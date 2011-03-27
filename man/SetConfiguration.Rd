@@ -1,0 +1,72 @@
+\name{SetConfiguration}
+
+\alias{SetConfiguration}
+
+\title{Set Window and Plotting Parameters}
+
+\description{
+A \acronym{GUI} for specifying window geometry and universal plotting
+parameters.
+}
+
+\usage{
+SetConfiguration(parent = NULL)
+}
+
+\arguments{
+\item{parent}{tkwin; the parent window (optional).}
+}
+
+\value{
+Queries and sets the following components of \code{\link{Data}}:
+\item{nlevels}{integer; approximate number of contour levels desired; its
+  default is 20.}
+\item{width}{numeric; the width of the plotting window canvas in inches; its
+  default is 7.}
+\item{cex.pts}{numeric; the amount by which point symbols should be magnified
+  relative to the default value, \code{1.0}. For example, \code{cex.pts = 0.5}
+  reduces the point symbol to half of its default size.}
+\item{asp.yx, asp.zx}{numeric; the \code{y/x} and \code{z/x} aspect ratios,
+  respectively (optional).}
+\item{vmax}{numeric; the maximum length of arrows in inches (optional).}
+\item{vxby, vyby}{integer; increment for the sequence of arrows in the
+  \code{x} and \code{y} directions, respectively (optional).}
+\item{tgap}{numeric; the time gap exceedance level in seconds. A break in the
+  linear segments of the time-series plot will occur where differences between
+  sequential temporal records is greater than \code{tgap}.}
+\item{rkey}{logical; if \code{TRUE} the legend key is reversed with \code{z}
+  values descending from top to bottom; its default is \code{FALSE}.}
+\item{img.contour}{logical; if \code{TRUE} the \code{\link{image}} function is
+  used to plot the interpolated surface; if \code{FALSE} (the default) the
+  \code{\link{filled.contour}} function is used.}
+\item{show.arrows}{logical; if \code{TRUE} the vector arrows will be plotted;
+  its default is \code{FALSE}.}
+\item{show.lines}{logical; if \code{TRUE} the line contours will be plotted on
+  the two-dimensional interpolated surface; its default is \code{FALSE}.}
+\item{show.points}{logical; if \code{TRUE} the point values associated with
+  \code{(x,y)} will be plotted on the interpolated surface; its default is
+  \code{FALSE}.}
+\item{show.poly}{logical; if \code{TRUE} the polygons describing the spatial
+  domain are added to the scatter plot and two-dimensional surface plot; its
+  default is \code{FALSE}.}
+\item{vuni}{logical; if \code{TRUE} a constant arrow length specified by
+  \code{vmax} is used; its default is \code{FALSE}.}
+\item{show.2.axes}{logical; if \code{TRUE} axes tickmarks will be drawn
+  on all sides, its default is \code{FALSE}.}
+\item{minor.ticks}{logical; if \code{TRUE} minor tickmarks are added to the
+  plot; its default is \code{FALSE}.}
+\item{ticks.inside}{logical; if \code{TRUE} tickmarks are placed inside the
+  plot region; its default is \code{FALSE}.}
+}
+
+\note{
+Re-importing data does not affect values specified in this \acronym{GUI}.
+}
+
+\author{Fisher, J.C.}
+
+\examples{
+\donttest{SetConfiguration()}
+}
+
+\keyword{misc}
