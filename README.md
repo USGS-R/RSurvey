@@ -33,24 +33,32 @@ computer, download and install the latest binary distribution from
 
 Install the required R packages from CRAN using a simple call to
 `install.packages()`:
+
     install.packages(c('tcltk', 'sp', 'gpclib', 'rgl', 'MBA', 'tripack', 'RSurvey'))
 
 Exporting to shapefiles requires the R package
 [rgdal](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal"):
+
     install.packages('rgdal')
 
 Support for displaying table data is provided by
 [tktable](http://tktable.sourceforge.net/ "tktable"),
 a spreadsheet-like [Tcl/Tk](http://www.tcl.tk/ "Tcl/Tk") widget
 (included with the Windows binary distribution of R).
+
     tclRequire('Tktable', warn = TRUE)
 
 Running
 -------
 
 Load RSurvey in the current R session:
+
     library(RSurvey)
+
 Load a sample RSurvey project into the current R session (optional):
+
     data(project)
+
 Activate the main GUI:
+
     OpenRSurvey()
