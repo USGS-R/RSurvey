@@ -13,11 +13,15 @@ BuildPackage <- function() {
   if (.Platform$OS.type != "windows")
     stop(call.=FALSE, "This function requires a Windows platform.")
 
-  pkg <- rev(unlist(strsplit(getwd(), "/")))[1]
+  pkg <- basename(getwd())
+  description <- readLines("DESCRIPTION")
+  ver <- strsplit(grep("Version:", description, value=TRUE), " ")[[1]][2]
 
   path.pkg <- shQuote(getwd())
   path.tmp <- shQuote(paste("C:/", pkg, sep=""))
-  path.chk <- shQuote(paste("C:/", pkg, "/", pkg, ".Rcheck", sep=""))
+  path.git <- shQuote(paste("C:/", pkg, "/.git", sep=""))
+  path.tar <- shQuote(paste("C:/", pkg, "_", ver, ".tar.gz", sep=""))
+  path.chk <- shQuote(paste("C:/", pkg, ".Rcheck", sep=""))
   path.zip <- shQuote(paste(pkg, "_*", sep=""))
   path.cmd <- paste(R.home(component="bin"), "/Rcmd", sep="")
 
@@ -26,9 +30,10 @@ BuildPackage <- function() {
   cmd <- append(cmd, paste(path.cmd, "REMOVE", pkg, sep=" "))
   cmd <- append(cmd, paste("CP -r", path.pkg, shQuote("C:/"), sep=" "))
   cmd <- append(cmd, paste("RMDIR /S /Q", path.chk, sep=" "))
+  cmd <- append(cmd, paste("RMDIR /S /Q", path.git, sep=" "))
   cmd <- append(cmd, paste(path.cmd, "build", path.tmp, sep=" "))
+  cmd <- append(cmd, paste(path.cmd, "check", path.tar, sep=" "))
   cmd <- append(cmd, paste(path.cmd, "INSTALL --build", path.tmp, sep=" "))
-  cmd <- append(cmd, paste(path.cmd, "check", path.tmp, sep=" "))
   cmd <- append(cmd, paste("RMDIR /S /Q", path.tmp, sep=" "))
   cmd <- append(cmd, paste("MOVE /Y", path.zip, path.pkg, sep=" "))
 
@@ -42,5 +47,5 @@ BuildPackage <- function() {
   if (length(f) == 0)
     return()
 
-  cat(c(cmd, "pause"), file=f, sep="\n")
+  cat(c("CD /d C:/", cmd, "pause"), file=f, sep="\n")
 }
