@@ -7,6 +7,8 @@ Description
 This [R](http://www.r-project.org/ "R") package is a processing program for
 spatially distributed data. It features graphing tools, query building, and
 polygon clipping. A graphical user interface (GUI) is provided.
+The GUI requires R operate as an SDI application, using multiple
+top-level windows for the console, graphics, and pager.
 
 Files can be one of four types as indicated by their extension: tables
 (_.txt_, _.csv_, _.dat_, or _.shp_), grids (_.grd_), polygons (_.ply_), or
@@ -28,8 +30,6 @@ Installation
 If R is not already installed on your
 computer, download and install the latest binary distribution from
 [CRAN](http://cran.r-project.org/ "The Comprehensive R Archive Network").
-The GUI requires R operate as an SDI application, using multiple
-top-level windows for the console, graphics, and pager.
 
 Install the required R packages from CRAN using a simple call to
 `install.packages()`:
