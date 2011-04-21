@@ -60,10 +60,10 @@ ImportData <- function(parent=NULL) {
     if (nrw > 0 && nrw < nrows)
       nrows <- nrw
 
-    sep <- sep0[as.integer(tcl(frame3.box.1.1, "current")) + 1]
-    com <- com0[as.integer(tcl(frame3.box.1.3, "current")) + 1]
-    nas <- nas0[as.integer(tcl(frame3.box.2.1, "current")) + 1]
-    quo <- quo0[as.integer(tcl(frame3.box.2.3, "current")) + 1]
+    sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
+    com <- com0[as.integer(tcl(frame3.box.1.4, "current")) + 1]
+    nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
+    quo <- quo0[as.integer(tcl(frame3.box.2.4, "current")) + 1]
 
     if (summary.only) {
       d <- try(read.table(con, header=FALSE, sep=sep, quote=quo, row.names=NULL,
@@ -169,7 +169,7 @@ ImportData <- function(parent=NULL) {
     tclvalue(source.var) <- f$path
     cb <<- NULL
     if (f$ext == "csv")
-      tcl(frame3.box.1.1, "current", match(",", sep0) - 1)
+      tcl(frame3.box.1.2, "current", match(",", sep0) - 1)
     RebuildTable()
   }
 
@@ -397,55 +397,64 @@ ImportData <- function(parent=NULL) {
   frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Select import parameters")
 
-  frame3.lab.1.2 <- ttklabel(frame3, width=10, text="seperator")
-  frame3.lab.1.4 <- ttklabel(frame3, width=10, text="comment")
-  frame3.lab.1.6 <- ttklabel(frame3, width= 8, text="skip lines")
-  frame3.lab.2.2 <- ttklabel(frame3, width=10, text="NA strings")
-  frame3.lab.2.4 <- ttklabel(frame3, width=10, text="quote")
-  frame3.lab.2.6 <- ttklabel(frame3, width= 8, text="max lines")
+  frame3.lab.1.1 <- ttklabel(frame3, text="Seperator")
+  frame3.lab.1.3 <- ttklabel(frame3, text="Comment")
+  frame3.lab.1.5 <- ttklabel(frame3, text="Skip lines")
+  frame3.lab.2.1 <- ttklabel(frame3, text="NA strings")
+  frame3.lab.2.3 <- ttklabel(frame3, text="Quote")
+  frame3.lab.2.5 <- ttklabel(frame3, text="Max lines")
 
-  frame3.box.1.1 <- ttkcombobox(frame3, width=14, state="readonly", value=sep1)
-  frame3.box.1.3 <- ttkcombobox(frame3, width=14, state="readonly", value=com1)
-  frame3.box.2.1 <- ttkcombobox(frame3, width=14, state="readonly", value=nas1)
-  frame3.box.2.3 <- ttkcombobox(frame3, width=14, state="readonly", value=quo1)
+  frame3.box.1.2 <- ttkcombobox(frame3, width=14, state="readonly", value=sep1)
+  frame3.box.1.4 <- ttkcombobox(frame3, width=14, state="readonly", value=com1)
+  frame3.box.2.2 <- ttkcombobox(frame3, width=14, state="readonly", value=nas1)
+  frame3.box.2.4 <- ttkcombobox(frame3, width=14, state="readonly", value=quo1)
 
-  tkbind(frame3.box.1.1, "<<ComboboxSelected>>", RebuildTable)
-  tkbind(frame3.box.1.3, "<<ComboboxSelected>>", RebuildTable)
-  tkbind(frame3.box.2.1, "<<ComboboxSelected>>", RebuildTable)
-  tkbind(frame3.box.2.3, "<<ComboboxSelected>>", RebuildTable)
+  tkbind(frame3.box.1.2, "<<ComboboxSelected>>", RebuildTable)
+  tkbind(frame3.box.1.4, "<<ComboboxSelected>>", RebuildTable)
+  tkbind(frame3.box.2.2, "<<ComboboxSelected>>", RebuildTable)
+  tkbind(frame3.box.2.4, "<<ComboboxSelected>>", RebuildTable)
 
-  frame3.ent.1.5 <- ttkentry(frame3, width=14, textvariable=skip.var)
-  frame3.ent.2.5 <- ttkentry(frame3, width=14, textvariable=nrow.var)
+  frame3.ent.1.6 <- ttkentry(frame3, width=14, textvariable=skip.var)
+  frame3.ent.2.6 <- ttkentry(frame3, width=14, textvariable=nrow.var)
 
-  tkbind(frame3.ent.1.5, "<KeyRelease>",
+  tkbind(frame3.ent.1.6, "<KeyRelease>",
          function() {
            tclvalue(skip.var) <- CheckEntry("integer", tclvalue(skip.var))
            RebuildTable()
          }
   )
-  tkbind(frame3.ent.2.5, "<KeyRelease>",
+  tkbind(frame3.ent.2.6, "<KeyRelease>",
          function() {
            tclvalue(nrow.var) <- CheckEntry("integer", tclvalue(nrow.var))
            RebuildTable()
          }
   )
 
-  tkgrid(frame3.box.1.1, frame3.lab.1.2, frame3.box.1.3, frame3.lab.1.4,
-         frame3.ent.1.5, frame3.lab.1.6)
-  tkgrid(frame3.box.2.1, frame3.lab.2.2, frame3.box.2.3, frame3.lab.2.4,
-         frame3.ent.2.5, frame3.lab.2.6, pady=c(5, 0))
+  tkgrid(frame3.lab.1.1, frame3.box.1.2, frame3.lab.1.3, frame3.box.1.4,
+         frame3.lab.1.5, frame3.ent.1.6)
+  tkgrid(frame3.lab.2.1, frame3.box.2.2, frame3.lab.2.3, frame3.box.2.4,
+         frame3.lab.2.5, frame3.ent.2.6, pady=c(5, 0))
 
-  tkgrid.configure(frame3.lab.1.2, frame3.lab.1.4, frame3.lab.2.2,
-                   frame3.lab.2.4, padx=2, sticky="w")
+  tkgrid.configure(frame3.lab.1.1, frame3.lab.1.3, frame3.lab.1.5,
+                   frame3.lab.2.1, frame3.lab.2.3, frame3.lab.2.5,
+                   padx=c(8, 1), sticky="e")
 
-  tkgrid.configure(frame3.lab.1.6, frame3.lab.2.6, padx=c(2, 0), sticky="w")
+  tkgrid.configure(frame3.box.1.2, frame3.box.1.4, frame3.ent.1.6,
+                   frame3.box.2.2, frame3.box.2.4, frame3.ent.2.6,
+                   sticky="we")
 
-  tkpack(frame3, anchor="w", fill="x", padx=10, pady=c(0, 15))
+  tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, padx=c(0, 1))
 
-  tcl(frame3.box.1.1, "current", 0)
-  tcl(frame3.box.1.3, "current", 0)
-  tcl(frame3.box.2.1, "current", 0)
-  tcl(frame3.box.2.3, "current", 0)
+  tkgrid.columnconfigure(frame3, 1, weight=1, minsize=14)
+  tkgrid.columnconfigure(frame3, 3, weight=1, minsize=14)
+  tkgrid.columnconfigure(frame3, 5, weight=1, minsize=14)
+
+  tkpack(frame3, anchor="w", fill="x", expand="yes", padx=10, pady=c(0, 15))
+
+  tcl(frame3.box.1.2, "current", 0)
+  tcl(frame3.box.1.4, "current", 0)
+  tcl(frame3.box.2.2, "current", 0)
+  tcl(frame3.box.2.4, "current", 0)
 
   if (!is.null(Data("skip")))
     tclvalue(skip.var) <- Data("skip")
@@ -453,13 +462,13 @@ ImportData <- function(parent=NULL) {
     tclvalue(nrow.var) <- Data("nrows")
 
   if (!is.null(Data("sep")))
-    tcl(frame3.box.1.1, "current", match(Data("sep"), sep0) - 1)
+    tcl(frame3.box.1.2, "current", match(Data("sep"), sep0) - 1)
   if (!is.null(Data("comment.char")))
-    tcl(frame3.box.1.3, "current", match(Data("comment.char"), com0) - 1)
+    tcl(frame3.box.1.4, "current", match(Data("comment.char"), com0) - 1)
   if (!is.null(Data("na.strings")))
-    tcl(frame3.box.2.1, "current", match(Data("na.strings"), nas0) - 1)
+    tcl(frame3.box.2.2, "current", match(Data("na.strings"), nas0) - 1)
   if (!is.null(Data("quote")))
-    tcl(frame3.box.2.3, "current", match(Data("quote"), quo0) - 1)
+    tcl(frame3.box.2.4, "current", match(Data("quote"), quo0) - 1)
 
   # Frame 4 contains example data table
 
@@ -492,7 +501,7 @@ ImportData <- function(parent=NULL) {
   tkgrid.configure(frame4.xsc, sticky="we", padx=c(11, 0), pady=0)
 
   tktag.configure(frame4.tbl, "active", background="#EAEEFE", relief="")
-  tktag.configure(frame4.tbl, "sel", background="#EAEEFE")
+  tktag.configure(frame4.tbl, "sel", background="#EAEEFE", foreground="black")
 
   tkconfigure(frame4.tbl, borderwidth=0, highlightthickness=0)
 
