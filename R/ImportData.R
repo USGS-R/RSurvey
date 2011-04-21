@@ -404,18 +404,18 @@ ImportData <- function(parent=NULL) {
   frame3.lab.2.3 <- ttklabel(frame3, text="Quote")
   frame3.lab.2.5 <- ttklabel(frame3, text="Max lines")
 
-  frame3.box.1.2 <- ttkcombobox(frame3, width=14, state="readonly", value=sep1)
-  frame3.box.1.4 <- ttkcombobox(frame3, width=14, state="readonly", value=com1)
-  frame3.box.2.2 <- ttkcombobox(frame3, width=14, state="readonly", value=nas1)
-  frame3.box.2.4 <- ttkcombobox(frame3, width=14, state="readonly", value=quo1)
+  frame3.box.1.2 <- ttkcombobox(frame3, width=16, state="readonly", value=sep1)
+  frame3.box.1.4 <- ttkcombobox(frame3, width=16, state="readonly", value=com1)
+  frame3.box.2.2 <- ttkcombobox(frame3, width=16, state="readonly", value=nas1)
+  frame3.box.2.4 <- ttkcombobox(frame3, width=16, state="readonly", value=quo1)
 
   tkbind(frame3.box.1.2, "<<ComboboxSelected>>", RebuildTable)
   tkbind(frame3.box.1.4, "<<ComboboxSelected>>", RebuildTable)
   tkbind(frame3.box.2.2, "<<ComboboxSelected>>", RebuildTable)
   tkbind(frame3.box.2.4, "<<ComboboxSelected>>", RebuildTable)
 
-  frame3.ent.1.6 <- ttkentry(frame3, width=14, textvariable=skip.var)
-  frame3.ent.2.6 <- ttkentry(frame3, width=14, textvariable=nrow.var)
+  frame3.ent.1.6 <- ttkentry(frame3, width=16, textvariable=skip.var)
+  frame3.ent.2.6 <- ttkentry(frame3, width=16, textvariable=nrow.var)
 
   tkbind(frame3.ent.1.6, "<KeyRelease>",
          function() {
@@ -439,17 +439,9 @@ ImportData <- function(parent=NULL) {
                    frame3.lab.2.1, frame3.lab.2.3, frame3.lab.2.5,
                    padx=c(8, 1), sticky="e")
 
-  tkgrid.configure(frame3.box.1.2, frame3.box.1.4, frame3.ent.1.6,
-                   frame3.box.2.2, frame3.box.2.4, frame3.ent.2.6,
-                   sticky="we")
-
   tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, padx=c(0, 1))
 
-  tkgrid.columnconfigure(frame3, 1, weight=1, minsize=14)
-  tkgrid.columnconfigure(frame3, 3, weight=1, minsize=14)
-  tkgrid.columnconfigure(frame3, 5, weight=1, minsize=14)
-
-  tkpack(frame3, anchor="w", fill="x", expand="yes", padx=10, pady=c(0, 15))
+  tkpack(frame3, anchor="w", fill="x", padx=10, pady=c(0, 15))
 
   tcl(frame3.box.1.2, "current", 0)
   tcl(frame3.box.1.4, "current", 0)
