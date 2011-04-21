@@ -11,7 +11,6 @@ Image files in this directory are covered by the following public licenses:
 
 **Images:** axes.gif, polygon.gif, transect.gif  
 **Designer:** Jason C. Fisher  
-**Contact:** <jfisher@usgs.gov></code>  
 **License:** GNU General Public License ([GPL][gpl])
 
 - - -
@@ -35,7 +34,7 @@ Image files in this directory are covered by the following public licenses:
 
 - - -
 
-**Images:** close.gif  
+**Image:** close.gif  
 **Icon set:** Glaze  
 **Designer:** Marco Martin  
 **Site:** <http://www.notmart.org>  
@@ -44,7 +43,7 @@ Image files in this directory are covered by the following public licenses:
 
 - - -
 
-**Images:** help.gif  
+**Image:** help.gif  
 **Icon set:** Futurosoft  
 **Designer:** Sergio Sanchez Lopez  
 **Site:** http://www.futurosoft.es  
@@ -53,7 +52,7 @@ Image files in this directory are covered by the following public licenses:
 
 - - -
 
-**Images:** refresh.gif (remixed)  
+**Image:** refresh.gif (remixed)  
 **Icon set:** Minimal perception  
 **Designer:** Mandarancio  
 **Site:** <http://mandarancio.deviantart.com>  
@@ -62,7 +61,7 @@ Image files in this directory are covered by the following public licenses:
 
 - - -
 
-**Images:** data.gif (remixed)  
+**Image:** data.gif (remixed)  
 **Icon set:** Gnome icons  
 **Designer:** Gnome Project  
 **Site:** <http://art.gnome.org/themes/icon>  
