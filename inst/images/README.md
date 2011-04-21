@@ -1,65 +1,69 @@
 Images
 ======
 
-Images in this directory are covered by the following public licenses.
+Image files in this directory are covered by the following public licenses:
+
+[gpl]: http://www.gnu.org/copyleft/gpl.html
+[lgpl]: http://www.gnu.org/licenses/lgpl.html
+[cc]: http://creativecommons.org/licenses/by-nc/3.0
 
 - - -
 
-**Images:** axes.gif, polygon.gif, transect.gif
-**Designer:** Jason Fisher
-**Contact:** jfisher@usgs.gov
-**License:** GNU General Public License ([GPL](http://www.gnu.org/copyleft/gpl.html))
+**Images:** axes.gif, polygon.gif, transect.gif  
+**Designer:** Jason C. Fisher  
+**Contact:** <jfisher@usgs.gov></code>  
+**License:** GNU General Public License ([GPL][gpl])
 
 - - -
 
-**Images:** config.gif, new.gif, save.gif, saveas.gif
-**Icon set:** Crystal Clear
-**Designer:** Everaldo Coelho
-**Site:** http://www.everaldo.com
-**Contact:** everaldo@everaldo.com
-**License:** GNU Lesser General Public License ([LGPL](http://www.gnu.org/licenses/lgpl.html))
+**Images:** config.gif, new.gif, save.gif, saveas.gif  
+**Icon set:** Crystal Clear  
+**Designer:** Everaldo Coelho  
+**Site:** <http://www.everaldo.com>  
+**Contact:** <everaldo@everaldo.com></code>  
+**License:** GNU Lesser General Public License ([LGPL][lgpl])
 
 
 - - -
 
-**Images:** globe.gif, import.gif
-**Designer:** David Vignoni
-**Icon set:** Nuvola
-**Site:** http://www.icon-king.com
-**Contact:** info@icon-king.com
-**License:** [LGPL](http://www.gnu.org/licenses/lgpl.html)
+**Images:** globe.gif, import.gif  
+**Designer:** David Vignoni  
+**Icon set:** Nuvola  
+**Site:** <http://www.icon-king.com>  
+**Contact:** <info@icon-king.com></code>  
+**License:** [LGPL][lgpl]
 
 - - -
 
-**Images:** close.gif
-**Icon set:** Glaze
-**Designer:** Marco Martin
-**Site:** http://www.notmart.org
-**Contact:** mart@notmart.org
-**License:** [LGPL](http://www.gnu.org/licenses/lgpl.html)
+**Images:** close.gif  
+**Icon set:** Glaze  
+**Designer:** Marco Martin  
+**Site:** <http://www.notmart.org>  
+**Contact:** <mart@notmart.org></code>  
+**License:** [LGPL][lgpl]
 
 - - -
 
-**Images:** help.gif
-**Icon set:** Futurosoft
-**Designer:** Sergio Sanchez Lopez
-**Site:** http://www.futurosoft.es
-**Contact:** sergio9087@hotmail.com
-**License:** [GPL](http://www.gnu.org/copyleft/gpl.html)
+**Images:** help.gif  
+**Icon set:** Futurosoft  
+**Designer:** Sergio Sanchez Lopez  
+**Site:** http://www.futurosoft.es  
+**Contact:** <sergio9087@hotmail.com></code>  
+**License:** [GPL][gpl]
 
 - - -
 
-**Images:** refresh.gif (remixed)
-**Icon set:** Minimal perception
-**Designer:** Mandarancio
-**Site:** http://mandarancio.deviantart.com
-**Contact:** manda.mgf@gmail.com
-**License:** Creative Commons ([Attribution-Noncommercial 3.0 Unported](http://creativecommons.org/licenses/by-nc/3.0))
+**Images:** refresh.gif (remixed)  
+**Icon set:** Minimal perception  
+**Designer:** Mandarancio  
+**Site:** <http://mandarancio.deviantart.com>  
+**Contact:** <manda.mgf@gmail.com></code>  
+**License:** Creative Commons ([Attribution-Noncommercial 3.0 Unported][cc])
 
 - - -
 
-**Images:** data.gif (remixed)
-**Icon set:** Gnome icons
-**Designer:** Gnome Project
-**Site:** http://art.gnome.org/themes/icon
-**License:** [GPL](http://www.gnu.org/copyleft/gpl.html)
+**Images:** data.gif (remixed)  
+**Icon set:** Gnome icons  
+**Designer:** Gnome Project  
+**Site:** <http://art.gnome.org/themes/icon>  
+**License:** [GPL][gpl]
