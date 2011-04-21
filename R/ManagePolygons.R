@@ -519,7 +519,7 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
          pady=c(7, 0), padx=c(0, 6))
 
   n <- length(ply)
-  if (n > 1)
+  if (n > 0)
     tkselection.set(frame1.lst, n - 1)
 
   tkbind(frame1.lst, "<ButtonRelease-1>", PlotPolygon)
