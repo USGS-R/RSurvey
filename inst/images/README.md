@@ -1,66 +1,65 @@
+Images
+======
 
 Images in this directory are covered by the following public licenses.
 
-###
+- - -
 
-IMAGES:   axes.gif, polygon.gif, transect.gif
-DESIGNER: Jason Fisher
-SITE:     http://stormplot.com
-CONTACT:  jfisher@usgs.gov
-LICENSE:  GNU General Public License (GPL)
-          http://www.gnu.org/copyleft/gpl.html
+**Images:** axes.gif, polygon.gif, transect.gif
+**Designer:** Jason Fisher
+**Contact:** jfisher@usgs.gov
+**License:** GNU General Public License ([GPL](http://www.gnu.org/copyleft/gpl.html))
 
-###
+- - -
 
-IMAGES:   config.gif, new.gif, save.gif, saveas.gif
-DESIGNER: Everaldo Coelho
-ICON SET: Crystal Clear
-SITE:     http://www.everaldo.com
-CONTACT:  everaldo@everaldo.com
-LICENSE:  GNU Lesser General Public License (LGPL)
-          http://www.gnu.org/licenses/lgpl.html
+**Images:** config.gif, new.gif, save.gif, saveas.gif
+**Icon set:** Crystal Clear
+**Designer:** Everaldo Coelho
+**Site:** http://www.everaldo.com
+**Contact:** everaldo@everaldo.com
+**License:** GNU Lesser General Public License ([LGPL](http://www.gnu.org/licenses/lgpl.html))
 
-###
 
-IMAGES:   globe.gif, import.gif
-DESIGNER: David Vignoni
-ICON SET: Nuvola
-SITE:     http://www.icon-king.com
-CONTACT:  info@icon-king.com
-LICENSE:  LGPL
+- - -
 
-###
+**Images:** globe.gif, import.gif
+**Designer:** David Vignoni
+**Icon set:** Nuvola
+**Site:** http://www.icon-king.com
+**Contact:** info@icon-king.com
+**License:** [LGPL](http://www.gnu.org/licenses/lgpl.html)
 
-IMAGES:   close.gif
-DESIGNER: Marco Martin
-ICON SET: Glaze
-SITE:     http://www.notmart.org
-CONTACT:  mart@notmart.org
-LICENSE:  LGPL
+- - -
 
-###
+**Images:** close.gif
+**Icon set:** Glaze
+**Designer:** Marco Martin
+**Site:** http://www.notmart.org
+**Contact:** mart@notmart.org
+**License:** [LGPL](http://www.gnu.org/licenses/lgpl.html)
 
-IMAGES:   help.gif
-DESIGNER: Sergio Sanchez Lopez
-ICON SET: Futurosoft
-SITE:     http://www.futurosoft.es
-CONTACT:  sergio9087@hotmail.com
-LICENSE:  GPL
+- - -
 
-###
+**Images:** help.gif
+**Icon set:** Futurosoft
+**Designer:** Sergio Sanchez Lopez
+**Site:** http://www.futurosoft.es
+**Contact:** sergio9087@hotmail.com
+**License:** [GPL](http://www.gnu.org/copyleft/gpl.html)
 
-IMAGES:   refresh.gif (remixed)
-ICON SET: Minimal perception
-DESIGNER: Mandarancio
-SITE:     http://mandarancio.deviantart.com
-CONTACT:  manda.mgf@gmail.com
-LICENSE:  Creative Commons (Attribution-Noncommercial 3.0 Unported)
-          http://creativecommons.org/licenses/by-nc/3.0
+- - -
 
-###
+**Images:** refresh.gif (remixed)
+**Icon set:** Minimal perception
+**Designer:** Mandarancio
+**Site:** http://mandarancio.deviantart.com
+**Contact:** manda.mgf@gmail.com
+**License:** Creative Commons ([Attribution-Noncommercial 3.0 Unported](http://creativecommons.org/licenses/by-nc/3.0))
 
-IMAGES:   data.gif (remixed)
-ICON SET: Gnome icons
-DESIGNER: Gnome Project
-SITE:     http://art.gnome.org/themes/icon
-LICENSE:  GPL
+- - -
+
+**Images:** data.gif (remixed)
+**Icon set:** Gnome icons
+**Designer:** Gnome Project
+**Site:** http://art.gnome.org/themes/icon
+**License:** [GPL](http://www.gnu.org/copyleft/gpl.html)
