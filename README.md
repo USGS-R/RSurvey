@@ -30,13 +30,16 @@ Installation
 If R is not already installed on your
 computer, download and install the latest binary distribution from
 [CRAN](http://cran.r-project.org/ "The Comprehensive R Archive Network").
+Windows users should set R to operate as an SDI application during installation
+by choosing to customize the startup options and specifying the SDI interface
+(not the default).
 
-Install the required R packages from CRAN using a simple call to
+Install required R packages from CRAN using a simple call to
 `install.packages()`:
 
     install.packages(c('tcltk', 'sp', 'gpclib', 'rgl', 'MBA', 'tripack', 'RSurvey'))
 
-Exporting to shapefiles requires the R package
+Install optional R package
 [rgdal](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal"):
 
     install.packages('rgdal')
