@@ -221,7 +221,7 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
   tkgrid.configure(frame2.xsc, sticky="we", padx=c(10, 0), pady=c(0, 5))
 
   tktag.configure(frame2.tbl, "active", background="#EAEEFE", relief="")
-  tktag.configure(frame2.tbl, "sel", background="#EAEEFE")
+  tktag.configure(frame2.tbl, "sel", background="#EAEEFE", foreground="black")
 
   tktag.configure(frame2.tbl, "title", background="white",
                   foreground="#0000FF", multiline=1, ellipsis="...", wrap=1)
