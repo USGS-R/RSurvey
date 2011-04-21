@@ -22,7 +22,7 @@ AddAxis <- function(side, lim, ticks.inside=FALSE,
       at.minor <- pretty(lim, n=len.minor)
     } else {
       typ <- round(delta / 10^floor(log10(delta) + .Machine$double.eps))
-      mult <- if (typ == 1 || typ == 2) 2 else 5
+      mult <- if (typ == 1 || typ == 2) 5 else 10
 
       i <- 0
       no.match <- TRUE
