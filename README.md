@@ -46,7 +46,7 @@ Summary descriptions of
 [RSurvey](http://cran.r-project.org/web/packages/RSurvey/index.html "RSurvey")
 are available on CRAN.
 
-Install the optional R package
+Install an optional R package
 [rgdal](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal")
 for shapefile support:
 
