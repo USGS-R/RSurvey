@@ -40,7 +40,8 @@ Install required R packages from CRAN using a simple call to
     install.packages(c('tcltk', 'sp', 'gpclib', 'rgl', 'MBA', 'tripack', 'RSurvey'))
 
 Install optional R package
-[rgdal](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal"):
+[rgdal](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal")
+for shapefile support:
 
     install.packages('rgdal')
 
@@ -58,10 +59,10 @@ Load RSurvey in the current R session:
 
     library(RSurvey)
 
-Load a sample RSurvey project into the current R session (optional):
-
-    data(project)
-
 Activate the main GUI:
 
     OpenRSurvey()
+
+Example data sets are provided in 
+a binary project image file `data/project.rda` 
+and text files `inst/extdata/` containing table and polygon data.
