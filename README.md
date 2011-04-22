@@ -37,14 +37,14 @@ Install required R packages from CRAN using a simple call to
 
     install.packages(c('tcltk', 'sp', 'gpclib', 'rgl', 'MBA', 'tripack', 'RSurvey'))
 
-A summary description of
+Summary descriptions of
 [sp](http://cran.r-project.org/web/packages/sp/index.html "sp"),
 [gpclib](http://cran.r-project.org/web/packages/gpclib/index.html "gpclib"),
 [rgl](http://cran.r-project.org/web/packages/rgl/index.html "rgl"),
 [MBA](http://cran.r-project.org/web/packages/MBA/index.html "MBA"),
 [tripack](http://cran.r-project.org/web/packages/tripack/index.html "tripack"), and
 [RSurvey](http://cran.r-project.org/web/packages/RSurvey/index.html "RSurvey")
-is available on CRAN.
+are available on CRAN.
 
 Install the optional R package
 [rgdal](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal")
