@@ -19,9 +19,7 @@ export. Support for programmatic manipulation of measurement units is only
 provided for date-time values; therefore, the bulk of unit consistency is tasked
 to the user. Time zones, spatial datum's and projections are not supported.
 
-The set of standards used for coding
-[RSurvey](http://cran.r-project.org/web/packages/RSurvey/index.html "RSurvey")
-is documented in
+The set of standards used for coding RSurvey is documented in
 [Google's R Style Guide](http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html "Google's R Style Guide").
 
 Installation
@@ -39,7 +37,16 @@ Install required R packages from CRAN using a simple call to
 
     install.packages(c('tcltk', 'sp', 'gpclib', 'rgl', 'MBA', 'tripack', 'RSurvey'))
 
-Install optional R package
+A summary description of
+[sp](http://cran.r-project.org/web/packages/sp/index.html "sp"),
+[gpclib](http://cran.r-project.org/web/packages/gpclib/index.html "gpclib"),
+[rgl](http://cran.r-project.org/web/packages/rgl/index.html "rgl"),
+[MBA](http://cran.r-project.org/web/packages/MBA/index.html "MBA"),
+[tripack](http://cran.r-project.org/web/packages/tripack/index.html "tripack"), and
+[RSurvey](http://cran.r-project.org/web/packages/RSurvey/index.html "RSurvey")
+is available on CRAN.
+
+Install the optional R package
 [rgdal](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal")
 for shapefile support:
 
@@ -48,7 +55,8 @@ for shapefile support:
 Support for displaying table data is provided by
 [tktable](http://tktable.sourceforge.net/ "tktable"),
 a spreadsheet-like [Tcl/Tk](http://www.tcl.tk/ "Tcl/Tk") widget
-(included with the Windows binary distribution of R).
+(included with the Windows binary distribution of R). 
+A call to `tclRequire()` will indicate whether tktable is available for use:
 
     tclRequire('Tktable', warn = TRUE)
 

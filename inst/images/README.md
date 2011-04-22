@@ -3,9 +3,9 @@ Images
 
 Image files in this directory are covered by the following public licenses:
 
-[gpl]: http://www.gnu.org/copyleft/gpl.html
-[lgpl]: http://www.gnu.org/licenses/lgpl.html
-[cc]: http://creativecommons.org/licenses/by-nc/3.0
+[gpl]: http://www.gnu.org/copyleft/gpl.html "GPL"
+[lgpl]: http://www.gnu.org/licenses/lgpl.html "LGPL"
+[cc]: http://creativecommons.org/licenses/by-nc/3.0 "Creative Commons"
 
 - - -
 
