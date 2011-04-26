@@ -5,7 +5,9 @@ Description
 -----------
 
 This [R](http://www.r-project.org/ "R") package is a processing program for
-spatially distributed data. It features graphing tools, query building, and
+spatially distributed data. 
+[RSurvey](http://cran.r-project.org/web/packages/RSurvey/index.html "RSurvey")
+features graphing tools, query building, and
 polygon clipping. A graphical user interface (GUI) is provided.
 The GUI requires R operate as an SDI application, using multiple
 top-level windows for the console, graphics, and pager.
@@ -37,15 +39,6 @@ Install required R packages from CRAN using a simple call to
 
     install.packages(c('tcltk', 'sp', 'gpclib', 'rgl', 'MBA', 'tripack', 'RSurvey'))
 
-Summary descriptions of
-[sp](http://cran.r-project.org/web/packages/sp/index.html "sp"),
-[gpclib](http://cran.r-project.org/web/packages/gpclib/index.html "gpclib"),
-[rgl](http://cran.r-project.org/web/packages/rgl/index.html "rgl"),
-[MBA](http://cran.r-project.org/web/packages/MBA/index.html "MBA"),
-[tripack](http://cran.r-project.org/web/packages/tripack/index.html "tripack"), and
-[RSurvey](http://cran.r-project.org/web/packages/RSurvey/index.html "RSurvey")
-are available on CRAN.
-
 Install an optional R package
 [rgdal](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal")
 for shapefile support:
@@ -72,5 +65,5 @@ Activate the main GUI:
     OpenRSurvey()
 
 Example data sets are provided in 
-a binary project image file `data/project.rda` 
+a binary project file `data/project.rda` 
 and text files `inst/extdata/` containing table and polygon data.
