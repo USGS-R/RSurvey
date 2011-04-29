@@ -724,9 +724,9 @@ OpenRSurvey <- function() {
     Data("default.dir", path)
 
   if ("package:RSurvey" %in% search()) {
-    imgPath <- system.file("images", package="RSurvey")
+    image.path <- system.file("images", package="RSurvey")
   } else {
-    imgPath <- paste(path, "/inst/images/", sep="")
+    image.path <- paste(path, "/inst/images/", sep="")
   }
 
   # Exit if GUI object is present
@@ -926,23 +926,23 @@ OpenRSurvey <- function() {
   tkpack(frame0, side="top", fill="x")
 
   tkimage.create("photo", new.var, format="GIF",
-                 file=paste(imgPath, "new.gif",     sep="/"))
+                 file=paste(image.path, "new.gif", sep="/"))
   tkimage.create("photo", save.var, format="GIF",
-                 file=paste(imgPath, "save.gif",    sep="/"))
+                 file=paste(image.path, "save.gif", sep="/"))
   tkimage.create("photo", import.var, format="GIF",
-                 file=paste(imgPath, "import.gif",  sep="/"))
+                 file=paste(image.path, "import.gif", sep="/"))
   tkimage.create("photo", data.var, format="GIF",
-                 file=paste(imgPath, "data.gif",    sep="/"))
+                 file=paste(image.path, "data.gif", sep="/"))
   tkimage.create("photo", polygon.var, format="GIF",
-                 file=paste(imgPath, "polygon.gif", sep="/"))
+                 file=paste(image.path, "polygon.gif", sep="/"))
   tkimage.create("photo", config.var, format="GIF",
-                 file=paste(imgPath, "config.gif",  sep="/"))
+                 file=paste(image.path, "config.gif", sep="/"))
   tkimage.create("photo", axes.var, format="GIF",
-                 file=paste(imgPath, "axes.gif",    sep="/"))
+                 file=paste(image.path, "axes.gif", sep="/"))
   tkimage.create("photo", help.var, format="GIF",
-                 file=paste(imgPath, "help.gif",    sep="/"))
+                 file=paste(image.path, "help.gif", sep="/"))
   tkimage.create("photo", close.var, format="GIF",
-                 file=paste(imgPath, "close.gif",   sep="/"))
+                 file=paste(image.path, "close.gif", sep="/"))
 
   frame0.but.1  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=new.var,
