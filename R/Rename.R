@@ -57,6 +57,9 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
 
   frame0 <- ttkframe(tt, relief="flat", borderwidth=2)
 
+  frame0.lab.1 <- ttklabel(frame0, text="Old name")
+  frame0.lab.2 <- ttklabel(frame0, text="New name")
+
   tmp <- names
   if (length(tmp) == 1)
     tmp <- paste("{", names, "}", sep="")
@@ -68,10 +71,13 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
   if (!is.null(cur.name) && cur.name %in% names)
     tcl(frame0.box.1, "current", match(cur.name, names) - 1)
 
-  tkgrid(frame0.box.1, pady=0, sticky="we")
-  tkgrid(frame0.ent.1, pady=5, sticky="we")
+  tkgrid(frame0.lab.1, frame0.box.1, pady=0)
+  tkgrid(frame0.lab.2, frame0.ent.1, pady=5)
 
-  tkgrid.columnconfigure(frame0, 0, weight=1, minsize=25)
+  tkgrid.configure(frame0.lab.1, frame0.lab.2, sticky="e", padx=c(0, 2))
+  tkgrid.configure(frame0.box.1, frame0.ent.1, sticky="we")
+
+  tkgrid.columnconfigure(frame0, 1, weight=1, minsize=25)
 
   tkpack(frame0, fill="x", expand=TRUE, pady=5)
 
