@@ -170,7 +170,7 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
   # Frame 1 contains line search
 
   frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0, height=200)
-  frame1.lab.1 <- ttklabel(frame1, text="Line")
+  frame1.lab.1 <- ttklabel(frame1, text="Record no.")
   frame1.ent.2 <- ttkentry(frame1, width=10, textvariable=line.no.var)
   frame1.but.3 <- ttkbutton(frame1, width=6, text="Goto", command=GotoLine)
 
