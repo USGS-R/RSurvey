@@ -456,7 +456,6 @@ OpenRSurvey <- function() {
       dat <- Data("data.pts")
     } else if (type %in% c("l", "g")) {
       dat <- Data("data.grd")
-
       if (type == "g") {
         ave.elem <- function(z) {
           m <- nrow(z)

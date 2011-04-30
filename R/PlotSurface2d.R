@@ -349,6 +349,9 @@ PlotSurface2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
         points(x[logic], y[logic], pch=21, cex=cex.pts, col="black",
                bg=col[i], lwd=lwd)
       }
+      logic <- is.na(z)
+      points(x[logic], y[logic], pch=21, cex=cex.pts, col="black",
+             bg=NA, lwd=lwd)
     }
   }
 
