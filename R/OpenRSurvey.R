@@ -529,14 +529,9 @@ OpenRSurvey <- function() {
                   vuni=Data("vuni"), vmax=Data("vmax"),
                   vxby=Data("vxby"), vyby=Data("vyby"),
                   axis.side=axis.side, minor.ticks=Data("minor.ticks"),
-                  ticks.inside=Data("ticks.inside"))
+                  ticks.inside=Data("ticks.inside"),
+                  add.contour.lines=show.lines)
 
-    if (show.lines) {
-      dat <- Data("data.grd")
-      lwd <- 0.5 * (96 / (6 * 12))
-      contour(dat, col="black", lty="solid", add=TRUE, nlevels=nlevels,
-              vfont = c("sans serif", "plain"), lwd=lwd)
-    }
     if (show.poly)
       plot(ply, add=TRUE, poly.args=list(border="black", lty=3))
     if (show.points)

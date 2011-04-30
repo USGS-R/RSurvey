@@ -4,7 +4,8 @@ PlotSurface2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
                           pointsize=12, cex.pts=1, nlevels=20, rkey=FALSE,
                           color.palette=terrain.colors, vuni=FALSE, vmax=NULL,
                           vxby=NULL, vyby=NULL, axis.side=1:2,
-                          minor.ticks=FALSE, ticks.inside=FALSE) {
+                          minor.ticks=FALSE, ticks.inside=FALSE,
+                          add.contour.lines=FALSE) {
   # Draws a scatter plot with arrows or contour plot with arrows. A key showing
   # how the colors map to state variable values is shown to the right of the
   # plot.
@@ -264,6 +265,15 @@ PlotSurface2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
   } else if (type == "g") {
     image(as.double(x), as.double(y), z, col=col, add=TRUE,
           breaks=as.double(levels))
+  }
+
+  # Plot contour lines
+
+  if (add.contour.lines && type %in% c("l", "g")) {
+      lwd <- 0.5 * (96 / (6 * 12))
+      contour(x=as.double(x), y=as.double(y), z=z, col="#999999", lty="solid",
+              add=TRUE, nlevels=nlevels, vfont = c("sans serif", "plain"),
+              lwd=lwd)
   }
 
   # Plot vector arrows
