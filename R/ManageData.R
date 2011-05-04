@@ -430,9 +430,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     fun <- as.character(tclvalue(tkget(frame2.txt.5.2, '1.0', 'end-1c')))
     d <- as.data.frame(EvalFunction(fun, cols))
 
-    tkconfigure(tt, cursor="watch")
     ViewData(d, col.names, col.units, col.digs, parent=tt)
-    tkconfigure(tt, cursor="arrow")
   }
 
 

@@ -36,8 +36,8 @@ AutocropPolygon <- function(parent=NULL) {
       old.ply <<- ply
     }
 
-    tkfocus(tt)
     tkconfigure(tt, cursor="arrow")
+    tkfocus(tt)
   }
 
   # Draw base plot and points
