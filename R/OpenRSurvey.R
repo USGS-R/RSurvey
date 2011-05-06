@@ -701,11 +701,6 @@ OpenRSurvey <- function() {
     image.path <- paste(path, "/inst/images/", sep="")
   }
 
-  # Exit if GUI object is present
-
-  if (exists("tt", where=".GlobalEnv"))
-    stop("An older instance of RSurvey is active and will be brought forward.")
-
   # Set options
 
   SetCsi()
