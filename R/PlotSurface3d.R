@@ -128,11 +128,10 @@ PlotSurface3d <- function(x=NULL, y=NULL, z=NULL, px=NULL, py=NULL, pz=NULL,
 
   yscale <- zscale <- 1
 
-  if (!is.null(hasp) && !is.na(hasp)) {
+  if (!is.null(hasp) && !is.na(hasp))
     yscale <- hasp
-  } else {
+  else
     yscale <- (diff(range(x, na.rm=TRUE)) / diff(range(y, na.rm=TRUE)))
-  }
 
   if (!is.null(vasp) && !is.na(vasp)) {
     zscale <- vasp

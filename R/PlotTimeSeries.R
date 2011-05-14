@@ -112,13 +112,12 @@ PlotTimeSeries <- function(x, y=NULL, xlim=NULL, ylim=NULL, ylab=NULL,
 
   for (side in axis.side) {
     if (side %in% c(1, 3)) {
-      if (is.null(fmt)) {
+      if (is.null(fmt))
         AddAxis(side=side, lim=xlim, ticks.inside=ticks.inside,
                 minor.ticks=minor.ticks, padj=-1)
-      } else {
+      else
         AddAxis(side=side, lim=xlim, ticks.inside=ticks.inside,
                 minor.ticks=minor.ticks, padj=-1, format=fmt)
-      }
     } else {
       AddAxis(side=side, lim=ylim, ticks.inside=ticks.inside,
               minor.ticks=minor.ticks, padj=0.7)

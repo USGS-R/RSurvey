@@ -33,11 +33,10 @@ CutoutPolygon <- function(dat, ply=NULL) {
     pts <- d[[i]]
     in.poly <- point.in.polygon(point.x=x, point.y=y, pol.x=pts$x, pol.y=pts$y)
     mat.in.poly <- matrix(in.poly, nrow=nrows, ncol=ncols, byrow=FALSE)
-    if (pts$hole) {
+    if (pts$hole)
       pnt.in.ply[mat.in.poly != 0] <- 0
-    } else {
+    else
       pnt.in.ply <- pnt.in.ply + mat.in.poly
-    }
   }
 
   dat$z[pnt.in.ply == 0] <- NA

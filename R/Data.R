@@ -39,14 +39,13 @@
 
     if (clear.proj | clear.data) {
       save.params <- c("default.dir", "win.loc", "csi", "width", "cex.pts")
-      if (clear.data) {
+      if (clear.data)
         save.params <- c(save.params, "nlevels", "asp.yx", "asp.zx",
                          "vmax", "vxby", "vyby", "rkey", "show.poly",
                          "img.contour", "show.lines", "show.points",
                          "show.arrows", "vuni", "date.fmt", "poly",
                          "proj.file", "show.2.axes", "minor.ticks",
                          "ticks.inside")
-      }
       save.params <- save.params[save.params %in% names(dat)]
       dat <<- sapply(save.params, function(i) list(dat[[i]]))
       return()
@@ -68,11 +67,10 @@
 
       if (!is.null(opt) && length(option) > 1) {
         for (i in 2:length(option)) {
-          if (option[i] > length(dat[[opt[-i]]])) {
+          if (option[i] > length(dat[[opt[-i]]]))
             break
-          } else {
+          else
             opt <- c(opt, option[i])
-          }
         }
       }
     } else {

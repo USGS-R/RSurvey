@@ -1,5 +1,5 @@
 OpenRSurvey <- function() {
-  # This function activates the main GUI for RSurvey.
+  # Activates the main GUI for RSurvey.
 
   # Additional functions (subroutines)
 
@@ -11,9 +11,9 @@ OpenRSurvey <- function() {
       return()
     CloseDevices()
 
-    tmp <- unlist(strsplit(as.character(tkwm.geometry(tt)), "\\+"))
-    Data("win.loc", paste("+", as.integer(tmp[2]),
-                          "+", as.integer(tmp[3]), sep=""))
+    geo <- unlist(strsplit(as.character(tkwm.geometry(tt)), "\\+"))
+    Data("win.loc", paste("+", as.integer(geo[2]),
+                          "+", as.integer(geo[3]), sep=""))
 
     tclvalue(tt.done.var) <- 1
     tkdestroy(tt)
@@ -71,13 +71,12 @@ OpenRSurvey <- function() {
 
   ClearObjs <- function() {
     msg <- "Save the existing project?"
-    if (is.null(Data("proj.file"))) {
+    if (is.null(Data("proj.file")))
       ans <- "no"
-    } else {
+    else
       ans <- as.character(tkmessageBox(icon="question", message=msg,
                                        title="Warning", type="yesnocancel",
                                        parent=tt))
-    }
     if (ans == "cancel") {
       return(ans)
     } else if (ans == "yes") {
@@ -243,9 +242,8 @@ OpenRSurvey <- function() {
 
   CloseDevices <- function() {
     graphics.off()
-    while (rgl.cur() != 0) {
+    while (rgl.cur() != 0)
       rgl.close()
-    }
   }
 
   # Save R graphic devices
@@ -272,21 +270,19 @@ OpenRSurvey <- function() {
     if (is.null(f))
       return()
 
-    if (f$ext == "png") {
+    if (f$ext == "png")
       rgl.snapshot(filename=f$path, fmt=f$ext)
-    } else {
+    else
       rgl.postscript(filename=f$path, fmt=f$ext)
-    }
   }
 
   # About package
 
   AboutPackage <- function() {
     con <- "DESCRIPTION"
-    if (file.access(paste(getwd(), "/", con, sep=""), mode=0) != 0) {
+    if (file.access(paste(getwd(), "/", con, sep=""), mode=0) != 0)
       con <- paste(.path.package(package="RSurvey", quiet=FALSE),
                    "/", con, sep="")
-    }
     msg <- paste(readLines(con, n=-1), collapse="\n")
     tkmessageBox(icon="info", message=msg, title="About", parent=tt)
   }
@@ -686,20 +682,18 @@ OpenRSurvey <- function() {
 
   # Establish working directory
 
-  if ("package:RSurvey" %in% search()) {
+  if ("package:RSurvey" %in% search())
     path <- system.file("RSurvey-ex", package="RSurvey")
-  } else {
+  else
     path <- getwd()
-  }
 
   if (is.null(Data("default.dir")))
     Data("default.dir", path)
 
-  if ("package:RSurvey" %in% search()) {
+  if ("package:RSurvey" %in% search())
     image.path <- system.file("images", package="RSurvey")
-  } else {
+  else
     image.path <- paste(path, "/inst/images/", sep="")
-  }
 
   # Set options
 

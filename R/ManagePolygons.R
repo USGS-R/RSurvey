@@ -1,7 +1,7 @@
 ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
                            parent=NULL) {
-  # A GUI for managing and manipulating polygons that is based
-  # on the gpclib package.
+  # A GUI for managing and manipulating polygons;
+  # based on the gpclib package.
 
   # Additional functions (subroutines)
 
@@ -278,11 +278,10 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
           all.idxs[c(i - 1, i)] <- all.idxs[c(i, i - 1)]
       }
       ply <<- ply[all.idxs]
-      if (length(new.idxs) == 0) {
+      if (length(new.idxs) == 0)
         new.idxs <- 1
-      } else {
+      else
         new.idxs <- (1:n)[all.idxs %in% new.idxs]
-      }
     } else if (type == "forward") {
       n <- length(ply)
       new.idxs <- idxs
@@ -293,16 +292,14 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
       }
       all.idxs <- na.omit(all.idxs)
       ply <<- ply[all.idxs]
-      if (length(new.idxs) == 0) {
+      if (length(new.idxs) == 0)
         new.idxs <- n
-      } else {
+      else
         new.idxs <- (1:n)[all.idxs %in% new.idxs]
-      }
     }
-    for (i in seq(along=ply)) {
+    for (i in seq(along=ply))
       tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var),
                                 i - 1, i - 1, names(ply)[i])
-    }
     tkselection.clear(frame1.lst, 0, "end")
     for (i in new.idxs - 1)
       tkselection.set(frame1.lst, i)
@@ -473,7 +470,7 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
 
   tkconfigure(tt, menu=top.menu)
 
-  # Frame 0 contains ok and cancel buttons, and size grip
+  # Frame 0, ok and cancel buttons, and size grip
 
   frame0 <- ttkframe(tt, relief="flat")
 

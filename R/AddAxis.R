@@ -60,10 +60,9 @@ AddAxis <- function(side, lim, ticks.inside=FALSE,
          labels=add.labels, lwd=-1, lwd.ticks=lwd.ticks, ...)
     if (minor.ticks) {
       at <- LocateMinorTicks()
-      if (!is.null(at)) {
+      if (!is.null(at))
         axis(side, at=at, tcl=tcl.minor, labels=FALSE,
              lwd=-1, lwd.ticks=lwd.ticks)
-      }
     }
   } else if (inherits(lim, "POSIXt")) {
     axis.POSIXct(side, lim, tcl=tcl.major, cex.axis=0.8, las=las,

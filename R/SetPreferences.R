@@ -72,7 +72,7 @@ SetPreferences <- function(parent=NULL) {
 
   tkwm.resizable(tt, 1, 0)
 
-  # Frame 0 contains ok and cancel buttons
+  # Frame 0, ok and cancel buttons
 
   frame0 <- tkframe(tt, relief="flat", padx=0, pady=0)
 
@@ -89,7 +89,7 @@ SetPreferences <- function(parent=NULL) {
 
   tkpack(frame0, side="bottom", anchor="e")
 
-  # Frame 1 contains interpolation parameteres
+  # Frame 1, interpolation parameteres
 
   frame1 <- ttkframe(tt, relief="flat", borderwidth=5, padding=8)
 
@@ -120,7 +120,7 @@ SetPreferences <- function(parent=NULL) {
 
   tkpack(frame1, fill="both", expand="yes", padx=20, pady=2)
 
-  # Frame 2 contains MBA input parameters
+  # Frame 2, MBA input parameters
 
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Multilevel B-spline approximation")

@@ -76,7 +76,7 @@ EditTimeFormat <- function(spec=NULL, parent=NULL) {
   }
   tktitle(tt) <- "Date and Time Format"
 
-  # Frame 0 contains load and cancel buttons, and size grip
+  # Frame 0, load and cancel buttons, and size grip
 
   frame0 <- ttkframe(tt, relief="flat")
 
@@ -99,7 +99,7 @@ EditTimeFormat <- function(spec=NULL, parent=NULL) {
 
   pw <- ttkpanedwindow(tt, orient="horizontal")
 
-  # Frame 1 containes treeview for conversion specifications
+  # Frame 1, treeview for conversion specifications
 
   frame1 <- ttkframe(pw, relief="flat", padding=0, borderwidth=0)
 

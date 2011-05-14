@@ -68,11 +68,10 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
   filters   <- apply(filters, 1, paste, collapse=" ")
   filters   <- paste(paste("{", filters, "}", sep=""), collapse=" ")
 
-  if (tolower(substr(cmd, 1, 4)) == "open") {
+  if (tolower(substr(cmd, 1, 4)) == "open")
     args <- list("tk_getOpenFile", title=win.title, multiple=multi)
-  } else {
+  else
     args <- list("tk_getSaveFile", title=win.title)
-  }
 
   if (!is.null(parent))
     args[["parent"]] <- parent
@@ -114,11 +113,10 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
     nam <- sub(paste(".", ext, "$", sep=""), "", basename(pth))
     typ <- all.filters[[ext]]
     val <- list(path=pth, dir=dir, name=nam, ext=ext, type=typ)
-    if (n > 1) {
+    if (n > 1)
       f[[i]] <- val
-    } else {
+    else
       f <- val
-    }
   }
 
   if (!is.null(f))

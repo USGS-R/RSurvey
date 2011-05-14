@@ -144,11 +144,10 @@
     } else {
       k <- y.diff / x.diff
     }
-    if (k < 1) {
+    if (k < 1)
       m <- 2
-    } else {
+    else
       n <- 2
-    }
     if (!is.null(Data("mba.m")))
       m <- Data("mba.m")
     if (!is.null(Data("mba.n")))

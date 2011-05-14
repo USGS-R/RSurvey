@@ -87,11 +87,10 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
     cols[is.na(cols)] <- ""
   }
 
-  if (is.null(col.units)) {
+  if (is.null(col.units))
     col.units <- rep(NA, n)
-  } else {
+  else
     col.units <- as.character(col.units[1:n])
-  }
   not.na <- !is.na(col.units)
   cols[not.na] <- paste(cols[not.na], col.units[not.na], sep="\n")
 
@@ -149,7 +148,7 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
   tktitle(tt) <- "View Data"
 
-  # Frame 0 contains ok button and size grip
+  # Frame 0, ok button and size grip
 
   frame0 <- ttkframe(tt, relief="flat")
 
@@ -167,7 +166,7 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
   tkpack(frame0, side="bottom", anchor="e")
 
-  # Frame 1 contains line search
+  # Frame 1, line search
 
   frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0, height=200)
   frame1.lab.1 <- ttklabel(frame1, text="Record no.")
@@ -182,7 +181,7 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
   tkpack(frame1, side="bottom", anchor="nw", padx=c(10, 0))
 
-  # Frame 2 contains the data table
+  # Frame 2, the data table
 
   frame2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 

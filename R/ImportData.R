@@ -35,13 +35,12 @@ ImportData <- function(parent=NULL) {
         con <- try(url(description=src, open="r", encoding=encoding),
                    silent=TRUE)
       } else {
-        if (grepl(".gz$", src)) {
+        if (grepl(".gz$", src))
           con <- try(gzfile(description=src, open="r", encoding=encoding,
                             compression=6), silent=TRUE)
-        } else {
+        else
           con <- try(file(description=src, open="r", encoding=encoding),
                      silent=TRUE)
-        }
       }
     }
 
@@ -191,7 +190,6 @@ ImportData <- function(parent=NULL) {
   ClearData <- function() {
     cb <<- NULL
     tclvalue(source.var) <- ""
-
     tclServiceMode(FALSE)
     ResetGUI()
     tclServiceMode(TRUE)
@@ -343,7 +341,7 @@ ImportData <- function(parent=NULL) {
 
   tkconfigure(frame0.but.1, state="disabled")
 
-  # Frame 1 contains file locator
+  # Frame 1, file locator
 
   frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
@@ -370,7 +368,7 @@ ImportData <- function(parent=NULL) {
 
   tkbind(frame1.ent.1, "<Return>", RebuildTable)
 
-  # Frame 2 contains header line information
+  # Frame 2, header line information
 
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Identify header lines")
@@ -392,7 +390,7 @@ ImportData <- function(parent=NULL) {
 
   tkpack(frame2, anchor="w", fill="x", padx=10, pady=10)
 
-  # Frame 3 contains import parameters
+  # Frame 3, import parameters
 
   frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Select import parameters")
@@ -462,7 +460,7 @@ ImportData <- function(parent=NULL) {
   if (!is.null(Data("quote")))
     tcl(frame3.box.2.4, "current", match(Data("quote"), quo0) - 1)
 
-  # Frame 4 contains example data table
+  # Frame 4, example data table
 
   frame4 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
@@ -506,7 +504,7 @@ ImportData <- function(parent=NULL) {
 
   tkselection.set(frame4.tbl, "origin")
 
-  # Frame 5 contians paste and clear buttons
+  # Frame 5, paste and clear buttons
 
   frame5 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 

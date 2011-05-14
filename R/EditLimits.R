@@ -15,36 +15,30 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
     d$z1 <- as.numeric(tclvalue(z1.var))
     d$z2 <- as.numeric(tclvalue(z2.var))
 
-    if (is.na(d$x1)) {
+    if (is.na(d$x1))
       d$x1 <- d$x1.chk <- NULL
-    } else {
+    else
       d$x1.chk <- as.integer(tclvalue(x1.chk.var))
-    }
-    if (is.na(d$x2)) {
+    if (is.na(d$x2))
       d$x2 <- d$x2.chk <- NULL
-    } else {
+    else
       d$x2.chk <- as.integer(tclvalue(x2.chk.var))
-    }
-    if (is.na(d$y1)) {
+    if (is.na(d$y1))
       d$y1 <- d$y1.chk <- NULL
-    } else {
+    else
       d$y1.chk <- as.integer(tclvalue(y1.chk.var))
-    }
-    if (is.na(d$y2)) {
+    if (is.na(d$y2))
       d$y2 <- d$y2.chk <- NULL
-    } else {
+    else
       d$y2.chk <- as.integer(tclvalue(y2.chk.var))
-    }
-    if (is.na(d$z1)) {
+    if (is.na(d$z1))
       d$z1 <- d$z1.chk <- NULL
-    } else {
+    else
       d$z1.chk <- as.integer(tclvalue(z1.chk.var))
-    }
-    if (is.na(d$z2)) {
+    if (is.na(d$z2))
       d$z2 <- d$z2.chk <- NULL
-    } else {
+    else
       d$z2.chk <- as.integer(tclvalue(z2.chk.var))
-    }
 
     d$x <- c(if (!is.null(d$x1) && !d$x1.chk) d$x1 else NA,
              if (!is.null(d$x2) && !d$x2.chk) d$x2 else NA)
@@ -72,16 +66,14 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
     if (inherits(t2, "POSIXt"))
       d$t2 <- t2
 
-    if (is.na(d$t1)) {
+    if (is.na(d$t1))
       d$t1 <- d$t1.chk <- NULL
-    } else {
+    else
       d$t1.chk <- as.integer(tclvalue(t1.chk.var))
-    }
-    if (is.na(d$t2)) {
+    if (is.na(d$t2))
       d$t2 <- d$t2.chk <- NULL
-    } else {
+    else
       d$t2.chk <- as.integer(tclvalue(t2.chk.var))
-    }
 
     origin <- as.POSIXct("1970-01-01 00:00:00.0")
 
@@ -273,11 +265,10 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
                     })
   frame1.chk.2.3 <- ttkcheckbutton(frame1, variable=y2.chk.var, text="Auto",
                     command=function() {
-                      if (as.integer(tclvalue(y2.chk.var))) {
+                      if (as.integer(tclvalue(y2.chk.var)))
                         tclvalue(y2.sta.var) <- "disabled"
-                      } else {
+                      else
                         tclvalue(y2.sta.var) <- "normal"
-                      }
                       tkconfigure(frame1.ent.2.2, state=tclvalue(y2.sta.var))
                       tkfocus(frame1.ent.2.2)
                     })
@@ -316,21 +307,19 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
 
   frame2.chk.1.3 <- ttkcheckbutton(frame2, variable=z1.chk.var, text="Auto",
                     command=function() {
-                      if (as.integer(tclvalue(z1.chk.var))) {
+                      if (as.integer(tclvalue(z1.chk.var)))
                         tclvalue(z1.sta.var) <- "disabled"
-                      } else {
+                      else
                         tclvalue(z1.sta.var) <- "normal"
-                      }
                       tkconfigure(frame2.ent.1.2, state=tclvalue(z1.sta.var))
                       tkfocus(frame2.ent.1.2)
                     })
   frame2.chk.2.3 <- ttkcheckbutton(frame2, variable=z2.chk.var, text="Auto",
                     command=function() {
-                      if (as.integer(tclvalue(z2.chk.var))) {
+                      if (as.integer(tclvalue(z2.chk.var)))
                         tclvalue(z2.sta.var) <- "disabled"
-                      } else {
+                      else
                         tclvalue(z2.sta.var) <- "normal"
-                      }
                       tkconfigure(frame2.ent.2.2, state=tclvalue(z2.sta.var))
                       tkfocus(frame2.ent.2.2)
                     })
@@ -416,11 +405,10 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
 
   frame3.chk.1.6 <- ttkcheckbutton(frame3, variable=t1.chk.var, text="Auto",
                     command=function() {
-                      if (as.integer(tclvalue(t1.chk.var))) {
+                      if (as.integer(tclvalue(t1.chk.var)))
                         tclvalue(t1.sta.var) <- "disabled"
-                      } else {
+                      else
                         tclvalue(t1.sta.var) <- "normal"
-                      }
                       tkconfigure(frame3.ent.1.2, state=tclvalue(t1.sta.var))
                       tkconfigure(frame3.ent.1.3, state=tclvalue(t1.sta.var))
                       tkconfigure(frame3.ent.1.4, state=tclvalue(t1.sta.var))
@@ -429,11 +417,10 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
                     })
   frame3.chk.2.6 <- ttkcheckbutton(frame3, variable=t2.chk.var, text="Auto",
                     command=function() {
-                      if (as.integer(tclvalue(t2.chk.var))) {
+                      if (as.integer(tclvalue(t2.chk.var)))
                         tclvalue(t2.sta.var) <- "disabled"
-                      } else {
+                      else
                         tclvalue(t2.sta.var) <- "normal"
-                      }
                       tkconfigure(frame3.ent.2.2, state=tclvalue(t2.sta.var))
                       tkconfigure(frame3.ent.2.3, state=tclvalue(t2.sta.var))
                       tkconfigure(frame3.ent.2.4, state=tclvalue(t2.sta.var))

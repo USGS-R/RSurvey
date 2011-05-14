@@ -104,16 +104,14 @@ PlotSurface2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
     rows.na <- sapply(1:nrow(z), function(idx) !all(is.na(z[idx, ])))
     cols.na <- sapply(1:ncol(z), function(idx) !all(is.na(z[, idx])))
 
-    if (nrow(z) < length(x)) {
+    if (nrow(z) < length(x))
       i <- i & (c(FALSE, rows.na) | c(rows.na, FALSE))
-    } else {
+    else
       i <- i & rows.na
-    }
-    if (ncol(z) < length(y)) {
+    if (ncol(z) < length(y))
       j <- j & (c(FALSE, cols.na) | c(cols.na, FALSE))
-    } else {
+    else
       j <- j & cols.na
-    }
 
     xran <- range(x[i])
     yran <- range(y[j])
@@ -327,16 +325,14 @@ PlotSurface2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
     if (type %in% c("l", "g")) {
       vxUnique <- sort(unique(v$x))
       vyUnique <- sort(unique(v$y))
-      if (is.null(vxby)) {
+      if (is.null(vxby))
         vxseq <- as.integer(seq(1, length(vxUnique), length.out=20))
-      } else {
+      else
         vxseq <- seq(1, length(vxUnique), by=vxby)
-      }
-      if (is.null(vyby)) {
+      if (is.null(vyby))
         vyseq <- as.integer(seq(1, length(vyUnique), length.out=20))
-      } else {
+      else
         vyseq <- seq(1, length(vyUnique), by=vyby)
-      }
       v <- v[v$x %in% vxUnique[vxseq] & v$y %in% vyUnique[vyseq], ]
     }
 

@@ -38,11 +38,10 @@ RestoreSession <- function(path, save.objs, fun.call) {
 
     if (!obj %in% save.objs) {
       ans <- try(source(i), silent=TRUE)
-      if (inherits(ans, "try-error")) {
+      if (inherits(ans, "try-error"))
         err.msg <- paste(err.msg, i, "\n", ans, sep="")
-      } else {
+      else
         cat(i, "\n")
-      }
     }
   }
 

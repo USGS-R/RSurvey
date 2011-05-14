@@ -7,11 +7,10 @@ SummarizeData <- function(obj, digits=NULL, units=NULL) {
 
   BuildString <- function(i) {
     if (s$Class == "POSIXct") {
-      if (is.na(dic[[i]][[3]])) {
+      if (is.na(dic[[i]][[3]]))
         val <- format(s[[i]])
-      } else {
+      else
         val <- format(s[[i]], format=dic[[i]][[3]])
-      }
     } else {
       if (is.na(dic[[i]][[2]])) {
         val <- format(s[[i]])

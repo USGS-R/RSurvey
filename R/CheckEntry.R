@@ -20,11 +20,10 @@ CheckEntry <- function (ent.typ, ent.str="") {
                      " ", as.character(0:9))
   }
 
-  if (all(chr %in% accept.vals)) {
+  if (all(chr %in% accept.vals))
     rtn <- ent.str
-  } else {
+  else
     rtn <- paste(chr[chr %in% accept.vals], collapse="")
-  }
 
   if (rtn == "")
    return(rtn)
@@ -36,10 +35,11 @@ CheckEntry <- function (ent.typ, ent.str="") {
     if (as.integer(rtn) > 59)
       rtn <- "59"
   } else if (ent.typ == "second") {
-    if (as.numeric(rtn) < 0)
+    if (as.numeric(rtn) < 0) {
       rtn <- "0"
-    if (as.numeric(rtn) > 59.999)
+    } else if (as.numeric(rtn) > 59.999) {
       rtn <- "59.999"
+    }
   }
 
   rtn
