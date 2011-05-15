@@ -48,7 +48,7 @@ EditTimeFormat <- function(spec=NULL, parent=NULL) {
 
   # Main program
 
-  d.t <- Sys.time()
+  d.t <- as.POSIXct("2009-07-16 13:05:42.123", format="%Y-%m-%d %H:%M:%OS")
   cur.val <- NA
   new.spec <- NULL
 
@@ -112,12 +112,14 @@ EditTimeFormat <- function(spec=NULL, parent=NULL) {
 
   tcl(frame1.tre, "column", "#0", width=200, anchor="center")
   tcl(frame1.tre, "column", "spec", width=80, minwidth=80, anchor="center")
-  tcl(frame1.tre, "column", "exam", width=80, minwidth=80, anchor="center")
+  tcl(frame1.tre, "column", "exam", width=100, minwidth=80, anchor="center")
 
   tcl(frame1.tre, "heading", "#0", text="Select", anchor="w")
   tcl(frame1.tre, "heading", "spec", text="Specification")
   tcl(frame1.tre, "heading", "exam", text="Example")
 
+  id.dt <- tkinsert(frame1.tre, "", "end", tags="bg", text="date")
+  id.tm <- tkinsert(frame1.tre, "", "end", tags="bg", text="time")
   id.yr <- tkinsert(frame1.tre, "", "end", tags="bg", text="year")
   id.mo <- tkinsert(frame1.tre, "", "end", tags="bg", text="month")
   id.dy <- tkinsert(frame1.tre, "", "end", tags="bg", text="day")
@@ -125,6 +127,29 @@ EditTimeFormat <- function(spec=NULL, parent=NULL) {
   id.mn <- tkinsert(frame1.tre, "", "end", tags="bg", text="minute")
   id.sc <- tkinsert(frame1.tre, "", "end", tags="bg", text="second")
   id.wk <- tkinsert(frame1.tre, "", "end", tags="bg", text="week")
+
+  tkinsert(frame1.tre, id.dt, "end", text="month day year",
+           values=c("%m/%d/%Y", format(d.t, format="%m/%d/%Y")), tags="bg")
+  tkinsert(frame1.tre, id.dt, "end", text="month day year",
+           values=c("%m/%d/%y", format(d.t, format="%m/%d/%y")), tags="bg")
+  tkinsert(frame1.tre, id.dt, "end", text="year month day",
+           values=c("%Y-%m-%d", format(d.t, format="%Y-%m-%d")), tags="bg")
+  tkinsert(frame1.tre, id.dt, "end", text="day month year",
+           values=c("%d%b%Y", format(d.t, format="%d%b%Y")), tags="bg")
+
+  tkinsert(frame1.tre, id.dt, "end", text="weekday month day",
+           values=c("%A %B %d", format(d.t, format="%A %B %d")), tags="bg")
+  tkinsert(frame1.tre, id.dt, "end", text="weekday month day",
+           values=c("%a %b %d", format(d.t, format="%a %b %d")), tags="bg")
+
+  tkinsert(frame1.tre, id.tm, "end", text="hour minute second",
+           values=c("%H:%M:%S", format(d.t, format="%H:%M:%S")), tags="bg")
+  tkinsert(frame1.tre, id.tm, "end", text="hour minute second",
+           values=c("%H:%M:%OS", format(d.t, format="%H:%M:%OS")),
+           tags="bg")
+  tkinsert(frame1.tre, id.tm, "end", text="hour minute",
+           values=c("%I:%M %p", format(d.t, format="%I:%M %p")),
+           tags="bg")
 
   tkinsert(frame1.tre, id.yr, "end", text="year without century (00-99)",
            values=c("%y", format(d.t, format="%y")), tags="bg")
