@@ -136,7 +136,6 @@ EditTimeFormat <- function(spec=NULL, parent=NULL) {
            values=c("%Y-%m-%d", format(d.t, format="%Y-%m-%d")), tags="bg")
   tkinsert(frame1.tre, id.dt, "end", text="day month year",
            values=c("%d%b%Y", format(d.t, format="%d%b%Y")), tags="bg")
-
   tkinsert(frame1.tre, id.dt, "end", text="weekday month day",
            values=c("%A %B %d", format(d.t, format="%A %B %d")), tags="bg")
   tkinsert(frame1.tre, id.dt, "end", text="weekday month day",
