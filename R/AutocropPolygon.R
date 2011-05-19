@@ -43,9 +43,8 @@ AutocropPolygon <- function(parent=NULL) {
   # Draw base plot and points
 
   DrawBasePlot <- function() {
-    PlotSurface2d(dat, type="p", xlab=xlab, ylab=ylab, zlab=zlab, asp=asp,
-                  csi=csi, width=width, nlevels=nlevels, cex.pts=cex.pts,
-                  rkey=rkey)
+    Plot2d(dat, type="p", xlab=xlab, ylab=ylab, zlab=zlab, asp=asp,
+           csi=csi, width=width, nlevels=nlevels, cex.pts=cex.pts, rkey=rkey)
     dev <<- dev.cur()
   }
 

@@ -1,6 +1,6 @@
-\name{PlotSurface2d}
+\name{Plot2d}
 
-\alias{PlotSurface2d}
+\alias{Plot2d}
 
 \title{Plot Points or Interpolated Surface}
 
@@ -10,15 +10,15 @@ the colors map to state variable values is shown to the right of the plot.
 }
 
 \usage{
-PlotSurface2d(x = NULL, y = NULL, z = NULL, vx = NULL, vy = NULL,
-              type = "p", xlim = NULL, ylim = NULL, zlim = NULL,
-              xlab = NULL, ylab = NULL, zlab = NULL, asp = NA,
-              csi = NA, width = 7, pointsize = 12, cex.pts = 1,
-              nlevels = 20, rkey = FALSE,
-              color.palette = terrain.colors,
-              vuni = FALSE, vmax = NULL, vxby = NULL, vyby = NULL,
-              axis.side = 1:2, minor.ticks = FALSE,
-              ticks.inside = FALSE, add.contour.lines = FALSE)
+Plot2d(x = NULL, y = NULL, z = NULL, vx = NULL, vy = NULL,
+       type = "p", xlim = NULL, ylim = NULL, zlim = NULL,
+       xlab = NULL, ylab = NULL, zlab = NULL, asp = NA,
+       csi = NA, width = 7, pointsize = 12, cex.pts = 1,
+       nlevels = 20, rkey = FALSE,
+       color.palette = terrain.colors,
+       vuni = FALSE, vmax = NULL, vxby = NULL, vyby = NULL,
+       axis.side = 1:2, minor.ticks = FALSE,
+       ticks.inside = FALSE, add.contour.lines = FALSE)
 }
 
 \arguments{
@@ -80,11 +80,11 @@ PlotSurface2d(x = NULL, y = NULL, z = NULL, vx = NULL, vy = NULL,
 data(project)
 
 d <- Data("data.pts")
-PlotSurface2d(d, type = "p")
+Plot2d(d, type = "p")
 
 d <- Data("data.grd")
-PlotSurface2d(d, type = "l")
-PlotSurface2d(d, type = "g")
+Plot2d(d, type = "l")
+Plot2d(d, type = "g")
 }
 
 \keyword{hplot}

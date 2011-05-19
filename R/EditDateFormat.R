@@ -1,4 +1,4 @@
-EditTimeFormat <- function(spec=NULL, parent=NULL) {
+EditDateFormat <- function(spec=NULL, parent=NULL) {
   # A GUI for constructing a date-time format.
 
   # Additional functions (subroutines)

@@ -1,6 +1,6 @@
-\name{PlotSurface3d}
+\name{Plot3d}
 
-\alias{PlotSurface3d}
+\alias{Plot3d}
 
 \title{Plot Surface using OpenGL}
 
@@ -9,13 +9,14 @@ Draws a three-dimensional (\acronym{3D}) surface plot.
 }
 
 \usage{
-PlotSurface3d(x = NULL, y = NULL, z = NULL, px = NULL, py = NULL,
-              pz = NULL, xlim = NULL, ylim = NULL, zlim = NULL,
-              vasp = NA, hasp = NA, width = 7, ppi = 96,
-              cex.pts = 1, nlevels = 20,
-              color.palette = terrain.colors,
-              mouse.mode = c("trackball", "zAxis", "zoom"),
-              bg = "white")
+Plot3d(x = NULL, y = NULL, z = NULL,
+       px = NULL, py = NULL, pz = NULL,
+       xlim = NULL, ylim = NULL, zlim = NULL,
+       vasp = NA, hasp = NA, width = 7, ppi = 96,
+       cex.pts = 1, nlevels = 20,
+       color.palette = terrain.colors,
+       mouse.mode = c("trackball", "zAxis", "zoom"),
+       bg = "white")
 }
 
 \arguments{
@@ -65,7 +66,7 @@ around the x-axis, and zooms the display, respectively.
 \donttest{
 data(project)
 d <- Data("data.grd")
-PlotSurface3d(d)
+Plot3d(d)
 rgl.quit()
 }
 }

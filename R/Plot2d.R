@@ -1,11 +1,11 @@
-PlotSurface2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
-                          xlim=NULL, ylim=NULL, zlim=NULL, xlab=NULL,
-                          ylab=NULL, zlab=NULL, asp=NA, csi=NA, width=7,
-                          pointsize=12, cex.pts=1, nlevels=20, rkey=FALSE,
-                          color.palette=terrain.colors, vuni=FALSE, vmax=NULL,
-                          vxby=NULL, vyby=NULL, axis.side=1:2,
-                          minor.ticks=FALSE, ticks.inside=FALSE,
-                          add.contour.lines=FALSE) {
+Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
+                   xlim=NULL, ylim=NULL, zlim=NULL, xlab=NULL,
+                   ylab=NULL, zlab=NULL, asp=NA, csi=NA, width=7,
+                   pointsize=12, cex.pts=1, nlevels=20, rkey=FALSE,
+                   color.palette=terrain.colors, vuni=FALSE, vmax=NULL,
+                   vxby=NULL, vyby=NULL, axis.side=1:2,
+                   minor.ticks=FALSE, ticks.inside=FALSE,
+                   add.contour.lines=FALSE) {
   # Draws a scatter plot with arrows or contour plot with arrows. A key showing
   # how the colors map to state variable values is shown to the right of the
   # plot.

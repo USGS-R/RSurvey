@@ -316,9 +316,9 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   # Edit date and time format
 
-  CallEditTimeFormat <- function() {
+  CallEditDateFormat <- function() {
     old.unit <- as.character(tclvalue(unit.var))
-    new.unit <- EditTimeFormat(old.unit, tt)
+    new.unit <- EditDateFormat(old.unit, tt)
     if (!is.null(new.unit))
       tclvalue(unit.var) <- new.unit
   }
@@ -564,7 +564,7 @@ ManageData <- function(cols, vars, parent=NULL) {
                            background="#ebebe4", borderwidth=1, font=fnt)
 
   frame2.but.2.3 <- ttkbutton(frame2, text="Edit", width=5,
-                              command=CallEditTimeFormat)
+                              command=CallEditDateFormat)
   frame2.but.5.3 <- ttkbutton(frame2, text="Edit", width=5,
                               command=CallEditFunction)
 

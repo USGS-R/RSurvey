@@ -38,7 +38,7 @@ Returns a polygon object of class \code{gpc.poly}.
 \author{Fisher, J.C.}
 
 \seealso{
-\code{tri.mesh}, \code{\link{Autocrop}}, \code{\link{PlotSurface2d}}
+\code{tri.mesh}, \code{\link{Autocrop}}, \code{\link{Plot2d}}
 }
 
 \examples{

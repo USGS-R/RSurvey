@@ -327,7 +327,7 @@ OpenRSurvey <- function() {
                  "graphics window.", sep="\n")
     tkmessageBox(icon="info", message=msg, title="Build Polygon", type="ok",
                  parent=tt)
-    CallPlotSurface2d(type=type, build.poly=TRUE)
+    CallPlot2d(type=type, build.poly=TRUE)
     tkfocus(tt)
   }
 
@@ -399,7 +399,7 @@ OpenRSurvey <- function() {
 
   # Plot point or 2d surface data
 
-  CallPlotSurface2d <- function(type, build.poly=FALSE) {
+  CallPlot2d <- function(type, build.poly=FALSE) {
     CallProcessData()
     if (is.null(Data("data.grd")) && type %in% c("g", "l")) {
       return()
@@ -498,15 +498,15 @@ OpenRSurvey <- function() {
     }
 
     tkconfigure(tt, cursor="watch")
-    PlotSurface2d(dat, type=type, xlim=lim$x, ylim=lim$y, zlim=lim$z,
-                  xlab=xlab, ylab=ylab, zlab=zlab, asp=Data("asp.yx"),
-                  csi=Data("csi"), width=Data("width"), nlevels=nlevels,
-                  cex.pts=Data("cex.pts"), rkey=Data("rkey"),
-                  vuni=Data("vuni"), vmax=Data("vmax"),
-                  vxby=Data("vxby"), vyby=Data("vyby"),
-                  axis.side=axis.side, minor.ticks=Data("minor.ticks"),
-                  ticks.inside=Data("ticks.inside"),
-                  add.contour.lines=show.lines)
+    Plot2d(dat, type=type, xlim=lim$x, ylim=lim$y, zlim=lim$z,
+           xlab=xlab, ylab=ylab, zlab=zlab, asp=Data("asp.yx"),
+           csi=Data("csi"), width=Data("width"), nlevels=nlevels,
+           cex.pts=Data("cex.pts"), rkey=Data("rkey"),
+           vuni=Data("vuni"), vmax=Data("vmax"),
+           vxby=Data("vxby"), vyby=Data("vyby"),
+           axis.side=axis.side, minor.ticks=Data("minor.ticks"),
+           ticks.inside=Data("ticks.inside"),
+           add.contour.lines=show.lines)
 
     if (show.poly)
       plot(ply, add=TRUE, poly.args=list(border="black", lty=3))
@@ -579,7 +579,7 @@ OpenRSurvey <- function() {
 
   # Plot 3d surface data
 
-  CallPlotSurface3d <- function() {
+  CallPlot3d <- function() {
     CallProcessData()
 
     if (is.null(Data("data.grd")))
@@ -592,10 +592,10 @@ OpenRSurvey <- function() {
     lim <- Data("lim.axes")
 
     tkconfigure(tt, cursor="watch")
-    PlotSurface3d(x=dat, px=pts, xlim=lim$x, ylim=lim$y, zlim=lim$z,
-                  vasp=Data("asp.zx"), hasp=Data("asp.yx"),
-                  width=Data("width"), cex.pts=Data("cex.pts"),
-                  nlevels=Data("nlevels"))
+    Plot3d(x=dat, px=pts, xlim=lim$x, ylim=lim$y, zlim=lim$z,
+           vasp=Data("asp.zx"), hasp=Data("asp.yx"),
+           width=Data("width"), cex.pts=Data("cex.pts"),
+           nlevels=Data("nlevels"))
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }
@@ -989,17 +989,17 @@ OpenRSurvey <- function() {
 
   frame2.but.1.1 <- ttkbutton(frame2, width=15, text="Scatter",
                               command=function() {
-                                CallPlotSurface2d(type="p")
+                                CallPlot2d(type="p")
                               })
   frame2.but.1.2 <- ttkbutton(frame2, width=15, text="2D Surface",
                               command=function() {
                                 tmp <- if (Data("img.contour")) "g" else "l"
-                                CallPlotSurface2d(type=tmp)
+                                CallPlot2d(type=tmp)
                               })
   frame2.but.2.1 <- ttkbutton(frame2, width=15, text="Time Series",
                               command=CallPlotTimeSeries)
   frame2.but.2.2 <- ttkbutton(frame2, width=15, text="3D Surface",
-                              command=CallPlotSurface3d)
+                              command=CallPlot3d)
 
   tkgrid(frame2.but.1.1, frame2.but.1.2, padx=2, pady=2)
   tkgrid(frame2.but.2.1, frame2.but.2.2, padx=2, pady=c(2, 4))
