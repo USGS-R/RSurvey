@@ -279,11 +279,11 @@ OpenRSurvey <- function() {
   # About package
 
   AboutPackage <- function() {
-    con <- "DESCRIPTION"
-    if (file.access(paste(getwd(), "/", con, sep=""), mode=0) != 0)
-      con <- paste(.path.package(package="RSurvey", quiet=FALSE),
-                   "/", con, sep="")
-    msg <- paste(readLines(con, n=-1), collapse="\n")
+    if ("package:RSurvey" %in% search())
+      path <- system.file("DESCRIPTION", package="RSurvey")
+    else
+      path <- paste(getwd(), "/DESCRIPTION", sep="")
+    msg <- paste(readLines(path, n=-1L), collapse="\n")
     tkmessageBox(icon="info", message=msg, title="About", parent=tt)
   }
 
