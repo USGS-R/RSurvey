@@ -1,4 +1,4 @@
-"Data" <- local({
+Data <- local({
   # A function used to set or query data and parameters.
 
   # Store data locally
