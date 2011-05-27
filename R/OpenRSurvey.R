@@ -851,8 +851,6 @@ OpenRSurvey <- function() {
   tkadd(top.menu, "cascade", label="Help", menu=menu.help, underline=0)
   tkadd(menu.help, "command", label="R functions (html)",
         command=OpenHTMLHelp)
-  tkadd(menu.help, "command", label="License",
-        command=function() RShowDoc("COPYING", package="RSurvey"))
   tkadd(menu.help, "separator")
   tkadd(menu.help, "command", label="About",
         command=AboutPackage)
