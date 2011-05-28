@@ -5,11 +5,11 @@ Description
 -----------
 
 This [R](http://www.r-project.org/ "R") package is a processing program for
-spatially distributed data. 
+spatially distributed data.
 [RSurvey](http://cran.r-project.org/web/packages/RSurvey/index.html "RSurvey")
 features graphing tools, query building, and
-polygon clipping. A graphical user interface (GUI) is provided.
-The GUI requires R operate as an SDI application, using multiple
+polygon clipping. A graphical user interface (GUI) is provided and
+requires R operate as an SDI application, using multiple
 top-level windows for the console, graphics, and pager.
 
 Files can be one of four types as indicated by their extension: tables
@@ -48,7 +48,7 @@ for shapefile support:
 Support for displaying table data is provided by
 [tktable](http://tktable.sourceforge.net/ "tktable"),
 a spreadsheet-like [Tcl/Tk](http://www.tcl.tk/ "Tcl/Tk") widget
-(included with the Windows binary distribution of R). 
+(included with the Windows binary distribution of R).
 A call to `tclRequire()` will indicate whether tktable is available for use:
 
     tclRequire('Tktable', warn = TRUE)
@@ -64,6 +64,6 @@ Activate the main GUI:
 
     OpenRSurvey()
 
-Example data sets are provided in 
-a binary project file `data/project.rda` 
+Example data sets are provided in
+a binary project file `data/project.rda`
 and text files `inst/extdata/` containing table and polygon data.
