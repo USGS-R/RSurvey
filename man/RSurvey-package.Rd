@@ -19,7 +19,7 @@ A graphical user interface (\acronym{GUI}) is provided.
     Package: \tab RSurvey\cr
     Type: \tab Package\cr
     Version: \tab 0.6-2\cr
-    Date: \tab 2011-05-19\cr
+    Date: \tab 2011-05-29\cr
     License: \tab GPL (>= 2)
   }
 }
@@ -38,8 +38,7 @@ therefore, the bulk of unit consistency is tasked to the user.
 Time zones, spatial datum's and projections are not supported.
 
 The set of standards used for coding \pkg{RSurvey} is documented in
-\emph{Google's R Style Guide},
-\url{http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html}.
+\href{http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html}{Google's R Style Guide}.
 }
 
 \author{
