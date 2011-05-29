@@ -34,7 +34,8 @@ a description of the connection (i.e. a file pathname).}
 }
 
 \note{
-Requires the Tcl package Tktable, \url{http://tktable.sourceforge.net/}.
+Requires the Tcl package
+\href{http://tktable.sourceforge.net/}{Tktable}.
 If Tktable is not available the \code{\link{ReadData}} function is called
 directly using default argument values.
 }

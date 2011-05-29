@@ -49,8 +49,8 @@ Plot3d(x = NULL, y = NULL, z = NULL,
 
 \details{
 The interpolated surface data is rendered using \pkg{rgl}, a \acronym{3D}
-visualization device system for \R based on OpenGL,
-\url{http://www.opengl.org/}.
+visualization device system for \R based on
+\href{http://www.opengl.org/}{OpenGL}.
 The mouse is used for interactive viewpoint navigation where
 the left, right, and center mouse buttons rotate the scene, rotate the scene
 around the x-axis, and zooms the display, respectively.

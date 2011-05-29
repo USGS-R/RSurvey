@@ -31,7 +31,8 @@ of the data frame.
 }
 
 \note{
-Requires the Tcl package Tktable, \url{http://tktable.sourceforge.net/}.
+Requires the Tcl package
+\href{http://tktable.sourceforge.net/}{Tktable}.
 }
 
 \author{Fisher, J.C.}
