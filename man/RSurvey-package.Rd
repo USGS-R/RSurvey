@@ -29,8 +29,10 @@ The \pkg{RSurvey} \acronym{GUI} requires \R operate as an \acronym{SDI}
 application, using multiple top-level windows for the console, graphics, and
 pager. Files can be one of four types as indicated by their extension:
 tables (\file{.txt}, \file{.csv}, \file{.dat}, or \file{.shp}),
-grids (\file{.grd}), polygons (\file{.ply}), or project images (\file{.rda}).
-Tables (\file{.txt}, \file{.csv}, \file{.dat}) can be compressed by \code{gzip}
+grids (\file{.grd}), polygons (\file{.ply}), or
+binary project images (\file{.rda}).
+Tables (\file{.txt}, \file{.csv}, \file{.dat}) can be compressed by
+\href{http://www.gzip.org/}{gzip}
 with additional extension \file{.gz}. Shapefiles (\file{.shp}) and interpolated
 grid files (\file{.grd}) are limited to data export. Support for programmatic
 manipulation of measurement units is only provided for date and time values;

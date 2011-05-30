@@ -14,7 +14,7 @@ Autocrop(mesh, max.len, max.itr = 10000)
 
 \arguments{
 \item{mesh}{tri; a Delaunay triangulation.}
-\item{max.len}{numeric; maximum arc length for a triangle.}
+\item{max.len}{numeric; maximum arc length for an outer triangle.}
 \item{max.itr}{integer; maximum number of iterations.}
 }
 
