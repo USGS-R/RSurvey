@@ -1,4 +1,4 @@
-Autocrop <- function(mesh, max.len, max.itr) {
+Autocrop <- function(mesh, max.len, max.itr=10000) {
   # Approximate the shape of an area defined by a set of points.
 
   # Additional functions (subroutines)

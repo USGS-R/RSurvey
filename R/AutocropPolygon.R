@@ -9,18 +9,12 @@ AutocropPolygon <- function(parent=NULL) {
     tkconfigure(tt, cursor="watch")
 
     max.len <- as.numeric(tclvalue(max.len.var))
-    max.itr <- as.integer(tclvalue(max.itr.var))
-
     if (is.na(max.len) || max.len > default.len) {
       tclvalue(max.len.var) <- format(default.len)
       max.len <- default.len
     }
-    if (is.na(max.itr)) {
-      tclvalue(max.itr.var) <- format(default.itr)
-      max.itr <- default.itr
-    }
 
-    ply <<- Autocrop(mesh, max.len, max.itr)
+    ply <<- Autocrop(mesh, max.len)
 
     if (is.null(ply)) {
       msg <- "Autocrop failed, try increasing the maximum outer arc length."
@@ -102,13 +96,10 @@ AutocropPolygon <- function(parent=NULL) {
   x2 <- c(x1[-1], x1[1])
   y2 <- c(y1[-1], y1[1])
   default.len <- max(sqrt((x2 - x1)^2 + (y2 - y1)^2))
-  default.itr <- 10000
 
   # Assign the variables linked to Tk widgets
 
   max.len.var <- tclVar(format(default.len))
-  max.itr.var <- tclVar(format(default.itr))
-
   tt.done.var <- tclVar(0)
 
   # Open GUI
@@ -126,7 +117,7 @@ AutocropPolygon <- function(parent=NULL) {
 
   # Frame 0 contains buttons
 
-  frame0 <- ttkframe(tt, relief="flat", borderwidth=2)
+  frame0 <- ttkframe(tt, relief="flat", borderwidth=10)
 
   frame0.but.2.1 <- ttkbutton(frame0, width=10, text="Build",
                               command=DrawPolygon)
@@ -144,10 +135,10 @@ AutocropPolygon <- function(parent=NULL) {
                               command=function() tclvalue(tt.done.var) <- 1)
 
   tkgrid(frame0.but.2.1, frame0.but.2.2, frame0.but.2.3, frame0.but.2.4,
-         pady=c(6, 8), padx=c(4, 0))
+         padx=c(0, 4))
 
-  tkgrid.configure(frame0.but.2.2, padx=4)
-  tkgrid.configure(frame0.but.2.4, padx=c(4, 8))
+  tkgrid.configure(frame0.but.2.3, padx=4)
+  tkgrid.configure(frame0.but.2.4, padx=0)
 
   tcl("grid", "anchor", frame0, "center")
 
@@ -155,31 +146,19 @@ AutocropPolygon <- function(parent=NULL) {
 
   # Frame 1 contains parameters
 
-  frame1 <- ttkframe(tt, relief="flat", borderwidth=5, padding=8)
+  frame1 <- ttkframe(tt, relief="flat", borderwidth=10)
 
-  frame1.lab.1.1 <- ttklabel(frame1, text="Maximum arc length")
-  frame1.lab.2.1 <- ttklabel(frame1, text="Maximum number of iterations")
-
+  frame1.lab.1.1 <- ttklabel(frame1, text="Maximum outer arc length")
   frame1.ent.1.2 <- ttkentry(frame1, width=20, textvariable=max.len.var)
-  frame1.ent.2.2 <- ttkentry(frame1, width=20, textvariable=max.itr.var)
-
   tkbind(frame1.ent.1.2, "<KeyRelease>",
          function() {
            tclvalue(max.len.var) <- CheckEntry("numeric", tclvalue(max.len.var))
          })
-  tkbind(frame1.ent.1.2, "<KeyRelease>",
-         function() {
-           tclvalue(max.itr.var) <- CheckEntry("integer", tclvalue(max.itr.var))
-         })
 
-  tkgrid(frame1.lab.1.1, frame1.ent.1.2, padx=2, pady=2)
-  tkgrid(frame1.lab.2.1, frame1.ent.2.2, padx=2, pady=2)
+  tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(10, 0))
 
-  tkgrid.configure(frame1.lab.1.1, sticky="e")
-  tkgrid.configure(frame1.lab.2.1, sticky="e")
-
+  tkgrid.configure(frame1.lab.1.1, sticky="e", padx=c(0, 2))
   tkgrid.configure(frame1.ent.1.2, sticky="we")
-  tkgrid.configure(frame1.ent.2.2, sticky="we")
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=15)
 
