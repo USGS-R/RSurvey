@@ -38,13 +38,13 @@ by choosing to customize the startup options and specifying the SDI interface
 Install required R packages from CRAN using a simple call to
 `install.packages()`:
 
-    install.packages(c('tcltk', 'sp', 'gpclib', 'rgl', 'MBA', 'tripack', 'RSurvey'))
+    > install.packages(c('tcltk', 'sp', 'gpclib', 'rgl', 'MBA', 'tripack', 'RSurvey'))
 
 Install an optional R package
 [rgdal](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal")
 for shapefile support:
 
-    install.packages('rgdal')
+    > install.packages('rgdal')
 
 Support for displaying table data is provided by
 [tktable](http://tktable.sourceforge.net/ "tktable"),
@@ -52,18 +52,18 @@ a spreadsheet-like [Tcl/Tk](http://www.tcl.tk/ "Tcl/Tk") widget
 (included with the Windows binary distribution of R).
 A call to `tclRequire()` will indicate whether tktable is available for use:
 
-    tclRequire('Tktable', warn = TRUE)
+    > tclRequire('Tktable', warn = TRUE)
 
 Running
 -------
 
 Load RSurvey in the current R session:
 
-    library(RSurvey)
+    > library(RSurvey)
 
 Activate the main GUI:
 
-    OpenRSurvey()
+    > OpenRSurvey()
 
 Example data sets are provided in
 a binary project file `data/project.rda`
