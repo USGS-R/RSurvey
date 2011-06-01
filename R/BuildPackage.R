@@ -25,10 +25,6 @@ BuildPackage <- function() {
   path.zip <- shQuote(paste(pkg, "_*", sep=""))
   path.cmd <- paste(R.home(component="bin"), "/Rcmd", sep="")
 
-  path.pkg.pdf <- shQuote(paste(getwd(), "/", pkg, "-manual.pdf", sep=""))
-  path.chk.pdf <- shQuote(paste("C:/", pkg, ".Rcheck/", pkg, "-manual.pdf",
-                                sep=""))
-
   cmd <- NULL
   cmd <- append(cmd, paste("RM -f ", getwd(), "/", pkg, "*", sep=""))
   cmd <- append(cmd, paste(path.cmd, "REMOVE", pkg, sep=" "))
@@ -40,7 +36,6 @@ BuildPackage <- function() {
   cmd <- append(cmd, paste(path.cmd, "INSTALL --build", path.tmp, sep=" "))
   cmd <- append(cmd, paste("RMDIR /S /Q", path.tmp, sep=" "))
   cmd <- append(cmd, paste("MOVE /Y", path.zip, path.pkg, sep=" "))
-  cmd <- append(cmd, paste("CP", path.chk.pdf, path.pkg.pdf, sep=" "))
 
   cmd <- paste(Sys.getenv("COMSPEC"), "/c", cmd, sep=" ")
 
