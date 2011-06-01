@@ -65,6 +65,5 @@ Activate the main GUI:
 
     > OpenRSurvey()
 
-Example data sets are provided in
-a binary project file `data/project.rda`
-and text files `inst/extdata/` containing table and polygon data.
+Example data sets are provided in a binary file `data/project.rda`
+and text files `inst/extdata/`.
