@@ -31,17 +31,12 @@ ImportData <- function(parent=NULL) {
       src <- "clipboard"
       con <- textConnection(cb)
     } else {
-      if (substr(src, 1, 6) %in% c("http:/", "ftp://", "file:/")) {
+      if (substr(src, 1, 6) %in% c("http:/", "ftp://", "file:/"))
         con <- try(url(description=src, open="r", encoding=encoding),
                    silent=TRUE)
-      } else {
-        if (grepl(".gz$", src))
-          con <- try(gzfile(description=src, open="r", encoding=encoding,
-                            compression=6), silent=TRUE)
-        else
-          con <- try(file(description=src, open="r", encoding=encoding),
-                     silent=TRUE)
-      }
+      else
+        con <- try(gzfile(description=src, open="r", encoding=encoding,
+                          compression=6), silent=TRUE)
     }
 
     if (inherits(con, "try-error") || !isOpen(con, "r")) {
@@ -158,18 +153,39 @@ ImportData <- function(parent=NULL) {
     tclServiceMode(TRUE)
   }
 
+  # Determine the number of lines in a file
+
+  NumLinesInFile <- function(f, max.rows=50000) {
+    con <- try(gzfile(f, open="r", encoding=encoding), silent=TRUE)
+    if (inherits(con, "try-error"))
+      return()
+    total.rows <- 0
+    while ((left.row <- length(readLines(con, max.rows))) > 0)
+      total.rows <- total.rows + left.row
+    close(con)
+    total.rows
+  }
+
   # Data file
 
   GetDataFile <- function() {
     exts <- c("txt", "csv", "dat", "gz")
     f <- GetFile(cmd="Open", exts=exts, win.title="Open Data File", parent=tt)
+    tkfocus(tt)
     if (is.null(f))
       return()
     tclvalue(source.var) <- f$path
     cb <<- NULL
     if (f$ext == "csv")
       tcl(frame3.box.1.2, "current", match(",", sep0) - 1)
+
     RebuildTable()
+
+    tkconfigure(tt, cursor="watch")
+    nlines <- NumLinesInFile(f$path)
+    if (!is.null(nlines))
+      tclvalue(nrow.var) <- nlines
+    tkconfigure(tt, cursor="arrow")
   }
 
   # Paste clipboard
