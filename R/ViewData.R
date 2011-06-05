@@ -73,7 +73,7 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
   # Height and width of viewable table
 
-  height <- if (m > 10) 10 else m
+  height <- if (m > 15) 15 else m
   width <- if (n > 6) 6 else n
 
   # Table titles
@@ -169,7 +169,7 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
   # Frame 1, line search
 
   frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0, height=200)
-  frame1.lab.1 <- ttklabel(frame1, text="Record no.")
+  frame1.lab.1 <- ttklabel(frame1, text="Record")
   frame1.ent.2 <- ttkentry(frame1, width=10, textvariable=line.no.var)
   frame1.but.3 <- ttkbutton(frame1, width=6, text="Goto", command=GotoLine)
 
