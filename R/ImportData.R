@@ -160,8 +160,8 @@ ImportData <- function(parent=NULL) {
     if (inherits(con, "try-error"))
       return()
     total.rows <- 0
-    while ((left.row <- length(readLines(con, max.rows))) > 0)
-      total.rows <- total.rows + left.row
+    while ((read.rows <- length(readLines(con, max.rows))) > 0)
+      total.rows <- total.rows + read.rows
     close(con)
     total.rows
   }
