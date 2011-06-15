@@ -10,13 +10,12 @@ WriteFile <- function(ext="txt") {
     if (!is.pkg)
       ext <- ext[-which(ext %in% "shp")]
   }
-
   if (is.null(Data("data.raw")) || is.null(ext))
     return()
   if (is.null(Data("data.pts")) && "shp" %in% ext)
     return()
   if (is.null(Data("data.grd")) && "grd" %in% ext)
-    return()
+    ext <- ext[ext != "grd"]
 
   # Select output file
 
