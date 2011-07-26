@@ -59,7 +59,7 @@ around the x-axis, and zooms the display, respectively.
 \author{Fisher, J.C.}
 
 \seealso{
-\code{surface3d}, \code{points3d}
+\code{\link{surface3d}}, \code{\link{points3d}}
 }
 
 \examples{

@@ -34,7 +34,7 @@ Returns a list containing the following components:
 \author{Fisher, J.C.}
 
 \seealso{
-\code{point.in.polygon}
+\code{\link{point.in.polygon}}
 }
 
 \examples{

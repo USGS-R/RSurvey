@@ -1,4 +1,4 @@
-"ProcessData" <- function() {
+ProcessData <- function() {
   # This function performs data processing on the state variables.
 
   # Additional functions (subroutines)
@@ -191,4 +191,5 @@
 
     Data("data.grd", d)
   }
+  invisible()
 }

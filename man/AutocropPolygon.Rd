@@ -32,13 +32,13 @@ input parameters. Plotting parameters are queried from \code{\link{Data}}.
 }
 
 \value{
-Returns a polygon object of class \code{gpc.poly}.
+Returns a polygon object of \code{\link{gpc.poly-class}}.
 }
 
 \author{Fisher, J.C.}
 
 \seealso{
-\code{tri.mesh}, \code{\link{Autocrop}}, \code{\link{Plot2d}}
+\code{\link{Autocrop}}, \code{\link{Plot2d}}, \code{tri.mesh}
 }
 
 \examples{

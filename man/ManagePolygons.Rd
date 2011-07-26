@@ -15,7 +15,7 @@ ManagePolygons(ply = NULL, encoding = getOption("encoding"),
 }
 
 \arguments{
-\item{ply}{list; its components are objects of class \code{gpc.poly-class}.}
+\item{ply}{list; its components are objects of \code{\link{gpc.poly-class}}.}
 \item{encoding}{character; encoding to be assumed for input strings. If the
   value is \code{"latin1"} or \code{"UTF-8"} it is used to mark character
   strings as known to be in Latin-1 or UTF-8: it is not used to re-encode
@@ -49,7 +49,8 @@ components of \code{\link{Data}}.
 \author{Fisher, J.C.}
 
 \seealso{
-\code{polyfile}, \code{union}, \code{setdiff}, \code{intersect}
+\code{\link{polyfile}}, \code{\link{union}}, \code{\link{setdiff}},
+\code{\link{intersect}}
 }
 
 \examples{

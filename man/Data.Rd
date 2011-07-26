@@ -61,8 +61,8 @@ Data(c("test2", "id"))
 Data(c("test2", "val"))
 # To get all parameter values
 d <- Data()
-# To clear all parameters, use at your own risk
-\dontrun{Data(clear.all = TRUE)}
+# To clear all parameters
+Data(clear.all = TRUE)
 }
 
 \keyword{sysdata}

@@ -1,0 +1,34 @@
+importFrom(sp, point.in.polygon)
+importFrom(MBA, mba.points)
+importFrom(rgl, surface3d, points3d)
+importFrom(gpclib, read.polyfile, write.polyfile, get.pts, get.bbox, area.poly)
+importClassesFrom(gpclib, gpc.poly)
+
+export(AddAxis,
+       Autocrop,
+       AutocropPolygon,
+       CheckEntry,
+       CutoutPolygon,
+       Data,
+       EditDateFormat,
+       EditFunction,
+       EditLimits,
+       EvalFunction,
+       GetFile,
+       ImportData,
+       LoadPackages,
+       ManageData,
+       ManagePolygons,
+       OpenRSurvey,
+       Plot2d,
+       Plot3d,
+       PlotTimeSeries,
+       ProcessData,
+       ReadData,
+       Rename,
+       SetConfiguration,
+       SetPolygonLimits,
+       SetPreferences,
+       SummarizeData,
+       ViewData,
+       WriteFile)

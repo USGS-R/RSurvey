@@ -26,7 +26,7 @@ removed; a polygon is created from the union of the remaining triangles.
 }
 
 \value{
-Returns a polygon object of class \code{gpc.poly}.
+Returns a polygon object of \code{\link{gpc.poly-class}}.
 }
 
 \seealso{

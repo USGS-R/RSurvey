@@ -56,12 +56,14 @@ Row names in \code{data.pts} coincide with row indexes in \code{data.raw}.
 \author{Fisher, J.C.}
 
 \seealso{
-\code{mba.points}
+\code{\link{mba.points}}
 }
 
 \examples{
+\donttest{
 data(project)
 ProcessData()
+}
 }
 
 \keyword{manip}
