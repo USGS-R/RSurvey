@@ -661,7 +661,82 @@ OpenRSurvey <- function() {
 
   CallProcessData <- function() {
     tkconfigure(tt, cursor="watch")
-    ProcessData()
+
+    if (is.null(Data("data.raw"))) {
+      Data("data.pts", NULL)
+      Data("data.grd", NULL)
+      return()
+    }
+
+    # Process points
+
+    if (is.null(Data("data.pts"))) {
+      cols <- Data("cols")
+      vars <- Data("vars")
+
+      var.names <- names(vars)
+
+      Eval <- function(v) {
+        if (is.null(v)) NULL else EvalFunction(cols[[v]]$fun, cols)
+      }
+      lst <- lapply(var.names, function(i) Eval(vars[[i]]))
+      len <- sapply(lst, function(i) length(i))
+      max.len <- max(len)
+
+      d <- as.data.frame(matrix(NA, nrow=max.len, ncol=length(lst)))
+      names(d) <- var.names
+      for (i in seq(along=lst))
+        d[[i]] <- c(lst[[i]], rep(NA, max.len - len[i]))
+
+      lim <- Data("lim.data")
+
+      if (!is.null(vars$x) & !is.null(vars$y)) {
+        ply <- Data("poly.data")
+        if (!is.null(ply))
+          ply <- Data(c("poly", ply))
+      }
+
+      data.pts <- ProcessData(d, type="p", lim=lim, ply=ply)
+      Data("data.pts", data.pts)
+    }
+
+    if (is.null(Data("data.pts"))) {
+      Data("data.grd", NULL)
+      return()
+    }
+
+    # Process grid
+
+    if (is.null(Data("data.grd"))) {
+      d <- Data("data.pts")
+
+      ply <- Data("poly.crop")
+      if (!is.null(ply))
+        ply <- Data("poly")[[ply]]
+
+      dx <- Data("grid.dx")
+      dy <- Data("grid.dy")
+      if (is.null(dx))
+        dx <- NA
+      if (is.null(dy))
+        dy <- NA
+      grid.res <- c(dx, dy)
+
+      m <- Data("mba.m")
+      n <- Data("mba.n")
+      h <- Data("mba.h")
+      if (is.null(m))
+        m <- NA
+      if (is.null(n))
+        n <- NA
+      if (is.null(h))
+        h <- NA
+
+      data.grd <- ProcessData(d, type="g", ply=ply, grid.res=grid.res,
+                              mba=list(n=n, m=m, h=h))
+      Data("data.grd", data.grd)
+    }
+
     tkconfigure(tt, cursor="arrow")
   }
 

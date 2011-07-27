@@ -9,61 +9,87 @@ This function performs data processing on the state variables.
 }
 
 \usage{
-ProcessData()
+ProcessData(d, type = "p", lim = NULL, ply = NULL,
+            grid.res = c(NA, NA), mba = list(n = NA, m = NA, h = 11))
+}
+
+\arguments{
+\item{d}{data.frame; the data to be processed, a table with required
+  numeric variables \code{x} and \code{y}; and optional variables
+  \code{z}, \code{t}, \code{vx}, \code{vy}, and \code{vz}.}
+\item{type}{character; a 1-character string giving the resulting
+  output type. The following values are possible: "p" for points
+  and "g" for interpolated grid.}
+\item{lim}{list; contains numeric vector components giving the minimum
+  and maximum values for each variable in \code{d}.}
+\item{ply}{gpc.poly; a polygon that defines either the data limits
+  if \code{type = "p"} or crop region for gridded data if
+  \code{type = "g"}.}
+\item{grid.res}{numeric; the grid spacing along the x- and y-axis for
+  the interpolated values, respectively, see \code{\link{SetPreferences}}
+  for details.}
+\item{mba}{list; components giving the input parameters for the
+  multilevel B-splines algorithm, see \code{\link{SetPreferences}}
+  for details.}
 }
 
 \details{
-The raw data being processed is queried from the \code{data.raw}
-component of \code{\link{Data}}. Processing control parameters are also
-queried from \code{Data} and include: \code{cols}, \code{vars},
-\code{lim.data}, \code{poly}, \code{poly.data}, \code{poly.crop},
-\code{grid.dx}, \code{grid.dy}, \code{mba.m}, \code{mba.n}, and \code{mba.h}.
-
-A data frame based on the user-defined state variables is first created.
-Records outside the user-defined spatial and temporal domains are then removed
-using: (1) data limits, where the \code{x}, \code{y}, \code{z}, and \code{t}
-limits are specified in the \code{xlim}, \code{ylim}, \code{zlim}, and
-\code{tlim} components of the \code{lim.data} list, respectively; and (2) a
-two-dimensional polygon defining the spatial domain within the \code{xy}-plane.
-
-An interpolated grid of \code{z} values in constructed using a
-Multilevel B-spline approximation. The spatial extent of the interpolated
-surface is constrained using \code{polyLimit}, a polygon that sets spatial
-limits for grided data; where \code{z} values corresponding to grid nodes located
-outside this polygon are set to \code{NA}.
+Rows in the \code{d} data table with \code{\link{NA}} values for
+either \code{x}, \code{y}, or \code{t} are removed.
+The spatial and temporal domains are constrained using data limits for
+\code{x}, \code{y}, \code{z}, and \code{t}. The spatial domain may be
+additionally limited using a polygon defined within the xy-plane.
+Interpolated grid values corresponding to grid nodes located outside
+the boundary polygon are set to \code{\link{NA}}.
 }
 
 \value{
-Sets the \code{data.pts} and \code{data.grd} components of \code{\link{Data}}.
-The \code{data.pts} component is a data frame with variables:
+If \code{type = "p"} returns a data frame with variables:
 \item{x, y}{numeric; a vector of \code{x} and \code{y} coordinates.}
 \item{z}{numeric; a vector of state variable values (optional).}
 \item{t}{POSIXct; a vector of time stamps (optional).}
-\item{vx, vy}{numeric; a vector of velocity components in the \code{x} and
-  \code{y} directions, respectively (optional).}
-The \code{data.grd} component is a list with components:
+\item{vx, vy, vz}{numeric; a vector of velocity components in the \code{x},
+  \code{y} and \code{z} directions, respectively (optional).}
+If \code{type = "g"} returns a list with components:
 \item{x, y}{numeric; a vector of grid line locations at which the values in
   \code{z} are measured.}
 \item{z}{matrix; interpolated surface of state variable with rows and columns
   corresponding to grid lines in the \code{x} and \code{y} directions,
   respectively.}
-\item{vx, vy}{matrix; interpolated surface of velocity components with rows
+\item{vx, vy, vz}{matrix; interpolated surface of velocity components with rows
   and columns corresponding to grid lines in the \code{x} and \code{y}
-  directions, respectively (optional).}
-Row names in \code{data.pts} coincide with row indexes in \code{data.raw}.
+  directions (optional).}
+\item{vf}{numeric; volumetric flux (optional).}
 }
 
 \author{Fisher, J.C.}
 
 \seealso{
+\code{\link{point.in.polygon}}, \code{\link{CutoutPolygon}},
 \code{\link{mba.points}}
 }
 
 \examples{
-\donttest{
-data(project)
-ProcessData()
-}
+x <- c(7.8, 5, 2.2, 3.7, NA, -1.6, -7.5)
+y <- c(-2.3, -4.7, -2.2, -2.3, -3.4, -1.6, -7.5)
+z <- c(-0.9, -1.2, -2.4, -2.4, -0.4, 0.1, 2)
+t <- c("4/23/2009 10:43", "4/24/2009 11:20", "4/24/2009 12:08",
+       "4/24/2009 12:50", "4/24/2009 13:51", "4/24/2009 14:24",
+       "4/24/2009 14:44")
+t <- as.POSIXct(t, format = "\%m/\%d/\%Y \%H:\%M")
+
+data.raw <- as.data.frame(list(x = x, y = y, z = z, t = t))
+data.pts <- ProcessData(data.raw, type = "p")
+data.grd <- ProcessData(data.pts, type = "g")
+
+lim <- list(x = c(NA, 5), t = c(as.POSIXct("4/24/2009 12",
+                                format = "\%m/\%d/\%Y \%H"), NA))
+data.pts <- ProcessData(data.raw, type = "p", lim = lim)
+
+ply <- as(cbind(c(-4, 2, -6), c(-7, -3, -3)), "gpc.poly")
+grid.res <- c(0.2, 0.5)
+data.grd <- ProcessData(data.pts, type = "g", ply = ply,
+                        grid.res = grid.res)
 }
 
 \keyword{manip}

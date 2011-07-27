@@ -1,108 +1,64 @@
-ProcessData <- function() {
+ProcessData <- function(d, type="p", lim=NULL, ply=NULL, grid.res=c(NA, NA),
+                        mba=list(n=NA, m=NA, h=11)) {
   # This function performs data processing on the state variables.
-
-  # Additional functions (subroutines)
-
-  # Evaluate function
-
-  Eval <- function(v) {
-    if (is.null(v)) NULL else EvalFunction(cols[[v]]$fun, cols)
-  }
-
-
-  # Main program
-
-  if (is.null(Data("data.raw"))) {
-    Data("data.pts", NULL)
-    Data("data.grd", NULL)
-    return()
-  }
 
   # Process point data
 
-  if (is.null(Data("data.pts"))) {
+  if (type == "p") {
 
-    Data("data.grd", NULL)
-
-    # Simplify data notation
-
-    cols <- Data("cols")
-    vars <- Data("vars")
-
-    var.names <- names(vars)
-    lst <- lapply(var.names, function(i) Eval(vars[[i]]))
-    len <- sapply(lst, function(i) length(i))
-    max.len <- max(len)
-
-    d <- as.data.frame(matrix(NA, nrow=max.len, ncol=length(lst)))
-    names(d) <- var.names
-    for (i in seq(along=lst))
-      d[[i]] <- c(lst[[i]], rep(NA, max.len - len[i]))
+    var.names <- names(d)
 
     # Remove NA's for spatial and temporal data
 
-    d <- d[rowSums(is.na(d[, names(d) %in% c("x", "y", "t")])) == 0, ]
+    d <- d[rowSums(is.na(d[, var.names %in% c("x", "y", "t")])) == 0, ]
 
-    # Range limits
+    # Set range limits
 
-    lim <- Data("lim.data")
     if (!is.null(lim)) {
-      for (i in var.names) {
-        if (!is.na(lim[[i]][1]))
-          d <- d[!is.na(d[[i]]) & d[[i]] >= lim[[i]][1], ]
-        if (!is.na(lim[[i]][2]))
-          d <- d[!is.na(d[[i]]) & d[[i]] <= lim[[i]][2], ]
+      for (i in names(lim)) {
+        if (i %in% var.names) {
+          if (!is.na(lim[[i]][1]))
+            d <- d[!is.na(d[[i]]) & d[[i]] >= lim[[i]][1], ]
+          if (!is.na(lim[[i]][2]))
+            d <- d[!is.na(d[[i]]) & d[[i]] <= lim[[i]][2], ]
+        }
       }
     }
 
     # Incorporate polygon spatial domain
 
-    if (!is.null(vars$x) & !is.null(vars$y)) {
-      ply <- Data("poly.data")
-      if (!is.null(ply))
-        ply <- Data(c("poly", ply))
-      if (inherits(ply, "gpc.poly")) {
-        all.pts <- get.pts(ply)
-        for (i in seq(along=all.pts)) {
-          pts <- all.pts[[i]]
-          tmp <- point.in.polygon(point.x=d$x, point.y=d$y,
-                                  pol.x=pts$x, pol.y=pts$y)
-          d <- d[if (pts$hole) tmp != 1 else tmp != 0, ]
-        }
+    if (!is.null(ply) && inherits(ply, "gpc.poly")) {
+      all.pts <- get.pts(ply)
+      for (i in seq(along=all.pts)) {
+        pts <- all.pts[[i]]
+        tmp <- point.in.polygon(point.x=d$x, point.y=d$y,
+                                pol.x=pts$x, pol.y=pts$y)
+        d <- d[if (pts$hole) tmp != 1 else tmp != 0, ]
       }
     }
 
-    # Save point data
-
     if (nrow(d) == 0)
-      stop("Range excludes all data")
-    Data("data.pts", d)
+      stop("Range excludes all point data")
   }
 
-  # Construct 3-D surface
+  # Process gridded data
 
-  if (is.null(Data("data.grd"))) {
+  if (type == "g") {
 
-    # Simplify data notation
-
-    x <- Data(c("data.pts", "x"))
-    y <- Data(c("data.pts", "y"))
-    z <- Data(c("data.pts", "z"))
-
-    if (is.null(x) | is.null(y) | is.null(z))
+    if (is.null(d$x) | is.null(d$y) | is.null(d$z))
       return()
 
-    vx <- Data(c("data.pts", "vx"))
-    vy <- Data(c("data.pts", "vy"))
-    vz <- Data(c("data.pts", "vz"))
+    # Store and simplify unprocessed data
 
-    # Limit polygon
+    x <- d$x
+    y <- d$y
+    z <- d$z
 
-    ply <- Data("poly.crop")
-    if (!is.null(ply))
-      ply <- Data("poly")[[ply]]
+    vx <- d$vx
+    vy <- d$vy
+    vz <- d$vz
 
-    # Define the grid and characteristics for the interpolated values
+    # Define interpolation grid
 
     if (is.null(ply)) {
       xlim <- range(x, na.rm=TRUE)
@@ -113,19 +69,16 @@ ProcessData <- function() {
       ylim <- bb$y
     }
 
-    dx <- Data("grid.dx")
-    dy <- Data("grid.dy")
-
     xnum <- ynum <- 100
-    if (!is.null(dx))
-      xnum <- as.integer(diff(xlim) / dx) + 1
-    if (!is.null(dy))
-      ynum <- as.integer(diff(ylim) / dy) + 1
+    if (!is.na(grid.res[1]))
+      xnum <- as.integer(diff(xlim) / grid.res[1]) + 1
+    if (!is.na(grid.res[2]))
+      ynum <- as.integer(diff(ylim) / grid.res[2]) + 1
 
     if (xnum < 1 | ynum < 1)
       stop("Grid resolution equal to zero")
 
-    # Bivariate interpolation onto grid for irregularly spaced data
+    # Estimate interpolated grid values
 
     xo <- seq(xlim[1], xlim[2], length=xnum)
     yo <- seq(ylim[1], ylim[2], length=ynum)
@@ -139,20 +92,25 @@ ProcessData <- function() {
     x.diff <- diff(range(x))
     y.diff <- diff(range(y))
     if (x.diff == 0 || y.diff == 0) {
-      Data("data.grd", NULL)
-      return() # interpolation failed due to data range of zero
+      warning("Interpolation failed due to data range of zero")
+      return()
     } else {
       k <- y.diff / x.diff
     }
+
+    m <- n <- 1
     if (k < 1)
       m <- 2
     else
       n <- 2
-    if (!is.null(Data("mba.m")))
-      m <- Data("mba.m")
-    if (!is.null(Data("mba.n")))
-      n <- Data("mba.n")
-    h <- Data("mba.h")
+    h <- 11
+
+    if (!is.na(mba$m))
+      m <- mba$m
+    if (!is.na(mba$n))
+      n <- mba$n
+    if (!is.na(mba$h))
+      h <- mba$h
 
     GetSurface <- function(x, y, z, pts, n, m) {
       xyz <- matrix(data=c(x, y, z), ncol=3)[!is.na(z), ]
@@ -172,24 +130,21 @@ ProcessData <- function() {
     if (!is.null(vz)) {
       d$vz <- GetSurface(x, y, vz, pts, n, m)$z
 
-      # Volumetrix flux
+      # Calculate volumetric flux
 
       GetArcLength <- function(x) {
         diff(c(x[1], x[-1] - (diff(x) / 2), x[length(x)]))
-      } # returns arc length
+      }
 
       m <- length(d$x)
       n <- length(d$y)
       area <- matrix(rep(GetArcLength(d$x), n), nrow=m, ncol=n, byrow=FALSE) *
               matrix(rep(GetArcLength(d$y), m), nrow=m, ncol=n, byrow=TRUE)
-      vol.flux <- sum(d$vz * area, na.rm=TRUE) # vol. flux = velocity * area
+      vol.flux <- sum(d$vz * area, na.rm=TRUE) # vol.flux = vel * area
       if (is.numeric(vol.flux))
         d$vf <- vol.flux
     }
-
-    # Save grid data
-
-    Data("data.grd", d)
   }
-  invisible()
+
+  d
 }
