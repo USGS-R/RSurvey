@@ -2,8 +2,6 @@
 
 \alias{Data}
 
-\docType{data}
-
 \title{Set or Query Data and Parameters}
 
 \description{
@@ -11,19 +9,18 @@ A function to set or query all data and parameters used in \pkg{RSurvey}.
 }
 
 \usage{
-Data(option, value, clear.all = FALSE, clear.proj = FALSE,
-     clear.data = FALSE)
+Data(option, value, clear.proj = FALSE, clear.data = FALSE,
+     replace.all = NULL)
 }
 
 \arguments{
 \item{option}{character; the parameter name, see \sQuote{Parameters}.}
 \item{value}{a parameter value specified for \code{option}.}
-\item{clear.all}{logical; if \code{TRUE} all parameters are cleared from
-  \code{Data}, its default is \code{FALSE}.}
 \item{clear.proj}{logical; if \code{TRUE} basic \acronym{GUI} preferences will
   be saved and all other data removed, its default is \code{FALSE}.}
 \item{clear.data}{logical; if \code{TRUE} only data sets will be removed,
   its default is \code{FALSE}.}
+\item{replace.all}{list; a replacement list of parameter values.}
 }
 
 \section{Data}{
@@ -61,8 +58,10 @@ Data(c("test2", "id"))
 Data(c("test2", "val"))
 # To get all parameter values
 d <- Data()
-# To clear all parameters
-Data(clear.all = TRUE)
+# To remove all saved parameter values
+Data(replace.all = list())
+# To recover saved parameter values
+Data(replace.all = d)
 }
 
 \keyword{sysdata}

@@ -20,19 +20,19 @@ Data <- local({
                   "show.2.axes"  = 0,
                   "minor.ticks"  = 0,
                   "ticks.inside" = 0,
-                  "mba.h"        = 11,
                   "encoding"     = getOption("encoding")
               )
 
   # Main program
 
-  function(option, value, clear.all=FALSE, clear.proj=FALSE, clear.data=FALSE) {
+  function(option, value, clear.proj=FALSE, clear.data=FALSE,
+           replace.all=NULL) {
 
-    # Clear all values
+    # Replace all values
 
-    if (clear.all) {
-      dat <<- list()
-      return()
+    if (is.list(replace.all)) {
+      dat <<- replace.all
+      return(invisible())
     }
 
     # Save parameters
@@ -48,7 +48,7 @@ Data <- local({
                          "ticks.inside")
       save.params <- save.params[save.params %in% names(dat)]
       dat <<- sapply(save.params, function(i) list(dat[[i]]))
-      return()
+      return(invisible())
     }
 
     # Return all data
