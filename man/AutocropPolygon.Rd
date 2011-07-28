@@ -19,7 +19,7 @@ AutocropPolygon(parent = NULL)
 
 \details{
 This subroutine calls on the \code{x} and \code{y} components of
-\code{data.raw}, a data table stored in \code{\link{Data}}
+\code{data.pts}, a data table stored in \code{\link{Data}}
 (see \code{\link{ReadData}}).
 A Delaunay triangulation is created from the set of
 arbitrarily distributed points and the area defining these
