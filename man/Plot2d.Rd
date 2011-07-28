@@ -79,10 +79,10 @@ Plot2d(x = NULL, y = NULL, z = NULL, vx = NULL, vy = NULL,
 \examples{
 data(project)
 
-d <- Data("data.pts")
+d <- project$data.pts
 Plot2d(d, type = "p")
 
-d <- Data("data.grd")
+d <- project$data.grd
 Plot2d(d, type = "l")
 Plot2d(d, type = "g")
 }

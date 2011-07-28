@@ -36,6 +36,7 @@ a binary file.
 \examples{
 \donttest{
 data(project)
+Data(replace.all = project)
 WriteFile("txt")
 }
 }

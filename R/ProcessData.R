@@ -1,5 +1,6 @@
-ProcessData <- function(d, type="p", lim=NULL, ply=NULL, grid.res=c(NA, NA),
-                        mba=list(n=NA, m=NA, h=11)) {
+ProcessData <- function(d, type="p", lim=NULL, ply=NULL,
+                        grid.res=list(x=NA, y=NA),
+                        grid.mba=list(n=NA, m=NA, h=11)) {
   # This function performs data processing on the state variables.
 
   # Process point data
@@ -70,10 +71,10 @@ ProcessData <- function(d, type="p", lim=NULL, ply=NULL, grid.res=c(NA, NA),
     }
 
     xnum <- ynum <- 100
-    if (!is.na(grid.res[1]))
-      xnum <- as.integer(diff(xlim) / grid.res[1]) + 1
-    if (!is.na(grid.res[2]))
-      ynum <- as.integer(diff(ylim) / grid.res[2]) + 1
+    if (!is.na(grid.res$x))
+      xnum <- as.integer(diff(xlim) / grid.res$x) + 1
+    if (!is.na(grid.res$y))
+      ynum <- as.integer(diff(ylim) / grid.res$y) + 1
 
     if (xnum < 1 | ynum < 1)
       stop("Grid resolution equal to zero")
@@ -105,12 +106,12 @@ ProcessData <- function(d, type="p", lim=NULL, ply=NULL, grid.res=c(NA, NA),
       n <- 2
     h <- 11
 
-    if (!is.na(mba$m))
-      m <- mba$m
-    if (!is.na(mba$n))
-      n <- mba$n
-    if (!is.na(mba$h))
-      h <- mba$h
+    if (!is.na(grid.mba$m))
+      m <- grid.mba$m
+    if (!is.na(grid.mba$n))
+      n <- grid.mba$n
+    if (!is.na(grid.mba$h))
+      h <- grid.mba$h
 
     GetSurface <- function(x, y, z, pts, n, m) {
       xyz <- matrix(data=c(x, y, z), ncol=3)[!is.na(z), ]

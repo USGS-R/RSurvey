@@ -215,7 +215,7 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
       zlim <- rev(zlim)
 
     plot.window(xlim=c(0, 1), ylim=zlim, xaxs="i", yaxs="i", xaxt="n", yaxt="n")
-    rect(0, levels[-length(levels)], 1, levels[-1], col=col, border=NA)
+    rect(0, levels[-length(levels)], 1, levels[-1], col=col, border=col)
 
     tcl <- (0.1 / (6 * par("csi")))
     axis(2, at=levels, las=3, padj=-1, tcl=tcl, labels=FALSE,

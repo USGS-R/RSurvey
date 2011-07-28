@@ -10,12 +10,13 @@ This function performs data processing on the state variables.
 
 \usage{
 ProcessData(d, type = "p", lim = NULL, ply = NULL,
-            grid.res = c(NA, NA), mba = list(n = NA, m = NA, h = 11))
+            grid.res = list(x = NA, y = NA),
+            grid.mba = list(n = NA, m = NA, h = 11))
 }
 
 \arguments{
 \item{d}{data.frame; the data to be processed, a table with required
-  numeric variables \code{x} and \code{y}; and optional variables
+  numeric variables \code{x} and \code{y}, and optional variables
   \code{z}, \code{t}, \code{vx}, \code{vy}, and \code{vz}.}
 \item{type}{character; a 1-character string giving the resulting
   output type. The following values are possible: "p" for points
@@ -25,10 +26,10 @@ ProcessData(d, type = "p", lim = NULL, ply = NULL,
 \item{ply}{gpc.poly; a polygon that defines either the data limits
   if \code{type = "p"} or crop region for gridded data if
   \code{type = "g"}.}
-\item{grid.res}{numeric; the grid spacing along the x- and y-axis for
-  the interpolated values, respectively, see \code{\link{SetPreferences}}
+\item{grid.res}{list; numeric components giving the grid spacing along
+  the x- and y-axis for interpolated values, see \code{\link{SetPreferences}}
   for details.}
-\item{mba}{list; components giving the input parameters for the
+\item{grid.mba}{list; integer components giving the input parameters for the
   multilevel B-splines algorithm, see \code{\link{SetPreferences}}
   for details.}
 }
@@ -44,13 +45,13 @@ the boundary polygon are set to \code{\link{NA}}.
 }
 
 \value{
-If \code{type = "p"} returns a data frame with variables:
+If \code{type} is \code{"p"} returns a data frame with variables:
 \item{x, y}{numeric; a vector of \code{x} and \code{y} coordinates.}
 \item{z}{numeric; a vector of state variable values (optional).}
 \item{t}{POSIXct; a vector of time stamps (optional).}
 \item{vx, vy, vz}{numeric; a vector of velocity components in the \code{x},
   \code{y} and \code{z} directions, respectively (optional).}
-If \code{type = "g"} returns a list with components:
+If \code{type} is \code{"g"} returns a list with components:
 \item{x, y}{numeric; a vector of grid line locations at which the values in
   \code{z} are measured.}
 \item{z}{matrix; interpolated surface of state variable with rows and columns
@@ -87,7 +88,7 @@ lim <- list(x = c(NA, 5), t = c(as.POSIXct("4/24/2009 12",
 data.pts <- ProcessData(data.raw, type = "p", lim = lim)
 
 ply <- as(cbind(c(-4, 2, -6), c(-7, -3, -3)), "gpc.poly")
-grid.res <- c(0.2, 0.5)
+grid.res <- list(x = 0.2, y = 0.5)
 data.grd <- ProcessData(data.pts, type = "g", ply = ply,
                         grid.res = grid.res)
 }

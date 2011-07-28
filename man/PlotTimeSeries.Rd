@@ -49,7 +49,7 @@ points are greater than \code{tgap}.
 
 \examples{
 data(project)
-d <- Data("data.pts")
+d <- project$data.pts
 PlotTimeSeries(x = d$t, y = d$z)
 PlotTimeSeries(x = d$t, y = d$z, tgap = 3000)
 }

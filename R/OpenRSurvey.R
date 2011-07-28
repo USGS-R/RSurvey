@@ -29,8 +29,12 @@ OpenRSurvey <- function() {
       return()
     if (ClearObjs() == "cancel")
       return()
-    load(file=f$path, envir=.GlobalEnv)
+
+    project <- NULL
+    load(file=f$path)
+    Data(replace.all=project)
     Data("proj.file", f$path)
+
     SetCsi()
     SetVars()
   }
@@ -54,7 +58,10 @@ OpenRSurvey <- function() {
     if (!is.null(Data("proj.file"))) {
       csi <- Data("csi")
       Data("csi", NULL)
-      save(list="Data", file=Data("proj.file"), compress=TRUE)
+
+      project <- Data()
+      save(project, file=Data("proj.file"), compress=TRUE)
+
       Data("csi", csi)
     }
   }
@@ -109,7 +116,7 @@ OpenRSurvey <- function() {
     tkconfigure(frame2.but.2.2, state=s)
 
     s <- "normal"
-    if (is.null(vars$z) | is.null(vars$t))
+    if (is.null(vars$x) | is.null(vars$y) | is.null(vars$z) | is.null(vars$t))
       s <- "disabled"
     tkconfigure(frame2.but.2.1, state=s)
   }
@@ -714,26 +721,16 @@ OpenRSurvey <- function() {
       if (!is.null(ply))
         ply <- Data("poly")[[ply]]
 
-      dx <- Data("grid.dx")
-      dy <- Data("grid.dy")
-      if (is.null(dx))
-        dx <- NA
-      if (is.null(dy))
-        dy <- NA
-      grid.res <- c(dx, dy)
+      grid.res <- Data("grid.res")
+      if (is.null(grid.res))
+        grid.res <- list(x=NA, y=NA)
 
-      m <- Data("mba.m")
-      n <- Data("mba.n")
-      h <- Data("mba.h")
-      if (is.null(m))
-        m <- NA
-      if (is.null(n))
-        n <- NA
-      if (is.null(h))
-        h <- NA
+      grid.mba <- Data("grid.mba")
+      if (is.null(grid.mba))
+        grid.mba <- list(n=NA, m=NA, h=11)
 
-      data.grd <- ProcessData(d, type="g", ply=ply, grid.res=grid.res,
-                              mba=list(n=n, m=m, h=h))
+      data.grd <- ProcessData(d, type="g", ply=ply,
+                              grid.res=grid.res, grid.mba=grid.mba)
       Data("data.grd", data.grd)
     }
 

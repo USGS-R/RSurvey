@@ -6,24 +6,24 @@ SetPreferences <- function(parent=NULL) {
   # Update parameter values
 
   UpdatePar <- function() {
-    vars <- c("grid.dx", "grid.dy", "mba.n", "mba.m", "mba.h")
+    vars <- c("grid.res", "grid.mba")
 
     old <- sapply(vars, function(i) Data(i))
 
-    tmp <- as.numeric(tclvalue(grid.dx.var))
-    Data("grid.dx", if (is.na(tmp)) NULL else tmp)
+    grid.res <- list(x=as.numeric(tclvalue(grid.dx.var)),
+                     y=as.numeric(tclvalue(grid.dy.var)))
+    if (all(sapply(grid.res, function(i) is.na(i))))
+      Data("grid.res", NULL)
+    else
+      Data("grid.res", grid.res)
 
-    tmp <- as.numeric(tclvalue(grid.dy.var))
-    Data("grid.dy", if (is.na(tmp)) NULL else tmp)
-
-    tmp <- as.integer(tclvalue(mba.n.var))
-    Data("mba.n", if (is.na(tmp)) NULL else tmp)
-
-    tmp <- as.integer(tclvalue(mba.m.var))
-    Data("mba.m", if (is.na(tmp)) NULL else tmp)
-
-    tmp <- as.integer(tclvalue(mba.h.var))
-    Data("mba.h", if (is.na(tmp)) NULL else tmp)
+    grid.mba <- list(n=as.integer(tclvalue(mba.n.var)),
+                     m=as.integer(tclvalue(mba.m.var)),
+                     h=as.integer(tclvalue(mba.h.var)))
+    if (all(sapply(grid.mba, function(i) is.na(i))))
+      Data("grid.mba", NULL)
+    else
+      Data("grid.mba", grid.mba)
 
     new <- sapply(vars, function(i) Data(i))
 
@@ -44,17 +44,25 @@ SetPreferences <- function(parent=NULL) {
   mba.m.var   <- tclVar()
   mba.h.var   <- tclVar()
 
-  if (!is.null(Data("grid.dx")))
-    tclvalue(grid.dx.var) <- Data("grid.dx")
-  if (!is.null(Data("grid.dy")))
-    tclvalue(grid.dy.var) <- Data("grid.dy")
+  grid.res <- Data("grid.res")
+  if (!is.null(grid.res)) {
+    if (!is.na(grid.res$x))
+      tclvalue(grid.dx.var) <- as.numeric(grid.res$x)
+    if (!is.na(grid.res$y))
+      tclvalue(grid.dy.var) <- as.numeric(grid.res$y)
+  }
 
-  if (!is.null(Data("mba.n")))
-    tclvalue(mba.n.var) <- Data("mba.n")
-  if (!is.null(Data("mba.m")))
-    tclvalue(mba.m.var) <- Data("mba.m")
-  if (!is.null(Data("mba.h")))
-    tclvalue(mba.h.var) <- Data("mba.h")
+  grid.mba <- Data("grid.mba")
+  if (!is.null(grid.mba)) {
+    if (!is.na(grid.mba$n))
+      tclvalue(mba.n.var) <- as.integer(grid.mba$n)
+    if (!is.na(grid.mba$m))
+      tclvalue(mba.m.var) <- as.integer(grid.mba$m)
+    if (!is.na(grid.mba$h))
+      tclvalue(mba.h.var) <- as.integer(grid.mba$h)
+  } else {
+    tclvalue(mba.h.var) <- 11
+  }
 
   tt.done.var <- tclVar(0)
 
