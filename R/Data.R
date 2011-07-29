@@ -20,6 +20,8 @@ Data <- local({
                   "show.2.axes"  = 0,
                   "minor.ticks"  = 0,
                   "ticks.inside" = 0,
+                  "grid.res"     = list(x=NA, y=NA),
+                  "grid.mba"     = list(n=NA, m=NA, h=11),
                   "encoding"     = getOption("encoding")
               )
 

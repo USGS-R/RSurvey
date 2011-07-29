@@ -443,8 +443,8 @@ OpenRSurvey <- function() {
       axis.side <- 1:4
 
     nlevels <- Data("nlevels")
-    cols <- Data("cols")
-    vars <- Data("vars")
+    cols    <- Data("cols")
+    vars    <- Data("vars")
 
     xlab <- cols[[vars$x]]$id
     ylab <- cols[[vars$y]]$id
@@ -454,30 +454,22 @@ OpenRSurvey <- function() {
       dat <- Data("data.pts")
     } else if (type %in% c("l", "g")) {
       dat <- Data("data.grd")
-      if (type == "g") {
-        ave.elem <- function(z) {
-          m <- nrow(z)
-          n <- ncol(z)
-          rtn <- (z[1:(m - 1), 1:(n - 1)] + z[1:(m - 1), 2:n] +
-                  z[2:m, 1:(n - 1)] + z[2:m, 2:n]) / 4
-          rtn
-        }
-        dat$z <- ave.elem(dat$z)
-        if (show.arrows) {
-          if (!is.null(dat$vx))
-            dat$vx <- ave.elem(dat$vx)
-          if (!is.null(dat$vy))
-            dat$vy <- ave.elem(dat$vy)
-        }
-      }
     }
+
+    if (type == "g") {
+      x.midpoint <- dat$x[1:(length(dat$x) - 1)] + diff(dat$x) / 2
+      y.midpoint <- dat$y[1:(length(dat$y) - 1)] + diff(dat$y) / 2
+      xran <- range(x.midpoint, finite=TRUE)
+      yran <- range(y.midpoint, finite=TRUE)
+    } else {
+      xran <- range(dat$x, finite=TRUE)
+      yran <- range(dat$y, finite=TRUE)
+    }
+
     if (!show.arrows) {
       dat$vx <- NULL
       dat$vy <- NULL
     }
-
-    xran <- range(dat$x, finite=TRUE)
-    yran <- range(dat$y, finite=TRUE)
 
     # Adjust axes limits for polygon
 
@@ -737,12 +729,7 @@ OpenRSurvey <- function() {
         ply <- Data("poly")[[ply]]
 
       grid.res <- Data("grid.res")
-      if (is.null(grid.res))
-        grid.res <- list(x=NA, y=NA)
-
       grid.mba <- Data("grid.mba")
-      if (is.null(grid.mba))
-        grid.mba <- list(n=NA, m=NA, h=11)
 
       data.grd <- ProcessData(d, type="g", ply=ply,
                               grid.res=grid.res, grid.mba=grid.mba)

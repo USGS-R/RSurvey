@@ -41,8 +41,35 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
 
   if (is.null(x) || is.null(y))
     stop("Missing 'x' or 'y' values")
-  if (is.null(z) & (type %in% c("l", "g")))
-    stop("Filled contour requires 'z' value")
+
+  if (type %in% c("l", "g")) {
+    if (is.null(z))
+      stop("Filled contour requires 'z' value")
+
+    x.boundaries <- as.double(x)
+    y.boundaries <- as.double(y)
+
+    if (type == "g") {
+      m <- nrow(z)
+      n <- ncol(z)
+
+      x <- x[1:(m - 1)] + diff(x) / 2
+      y <- y[1:(n - 1)] + diff(y) / 2
+
+      CalcAveElem <- function(mat) {
+        return((mat[1:(m - 1), 1:(n - 1)] + mat[1:(m - 1), 2:n] +
+                mat[2:m, 1:(n - 1)] + mat[2:m, 2:n]) / 4)
+      }
+
+      z <- CalcAveElem(z)
+      if (!is.null(vx) | !is.null(vy)) {
+        if (!is.null(vx))
+          vx <- CalcAveElem(vx)
+        if (!is.null(vy))
+          vy <- CalcAveElem(vy)
+      }
+    }
+  }
 
   if (is.null(asp))
     asp <- NA
@@ -160,11 +187,10 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
 
   xlim <- c(xmin - xdif * xminf, xmax + xdif * xmaxf)
 
-  if (is.na(asp)) {
+  if (is.na(asp))
     ylim <- c(ymin - ydif * yminf, ymax + ydif * ymaxf)
-  } else {
+  else
     ylim <- c(ymin - xdif * yminf / asp, ymax + xdif * ymaxf / asp)
-  }
 
   if (!is.null(z)) {
     if (is.na(zmin))
@@ -258,18 +284,18 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
   if (type == "l") {
     if (!is.double(z))
       storage.mode(z) <- "double"
-    .Internal(filledcontour(as.double(x), as.double(y), z,
+    .Internal(filledcontour(x.boundaries, y.boundaries, z,
                             as.double(levels), col=col))
   } else if (type == "g") {
-    image(as.double(x), as.double(y), z, col=col, add=TRUE,
-          breaks=as.double(levels))
+    image(x.boundaries, y.boundaries, z, col=col, add=TRUE,
+          breaks=as.double(levels), useRaster=TRUE)
   }
 
   # Plot contour lines
 
   if (add.contour.lines && type %in% c("l", "g")) {
       lwd <- 0.5 * (96 / (6 * 12))
-      contour(x=as.double(x), y=as.double(y), z=z, col="#999999", lty="solid",
+      contour(x=x, y=y, z=z, col="#999999", lty="solid",
               add=TRUE, nlevels=nlevels, vfont = c("sans serif", "plain"),
               lwd=lwd)
   }
@@ -280,14 +306,6 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
     if (is.matrix(vx) | is.matrix(vy)) {
       m <- length(y)
       n <- length(x)
-
-      vdim <- if (is.null(vx)) dim(vy) else dim(vx)
-      if (vdim[1] == n - 1 && vdim[2] == m - 1) {
-        x <- x[1:(n - 1)] + diff(x) / 2
-        y <- y[1:(m - 1)] + diff(y) / 2
-        m <- length(y)
-        n <- length(x)
-      }
       tmp <- as.vector(matrix(rep(y, n), nrow=n, ncol=m, byrow=TRUE))
       v <- data.frame(cbind(x=rep(x, m), y=tmp))
     } else {

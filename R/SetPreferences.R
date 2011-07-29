@@ -45,24 +45,18 @@ SetPreferences <- function(parent=NULL) {
   mba.h.var   <- tclVar()
 
   grid.res <- Data("grid.res")
-  if (!is.null(grid.res)) {
-    if (!is.na(grid.res$x))
-      tclvalue(grid.dx.var) <- as.numeric(grid.res$x)
-    if (!is.na(grid.res$y))
-      tclvalue(grid.dy.var) <- as.numeric(grid.res$y)
-  }
+  if (!is.na(grid.res$x))
+    tclvalue(grid.dx.var) <- as.numeric(grid.res$x)
+  if (!is.na(grid.res$y))
+    tclvalue(grid.dy.var) <- as.numeric(grid.res$y)
 
   grid.mba <- Data("grid.mba")
-  if (!is.null(grid.mba)) {
-    if (!is.na(grid.mba$n))
-      tclvalue(mba.n.var) <- as.integer(grid.mba$n)
-    if (!is.na(grid.mba$m))
-      tclvalue(mba.m.var) <- as.integer(grid.mba$m)
-    if (!is.na(grid.mba$h))
-      tclvalue(mba.h.var) <- as.integer(grid.mba$h)
-  } else {
-    tclvalue(mba.h.var) <- 11
-  }
+  if (!is.na(grid.mba$n))
+    tclvalue(mba.n.var) <- as.integer(grid.mba$n)
+  if (!is.na(grid.mba$m))
+    tclvalue(mba.m.var) <- as.integer(grid.mba$m)
+  if (!is.na(grid.mba$h))
+    tclvalue(mba.h.var) <- as.integer(grid.mba$h)
 
   tt.done.var <- tclVar(0)
 
