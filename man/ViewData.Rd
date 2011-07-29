@@ -56,7 +56,7 @@ col.digs <- c(0, NA, NA, 3)
 ViewData(d, col.names, col.units, col.digs)
 
 row.names(d) <- 1:n + n
-ViewData(d, col.names, col.units = NULL, digs)
+ViewData(d, col.names, col.digs = col.digs)
 }
 }
 

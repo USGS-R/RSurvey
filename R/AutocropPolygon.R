@@ -1,7 +1,16 @@
-AutocropPolygon <- function(parent=NULL) {
+AutocropPolygon <- function(d, parent=NULL, ...) {
   # A GUI for specify input parameters for the Autocrop function.
 
   # Additional functions (subroutines)
+
+  # Save polygon and exit GUI
+
+  SavePolygon <- function() {
+    if (inherits(ply, "gpc.poly")) {
+      rtn <<- ply
+      tclvalue(tt.done.var) <- 1
+    }
+  }
 
   # Run Autocrop function and plot results
 
@@ -37,8 +46,7 @@ AutocropPolygon <- function(parent=NULL) {
   # Draw base plot and points
 
   DrawBasePlot <- function() {
-    Plot2d(dat, type="p", xlab=xlab, ylab=ylab, zlab=zlab, asp=asp,
-           csi=csi, width=width, nlevels=nlevels, cex.pts=cex.pts, rkey=rkey)
+    do.call(Plot2d, append(list(x=d, type="p"), list(...)))
     dev <<- dev.cur()
   }
 
@@ -61,23 +69,8 @@ AutocropPolygon <- function(parent=NULL) {
 
   # Initialize parameters
 
-  dat  <- Data("data.pts")
-  vars <- Data("vars")
-  cols <- Data("cols")
-
-  xlab <- cols[[vars$x]]$id
-  ylab <- cols[[vars$y]]$id
-  zlab <- cols[[vars$z]]$id
-
-  asp <- Data("asp.yx")
-  csi <- Data("csi")
-  width <- Data("width")
-  nlevels <- Data("nlevels")
-  cex.pts <- Data("cex.pts")
-  rkey <- Data("rkey")
-
-  dat$vx <- NULL
-  dat$vy <- NULL
+  d$vx <- NULL
+  d$vy <- NULL
 
   ply <- NULL
   rtn <- NULL
@@ -86,7 +79,7 @@ AutocropPolygon <- function(parent=NULL) {
 
   # Construct mesh
 
-  mesh <- tri.mesh(dat$x, dat$y, duplicate="remove")
+  mesh <- tri.mesh(d$x, d$y, duplicate="remove")
 
   # Convex hull and maximum outer arc length
 
@@ -125,12 +118,7 @@ AutocropPolygon <- function(parent=NULL) {
   frame0.but.2.2 <- ttkbutton(frame0, width=10, text="Refresh",
                               command=RefreshPlot)
   frame0.but.2.3 <- ttkbutton(frame0, width=10, text="Save",
-                              command=function() {
-                                if (inherits(ply, "gpc.poly")) {
-                                  rtn <<- ply
-                                  tclvalue(tt.done.var) <- 1
-                                }
-                              })
+                              command=SavePolygon)
   frame0.but.2.4 <- ttkbutton(frame0, width=10, text="Cancel",
                               command=function() tclvalue(tt.done.var) <- 1)
 

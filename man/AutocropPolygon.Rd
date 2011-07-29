@@ -10,17 +10,17 @@ function.
 }
 
 \usage{
-AutocropPolygon(parent = NULL)
+AutocropPolygon(d, parent = NULL, ...)
 }
 
 \arguments{
-\item{parent}{tkwin; the parent window (optional).}
+\item{d}{data.frame; a data table with coordinate components
+  \code{d$x}, \code{d$y}.}
+\item{parent}{tkwin; the parent window.}
+\item{...}{other graphical parameters.}
 }
 
 \details{
-This subroutine calls on the \code{x} and \code{y} components of
-\code{data.pts}, a data table stored in \code{\link{Data}}
-(see \code{\link{ReadData}}).
 A Delaunay triangulation is created from the set of
 arbitrarily distributed points and the area defining these
 points is approximated using the \code{\link{Autocrop}} function.
@@ -28,7 +28,7 @@ The default maximum arc length is the maximum outer arc length
 for the mesh. Entering arc lengths less than the
 default value will result in a reduced area for the polygon.
 A point plot is drawn showing the resulting polygon based on the user defined
-input parameters. Plotting parameters are queried from \code{\link{Data}}.
+input parameters. Graphical parameters are described in \code{\link{Plot2d}}.
 }
 
 \value{
@@ -38,15 +38,13 @@ Returns a polygon object of \code{\link{gpc.poly-class}}.
 \author{Fisher, J.C.}
 
 \seealso{
-\code{\link{Autocrop}}, \code{\link{Plot2d}}, \code{tri.mesh}
+\code{\link{Plot2d}}, \code{\link{Autocrop}}, \code{tri.mesh}
 }
 
 \examples{
 \donttest{
 data(tritest)
-Data("data.pts", as.data.frame(tritest))
-Data("vars", list(x = 1, y = 2))
-AutocropPolygon()
+AutocropPolygon(as.data.frame(tritest), asp = 1)
 }
 }
 

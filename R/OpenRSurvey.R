@@ -345,7 +345,22 @@ OpenRSurvey <- function() {
       return()
     CallProcessData()
 
-    ply.new <- AutocropPolygon(tt)
+    d <- Data("data.pts")
+
+    xlab <- Data("cols")[[Data("vars")$x]]$id
+    ylab <- Data("cols")[[Data("vars")$y]]$id
+    zlab <- Data("cols")[[Data("vars")$z]]$id
+
+    asp     <- Data("asp.yx")
+    csi     <- Data("csi")
+    width   <- Data("width")
+    nlevels <- Data("nlevels")
+    cex.pts <- Data("cex.pts")
+    rkey    <- Data("rkey")
+
+    ply.new <- AutocropPolygon(d, tt, xlab=xlab, ylab=ylab, zlab=zlab,
+                               asp=asp, csi=csi, width=width, nlevels=nlevels,
+                               cex.pts=cex.pts, rkey=rkey)
 
     if (inherits(ply.new, "gpc.poly")) {
       ply <- list()

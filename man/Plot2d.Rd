@@ -23,8 +23,8 @@ Plot2d(x = NULL, y = NULL, z = NULL, vx = NULL, vy = NULL,
 
 \arguments{
 \item{x}{numeric; a vector of \code{x} coordinates for the plot. If \code{x} is
-  a list, its components \code{x$x}, \code{x$y}, \code{x$z}, \code{x$vx}, and
-  \code{x$vy} are used for \code{x}, \code{y}, \code{z}, \code{vx}, and
+  a data frame, its components \code{x$x}, \code{x$y}, \code{x$z}, \code{x$vx},
+  and \code{x$vy} are used for \code{x}, \code{y}, \code{z}, \code{vx}, and
   \code{vy}, respectively.}
 \item{y}{numeric; a vector of \code{y} coordinates for the plot.}
 \item{z}{matrix; the state variable values to be plotted, NAs allowed (optional
