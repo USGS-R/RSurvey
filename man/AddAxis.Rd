@@ -18,9 +18,9 @@ AddAxis(side, lim, ticks.inside = FALSE, minor.ticks = FALSE, ...)
 \item{lim}{numeric or POSIXt; the axis limits (\code{x1}, \code{x2}) of
   the plot.}
 \item{ticks.inside}{logical; if \code{TRUE} tickmarks are placed inside the
-  plot region, its default is \code{FALSE}.}
+  plot region; its default is \code{FALSE}.}
 \item{minor.ticks}{logical; if \code{TRUE} minor tickmarks are added to the
-  plot, its default is \code{FALSE}.}
+  plot; its default is \code{FALSE}.}
 \item{...}{other graphical parameters may also be passed as arguments to this
   function, see \code{\link{axis}}.}
 }

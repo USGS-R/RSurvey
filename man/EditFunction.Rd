@@ -13,7 +13,7 @@ EditFunction(cols, index = NULL, parent = NULL)
 }
 
 \arguments{
-\item{cols}{lsit; see \code{\link{ManageData}}.}
+\item{cols}{list; see \code{\link{ManageData}}.}
 \item{index}{integer; an element index number in \code{cols}.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }

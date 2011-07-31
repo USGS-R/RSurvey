@@ -31,9 +31,9 @@ PlotTimeSeries(x, y = NULL, xlim = NULL, ylim = NULL, ylab = NULL,
 \item{axis.side}{integer; the side of the plot the axis is to be drawn on.
   The axis is placed as follows: 1 = below, 2 = left, 3 = above and 4 = right.}
 \item{minor.ticks}{logical; if \code{TRUE} minor tickmarks are added to the
-  plot, its default is \code{FALSE}.}
+  plot; its default is \code{FALSE}.}
 \item{ticks.inside}{logical; if \code{TRUE} tickmarks are placed inside the
-  plot region, its default is \code{FALSE}.}
+  plot region; its default is \code{FALSE}.}
 }
 
 \details{

@@ -28,7 +28,7 @@ GetFile(cmd = "Open", file = NULL, exts = NULL, initialdir = NULL,
 \item{defaultextension}{character; the string that will be appended to the
   file name if the user enters a file name without an extension.}
 \item{win.title}{character; a string to display as the title of the dialog box.}
-\item{multi}{logical; if \code{TRUE} multiple files may be selected,
+\item{multi}{logical; if \code{TRUE} multiple files may be selected;
   its default is \code{FALSE}.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }

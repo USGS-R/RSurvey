@@ -47,7 +47,7 @@ Plot2d(x = NULL, y = NULL, z = NULL, vx = NULL, vy = NULL,
   relative to the default.}
 \item{nlevels}{integer; number of contour levels desired.}
 \item{rkey}{logical; if \code{TRUE} the legend key is reversed with \code{z}
-  values descending from top to bottom, its default is \code{FALSE}.}
+  values descending from top to bottom; its default is \code{FALSE}.}
 \item{color.palette}{function; a color \link{palette} to be used to assign
   colors in the plot.}
 \item{vuni}{logical; if \code{TRUE} all arrow lengths are set equal; its
@@ -58,11 +58,11 @@ Plot2d(x = NULL, y = NULL, z = NULL, vx = NULL, vy = NULL,
 \item{axis.side}{integer; the side of the plot the axis is to be drawn on.
   The axis is placed as follows: 1 = below, 2 = left, 3 = above and 4 = right.}
 \item{minor.ticks}{logical; if \code{TRUE} minor tickmarks are added to the
-  plot, its default is \code{FALSE}.}
+  plot; its default is \code{FALSE}.}
 \item{ticks.inside}{logical; if \code{TRUE} tickmarks are placed inside the
-  plot region, its default is \code{FALSE}.}
+  plot region; its default is \code{FALSE}.}
 \item{add.contour.lines}{logical; if \code{TRUE} and \code{type} is either "l"
-  or "g" than contour lines are drawn, its default is \code{FALSE}.}
+  or "g" than contour lines are drawn; its default is \code{FALSE}.}
 }
 
 \details{
