@@ -14,8 +14,8 @@ EditFunction(cols, index = NULL, parent = NULL)
 
 \arguments{
 \item{cols}{lsit; see \code{\link{ManageData}}.}
-\item{index}{integer; an element index number in \code{cols} (optional).}
-\item{parent}{tkwin; the parent window (optional).}
+\item{index}{integer; an element index number in \code{cols}.}
+\item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
 \details{
@@ -24,15 +24,15 @@ pre-existing data frame.
 }
 
 \value{
-Results in a character string of the edited function; when evaluated,
-this text must be parseable and result in a vector of length equal to the
+Results in a character string of the user defined function; when evaluated,
+this string must be parseable and result in a vector length equal to the
 number of rows in the \code{data.raw} data frame (see \code{\link{ReadData}}).
 }
 
 \author{Fisher, J.C.}
 
 \seealso{
-\code{\link{parse}}, \code{\link{EvalFunction}}
+\code{\link{EvalFunction}}, \code{\link{parse}}
 }
 
 \examples{

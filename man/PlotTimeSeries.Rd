@@ -26,14 +26,14 @@ PlotTimeSeries(x, y = NULL, xlim = NULL, ylim = NULL, ylab = NULL,
 \item{cex.pts}{numeric; the amount by which point symbols should be magnified
   relative to the default.}
 \item{pointsize}{integer; the point size of plotted text.}
-\item{fmt}{character; date-time format for \code{x} axis tic mark labels, see
+\item{fmt}{character; date-time format for \code{x} axis tickmark labels, see
   \code{\link{strptime}}.}
 \item{axis.side}{integer; the side of the plot the axis is to be drawn on.
   The axis is placed as follows: 1 = below, 2 = left, 3 = above and 4 = right.}
 \item{minor.ticks}{logical; if \code{TRUE} minor tickmarks are added to the
-  plot; its default is \code{FALSE}.}
+  plot, its default is \code{FALSE}.}
 \item{ticks.inside}{logical; if \code{TRUE} tickmarks are placed inside the
-  plot region; its default is \code{FALSE}.}
+  plot region, its default is \code{FALSE}.}
 }
 
 \details{

@@ -5,7 +5,7 @@
 \title{Set Autocrop Input Parameters}
 
 \description{
-A \acronym{GUI} for specifying input parameters for the \code{\link{Autocrop}}
+A \acronym{GUI} for specifying input parameters of the \code{\link{Autocrop}}
 function.
 }
 
@@ -14,10 +14,10 @@ AutocropPolygon(d, parent = NULL, ...)
 }
 
 \arguments{
-\item{d}{data.frame; a data table with coordinate components
-  \code{d$x}, \code{d$y}.}
-\item{parent}{tkwin; the parent window.}
-\item{...}{other graphical parameters.}
+\item{d}{data.frame; a data table with required coordinate components
+  \code{d$x} and \code{d$y}.}
+\item{parent}{tkwin; the \acronym{GUI} parent window.}
+\item{...}{other graphical parameters, see \code{\link{Plot2d}}.}
 }
 
 \details{
@@ -27,8 +27,8 @@ points is approximated using the \code{\link{Autocrop}} function.
 The default maximum arc length is the maximum outer arc length
 for the mesh. Entering arc lengths less than the
 default value will result in a reduced area for the polygon.
-A point plot is drawn showing the resulting polygon based on the user defined
-input parameters. Graphical parameters are described in \code{\link{Plot2d}}.
+A point plot is drawn showing the resulting polygon based on user defined
+input parameters.
 }
 
 \value{
@@ -38,7 +38,7 @@ Returns a polygon object of \code{\link{gpc.poly-class}}.
 \author{Fisher, J.C.}
 
 \seealso{
-\code{\link{Plot2d}}, \code{\link{Autocrop}}, \code{tri.mesh}
+\code{tri.mesh}
 }
 
 \examples{

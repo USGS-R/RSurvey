@@ -13,7 +13,6 @@ Data <- local({
                   "rkey"         = 0,
                   "show.poly"    = 0,
                   "img.contour"  = 0,
-                  "show.arrows"  = 0,
                   "show.lines"   = 0,
                   "show.points"  = 0,
                   "vuni"         = 0,
@@ -45,9 +44,8 @@ Data <- local({
         save.params <- c(save.params, "nlevels", "asp.yx", "asp.zx",
                          "vmax", "vxby", "vyby", "rkey", "show.poly",
                          "img.contour", "show.lines", "show.points",
-                         "show.arrows", "vuni", "date.fmt", "poly",
-                         "proj.file", "show.2.axes", "minor.ticks",
-                         "ticks.inside")
+                         "vuni", "date.fmt", "poly", "proj.file",
+                         "show.2.axes", "minor.ticks", "ticks.inside")
       save.params <- save.params[save.params %in% names(dat)]
       dat <<- sapply(save.params, function(i) list(dat[[i]]))
       return(invisible())

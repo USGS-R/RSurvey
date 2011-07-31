@@ -17,20 +17,20 @@ GetFile(cmd = "Open", file = NULL, exts = NULL, initialdir = NULL,
 \arguments{
 \item{cmd}{character; specifies if an \code{"Open"} or \code{"Save As"} file
   management pop up dialog box is implemented.}
-\item{file}{character; the name of the file which the data are to be read from.
+\item{file}{character; the file name which the data are to be read from.
   Alternatively, \code{file} can be a readable text-mode
-  \code{\link{connection}} (optional).}
+  \code{\link{connection}}.}
 \item{exts}{character; a vector of default file extensions.}
 \item{initialdir}{character; specifies that the files in this directory should
   be displayed when the dialog pops up.}
-\item{initialfile}{character; the filename to be displayed in the dialog when
+\item{initialfile}{character; the file name to be displayed in the dialog when
   it pops up.}
 \item{defaultextension}{character; the string that will be appended to the
-  filename if the user enters a filename without an extension.}
+  file name if the user enters a file name without an extension.}
 \item{win.title}{character; a string to display as the title of the dialog box.}
 \item{multi}{logical; if \code{TRUE} multiple files may be selected,
   its default is \code{FALSE}.}
-\item{parent}{tkwin; the parent window (optional).}
+\item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
 \value{

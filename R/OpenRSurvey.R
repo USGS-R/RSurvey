@@ -434,7 +434,6 @@ OpenRSurvey <- function() {
       ply <- Data("poly")[[ply]]
 
     show.poly   <- Data("show.poly") && inherits(ply, "gpc.poly")
-    show.arrows <- Data("show.arrows")
     show.lines  <- type %in% c("l", "g") && Data("show.lines")
     show.points <- type %in% c("l", "g") && Data("show.points")
 
@@ -464,11 +463,6 @@ OpenRSurvey <- function() {
     } else {
       xran <- range(dat$x, finite=TRUE)
       yran <- range(dat$y, finite=TRUE)
-    }
-
-    if (!show.arrows) {
-      dat$vx <- NULL
-      dat$vy <- NULL
     }
 
     # Adjust axes limits for polygon

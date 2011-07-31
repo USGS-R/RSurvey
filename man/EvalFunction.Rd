@@ -19,8 +19,8 @@ EvalFunction(txt, cols)
 }
 
 \details{
-The \dQuote{DATA} identifier is a reserved word within the \code{txt} argument.
-\dQuote{DATA} is used to reference the \code{data.raw} data
+The \dQuote{DATA} identifier is a reserved word within the \code{txt} argument
+and is used to reference the \code{data.raw} data
 frame, a component of \code{\link{Data}} with variable names keyed to
 column index numbers in \code{data.raw} using the \code{vars} argument.
 }

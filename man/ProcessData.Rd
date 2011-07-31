@@ -23,35 +23,32 @@ ProcessData(d, type = "p", lim = NULL, ply = NULL,
   and "g" for interpolated grid.}
 \item{lim}{list; contains numeric vector components giving the minimum
   and maximum values for each variable in \code{d}.}
-\item{ply}{gpc.poly; a polygon that defines either the data limits
-  if \code{type = "p"} or crop region for gridded data if
-  \code{type = "g"}.}
+\item{ply}{gpc.poly; if \code{type="p"} a polygon that defines either the
+  data limits, else if \code{type="g"} a crop region for gridded data.}
 \item{grid.res}{list; numeric components giving the grid spacing along
-  the x- and y-axis for interpolated values, see \code{\link{SetPreferences}}
-  for details.}
+  the x- and y-axis for interpolated values, see \code{\link{SetPreferences}}.}
 \item{grid.mba}{list; integer components giving the input parameters for the
-  multilevel B-splines algorithm, see \code{\link{SetPreferences}}
-  for details.}
+  multilevel B-splines algorithm, see \code{\link{SetPreferences}}.}
 }
 
 \details{
-Rows in the \code{d} data table with \code{\link{NA}} values for
-either \code{x}, \code{y}, or \code{t} are removed.
+Any row in the \code{d} data table with \code{\link{NA}} values for
+either \code{x}, \code{y}, or \code{t} is removed.
 The spatial and temporal domains are constrained using data limits for
-\code{x}, \code{y}, \code{z}, and \code{t}. The spatial domain may be
-additionally limited using a polygon defined within the xy-plane.
+\code{x}, \code{y}, \code{z}, and \code{t}. Additionally, the spatial domain
+may be limited using a polygon defined in the xy-plane.
 Interpolated grid values corresponding to grid nodes located outside
-the boundary polygon are set to \code{\link{NA}}.
+the polygon boundary are set to \code{\link{NA}}.
 }
 
 \value{
-If \code{type} is \code{"p"} returns a data frame with variables:
+If \code{type="p"} returns a data frame with variables:
 \item{x, y}{numeric; a vector of \code{x} and \code{y} coordinates.}
 \item{z}{numeric; a vector of state variable values (optional).}
 \item{t}{POSIXct; a vector of time stamps (optional).}
 \item{vx, vy, vz}{numeric; a vector of velocity components in the \code{x},
   \code{y} and \code{z} directions, respectively (optional).}
-If \code{type} is \code{"g"} returns a list with components:
+If \code{type="g"} returns a list with components:
 \item{x, y}{numeric; a vector of grid line locations at which the values in
   \code{z} are measured.}
 \item{z}{matrix; interpolated surface of state variable with rows and columns

@@ -11,18 +11,18 @@ A \acronym{GUI} for specifying the interpolation algorithms input parameters.
 \usage{SetPreferences(parent = NULL)}
 
 \arguments{
-\item{parent}{tkwin; the parent window (optional).}
+\item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
 \value{
 Queries and sets the following components in \code{\link{Data}}:
-\item{grid.res}{list; numeric components giving the grid spacing along
-  the x- (\code{$x}) and y-axis (\code{$y}) of the
-  interpolated surface, respectively (optional).}
-\item{grid.mba}{list; integer components giving the initial size of the
-  spline space in the hierarchical construction along the
-  \code{x}- (\code{$n}) and \code{y}-axis (\code{$m}), and
-  number of levels in the hierarchical construction (\code{$h}),
+\item{grid.res}{list; numeric components \code{x} and \code{y}
+  giving the grid spacing along the x- and y-axis of the
+  interpolated surface, respectively.}
+\item{grid.mba}{list; integer components \code{m}, \code{n}, and \code{h}
+  giving the initial size of the spline space in the hierarchical
+  construction along the \code{x}- and \code{y}-axis, and the
+  number of levels in the hierarchical construction;
   its default is 11.
 }
 }

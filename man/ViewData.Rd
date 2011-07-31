@@ -14,20 +14,20 @@ ViewData(d, col.names = NULL, col.units = NULL, col.digs = NULL,
 }
 
 \arguments{
-\item{d}{data.frame; data used to populate the table.}
+\item{d}{data.frame; the data used to populate the table.}
 \item{col.names}{character; a vector giving the column names for the
   data table (optional).}
 \item{col.units}{character; a vector giving the measurement units for
   each column of the data table (optional).}
 \item{col.digs}{integer; a vector giving the decimal places of numeric
   columns in the data table (optional).}
-\item{parent}{tkwin; the parent window (optional).}
+\item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
 \details{
 Column titles are a concatenation of variables \code{col.names}
 and \code{col.units}. Row titles are taken from the row names attribute
-of the data frame.
+of \code{d}.
 }
 
 \note{

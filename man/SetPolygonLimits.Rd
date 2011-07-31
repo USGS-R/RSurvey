@@ -15,24 +15,24 @@ SetPolygonLimits(poly.names = NULL, poly.data = NULL,
 
 \arguments{
 \item{poly.names}{character; the vector of names corresponding to polygons
-  contained within \code{ply} (see \code{\link{ManagePolygons}}).}
+  contained within \code{ply}, a list of polygon components,
+ see \code{\link{ManagePolygons}}.}
 \item{poly.data}{character; the name of the polygon that defines the
-  data limits boundary (optional).}
+  data limits boundary.}
 \item{poly.crop}{character; the name of the polygon that defines the crop
-  region for interpolated data (optional).}
-\item{parent}{tkwin; the parent window (optional).}
+  region for interpolated data.}
+\item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
 \value{
-Returns a list with components \code{poly.data} and \code{poly.crop}
-  (see \sQuote{Arguments}).
+Returns a list with components \code{poly.data} and \code{poly.crop}.
 }
+
+\author{Fisher, J.C.}
 
 \seealso{
 \code{\link{AutocropPolygon}}, \code{tri.mesh}
 }
-
-\author{Fisher, J.C.}
 
 \examples{
 \donttest{SetPolygonLimits(c("Polygon1", "Polygon2", "Polygon3"))}

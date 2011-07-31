@@ -16,9 +16,9 @@ Rename(names = NULL, cur.name = NULL, win.title = NULL,
 \arguments{
 \item{names}{character; a vector of character strings.}
 \item{cur.name}{character; sets the combobox value, name must be included in
-  \code{names} (optional).}
-\item{win.title}{character; the title of the main window (optional).}
-\item{parent}{tkwin; the parent window (optional).}
+  \code{names}.}
+\item{win.title}{character; the title of the main \acronym{GUI} window.}
+\item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
 \value{

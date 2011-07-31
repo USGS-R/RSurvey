@@ -23,7 +23,7 @@ ReadData(con, headers = c(FALSE, FALSE, FALSE), sep = "\t",
 \item{quote}{character; the set of quoting characters.}
 \item{nrows}{integer; the maximum number of rows to read in. Negative and other
   invalid values are ignored (optional).}
-\item{na.strings}{character; a vector of strings which are to be interpreted as
+\item{na.strings}{character; a vector of strings which are interpreted as
   \code{\link{NA}} values. Blank fields are also considered to be missing
   values.}
 \item{skip}{integer; the number of lines to skip before beginning to read data.}
@@ -37,7 +37,7 @@ ReadData(con, headers = c(FALSE, FALSE, FALSE), sep = "\t",
 }
 
 \format{
-The table formatted data is required to have at least two numeric variables.
+The imported data table is required to have at least two numeric variables.
 Measurement units associated with date and time values are based on format
 character strings described in \code{\link{strptime}}, for example
 "02/26/2010 02:05:39 PM" is represented using "\%d/\%m/\%Y \%I:\%M:\%S \%p".
@@ -47,17 +47,17 @@ character strings described in \code{\link{strptime}}, for example
 This function is the primary method for importing table formatted data.
 The \code{headers} argument, a logical vector of length three, indicates
 whether the file contains the names, measurement units, and decimal precision
-of variables as its initial lines of text. For example, a
+of variables as its initial lines of text. For example,
 \code{headers = c(TRUE, FALSE, TRUE)} indicates that the first and second lines
 will contain the names and decimal precision of variables, respectively;
-measurement units are not included. If \code{headers = c(FALSE, FALSE, FALSE)}
-(the default), no header information is contained within the data table.
+measurement units are not included. If \code{headers = c(FALSE, FALSE, FALSE)},
+the default, no header information is contained within the data table.
 }
 
 \value{
 Returns a list with the following components:
 \item{dat}{data.frame; a data table with headers and comments removed.}
-\item{cols}{list; of length equal to the current number of data variables.
+\item{cols}{list; length equal to the current number of data variables.
   Each component in \code{cols} is linked to a specific variable
   (see \code{\link{ManageData}}).}
 \item{vars}{list; an initial guess of the state variables. Integer components

@@ -14,8 +14,8 @@ EditLimits(lim = NULL, win.title = "Limits", parent = NULL)
 
 \arguments{
 \item{lim}{list; contains the current plotting limits, see \sQuote{Value}.}
-\item{win.title}{character; the title of the main window (optional).}
-\item{parent}{tkwin; the parent window (optional).}
+\item{win.title}{character; the title of the main window.}
+\item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
 \value{

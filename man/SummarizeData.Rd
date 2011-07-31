@@ -14,8 +14,8 @@ SummarizeData(obj, digits = NULL, units = NULL)
 
 \arguments{
 \item{obj}{an array object for which the summary is desired.}
-\item{digits}{integer; the decimal precision of the object (only pertains to
-  objects of class dQuote{numeric}).}
+\item{digits}{integer; the decimal precision of the object. Only pertains to
+  objects of numeric class.}
 \item{units}{integer; the date and time format, its default is
   \dQuote{\%Y-\%m-\%d \%H:\%M:\%S}.}
 }

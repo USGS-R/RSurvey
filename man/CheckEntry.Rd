@@ -5,7 +5,7 @@
 \title{Content Control within Entry Widget}
 
 \description{
-Content control for character strings based on an expected entry type.
+Content control for character strings based on an expected data type.
 }
 
 \usage{
@@ -23,8 +23,7 @@ The entry types include: \var{real}, \var{integer},
 }
 
 \value{
-A character string with strict adherence to the specified format of
-the entry type.
+A character string with strict adherence to the specified data format.
 }
 
 \author{Fisher, J.C.}

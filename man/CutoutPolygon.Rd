@@ -5,7 +5,7 @@
 \title{Determine Grid Points within Polygon}
 
 \description{
-This function excludes gridded data lying outside of a given polygon.
+This function excludes gridded data located outside a given polygon.
 }
 
 \usage{
@@ -26,8 +26,7 @@ outside the polygon will be set to \code{NA}.
 
 \value{
 Returns a list containing the following components:
-  \item{x}{numeric; a vector of \code{x} coordinates.}
-  \item{y}{numeric; a vector of \code{y} coordinates.}
+  \item{x, y}{numeric; a vector of \code{x} and \code{y} coordinates.}
   \item{z}{matrix; the state variable corresponding to coordinates in the grid.}
 }
 

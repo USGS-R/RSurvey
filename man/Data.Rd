@@ -5,7 +5,7 @@
 \title{Set or Query Data and Parameters}
 
 \description{
-A function to set or query all data and parameters used in \pkg{RSurvey}.
+A function to set or query parameters used in \pkg{RSurvey}.
 }
 
 \usage{
@@ -26,8 +26,8 @@ Data(option, value, clear.proj = FALSE, clear.data = FALSE,
 \section{Data}{
 Imported raw data is saved to the data frame \code{data.raw}
 (see \code{\link{ReadData}}). Processed point data is saved to the data frame
-\code{data.pts} and interpolated surface data to the list \code{data.grd}
-(see \code{\link{ProcessData}}).
+\code{data.pts} and interpolated surface data is saved to the list
+\code{data.grd} (see \code{\link{ProcessData}}).
 }
 
 \section{Parameters}{
@@ -42,7 +42,8 @@ Parameters undefined elsewhere in this documentation include:
 \value{
 If \code{value} is given the object specified by \code{option} is returned.
 A \code{NULL} value is returned for objects not yet assigned a value and where
-no default value is available.
+no default value is available. Default values are specified internally within
+this function.
 }
 
 \author{Fisher, J.C.}

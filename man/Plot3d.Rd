@@ -44,11 +44,11 @@ Plot3d(x = NULL, y = NULL, z = NULL,
   colors in the plot.}
 \item{mouse.mode}{character; a vector of 3 strings describing what the 3 mouse
   buttons do, see \code{par3d}.}
-\item{bg}{character; the primary color for the background.}
+\item{bg}{character; the primary background color.}
 }
 
 \details{
-The interpolated surface data is rendered using \pkg{rgl}, a \acronym{3D}
+The interpolated surface is rendered using \pkg{rgl}, a \acronym{3D}
 visualization device system for \R based on
 \href{http://www.opengl.org/}{OpenGL}.
 The mouse is used for interactive viewpoint navigation where

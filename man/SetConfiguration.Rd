@@ -14,7 +14,7 @@ SetConfiguration(parent = NULL)
 }
 
 \arguments{
-\item{parent}{tkwin; the parent window (optional).}
+\item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
 \value{
@@ -30,33 +30,31 @@ Queries and sets the following components of \code{\link{Data}}:
   respectively (optional).}
 \item{vmax}{numeric; the maximum length of arrows in inches (optional).}
 \item{vxby, vyby}{integer; increment for the sequence of arrows in the
-  \code{x} and \code{y} directions, respectively (optional).}
-\item{tgap}{numeric; the time gap exceedance level in seconds. A break in the
+  \code{x} and \code{y} directions, respectively.}
+\item{tgap}{numeric; the time-gap exceedance level in seconds. A break in the
   linear segments of the time-series plot will occur where differences between
   sequential temporal records is greater than \code{tgap}.}
 \item{rkey}{logical; if \code{TRUE} the legend key is reversed with \code{z}
-  values descending from top to bottom; its default is \code{FALSE}.}
+  values descending from top to bottom, its default is \code{FALSE}.}
 \item{img.contour}{logical; if \code{TRUE} the \code{\link{image}} function is
-  used to plot the interpolated surface; if \code{FALSE} (the default) the
+  used to plot interpolated surfaces; if \code{FALSE}, the default, the
   \code{\link{filled.contour}} function is used.}
-\item{show.arrows}{logical; if \code{TRUE} the vector arrows will be plotted;
-  its default is \code{FALSE}.}
 \item{show.lines}{logical; if \code{TRUE} the line contours will be plotted on
-  the two-dimensional interpolated surface; its default is \code{FALSE}.}
+  the two-dimensional interpolated surface, its default is \code{FALSE}.}
 \item{show.points}{logical; if \code{TRUE} the point values associated with
-  \code{(x,y)} will be plotted on the interpolated surface; its default is
+  \code{(x,y)} will be plotted on the interpolated surface, its default is
   \code{FALSE}.}
-\item{show.poly}{logical; if \code{TRUE} the polygons describing the spatial
+\item{show.poly}{logical; if \code{TRUE} polygons describing the spatial
   domain are added to the scatter plot and two-dimensional surface plot; its
   default is \code{FALSE}.}
 \item{vuni}{logical; if \code{TRUE} a constant arrow length specified by
-  \code{vmax} is used; its default is \code{FALSE}.}
+  \code{vmax} is used, its default is \code{FALSE}.}
 \item{show.2.axes}{logical; if \code{TRUE} axes tickmarks will be drawn
   on all sides, its default is \code{FALSE}.}
 \item{minor.ticks}{logical; if \code{TRUE} minor tickmarks are added to the
-  plot; its default is \code{FALSE}.}
+  plot, its default is \code{FALSE}.}
 \item{ticks.inside}{logical; if \code{TRUE} tickmarks are placed inside the
-  plot region; its default is \code{FALSE}.}
+  plot region, its default is \code{FALSE}.}
 }
 
 \note{

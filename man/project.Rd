@@ -23,7 +23,7 @@ graphical parameters, and options to control the way in which
 
 \examples{
 \donttest{data(project)
-# To load project data into RSurvey
+# To load a project data set into RSurvey
 Data(replace.all = project)
 }
 }

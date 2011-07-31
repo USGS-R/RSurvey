@@ -6,7 +6,7 @@
 
 \description{
 A \acronym{GUI} for converting between character representations and objects of
-class \dQuote{POSIXt} representing calendar dates and times.
+class \dQuote{POSIXt}, calendar dates and times.
 }
 
 \usage{
@@ -15,7 +15,7 @@ EditDateFormat(spec = "", parent = NULL)
 
 \arguments{
 \item{spec}{character; the conversion specification for date-time values.}
-\item{parent}{tkwin; the parent window (optional).}
+\item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
 \value{
