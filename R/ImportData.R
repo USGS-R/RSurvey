@@ -36,20 +36,14 @@ ImportData <- function(parent=NULL) {
 
   GetConnection <- function(src) {
     if (src == "") {
-      src <- "clipboard"
-      con <- textConnection(cb)
+      con <- try(textConnection(cb), silent=TRUE)
+    } else if (substr(src, 1, 6) %in% c("http:/", "ftp://", "file:/")) {
+      con <- try(url(description=src, open="r", encoding=enc), silent=TRUE)
+    } else if (GetFile(file=src)$ext == "gz") {
+      con <- try(gzfile(description=src, open="r", encoding=enc,
+                        compression=6), silent=TRUE)
     } else {
-      if (substr(src, 1, 6) %in% c("http:/", "ftp://", "file:/")) {
-        con <- try(url(description=src, open="r", encoding=enc),
-                   silent=TRUE)
-      } else {
-        ext <- GetFile(file=src)$ext
-        if (ext == "gz")
-          con <- try(gzfile(description=src, open="r", encoding=enc,
-                            compression=6), silent=TRUE)
-        else
-          con <- try(file(description=src, open="r", encoding=enc), silent=TRUE)
-      }
+      con <- try(file(description=src, open="r", encoding=enc), silent=TRUE)
     }
     con
   }
@@ -226,6 +220,7 @@ ImportData <- function(parent=NULL) {
   ClearData <- function() {
     cb <<- NULL
     tclvalue(source.var) <- ""
+    tclvalue(nrow.var) <- ""
     tclServiceMode(FALSE)
     ResetGUI()
     tclServiceMode(TRUE)
