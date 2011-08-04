@@ -8,10 +8,10 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
   # Determine file extension
 
   FileExt <- function(x) {
-      brk <- unlist(strsplit(basename(x), "\\."))
+    ext <- tolower(tail(unlist(strsplit(basename(x), "\\."))[-1], 1))
+    if (length(ext) == 0L)
       ext <- ""
-      if (length(brk) != 1)
-        ext <- tolower(tail(brk, 1))
+    ext
   }
 
 
