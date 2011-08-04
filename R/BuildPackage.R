@@ -18,12 +18,12 @@ BuildPackage <- function() {
   ver <- strsplit(grep("Version:", description, value=TRUE), " ")[[1]][2]
 
   path.pkg <- shQuote(getwd())
-  path.tmp <- shQuote(paste("C:/", pkg, sep=""))
-  path.git <- shQuote(paste("C:/", pkg, "/.git", sep=""))
+  path.tmp <- shQuote(file.path("C:", pkg))
+  path.git <- shQuote(file.path("C:", pkg, ".git"))
   path.tar <- shQuote(paste("C:/", pkg, "_", ver, ".tar.gz", sep=""))
   path.chk <- shQuote(paste("C:/", pkg, ".Rcheck", sep=""))
-  path.zip <- shQuote(paste(pkg, "_*", sep=""))
   path.cmd <- paste(R.home(component="bin"), "/Rcmd", sep="")
+  file.zip <- shQuote(paste(pkg, "_*", sep=""))
 
   cmd <- NULL
   cmd <- append(cmd, paste("RM -f ", getwd(), "/", pkg, "*", sep=""))
@@ -35,13 +35,13 @@ BuildPackage <- function() {
   cmd <- append(cmd, paste(path.cmd, "check", path.tar, sep=" "))
   cmd <- append(cmd, paste(path.cmd, "INSTALL --build", path.tmp, sep=" "))
   cmd <- append(cmd, paste("RMDIR /S /Q", path.tmp, sep=" "))
-  cmd <- append(cmd, paste("MOVE /Y", path.zip, path.pkg, sep=" "))
+  cmd <- append(cmd, paste("MOVE /Y", file.zip, path.pkg, sep=" "))
 
   cmd <- paste(Sys.getenv("COMSPEC"), "/c", cmd, sep=" ")
 
   f <- tcl("tk_getSaveFile", defaultextension=".bat",
            title="Save Batch file As", initialfile=paste(pkg, ".bat", sep=""),
-           initialdir=paste(getwd(), "/..", sep=""))
+           initialdir=file.path(getwd(), ".."))
   f <- as.character(f)
 
   if (length(f) == 0)

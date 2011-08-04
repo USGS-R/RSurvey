@@ -289,7 +289,7 @@ OpenRSurvey <- function() {
     if ("package:RSurvey" %in% search())
       path <- system.file("DESCRIPTION", package="RSurvey")
     else
-      path <- paste(getwd(), "/DESCRIPTION", sep="")
+      path <- file.path(getwd(), "DESCRIPTION")
     msg <- paste(readLines(path, n=-1L), collapse="\n")
     tkmessageBox(icon="info", message=msg, title="About", parent=tt)
   }
@@ -761,7 +761,7 @@ OpenRSurvey <- function() {
   if ("package:RSurvey" %in% search())
     image.path <- system.file("images", package="RSurvey")
   else
-    image.path <- paste(path, "/inst/images/", sep="")
+    image.path <- file.path(path, "inst", "images")
 
   # Set options
 
@@ -928,8 +928,8 @@ OpenRSurvey <- function() {
       tkadd(menu.help, "command", label="Restore R session",
             command=function() {
               CloseGUI()
-              RestoreSession(paste(getwd(), "R", sep="/"),
-                             save.objs="Data", fun.call="OpenRSurvey")
+              RestoreSession(file.path(getwd(), "R"), save.objs="Data",
+                             fun.call="OpenRSurvey")
             })
   }
 
@@ -954,23 +954,23 @@ OpenRSurvey <- function() {
   tkpack(frame0, side="top", fill="x")
 
   tkimage.create("photo", new.var, format="GIF",
-                 file=paste(image.path, "new.gif", sep="/"))
+                 file=file.path(image.path, "new.gif"))
   tkimage.create("photo", save.var, format="GIF",
-                 file=paste(image.path, "save.gif", sep="/"))
+                 file=file.path(image.path, "save.gif"))
   tkimage.create("photo", import.var, format="GIF",
-                 file=paste(image.path, "import.gif", sep="/"))
+                 file=file.path(image.path, "import.gif"))
   tkimage.create("photo", data.var, format="GIF",
-                 file=paste(image.path, "data.gif", sep="/"))
+                 file=file.path(image.path, "data.gif"))
   tkimage.create("photo", polygon.var, format="GIF",
-                 file=paste(image.path, "polygon.gif", sep="/"))
+                 file=file.path(image.path, "polygon.gif"))
   tkimage.create("photo", config.var, format="GIF",
-                 file=paste(image.path, "config.gif", sep="/"))
+                 file=file.path(image.path, "config.gif"))
   tkimage.create("photo", axes.var, format="GIF",
-                 file=paste(image.path, "axes.gif", sep="/"))
+                 file=file.path(image.path, "axes.gif"))
   tkimage.create("photo", help.var, format="GIF",
-                 file=paste(image.path, "help.gif", sep="/"))
+                 file=file.path(image.path, "help.gif"))
   tkimage.create("photo", close.var, format="GIF",
-                 file=paste(image.path, "close.gif", sep="/"))
+                 file=file.path(image.path, "close.gif"))
 
   frame0.but.1  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=new.var,
