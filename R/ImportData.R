@@ -3,6 +3,15 @@ ImportData <- function(parent=NULL) {
 
   # Additional functions (subroutines)
 
+  # Convert image bits to the image data string format
+
+    BitsToString <- function(bits) {
+      n <- length(bits) / 2
+      paste("#define v_width ", n, "\n#define v_height ", n, "\n",
+            "static unsigned char v_bits[] = { ", paste(bits, collapse=", "),
+            " }; ", sep="")
+    }
+
   # Raise error message for bad connection
 
   RaiseError <- function() {
@@ -23,10 +32,9 @@ ImportData <- function(parent=NULL) {
     }
   }
 
-  # Read file and populate example table
+  # Establish data connection
 
-  ReadFile <- function(summary.only=TRUE) {
-    src <- as.character(tclvalue(source.var))
+  GetConnection <- function(src) {
     if (src == "") {
       src <- "clipboard"
       con <- textConnection(cb)
@@ -43,6 +51,14 @@ ImportData <- function(parent=NULL) {
           con <- try(file(description=src, open="r", encoding=enc), silent=TRUE)
       }
     }
+    con
+  }
+
+  # Read file and populate example table
+
+  ReadFile <- function(summary.only=TRUE) {
+    src <- as.character(tclvalue(source.var))
+    con <- GetConnection(src)
 
     if (inherits(con, "try-error") || !isOpen(con, "r")) {
       RaiseError()
@@ -109,7 +125,6 @@ ImportData <- function(parent=NULL) {
         Data("headers", hds)
         Data("skip", skp)
         Data("sep", sep)
-        Data("nrows", if (nrw < 1) NULL else nrw)
         Data("na.strings", nas)
         Data("quote", quo)
         Data("comment.char", com)
@@ -160,11 +175,20 @@ ImportData <- function(parent=NULL) {
 
   # Determine the number of lines in a file
 
-  NumLinesInFile <- function(con, max.rows=50000) {
+  NumLinesInFile <- function() {
+    src <- as.character(tclvalue(source.var))
+    con <- GetConnection(src)
+    if (inherits(con, "try-error"))
+      return()
+
+    tkconfigure(tt, cursor="watch")
     total.rows <- 0
-    while ((read.rows <- length(readLines(con, max.rows))) > 0)
+    while ((read.rows <- length(readLines(con, n=50000))) > 0)
       total.rows <- total.rows + read.rows
-    total.rows
+    tkconfigure(tt, cursor="arrow")
+
+    close(con)
+    tclvalue(nrow.var) <- total.rows
   }
 
   # Data file
@@ -182,18 +206,6 @@ ImportData <- function(parent=NULL) {
       tcl(frame3.box.1.2, "current", match(",", sep0) - 1)
 
     RebuildTable()
-
-    if (f$ext == "gz")
-      con <- try(gzfile(f$path, open="r", encoding=enc), silent=TRUE)
-    else
-      con <- try(file(f$path, open="r", encoding=enc), silent=TRUE)
-    if (!inherits(con, "try-error")) {
-      tkconfigure(tt, cursor="watch")
-      nlines <- NumLinesInFile(con)
-      tkconfigure(tt, cursor="arrow")
-      close(con)
-      tclvalue(nrow.var) <- nlines
-    }
   }
 
   # Paste clipboard
@@ -452,10 +464,17 @@ ImportData <- function(parent=NULL) {
          }
   )
 
+  bits <- c('0x3c', '0x00', '0x42', '0x00', '0x81', '0x00', '0x81', '0x00',
+            '0x81', '0x00', '0x81', '0x00', '0x42', '0x00', '0xbc', '0x01',
+            '0x80', '0x03', '0x00', '0x07', '0x00', '0x06')
+  find.image <- tkimage.create("bitmap", data=as.tclObj(BitsToString(bits)))
+  frame3.but.2.7 <- ttkbutton(frame3, width=2, image=find.image,
+                              command=NumLinesInFile)
+
   tkgrid(frame3.lab.1.1, frame3.box.1.2, frame3.lab.1.3, frame3.box.1.4,
          frame3.lab.1.5, frame3.ent.1.6)
   tkgrid(frame3.lab.2.1, frame3.box.2.2, frame3.lab.2.3, frame3.box.2.4,
-         frame3.lab.2.5, frame3.ent.2.6, pady=c(5, 0))
+         frame3.lab.2.5, frame3.ent.2.6, frame3.but.2.7, pady=c(5, 0))
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.1.3, frame3.lab.1.5,
                    frame3.lab.2.1, frame3.lab.2.3, frame3.lab.2.5,
@@ -472,8 +491,6 @@ ImportData <- function(parent=NULL) {
 
   if (!is.null(Data("skip")))
     tclvalue(skip.var) <- Data("skip")
-  if (!is.null(Data("nrows")))
-    tclvalue(nrow.var) <- Data("nrows")
 
   if (!is.null(Data("sep")))
     tcl(frame3.box.1.2, "current", match(Data("sep"), sep0) - 1)
