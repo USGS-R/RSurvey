@@ -31,12 +31,17 @@ ImportData <- function(parent=NULL) {
       src <- "clipboard"
       con <- textConnection(cb)
     } else {
-      if (substr(src, 1, 6) %in% c("http:/", "ftp://", "file:/"))
-        con <- try(url(description=src, open="r", encoding=encoding),
+      if (substr(src, 1, 6) %in% c("http:/", "ftp://", "file:/")) {
+        con <- try(url(description=src, open="r", encoding=enc),
                    silent=TRUE)
-      else
-        con <- try(gzfile(description=src, open="r", encoding=encoding,
-                          compression=6), silent=TRUE)
+      } else {
+        ext <- GetFile(file=src)$ext
+        if (ext == "gz")
+          con <- try(gzfile(description=src, open="r", encoding=enc,
+                            compression=6), silent=TRUE)
+        else
+          con <- try(file(description=src, open="r", encoding=enc), silent=TRUE)
+      }
     }
 
     if (inherits(con, "try-error") || !isOpen(con, "r")) {
@@ -155,14 +160,10 @@ ImportData <- function(parent=NULL) {
 
   # Determine the number of lines in a file
 
-  NumLinesInFile <- function(f, max.rows=50000) {
-    con <- try(gzfile(f, open="r", encoding=encoding), silent=TRUE)
-    if (inherits(con, "try-error"))
-      return()
+  NumLinesInFile <- function(con, max.rows=50000) {
     total.rows <- 0
     while ((read.rows <- length(readLines(con, max.rows))) > 0)
       total.rows <- total.rows + read.rows
-    close(con)
     total.rows
   }
 
@@ -175,17 +176,24 @@ ImportData <- function(parent=NULL) {
     if (is.null(f))
       return()
     tclvalue(source.var) <- f$path
+    tclvalue(nrow.var) <- ""
     cb <<- NULL
     if (f$ext == "csv")
       tcl(frame3.box.1.2, "current", match(",", sep0) - 1)
 
     RebuildTable()
 
-    tkconfigure(tt, cursor="watch")
-    nlines <- NumLinesInFile(f$path)
-    if (!is.null(nlines))
+    if (f$ext == "gz")
+      con <- try(gzfile(f$path, open="r", encoding=enc), silent=TRUE)
+    else
+      con <- try(file(f$path, open="r", encoding=enc), silent=TRUE)
+    if (!inherits(con, "try-error")) {
+      tkconfigure(tt, cursor="watch")
+      nlines <- NumLinesInFile(con)
+      tkconfigure(tt, cursor="arrow")
+      close(con)
       tclvalue(nrow.var) <- nlines
-    tkconfigure(tt, cursor="arrow")
+    }
   }
 
   # Paste clipboard
@@ -298,7 +306,7 @@ ImportData <- function(parent=NULL) {
   com1 <- c("", "Number sign ( # )", "Exclamation ( ! )",
             "Backslash ( \\\\ )", "Tilde ( ~ )")
 
-  encoding <- Data("encoding")
+  enc <- Data("encoding")
 
   # Assign variables linked to Tk widgets
 
