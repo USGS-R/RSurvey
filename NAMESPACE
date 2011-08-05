@@ -1,7 +1,8 @@
 importFrom(sp, point.in.polygon)
 importFrom(MBA, mba.points)
 importFrom(rgl, surface3d, points3d)
-importFrom(gpclib, read.polyfile, write.polyfile, get.pts, get.bbox, area.poly)
+importFrom(gpclib, read.polyfile, write.polyfile, get.pts, get.bbox, area.poly,
+           union, setdiff, intersect)
 importClassesFrom(gpclib, gpc.poly)
 
 export(AddAxis,

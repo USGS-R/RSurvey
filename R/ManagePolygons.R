@@ -43,7 +43,7 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
 
   # Plot polygon
 
-  PlotPolygon <- function(){
+  PlotPolygon <- function() {
 
     # Draw polygon in canvas
 
@@ -105,7 +105,6 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
     }
 
     base.pts <- get.pts(base.ply)
-
     if (length(base.pts) == 0) {
       base.ply <<- NULL
     } else {
@@ -518,8 +517,6 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
   n <- length(ply)
   if (n > 0)
     tkselection.set(frame1.lst, n - 1)
-
-  tkbind(frame1.lst, "<ButtonRelease-1>", PlotPolygon)
 
   # Frame 2
 
