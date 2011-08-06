@@ -3,15 +3,6 @@ ImportData <- function(parent=NULL) {
 
   # Additional functions (subroutines)
 
-  # Convert image bits to the image data string format
-
-    BitsToString <- function(bits) {
-      n <- length(bits) / 2
-      paste("#define v_width ", n, "\n#define v_height ", n, "\n",
-            "static unsigned char v_bits[] = { ", paste(bits, collapse=", "),
-            " }; ", sep="")
-    }
-
   # Raise error message for bad connection
 
   RaiseError <- function() {
@@ -459,11 +450,7 @@ ImportData <- function(parent=NULL) {
          }
   )
 
-  bits <- c('0x3c', '0x00', '0x42', '0x00', '0x81', '0x00', '0x81', '0x00',
-            '0x81', '0x00', '0x81', '0x00', '0x42', '0x00', '0xbc', '0x01',
-            '0x80', '0x03', '0x00', '0x07', '0x00', '0x06')
-  find.image <- tkimage.create("bitmap", data=as.tclObj(BitsToString(bits)))
-  frame3.but.2.7 <- ttkbutton(frame3, width=2, image=find.image,
+  frame3.but.2.7 <- ttkbutton(frame3, width=2, image=GetBitmapImage("find"),
                               command=NumLinesInFile)
 
   tkgrid(frame3.lab.1.1, frame3.box.1.2, frame3.lab.1.3, frame3.box.1.4,
