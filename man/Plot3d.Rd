@@ -24,7 +24,8 @@ Plot3d(x = NULL, y = NULL, z = NULL,
   measured. These must be in ascending order. If \code{x} is a list, its
   components \code{x$x} and \code{x$y} are used for \code{x} and \code{y},
   respectively. If the list has component \code{x$z} this is used for \code{z}.}
-\item{z}{matrix; the values to be plotted.}
+\item{z}{matrix; the values to be plotted. The number of rows and columns
+  should be equal to the \code{length(x)} and \code{length(y)}, respectively.}
 \item{px}{numeric; a vector of \code{x} coordinates for points in the plot.
   If \code{px} is a list, its components \code{px$px}, \code{px$py} and
   \code{px$pz} are used for \code{px}, \code{py} and \code{pz}, respectively.}
