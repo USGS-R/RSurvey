@@ -200,22 +200,16 @@ OpenRSurvey <- function() {
 
     vars <- list()
 
-    vars$x <- NULL
     if (idx.x > 0)
       vars$x <- idxs.n[idx.x]
-    vars$y <- NULL
     if (idx.y > 0)
       vars$y <- idxs.n[idx.y]
-    vars$z <- NULL
     if (idx.z > 0)
       vars$z <- idxs.n[idx.z]
-    vars$t <- NULL
     if (idx.t > 0)
       vars$t <- idxs.t[idx.t]
-    vars$vx <- NULL
     if (idx.vx > 0)
       vars$vx <- idxs.n[idx.vx]
-    vars$vy <- NULL
     if (idx.vy > 0)
       vars$vy <- idxs.n[idx.vy]
 
@@ -396,13 +390,15 @@ OpenRSurvey <- function() {
     if (is.null(Data("data.pts")))
       return()
 
-    dat <- Data("data.pts")
-    lim <- Data("lim.axes")
-    cols <- Data("cols")
-    vars <- Data("vars")
-    tgap <- Data("tgap")
-    width <- Data("width")
-    cex.pts <- Data("cex.pts")
+    dat          <- Data("data.pts")
+    lim          <- Data("lim.axes")
+    cols         <- Data("cols")
+    vars         <- Data("vars")
+    tgap         <- Data("tgap")
+    width        <- Data("width")
+    cex.pts      <- Data("cex.pts")
+    minor.ticks  <- Data("minor.ticks")
+    ticks.inside <- Data("ticks.inside")
 
     ylab <- cols[[vars$z]]$id
 
@@ -413,8 +409,8 @@ OpenRSurvey <- function() {
     tkconfigure(tt, cursor="watch")
     PlotTimeSeries(x=dat$t, y=dat$z, xlim=lim$t, ylim=lim$z, ylab=ylab,
                    tgap=tgap, width=width, cex.pts=cex.pts,
-                   axis.side=axis.side, minor.ticks=Data("minor.ticks"),
-                   ticks.inside=Data("ticks.inside"))
+                   axis.side=axis.side, minor.ticks=minor.ticks,
+                   ticks.inside=ticks.inside)
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }
