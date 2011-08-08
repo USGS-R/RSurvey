@@ -43,9 +43,9 @@ SetPolygonLimits <- function(poly.names=NULL, poly.data=NULL, poly.crop=NULL,
 
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
-    tmp <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(tmp[2]) + 25,
-                            "+", as.integer(tmp[3]) + 25, sep=""))
+    geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
+    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
+                            "+", as.integer(geo[3]) + 25, sep=""))
   }
 
   tktitle(tt) <- "Polygon Limits"

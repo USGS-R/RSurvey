@@ -32,9 +32,10 @@ ProcessData <- function(d, type="p", lim=NULL, ply=NULL,
       all.pts <- get.pts(ply)
       for (i in seq(along=all.pts)) {
         pts <- all.pts[[i]]
-        tmp <- point.in.polygon(point.x=d$x, point.y=d$y,
-                                pol.x=pts$x, pol.y=pts$y)
-        d <- d[if (pts$hole) tmp != 1 else tmp != 0, ]
+        is.in <- point.in.polygon(point.x=d$x, point.y=d$y,
+                                  pol.x=pts$x, pol.y=pts$y)
+        is.in <- if (pts$hole) is.in != 1 else is.in != 0
+        d <- d[is.in, ]
       }
     }
 

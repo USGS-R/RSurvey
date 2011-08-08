@@ -306,8 +306,9 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
     if (is.matrix(vx) | is.matrix(vy)) {
       m <- length(y)
       n <- length(x)
-      tmp <- as.vector(matrix(rep(y, n), nrow=n, ncol=m, byrow=TRUE))
-      v <- data.frame(cbind(x=rep(x, m), y=tmp))
+      x.coord <- rep(x, m)
+      y.coord <- as.vector(matrix(rep(y, n), nrow=n, ncol=m, byrow=TRUE))
+      v <- data.frame(cbind(x=x.coord, y=y.coord))
     } else {
       v <- data.frame(cbind(x=x, y=y))
     }

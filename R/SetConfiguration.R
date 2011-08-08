@@ -4,32 +4,32 @@ SetConfiguration <- function(parent=NULL) {
   # Additional functions (subroutines)
 
   UpdatePar <- function() {
-    tmp <- as.integer(tclvalue(nlevels.var))
-    Data("nlevels", if (is.na(tmp)) NULL else tmp)
+    val <- as.integer(tclvalue(nlevels.var))
+    Data("nlevels", if (is.na(val)) NULL else val)
 
-    tmp <- as.numeric(tclvalue(width.var))
-    Data("width", if (is.na(tmp)) NULL else tmp)
+    val <- as.numeric(tclvalue(width.var))
+    Data("width", if (is.na(val)) NULL else val)
 
-    tmp <- as.numeric(tclvalue(cex.pts.var))
-    Data("cex.pts", if (is.na(tmp)) NULL else tmp)
+    val <- as.numeric(tclvalue(cex.pts.var))
+    Data("cex.pts", if (is.na(val)) NULL else val)
 
-    tmp <- as.numeric(tclvalue(asp.yx.var))
-    Data("asp.yx", if (is.na(tmp)) NULL else tmp)
+    val <- as.numeric(tclvalue(asp.yx.var))
+    Data("asp.yx", if (is.na(val)) NULL else val)
 
-    tmp <- as.numeric(tclvalue(asp.zx.var))
-    Data("asp.zx", if (is.na(tmp)) NULL else tmp)
+    val <- as.numeric(tclvalue(asp.zx.var))
+    Data("asp.zx", if (is.na(val)) NULL else val)
 
-    tmp <- as.numeric(tclvalue(vmax.var))
-    Data("vmax", if (is.na(tmp)) NULL else tmp)
+    val <- as.numeric(tclvalue(vmax.var))
+    Data("vmax", if (is.na(val)) NULL else val)
 
-    tmp <- as.numeric(tclvalue(vxby.var))
-    Data("vxby", if (is.na(tmp)) NULL else tmp)
+    val <- as.numeric(tclvalue(vxby.var))
+    Data("vxby", if (is.na(val)) NULL else val)
 
-    tmp <- as.numeric(tclvalue(vyby.var))
-    Data("vyby", if (is.na(tmp)) NULL else tmp)
+    val <- as.numeric(tclvalue(vyby.var))
+    Data("vyby", if (is.na(val)) NULL else val)
 
-    tmp <- as.integer(tclvalue(tgap.var))
-    Data("tgap", if (is.na(tmp)) NULL else tmp)
+    val <- as.integer(tclvalue(tgap.var))
+    Data("tgap", if (is.na(val)) NULL else val)
 
     Data("rkey", as.integer(tclvalue(rkey.var)))
     Data("img.contour", as.integer(tclvalue(img.contour.var)))
@@ -112,9 +112,9 @@ SetConfiguration <- function(parent=NULL) {
   tt <- tktoplevel(padx=0, pady=0)
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
-    tmp <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(tmp[2]) + 25,
-                            "+", as.integer(tmp[3]) + 25, sep=""))
+    geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
+    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
+                            "+", as.integer(geo[3]) + 25, sep=""))
   }
   tktitle(tt) <- "Configuration"
 

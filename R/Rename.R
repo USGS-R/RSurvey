@@ -43,9 +43,9 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
 
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
-    tmp <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(tmp[2]) + 25,
-                            "+", as.integer(tmp[3]) + 25, sep=""))
+    geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
+    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
+                            "+", as.integer(geo[3]) + 25, sep=""))
   }
 
   if (!is.null(win.title))
@@ -60,10 +60,12 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
   frame0.lab.1 <- ttklabel(frame0, text="Old name")
   frame0.lab.2 <- ttklabel(frame0, text="New name")
 
-  tmp <- names
-  if (length(tmp) == 1)
-    tmp <- paste("{", names, "}", sep="")
-  frame0.box.1 <- ttkcombobox(frame0, state="readonly", values=tmp,
+  if (length(names) == 1)
+    prep.names <- paste("{", names, "}", sep="")
+  else
+    prep.names <- names
+
+  frame0.box.1 <- ttkcombobox(frame0, state="readonly", values=prep.names,
                               textvariable=old.var)
 
   frame0.ent.1 <- ttkentry(frame0, textvariable=new.var)

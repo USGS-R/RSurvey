@@ -252,8 +252,8 @@ OpenRSurvey <- function() {
   SaveRDevice <- function() {
     if (is.null(dev.list()))
       return()
-    tmp <- c("eps", "png", "jpg", "jpeg", "pdf", "bmp", "tif", "tiff")
-    f <- GetFile(cmd="Save As", exts=tmp, win.title="Save R Graphic As",
+    exts <- c("eps", "png", "jpg", "jpeg", "pdf", "bmp", "tif", "tiff")
+    f <- GetFile(cmd="Save As", exts=exts, win.title="Save R Graphic As",
                  defaultextension="eps", parent=tt)
     if (is.null(f))
       return()
@@ -542,9 +542,10 @@ OpenRSurvey <- function() {
           pts <- get.pts(ply.new)
           logic <- rep(TRUE, nrow(dat))
           for (i in seq(along=pts)) {
-              tmp <- point.in.polygon(point.x=dat$x, point.y=dat$y,
-                                      pol.x=pts[[i]]$x, pol.y=pts[[i]]$y) > 0
-              logic <- logic & if (pts[[i]]$hole) !tmp else tmp
+              is.in <-  point.in.polygon(point.x=dat$x, point.y=dat$y,
+                                         pol.x=pts[[i]]$x, pol.y=pts[[i]]$y) > 0
+              is.in <- if (pts[[i]]$hole) !is.in else is.in
+              logic <- logic & is.in
           }
           if (any(logic)) {
             points(dat$x[logic], dat$y[logic], col="red",
@@ -900,8 +901,8 @@ OpenRSurvey <- function() {
 
   tkadd(menu.plot, "command", label="Set axes limits",
         command=function() {
-          tmp <- EditLimits(Data("lim.axes"), "Axes Limits", tt)
-          Data("lim.axes", tmp)
+          lim <- EditLimits(Data("lim.axes"), "Axes Limits", tt)
+          Data("lim.axes", lim)
         })
 
   tkadd(menu.plot, "separator")
@@ -989,9 +990,9 @@ OpenRSurvey <- function() {
   frame0.but.7  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=axes.var,
                             command=function() {
-                             tmp <- EditLimits(Data("lim.axes"),
+                             lim <- EditLimits(Data("lim.axes"),
                                                "Axes Limits", tt)
-                             Data("lim.axes", tmp)
+                             Data("lim.axes", lim)
                            })
   frame0.but.8  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=help.var,
@@ -1057,8 +1058,8 @@ OpenRSurvey <- function() {
                               })
   frame2.but.1.2 <- ttkbutton(frame2, width=15, text="2D Surface",
                               command=function() {
-                                tmp <- if (Data("img.contour")) "g" else "l"
-                                CallPlot2d(type=tmp)
+                                type <- if (Data("img.contour")) "g" else "l"
+                                CallPlot2d(type=type)
                               })
   frame2.but.2.1 <- ttkbutton(frame2, width=15, text="Time Series",
                               command=CallPlotTimeSeries)

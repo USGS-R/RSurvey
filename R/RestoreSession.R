@@ -19,8 +19,8 @@ RestoreSession <- function(path, save.objs, fun.call) {
   if (missing(save.objs))
     save.objs <- NULL
 
-  tmp <- ls(all.names=FALSE, envir=as.environment(1))
-  cur.objs <- tmp[!tmp %in% save.objs]
+  all.objs <- ls(all.names=FALSE, envir=as.environment(1))
+  cur.objs <- all.objs[!all.objs %in% save.objs]
 
   graphics.off()
 
@@ -33,8 +33,8 @@ RestoreSession <- function(path, save.objs, fun.call) {
 
   cat("\n")
   for (i in r.files) {
-    tmp <- tail(unlist(strsplit(i, "/")), 1)
-    obj <- substr(tmp, 1, nchar(tmp) - 2)
+    file.name <- tail(unlist(strsplit(i, "/")), 1)
+    obj <- substr(file.name, 1, nchar(file.name) - 2)
 
     if (!obj %in% save.objs) {
       ans <- try(source(i), silent=TRUE)

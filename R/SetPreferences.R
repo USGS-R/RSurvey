@@ -66,9 +66,9 @@ SetPreferences <- function(parent=NULL) {
   tt <- tktoplevel(padx=0, pady=0)
   if (!is.null(parent)) {
       tkwm.transient(tt, parent)
-      tmp <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-      tkwm.geometry(tt, paste("+", as.integer(tmp[2]) + 25,
-                              "+", as.integer(tmp[3]) + 25, sep=""))
+      geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
+      tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
+                              "+", as.integer(geo[3]) + 25, sep=""))
   }
   tktitle(tt) <- "Preferences"
 

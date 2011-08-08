@@ -120,9 +120,9 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
       id <- paste(c(nam, unt), collapse=", ")
       i <- 1
 
-      hld <- id
+      hold.id <- id
       while (id %in% ids) {
-        id <- paste(hld, " (", i, ")", sep="")
+        id <- paste(hold.id, " (", i, ")", sep="")
         i <- i + 1
       }
       ids <- c(ids, id)

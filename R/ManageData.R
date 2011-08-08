@@ -47,9 +47,9 @@ ManageData <- function(cols, vars, parent=NULL) {
     old.ids <- sapply(cols, function(i) i$id)
 
     i <- 1
-    hld <- new.id
+    hold.new.id <- new.id
     while (new.id %in% old.ids[-idx]) {
-      new.id <- paste(hld, " (", i, ")", sep="")
+      new.id <- paste(hold.new.id, " (", i, ")", sep="")
       i <- i + 1
     }
     cols[[idx]]$id <<- new.id
@@ -86,22 +86,25 @@ ManageData <- function(cols, vars, parent=NULL) {
     # Save units
 
     old.unt <- cols[[idx]]$unit
-    tmp <- tclvalue(unit.var)
-    new.unt <- if (tmp == "") NULL else as.character(tmp)
+    new.unt <- as.character(tclvalue(unit.var))
+    if (new.unt == "")
+      new.unt <- NULL
     cols[[idx]]$unit <<- new.unt
 
     # Save decimals
 
     old.dig <- cols[[idx]]$digits
-    tmp <- tclvalue(digs.var)
-    new.dig <- if (tmp == "") NULL else as.integer(tmp)
+    new.dig <- as.integer(tclvalue(digs.var))
+    if (is.na(new.dig))
+      new.dig <- NULL
     cols[[idx]]$digits <<- new.dig
 
     # Save function
 
     old.fun <- cols[[idx]]$fun
-    tmp <- as.character(tclvalue(tkget(frame2.txt.5.2, '1.0', 'end-1c')))
-    new.fun <- if (tmp == "") "NA" else as.character(tmp)
+    new.fun <- as.character(tclvalue(tkget(frame2.txt.5.2, '1.0', 'end-1c')))
+    if (new.fun == "")
+      new.fun <- "NA"
     cols[[idx]]$fun <<- new.fun
 
     # Save summary
@@ -124,8 +127,10 @@ ManageData <- function(cols, vars, parent=NULL) {
 
     # Save comments
 
-    tmp <- sub("\n$", "", tclvalue(tkget(frame4.txt, '1.0', 'end')))
-    cols[[idx]]$comments <<- if (tmp == "") NULL else tmp
+    new.comments <- sub("\n$", "", tclvalue(tkget(frame4.txt, '1.0', 'end')))
+    if (new.comments == "")
+      new.comments <- NULL
+    cols[[idx]]$comments <<- new.comments
 
     # Save name
 
@@ -143,13 +148,17 @@ ManageData <- function(cols, vars, parent=NULL) {
 
     # Update name
 
-    tmp <- cols[[idx]]$name
-    tclvalue(name.var) <- if (is.null(tmp)) "" else tmp
+    saved.name <- cols[[idx]]$name
+    if (is.null(saved.name))
+      saved.name <- ""
+    tclvalue(name.var) <- saved.name
 
     # Update units
 
-    tmp <- cols[[idx]]$unit
-    tclvalue(unit.var) <- if (is.null(tmp)) "" else tmp
+    saved.unit <- cols[[idx]]$unit
+    if (is.null(saved.unit))
+      saved.unit <- ""
+    tclvalue(unit.var) <- saved.unit
 
     if (cols[[idx]]$class == "POSIXct") {
       tkconfigure(frame2.ent.2.2, state="readonly")
@@ -164,8 +173,10 @@ ManageData <- function(cols, vars, parent=NULL) {
     tkconfigure(frame2.ent.3.2, state="normal")
     tclvalue(digs.var) <- cols[[idx]]$digits
     if (cols[[idx]]$class == "numeric") {
-      tmp <- cols[[idx]]$digits
-      tclvalue(digs.var) <- if (is.null(tmp)) "" else tmp
+      saved.digs <- cols[[idx]]$digits
+      if (is.null(saved.digs))
+        saved.digs <- ""
+      tclvalue(digs.var) <- saved.digs
     } else {
       tclvalue(digs.var) <- ""
       tkconfigure(frame2.ent.3.2, state="disabled")
@@ -263,9 +274,9 @@ ManageData <- function(cols, vars, parent=NULL) {
     if (length(idx) == 0)
       return()
 
-    txt <- paste("DATA[[\"", cols[[idx]]$id, "\"]]", sep="")
-    tmp <- grep(txt, sapply(cols, function(i) i$fun), fixed=TRUE)
-    dependent.vars <- tmp[!tmp %in% idx]
+    var.str <- paste("DATA[[\"", cols[[idx]]$id, "\"]]", sep="")
+    funs.with.var <- grep(var.str, sapply(cols, function(i) i$fun), fixed=TRUE)
+    dependent.vars <- funs.with.var[!funs.with.var %in% idx]
 
     if (length(dependent.vars) > 0) {
       msg <- paste("Removal of this variable first requires that the",
@@ -461,9 +472,9 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
-    tmp <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(tmp[2]) + 25,
-                            "+", as.integer(tmp[3]) + 25, sep=""))
+    geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
+    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
+                            "+", as.integer(geo[3]) + 25, sep=""))
   }
   tktitle(tt) <- "Manage Data"
 
