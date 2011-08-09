@@ -334,7 +334,7 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
       return()
     if (!is.list(f[[1]]))
       f <- list(f)
-    for (i in seq(along=f)) {
+    for (i in rev(seq(along=f))) {
       con <- file(f[[i]]$path, "r", encoding=encoding)
       new.poly <- read.polyfile(con, nohole=FALSE)
       close(con)
