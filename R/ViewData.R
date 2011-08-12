@@ -16,6 +16,72 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
     tkselection.set(frame2.tbl, "origin", "end")
   }
 
+  # Find value in table
+
+  Find <- function(direction="next") {
+    pattern <- as.character(tclvalue(pattern.var))
+    if (pattern == "")
+      return()
+
+    if (is.null(matched.cells)) {
+      n <- ncol(d) - 1L
+      matched.idxs <- grep(pattern, t(d[-1, -1]))
+      if (length(matched.idxs) == 0) {
+        warning("no matches")
+        return()
+      }
+      col.div <- matched.idxs / n
+      i <- ceiling(col.div)
+      j <- n * (col.div - trunc(col.div))
+      j[j == 0] <- n
+      matched.cells <<- cbind(i, j)
+    }
+
+    active.i <- as.integer(tcl(frame2.tbl, "tag", "row", "active"))
+    active.j <- as.integer(tcl(frame2.tbl, "tag", "col", "active"))
+    if (length(active.i) == 0) {
+      active.i <- 1
+      active.j <- 1
+    }
+
+    cell.below <- matched.cells[, 1] > active.i |
+                 (matched.cells[, 1] == active.i &
+                  matched.cells[, 2] > active.j)
+    cell.above <- !cell.below &
+                  !(matched.cells[, 1] == active.i &
+                    matched.cells[, 2] == active.j)
+
+    any.below <- any(cell.below)
+    any.above <- any(cell.above)
+
+    if (direction == "next") {
+      if (any.below) {
+        cell <- head(matched.cells[cell.below, , drop=FALSE], n=1)
+      } else if (any.above) {
+        cell <- head(matched.cells[cell.above, , drop=FALSE], n=1)
+      } else {
+        return()
+      }
+    } else {
+      if (any.above) {
+        cell <- tail(matched.cells[cell.above, , drop=FALSE], n=1)
+      } else if (any.below) {
+        cell <- tail(matched.cells[cell.below, , drop=FALSE], n=1)
+      } else {
+        return()
+      }
+    }
+
+    cell.str <- paste(cell[1, 1], cell[1, 2], sep=",")
+    tkselection.clear(frame2.tbl, "all")
+
+    tkactivate(frame2.tbl, cell.str)
+    tkselection.set(frame2.tbl, cell.str)
+
+    tkyview(frame2.tbl, cell[1, 1] - 1L)
+    tkxview(frame2.tbl, cell[1, 2] - 1L)
+  }
+
   # Goto line number
 
   GotoLine <- function() {
@@ -36,15 +102,15 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
     } else {
       idx <- idx[1]
     }
-    tkyview(frame2.tbl, idx - 1)
+    tkyview(frame2.tbl, idx - 1L)
   }
 
   # Get single cell value for table, a simplified version of
-  #   as.tclObj(as.character(x), drop=TRUE) is used.
+  # as.tclObj(as.character(x), drop=TRUE) is used.
 
   GetCellValue <- function(r, c) {
     val <- .External("RTcl_ObjFromCharVector",
-                     d[as.integer(r) + 1, as.integer(c) + 1],
+                     d[as.integer(r) + 1L, as.integer(c) + 1L],
                      drop=TRUE, PACKAGE="tcltk")
     class(val) <- "tclObj"
     val
@@ -59,6 +125,10 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
                               silent=TRUE), "try-error")
   if (!is.tktable)
     return()
+
+  # Initialize search results
+
+  matched.cells <- NULL
 
   # Number of rows and columns
 
@@ -131,6 +201,7 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
   table.var <- tclArray()
   line.no.var <- tclVar()
+  pattern.var <- tclVar()
   tt.done.var <- tclVar(0)
 
   # Open GUI
@@ -169,15 +240,37 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
   # Frame 1, line search
 
   frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0, height=200)
-  frame1.lab.1 <- ttklabel(frame1, text="Record")
-  frame1.ent.2 <- ttkentry(frame1, width=10, textvariable=line.no.var)
-  frame1.but.3 <- ttkbutton(frame1, width=6, text="Goto", command=GotoLine)
 
-  tkbind(frame1.ent.2, "<Return>", function() GotoLine())
+  frame1.lab.1.1 <- ttklabel(frame1, text="Find")
+  frame1.lab.2.1 <- ttklabel(frame1, text="Record")
 
-  tkgrid(frame1.lab.1, frame1.ent.2, frame1.but.3)
+  frame1.ent.1.2 <- ttkentry(frame1, width=15, textvariable=pattern.var)
+  frame1.ent.2.2 <- ttkentry(frame1, width=15, textvariable=line.no.var)
 
-  tkgrid.configure(frame1.but.3, padx=2)
+  tkbind(frame1.ent.1.2, "<KeyRelease>",
+         function() {
+           matched.cells <<- NULL
+         })
+  tkbind(frame1.ent.2.2, "<KeyRelease>",
+         function() {
+           tclvalue(line.no.var) <- CheckEntry("integer", tclvalue(line.no.var))
+         })
+
+  frame1.but.1.3 <- ttkbutton(frame1, width=8, text="Previous",
+                              command=function() Find("prev"))
+  frame1.but.1.4 <- ttkbutton(frame1, width=8, text="Next",
+                              command=function() Find("next"))
+  frame1.but.2.3 <- ttkbutton(frame1, width=8, text="Goto",
+                              command=GotoLine)
+
+  tkbind(frame1.ent.2.2, "<Return>", function() GotoLine())
+
+  tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.but.1.3, frame1.but.1.4)
+  tkgrid(frame1.lab.2.1, frame1.ent.2.2, frame1.but.2.3, pady=c(1, 0))
+
+  tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, sticky="e")
+  tkgrid.configure(frame1.but.1.3, frame1.but.2.3, padx=2)
+  tkgrid.configure(frame1.but.1.4, padx=c(0, 10))
 
   tkpack(frame1, side="bottom", anchor="nw", padx=c(10, 0))
 
