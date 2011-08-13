@@ -25,47 +25,47 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
     if (is.null(matched.cells)) {
       n <- ncol(d) - 1L
-      matched.idxs <- grep(pattern, t(d[-1, -1]))
-      if (length(matched.idxs) == 0) {
-        warning("no matches")
+      matched.idxs <- grep(pattern, t(d[-1L, -1L]))
+      if (length(matched.idxs) == 0L) {
+        msg <- paste("Search string \'", pattern, "\' not found.", sep="")
+        tkmessageBox(icon="info", message=msg, title="Find", type="ok",
+                     parent=tt)
         return()
       }
       col.div <- matched.idxs / n
-      i <- ceiling(col.div)
-      j <- n * (col.div - trunc(col.div))
-      j[j == 0] <- n
+      i <- as.integer(ceiling(col.div))
+      j <- as.integer(round(n * (col.div - trunc(col.div))))
+      j[j == 0L] <- n
       matched.cells <<- cbind(i, j)
     }
 
     active.i <- as.integer(tcl(frame2.tbl, "tag", "row", "active"))
     active.j <- as.integer(tcl(frame2.tbl, "tag", "col", "active"))
     if (length(active.i) == 0) {
-      active.i <- 1
-      active.j <- 1
+      active.i <- 1L
+      active.j <- 1L
     }
 
-    cell.below <- matched.cells[, 1] > active.i |
-                 (matched.cells[, 1] == active.i &
-                  matched.cells[, 2] > active.j)
-    cell.above <- !cell.below &
-                  !(matched.cells[, 1] == active.i &
-                    matched.cells[, 2] == active.j)
-
-    any.below <- any(cell.below)
-    any.above <- any(cell.above)
-
     if (direction == "next") {
-      if (any.below) {
+      cell.below <- matched.cells[, 1] > active.i |
+                   (matched.cells[, 1] == active.i &
+                    matched.cells[, 2] > active.j)
+      cell.above <- !cell.below
+      if (any(cell.below)) {
         cell <- head(matched.cells[cell.below, , drop=FALSE], n=1)
-      } else if (any.above) {
+      } else if (any(cell.above)) {
         cell <- head(matched.cells[cell.above, , drop=FALSE], n=1)
       } else {
         return()
       }
     } else {
-      if (any.above) {
+      cell.above <- matched.cells[, 1] < active.i |
+                   (matched.cells[, 1] == active.i &
+                    matched.cells[, 2] < active.j)
+      cell.below <- !cell.above
+      if (any(cell.above)) {
         cell <- tail(matched.cells[cell.above, , drop=FALSE], n=1)
-      } else if (any.below) {
+      } else if (any(cell.below)) {
         cell <- tail(matched.cells[cell.below, , drop=FALSE], n=1)
       } else {
         return()
@@ -263,8 +263,6 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
   frame1.but.2.3 <- ttkbutton(frame1, width=8, text="Goto",
                               command=GotoLine)
 
-  tkbind(frame1.ent.2.2, "<Return>", function() GotoLine())
-
   tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.but.1.3, frame1.but.1.4)
   tkgrid(frame1.lab.2.1, frame1.ent.2.2, frame1.but.2.3, pady=c(1, 0))
 
@@ -341,6 +339,10 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
   # Text bindings
 
   tkbind(tt, "<Control-a>", SelectAll)
+  tkbind(frame1.ent.1.2, "<Return>", function() Find("next"))
+  tkbind(frame1.ent.1.2, "<Up>", function() Find("prev"))
+  tkbind(frame1.ent.1.2, "<Down>", function() Find("next"))
+  tkbind(frame1.ent.2.2, "<Return>", function() GotoLine())
 
   # GUI control
 

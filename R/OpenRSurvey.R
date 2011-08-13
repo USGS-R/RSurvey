@@ -665,13 +665,13 @@ OpenRSurvey <- function() {
   # Call process data
 
   CallProcessData <- function() {
-    tkconfigure(tt, cursor="watch")
-
     if (is.null(Data("data.raw"))) {
       Data("data.pts", NULL)
       Data("data.grd", NULL)
       return()
     }
+
+    tkconfigure(tt, cursor="watch")
 
     # Process points
 
