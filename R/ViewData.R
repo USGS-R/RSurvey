@@ -25,7 +25,9 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
     if (is.null(matched.cells)) {
       n <- ncol(d) - 1L
-      matched.idxs <- grep(pattern, t(d[-1L, -1L]))
+
+      matched.idxs <- grep(pattern, t(d[-1L, -1L]), fixed=TRUE)
+
       if (length(matched.idxs) == 0L) {
         msg <- paste("Search string \'", pattern, "\' not found.", sep="")
         tkmessageBox(icon="info", message=msg, title="Find", type="ok",
@@ -41,7 +43,7 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
     active.i <- as.integer(tcl(frame2.tbl, "tag", "row", "active"))
     active.j <- as.integer(tcl(frame2.tbl, "tag", "col", "active"))
-    if (length(active.i) == 0) {
+    if (length(active.i) == 0L) {
       active.i <- 1L
       active.j <- 1L
     }
