@@ -25,8 +25,11 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
     if (is.null(matched.cells)) {
       n <- ncol(d) - 1L
+      fixed <- as.logical(as.integer(tclvalue(fixed.var)))
+      perl <- as.logical(as.integer(tclvalue(perl.var)))
 
-      matched.idxs <- grep(pattern, t(d[-1L, -1L]), fixed=TRUE)
+      matched.idxs <- grep(pattern, t(d[-1L, -1L]), fixed=fixed, perl=perl,
+                           ignore.case=FALSE, useBytes=FALSE, invert=FALSE)
 
       if (length(matched.idxs) == 0L) {
         msg <- paste("Search string \'", pattern, "\' not found.", sep="")
@@ -201,9 +204,11 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
   # Assign variables linked to Tk widgets
 
-  table.var <- tclArray()
+  table.var   <- tclArray()
   line.no.var <- tclVar()
   pattern.var <- tclVar()
+  fixed.var   <- tclVar(1)
+  perl.var    <- tclVar(0)
   tt.done.var <- tclVar(0)
 
   # Open GUI
@@ -233,8 +238,8 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
   tkgrid(frame0.but.1, frame0.but.2, frame0.grp.3)
 
-  tkgrid.configure(frame0.but.1, sticky="e", padx=2, pady=c(5, 10))
-  tkgrid.configure(frame0.but.2, sticky="w", padx=2, pady=c(5, 10), rowspan=2)
+  tkgrid.configure(frame0.but.1, sticky="e", padx=2, pady=c(10, 10))
+  tkgrid.configure(frame0.but.2, sticky="w", padx=2, pady=c(10, 10), rowspan=2)
   tkgrid.configure(frame0.grp.3, sticky="se")
 
   tkpack(frame0, side="bottom", anchor="e")
@@ -258,19 +263,30 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
            tclvalue(line.no.var) <- CheckEntry("integer", tclvalue(line.no.var))
          })
 
-  frame1.but.1.3 <- ttkbutton(frame1, width=8, text="Previous",
+  frame1.but.1.3 <- ttkbutton(frame1, width=2, image=GetBitmapImage("previous"),
                               command=function() Find("prev"))
-  frame1.but.1.4 <- ttkbutton(frame1, width=8, text="Next",
+  frame1.but.1.4 <- ttkbutton(frame1, width=2, image=GetBitmapImage("next"),
                               command=function() Find("next"))
-  frame1.but.2.3 <- ttkbutton(frame1, width=8, text="Goto",
+  frame1.but.2.3 <- ttkbutton(frame1, width=4, text="Goto",
                               command=GotoLine)
 
-  tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.but.1.3, frame1.but.1.4)
+  frame1.chk.1.5 <- ttkcheckbutton(frame1, variable=fixed.var, text="Fixed",
+                                   command=function() matched.cells <<- NULL)
+  frame1.chk.1.6 <- ttkcheckbutton(frame1, variable=perl.var, text="Perl",
+                                   command=function() matched.cells <<- NULL)
+
+  tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.but.1.3, frame1.but.1.4,
+         frame1.chk.1.5, frame1.chk.1.6)
   tkgrid(frame1.lab.2.1, frame1.ent.2.2, frame1.but.2.3, pady=c(1, 0))
 
+  tkgrid.configure(frame1.ent.1.2, frame1.ent.2.2, padx=c(0, 2))
+
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, sticky="e")
-  tkgrid.configure(frame1.but.1.3, frame1.but.2.3, padx=2)
-  tkgrid.configure(frame1.but.1.4, padx=c(0, 10))
+  tkgrid.configure(frame1.but.1.3, padx=c(0, 2))
+
+  tkgrid.configure(frame1.but.2.3, columnspan=2, sticky="we")
+  tkgrid.configure(frame1.chk.1.5, padx=c(4, 0))
+  tkgrid.configure(frame1.chk.1.6, padx=c(2, 10))
 
   tkpack(frame1, side="bottom", anchor="nw", padx=c(10, 0))
 
@@ -286,6 +302,7 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
                          highlightcolor="gray75", background="white",
                          foreground="black", titlerows=1, titlecols=1,
                          multiline=0, resizeborders="col", colorigin=0,
+                         bordercursor="sb_h_double_arrow", cursor="plus",
                          colstretchmode="unset", rowstretchmode="none",
                          drawmode="single", rowseparator="\n",
                          colseparator="\t", selectmode="extended",

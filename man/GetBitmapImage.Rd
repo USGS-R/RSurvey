@@ -20,6 +20,8 @@ GetBitmapImage(type)
 Icon image types include: \var{left}, \var{right}, \var{up}, \var{down},
 \var{top}, \var{bottom}, \var{upleft}, \var{upright}, \var{downleft},
 \var{downright} arrows; \var{copy}, \var{paste}, \var{find}, and \var{delete}.
+A recommended editor of bitmaps is Paul Obermeier's
+\href{http://www.posoft.de/html/poBitmapMain.html}{poBitmap} tool.
 }
 
 \value{

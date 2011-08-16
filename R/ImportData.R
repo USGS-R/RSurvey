@@ -494,6 +494,7 @@ ImportData <- function(parent=NULL) {
                          highlightcolor="gray75", background="white",
                          foreground="black", titlerows=0, titlecols=0,
                          multiline=0, resizeborders="col",
+                         bordercursor="sb_h_double_arrow", cursor="plus",
                          colstretchmode="none", rowstretchmode="none",
                          anchor="nw", drawmode="single", rowseparator="\n",
                          colseparator="\t", selectmode="extended",

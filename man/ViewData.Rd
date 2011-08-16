@@ -27,7 +27,9 @@ ViewData(d, col.names = NULL, col.units = NULL, col.digs = NULL,
 \details{
 Column titles are a concatenation of variables \code{col.names}
 and \code{col.units}. Row titles are taken from the row names attribute
-of \code{d}.
+of \code{d}. Pattern searches are performed using \code{\link{grep}}
+with \acronym{GUI} options available for setting its
+\code{fixed} and \code{perl} arguments.
 }
 
 \note{
