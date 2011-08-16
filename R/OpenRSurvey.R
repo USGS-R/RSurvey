@@ -639,6 +639,8 @@ OpenRSurvey <- function() {
     if (is.null(Data("data.pts")))
       return()
 
+    tkconfigure(tt, cursor="watch")
+
     vars <- Data("vars")
     cols <- Data("cols")
 
@@ -659,6 +661,7 @@ OpenRSurvey <- function() {
 
     ViewData(d, col.names, col.units, col.digs, parent=tt)
 
+    tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }
 
