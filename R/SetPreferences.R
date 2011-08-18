@@ -95,9 +95,9 @@ SetPreferences <- function(parent=NULL) {
 
   frame1 <- ttkframe(tt, relief="flat", borderwidth=5, padding=8)
 
-  txt <- "Interpolated-grid spacing along the x axis"
+  txt <- "Interpolated-grid spacing along the x-axis"
   frame1.lab.1.1 <- ttklabel(frame1, text=txt)
-  txt <- "Interpolated-grid spacing along the y axis"
+  txt <- "Interpolated-grid spacing along the y-axis"
   frame1.lab.2.1 <- ttklabel(frame1, text=txt)
 
   frame1.ent.1.2 <- ttkentry(frame1, width=15, textvariable=grid.dx.var)
@@ -112,10 +112,10 @@ SetPreferences <- function(parent=NULL) {
            tclvalue(grid.dy.var) <- CheckEntry("numeric", tclvalue(grid.dy.var))
          })
 
-  tkgrid(frame1.lab.1.1, frame1.ent.1.2, padx=1, pady=1)
-  tkgrid(frame1.lab.2.1, frame1.ent.2.2, padx=1, pady=1)
+  tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(0, 4))
+  tkgrid(frame1.lab.2.1, frame1.ent.2.2)
 
-  tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, sticky="e")
+  tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, sticky="e", padx=c(0, 2))
   tkgrid.configure(frame1.ent.1.2, frame1.ent.2.2, sticky="we")
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=20)
@@ -127,9 +127,9 @@ SetPreferences <- function(parent=NULL) {
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Multilevel B-spline approximation")
 
-  txt <- "Initial size of the spline space along the x axis"
+  txt <- "Initial size of the spline space along the x-axis"
   frame2.lab.1.1 <- ttklabel(frame2, text=txt)
-  txt <- "Initial size of the spline space along the y axis"
+  txt <- "Initial size of the spline space along the y-axis"
   frame2.lab.2.1 <- ttklabel(frame2, text=txt)
   txt <- "Number of levels in the hierarchical construction"
   frame2.lab.3.1 <- ttklabel(frame2, text=txt)
@@ -138,11 +138,11 @@ SetPreferences <- function(parent=NULL) {
   frame2.ent.2.2 <- ttkentry(frame2, width=15, textvariable=mba.m.var)
   frame2.ent.3.2 <- ttkentry(frame2, width=15, textvariable=mba.h.var)
 
-  tkgrid(frame2.lab.1.1, frame2.ent.1.2, padx=1, pady=1)
-  tkgrid(frame2.lab.2.1, frame2.ent.2.2, padx=1, pady=1)
-  tkgrid(frame2.lab.3.1, frame2.ent.3.2, padx=1, pady=1)
+  tkgrid(frame2.lab.1.1, frame2.ent.1.2, pady=c(0, 4))
+  tkgrid(frame2.lab.2.1, frame2.ent.2.2, pady=c(0, 4))
+  tkgrid(frame2.lab.3.1, frame2.ent.3.2)
 
-  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, frame2.lab.3.1, sticky="e")
+  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, frame2.lab.3.1, sticky="e", padx=c(0, 2))
   tkgrid.configure(frame2.ent.1.2, frame2.ent.2.2, frame2.ent.3.2, sticky="we")
 
   tkgrid.columnconfigure(frame2, 1, weight=1, minsize=20)

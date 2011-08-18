@@ -177,7 +177,7 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
 
   nb <- ttknotebook(tt)
 
-  # Frame 0 contains z-axis limits
+  # Frame 0 contains x-axis limits
 
   frame0 <- ttkframe(nb, relief="flat", padding=10, borderwidth=2)
   tkadd(nb, frame0, text="      x      ")
@@ -220,8 +220,8 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
                       tkfocus(frame0.ent.2.2)
                     })
 
-  tkgrid(frame0.lab.1.1, frame0.ent.1.2, frame0.chk.1.3, padx=1, pady=1)
-  tkgrid(frame0.lab.2.1, frame0.ent.2.2, frame0.chk.2.3, padx=1, pady=1)
+  tkgrid(frame0.lab.1.1, frame0.ent.1.2, frame0.chk.1.3, padx=1, pady=2)
+  tkgrid(frame0.lab.2.1, frame0.ent.2.2, frame0.chk.2.3, padx=1, pady=2)
 
   tkgrid.configure(frame0.lab.1.1, frame0.lab.2.1, sticky="e")
 
@@ -273,8 +273,8 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
                       tkfocus(frame1.ent.2.2)
                     })
 
-  tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.chk.1.3, padx=1, pady=1)
-  tkgrid(frame1.lab.2.1, frame1.ent.2.2, frame1.chk.2.3, padx=1, pady=1)
+  tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.chk.1.3, padx=1, pady=2)
+  tkgrid(frame1.lab.2.1, frame1.ent.2.2, frame1.chk.2.3, padx=1, pady=2)
 
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, sticky="e")
   tkgrid.configure(frame1.ent.1.2, frame1.ent.2.2, sticky="we")
@@ -324,8 +324,8 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
                       tkfocus(frame2.ent.2.2)
                     })
 
-  tkgrid(frame2.lab.1.1, frame2.ent.1.2, frame2.chk.1.3, padx=1, pady=1)
-  tkgrid(frame2.lab.2.1, frame2.ent.2.2, frame2.chk.2.3, padx=1, pady=1)
+  tkgrid(frame2.lab.1.1, frame2.ent.1.2, frame2.chk.1.3, padx=1, pady=2)
+  tkgrid(frame2.lab.2.1, frame2.ent.2.2, frame2.chk.2.3, padx=1, pady=2)
 
   tkgrid.configure(frame2.lab.1.1, sticky="e")
   tkgrid.configure(frame2.lab.2.1, sticky="e")
@@ -429,11 +429,11 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
                     })
 
   tkgrid(frame3.lab.1.1, frame3.ent.1.2, frame3.ent.1.3,
-         frame3.ent.1.4, frame3.ent.1.5, frame3.chk.1.6, padx=1, pady=1)
+         frame3.ent.1.4, frame3.ent.1.5, frame3.chk.1.6, padx=1, pady=2)
   tkgrid(frame3.lab.2.1, frame3.ent.2.2, frame3.ent.2.3,
-         frame3.ent.2.4, frame3.ent.2.5, frame3.chk.2.6, padx=1, pady=1)
+         frame3.ent.2.4, frame3.ent.2.5, frame3.chk.2.6, padx=1, pady=2)
   tkgrid(frame3.lab.3.1, frame3.lab.3.2, frame3.lab.3.3,
-         frame3.lab.3.4, frame3.lab.3.5, "x", padx=1, pady=1)
+         frame3.lab.3.4, frame3.lab.3.5, "x", padx=1, pady=2)
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, frame3.lab.3.1, sticky="e")
   tkgrid.configure(frame3.lab.3.2, frame3.lab.3.3,

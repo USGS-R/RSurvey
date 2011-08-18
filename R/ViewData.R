@@ -276,12 +276,12 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
                                    command=function() matched.cells <<- NULL)
 
   tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.but.1.3, frame1.but.1.4,
-         frame1.chk.1.5, frame1.chk.1.6)
-  tkgrid(frame1.lab.2.1, frame1.ent.2.2, frame1.but.2.3, pady=c(1, 0))
+         frame1.chk.1.5, frame1.chk.1.6, pady=c(0, 4))
+  tkgrid(frame1.lab.2.1, frame1.ent.2.2, frame1.but.2.3)
 
   tkgrid.configure(frame1.ent.1.2, frame1.ent.2.2, padx=c(0, 2))
 
-  tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, sticky="e")
+  tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, padx=c(0, 2), sticky="e")
   tkgrid.configure(frame1.but.1.3, padx=c(0, 2))
 
   tkgrid.configure(frame1.but.2.3, columnspan=2, sticky="we")

@@ -1012,22 +1012,15 @@ OpenRSurvey <- function() {
 
   # Frame 1, variables
 
-  frame1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=3,
+  frame1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="State variables")
 
-  frame1.lab.1.1 <- ttklabel(frame1, justify="center", width=8,
-                             anchor="e", text="x-axis")
-  frame1.lab.2.1 <- ttklabel(frame1, justify="center", width=8,
-                             anchor="e", text="y-axis")
-  frame1.lab.3.1 <- ttklabel(frame1, justify="center", width=8,
-                             anchor="e", text="z-axis")
-  frame1.lab.4.1 <- ttklabel(frame1, justify="center", width=8,
-                             anchor="e", text="t-axis")
-
-  frame1.lab.5.1 <- ttklabel(frame1, justify="center", width=8,
-                             anchor="e", text="x-vector")
-  frame1.lab.6.1 <- ttklabel(frame1, justify="center", width=8,
-                             anchor="e", text="y-vector")
+  frame1.lab.1.1 <- ttklabel(frame1, text="x-axis")
+  frame1.lab.2.1 <- ttklabel(frame1, text="y-axis")
+  frame1.lab.3.1 <- ttklabel(frame1, text="z-axis")
+  frame1.lab.4.1 <- ttklabel(frame1, text="t-axis")
+  frame1.lab.5.1 <- ttklabel(frame1, text="x-vector")
+  frame1.lab.6.1 <- ttklabel(frame1, text="y-vector")
 
   frame1.box.1.2 <- ttkcombobox(frame1, state="readonly")
   frame1.box.2.2 <- ttkcombobox(frame1, state="readonly")
@@ -1036,23 +1029,29 @@ OpenRSurvey <- function() {
   frame1.box.5.2 <- ttkcombobox(frame1, state="readonly")
   frame1.box.6.2 <- ttkcombobox(frame1, state="readonly")
 
-  tkgrid(frame1.lab.1.1, frame1.box.1.2, padx=1, pady=3, sticky="we")
-  tkgrid(frame1.lab.2.1, frame1.box.2.2, padx=1, pady=3, sticky="we")
-  tkgrid(frame1.lab.3.1, frame1.box.3.2, padx=1, pady=3, sticky="we")
-  tkgrid(frame1.lab.4.1, frame1.box.4.2, padx=1, pady=3, sticky="we")
-  tkgrid(frame1.lab.5.1, frame1.box.5.2, padx=1, pady=3, sticky="we")
-  tkgrid(frame1.lab.6.1, frame1.box.6.2, padx=1, pady=3, sticky="we")
+  tkgrid(frame1.lab.1.1, frame1.box.1.2)
+  tkgrid(frame1.lab.2.1, frame1.box.2.2)
+  tkgrid(frame1.lab.3.1, frame1.box.3.2)
+  tkgrid(frame1.lab.4.1, frame1.box.4.2)
+  tkgrid(frame1.lab.5.1, frame1.box.5.2)
+  tkgrid(frame1.lab.6.1, frame1.box.6.2)
 
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, frame1.lab.3.1,
-                   frame1.lab.4.1, frame1.lab.5.1, frame1.lab.6.1, sticky="e")
+                   frame1.lab.4.1, frame1.lab.5.1, frame1.lab.6.1,
+                   sticky="e", padx=c(0, 2))
+
+  tkgrid.configure(frame1.box.1.2, frame1.box.2.2, frame1.box.3.2,
+                   frame1.box.4.2, frame1.box.5.2, frame1.box.6.2, sticky="we")
+  tkgrid.configure(frame1.box.1.2, frame1.box.2.2, frame1.box.3.2,
+                   frame1.box.4.2, frame1.box.5.2, pady=c(0, 4))
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=25)
 
-  tkpack(frame1, fill="x", expand=TRUE, ipadx=2, ipady=2, padx=8, pady=c(5, 3))
+  tkpack(frame1, fill="x", expand=TRUE, ipadx=0, ipady=0, padx=10, pady=5)
 
   # Frame 2, plotting buttons
 
-  frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=3,
+  frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Plot types")
 
   frame2.but.1.1 <- ttkbutton(frame2, width=15, text="Scatter",
@@ -1069,12 +1068,14 @@ OpenRSurvey <- function() {
   frame2.but.2.2 <- ttkbutton(frame2, width=15, text="3D Surface",
                               command=CallPlot3d)
 
-  tkgrid(frame2.but.1.1, frame2.but.1.2, padx=2, pady=2)
-  tkgrid(frame2.but.2.1, frame2.but.2.2, padx=2, pady=c(2, 4))
+  tkgrid(frame2.but.1.1, frame2.but.1.2, pady=c(0, 4))
+  tkgrid(frame2.but.2.1, frame2.but.2.2, pady=0)
+
+  tkgrid.configure(frame2.but.1.1, frame2.but.2.1, padx=c(0, 4))
 
   tcl("grid", "anchor", frame2, "center")
 
-  tkpack(frame2, fill="x", expand=TRUE, pady=c(2, 6), padx=8)
+  tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE, padx=10, pady=c(0, 10))
 
   # Variables
 

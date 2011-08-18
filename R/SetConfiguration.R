@@ -147,7 +147,7 @@ SetConfiguration <- function(parent=NULL) {
 
   txt <- "Approximate number of contour levels"
   frame1.lab.1.1 <- ttklabel(frame1, text=txt)
-  txt <- "Width of plotting window canvas (in)"
+  txt <- "Width of plotting window canvas in inches"
   frame1.lab.2.1 <- ttklabel(frame1, text=txt)
   txt <- "Scaling for point symbols"
   frame1.lab.3.1 <- ttklabel(frame1, text=txt)
@@ -155,13 +155,13 @@ SetConfiguration <- function(parent=NULL) {
   frame1.lab.4.1 <- ttklabel(frame1, text=txt)
   txt <- "Aspect ratio, z / x"
   frame1.lab.5.1 <- ttklabel(frame1, text=txt)
-  txt <- "Maximum arrow length (in)"
+  txt <- "Maximum arrow length in inches"
   frame1.lab.6.1 <- ttklabel(frame1, text=txt)
   txt <- "Increment for sequence of arrows in x direction"
   frame1.lab.7.1 <- ttklabel(frame1, text=txt)
   txt <- "Increment for sequence of arrows in y direction"
   frame1.lab.8.1 <- ttklabel(frame1, text=txt)
-  txt <- "Time gap exceedence level (sec)"
+  txt <- "Time gap exceedence level in seconds"
   frame1.lab.9.1 <- ttklabel(frame1, text=txt)
 
   frame1.ent.1.2 <- ttkentry(frame1, width=8, textvariable=nlevels.var)
@@ -211,15 +211,15 @@ SetConfiguration <- function(parent=NULL) {
            tclvalue(tgap.var) <- CheckEntry("numeric", tclvalue(tgap.var))
          })
 
-  tkgrid(frame1.lab.1.1, frame1.ent.1.2, padx=1, pady=1)
-  tkgrid(frame1.lab.2.1, frame1.ent.2.2, padx=1, pady=1)
-  tkgrid(frame1.lab.3.1, frame1.ent.3.2, padx=1, pady=1)
-  tkgrid(frame1.lab.4.1, frame1.ent.4.2, padx=1, pady=1)
-  tkgrid(frame1.lab.5.1, frame1.ent.5.2, padx=1, pady=1)
-  tkgrid(frame1.lab.6.1, frame1.ent.6.2, padx=1, pady=1)
-  tkgrid(frame1.lab.7.1, frame1.ent.7.2, padx=1, pady=1)
-  tkgrid(frame1.lab.8.1, frame1.ent.8.2, padx=1, pady=1)
-  tkgrid(frame1.lab.9.1, frame1.ent.9.2, padx=1, pady=1)
+  tkgrid(frame1.lab.1.1, frame1.ent.1.2, padx=1, pady=c(0, 4))
+  tkgrid(frame1.lab.2.1, frame1.ent.2.2, padx=1, pady=c(0, 4))
+  tkgrid(frame1.lab.3.1, frame1.ent.3.2, padx=1, pady=c(0, 4))
+  tkgrid(frame1.lab.4.1, frame1.ent.4.2, padx=1, pady=c(0, 4))
+  tkgrid(frame1.lab.5.1, frame1.ent.5.2, padx=1, pady=c(0, 4))
+  tkgrid(frame1.lab.6.1, frame1.ent.6.2, padx=1, pady=c(0, 4))
+  tkgrid(frame1.lab.7.1, frame1.ent.7.2, padx=1, pady=c(0, 4))
+  tkgrid(frame1.lab.8.1, frame1.ent.8.2, padx=1, pady=c(0, 4))
+  tkgrid(frame1.lab.9.1, frame1.ent.9.2, padx=1)
 
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, frame1.lab.3.1,
                    frame1.lab.4.1, frame1.lab.5.1, frame1.lab.6.1,
@@ -254,21 +254,20 @@ SetConfiguration <- function(parent=NULL) {
   txt <- "place tickmarks inside plot region"
   frame2.chk.09.1 <- ttkcheckbutton(frame2, text=txt, variable=ticks.inside.var)
 
-  tkgrid(frame2.chk.01.1, pady=1, sticky="w")
-  tkgrid(frame2.chk.02.1, pady=1, sticky="w")
-  tkgrid(frame2.chk.03.1, pady=1, sticky="w")
-  tkgrid(frame2.chk.04.1, pady=1, sticky="w")
-  tkgrid(frame2.chk.05.1, pady=1, sticky="w")
-  tkgrid(frame2.chk.06.1, pady=1, sticky="w")
-  tkgrid(frame2.chk.07.1, pady=1, sticky="w")
-  tkgrid(frame2.chk.08.1, pady=1, sticky="w")
-  tkgrid(frame2.chk.09.1, pady=1, sticky="w")
+  tkgrid(frame2.chk.01.1, sticky="w", pady=c(0, 2))
+  tkgrid(frame2.chk.02.1, sticky="w", pady=c(0, 2))
+  tkgrid(frame2.chk.03.1, sticky="w", pady=c(0, 2))
+  tkgrid(frame2.chk.04.1, sticky="w", pady=c(0, 2))
+  tkgrid(frame2.chk.05.1, sticky="w", pady=c(0, 2))
+  tkgrid(frame2.chk.06.1, sticky="w", pady=c(0, 2))
+  tkgrid(frame2.chk.07.1, sticky="w", pady=c(0, 2))
+  tkgrid(frame2.chk.08.1, sticky="w", pady=c(0, 2))
+  tkgrid(frame2.chk.09.1, sticky="w")
 
   # Final layout
 
   tkgrid(frame1, frame2, padx=2, pady=2, sticky="nswe")
   tkgrid.columnconfigure(pw, 0, weight=2)
-
   tkpack(pw, fill="x", expand=TRUE)
 
   # GUI control

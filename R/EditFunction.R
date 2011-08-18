@@ -256,7 +256,7 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
   frame0.lab.1.1 <- ttklabel(frame0, text="Click to insert variable",
                              foreground="#414042")
   frame0.lst.2.1 <- tklistbox(frame0, selectmode="browse", activestyle="none",
-                              relief="flat", borderwidth=5, width=20, height=8,
+                              relief="flat", borderwidth=5, width=25, height=8,
                               exportselection=FALSE, listvariable=list.var,
                               highlightthickness=0)
   frame0.ysc.2.2 <- ttkscrollbar(frame0, orient="vertical")
@@ -279,7 +279,7 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
   tkgrid.configure(frame0.lab.1.1, padx=c(5, 0), pady=c(5, 0), sticky="w")
   tkgrid.configure(frame0.lst.2.1, padx=c(5, 0), pady=c(2, 1), sticky="nsew")
   tkgrid.configure(frame0.ysc.2.2, padx=c(0, 2), pady=c(2, 0), sticky="ns")
-  tkgrid.configure(frame0.box.3.1, padx=c(5, 0), pady=c(2, 2), sticky="we")
+  tkgrid.configure(frame0.box.3.1, padx=c(5, 0), pady=c(4, 2), sticky="we")
 
   tkgrid.rowconfigure(frame0, 1, weight=1)
   tkgrid.columnconfigure(frame0, 0, weight=1, minsize=20)
@@ -346,7 +346,7 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
          frame1a.but.05, frame1a.but.06, frame1a.but.07, frame1a.but.08,
          frame1a.but.09, frame1a.but.10, frame1a.but.11, frame1a.but.12,
          frame1a.but.13, frame1a.but.14, frame1a.but.15, frame1a.but.16,
-         padx=c(0, 2))
+         padx=c(0, 2), pady=c(2, 0))
 
   tkgrid.configure(frame1a.but.06, frame1a.but.09, frame1a.but.15, padx=c(8, 2))
 
