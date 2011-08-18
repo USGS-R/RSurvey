@@ -491,7 +491,7 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
 
   tkpack(frame0, side="bottom", anchor="e")
 
-  # Frame 1, polygon arrangement and deletion
+  # Frame 1, polygon arrangement and deletion buttons
 
   frame1 <- ttkframe(tt, relief="flat")
 
