@@ -284,7 +284,7 @@ ManageData <- function(cols, vars, parent=NULL) {
       detail <- paste(sapply(cols, function(i) i$id)[dependent.vars],
                       collapse="\n")
       tkmessageBox(icon="info", message=msg, detail=detail,
-                   title="Deletion Cancelled", type="ok", parent=tt)
+                   title="Prevented Deletion", type="ok", parent=tt)
       return()
     }
 
@@ -529,12 +529,24 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   frame1 <- ttkframe(tt, relief="flat")
 
-  frame1.but.1 <- ttkbutton(frame1, width=2, image=GetBitmapImage("new"),
+  frame1.but.1 <- ttkbutton(frame1, width=2, image=GetBitmapImage("up"),
+                            command=function() Arrange("backward"))
+  frame1.but.2 <- ttkbutton(frame1, width=2, image=GetBitmapImage("top"),
+                            command=function() Arrange("back"))
+  frame1.but.3 <- ttkbutton(frame1, width=2, image=GetBitmapImage("bottom"),
+                            command=function() Arrange("front"))
+  frame1.but.4 <- ttkbutton(frame1, width=2, image=GetBitmapImage("down"),
+                            command=function() Arrange("forward"))
+  frame1.but.5 <- ttkbutton(frame1, width=2, image=GetBitmapImage("new"),
                             command=SaveNewVar)
-  frame1.but.2 <- ttkbutton(frame1, width=2, image=GetBitmapImage("view"),
+  frame1.but.6 <- ttkbutton(frame1, width=2, image=GetBitmapImage("view"),
                             command=CallViewData)
+  frame1.but.7 <- ttkbutton(frame1, width=2, image=GetBitmapImage("delete"),
+                            command=DeleteVar)
 
-  tkgrid(frame1.but.1, frame1.but.2, padx=c(0, 2))
+  tkgrid(frame1.but.1, frame1.but.2, frame1.but.3, frame1.but.4,
+         frame1.but.5, frame1.but.6, frame1.but.7, padx=c(0, 2))
+  tkgrid.configure(frame1.but.7, padx=c(5, 0))
 
   tkpack(frame1, side="bottom", anchor="w", padx=c(10, 0))
 
@@ -547,7 +559,7 @@ ManageData <- function(cols, vars, parent=NULL) {
   frame2 <- tkframe(pw, relief="flat", padx=0, pady=0)
 
   frame2.lst <- tklistbox(frame2, selectmode="browse", activestyle="none",
-                relief="flat", borderwidth=5, width=20, exportselection=FALSE,
+                relief="flat", borderwidth=5, width=25, exportselection=FALSE,
                 listvariable=list.var, highlightthickness=0)
   frame2.ysc <- ttkscrollbar(frame2, orient="vertical")
   tkconfigure(frame2.lst, background="white",
@@ -591,25 +603,25 @@ ManageData <- function(cols, vars, parent=NULL) {
   frame3.but.5.3 <- ttkbutton(frame3, text="Edit", width=5,
                               command=CallEditFunction)
 
-  tkgrid(frame3.lab.1.1, frame3.ent.1.2, "x", padx=1, pady=1)
-  tkgrid(frame3.lab.2.1, frame3.ent.2.2, frame3.but.2.3, padx=1, pady=1)
-  tkgrid(frame3.lab.3.1, frame3.ent.3.2, "x", padx=1, pady=1)
-  tkgrid(frame3.lab.4.1, frame3.ent.4.2, "x", padx=1, pady=1)
-  tkgrid(frame3.lab.5.1, frame3.txt.5.2, frame3.but.5.3, padx=1, pady=1)
+  tkgrid(frame3.lab.1.1, frame3.ent.1.2, "x")
+  tkgrid(frame3.lab.2.1, frame3.ent.2.2, frame3.but.2.3)
+  tkgrid(frame3.lab.3.1, frame3.ent.3.2, "x")
+  tkgrid(frame3.lab.4.1, frame3.ent.4.2, "x")
+  tkgrid(frame3.lab.5.1, frame3.txt.5.2, frame3.but.5.3)
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1,
-                   frame3.lab.3.1, frame3.lab.4.1,
-                   sticky="e", padx=1, pady=1)
+                   frame3.lab.3.1, frame3.lab.4.1, sticky="e")
 
   tkgrid.configure(frame3.lab.5.1, sticky="ne")
 
   tkgrid.configure(frame3.ent.1.2, frame3.ent.2.2,
                    frame3.ent.3.2, frame3.ent.4.2,
-                   sticky="we", padx=1, pady=1)
+                   sticky="we", padx=2, pady=2)
 
-  tkgrid.configure(frame3.txt.5.2, sticky="nswe")
+  tkgrid.configure(frame3.txt.5.2, padx=2, pady=2, sticky="nswe")
 
-  tkgrid.configure(frame3.but.2.3, frame3.but.5.3, sticky="nw", padx=c(2, 0))
+  tkgrid.configure(frame3.but.2.3, frame3.but.5.3,
+                   sticky="nw", padx=c(2, 0), pady=c(1, 0))
 
   tkgrid.columnconfigure(frame3, 1, weight=1, minsize=25)
   tkgrid.rowconfigure(frame3, 4, weight=1, minsize=25)
