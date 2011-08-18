@@ -1075,7 +1075,8 @@ OpenRSurvey <- function() {
 
   tcl("grid", "anchor", frame2, "center")
 
-  tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE, padx=10, pady=c(0, 10))
+  tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE,
+         padx=10, pady=c(0, 10))
 
   # Variables
 
