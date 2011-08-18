@@ -44,7 +44,7 @@ points are greater than \code{tgap}.
 \author{Fisher, J.C.}
 
 \seealso{
-\code{\link{plot}}
+\code{\link{points}}, \code{\link{lines}}, \code{\link{AddAxis}}
 }
 
 \examples{

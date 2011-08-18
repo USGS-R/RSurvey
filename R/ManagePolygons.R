@@ -495,14 +495,14 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
 
   frame1 <- ttkframe(tt, relief="flat")
 
-  frame1.but.1 <- ttkbutton(frame1, width=2, image=GetBitmapImage("bottom"),
-                            command=function() ArrangePolygon("front"))
-  frame1.but.2 <- ttkbutton(frame1, width=2, image=GetBitmapImage("down"),
-                            command=function() ArrangePolygon("forward"))
-  frame1.but.3 <- ttkbutton(frame1, width=2, image=GetBitmapImage("up"),
+  frame1.but.1 <- ttkbutton(frame1, width=2, image=GetBitmapImage("up"),
                             command=function() ArrangePolygon("backward"))
-  frame1.but.4 <- ttkbutton(frame1, width=2, image=GetBitmapImage("top"),
+  frame1.but.2 <- ttkbutton(frame1, width=2, image=GetBitmapImage("top"),
                             command=function() ArrangePolygon("back"))
+  frame1.but.3 <- ttkbutton(frame1, width=2, image=GetBitmapImage("bottom"),
+                            command=function() ArrangePolygon("front"))
+  frame1.but.4 <- ttkbutton(frame1, width=2, image=GetBitmapImage("down"),
+                            command=function() ArrangePolygon("forward"))
   frame1.but.5 <- ttkbutton(frame1, width=2, image=GetBitmapImage("delete"),
                             command=ClearPolygon)
 

@@ -52,7 +52,7 @@ a spreadsheet-like [Tcl/Tk](http://www.tcl.tk/ "Tcl/Tk") widget
 (included with the Windows binary distribution of R).
 A call to `tclRequire()` will indicate whether tktable is available for use:
 
-    > tclRequire('Tktable', warn = TRUE)
+    > tclRequire('Tktable')
 
 Running
 -------
@@ -65,5 +65,4 @@ Activate the main GUI:
 
     > OpenRSurvey()
 
-Example data sets are provided in a binary file `data/project.rda`
-and text files `inst/extdata/`.
+Example data sets are provided in `inst/extdata/`.
