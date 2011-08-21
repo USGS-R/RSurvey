@@ -463,6 +463,7 @@ ImportData <- function(parent=NULL) {
                    padx=c(8, 1), sticky="e")
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, padx=c(0, 1))
+  tkgrid.configure(frame3.but.2.7, padx=c(2, 0))
 
   tkpack(frame3, anchor="w", fill="x", padx=10, pady=c(0, 15))
 

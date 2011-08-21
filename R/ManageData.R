@@ -620,8 +620,8 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   tkgrid.configure(frame3.txt.5.2, padx=2, pady=2, sticky="nswe")
 
-  tkgrid.configure(frame3.but.2.3, frame3.but.5.3,
-                   sticky="nw", padx=c(2, 0), pady=c(1, 0))
+  tkgrid.configure(frame3.but.2.3, sticky="w")
+  tkgrid.configure(frame3.but.5.3, sticky="nw", pady=c(1, 0))
 
   tkgrid.columnconfigure(frame3, 1, weight=1, minsize=25)
   tkgrid.rowconfigure(frame3, 4, weight=1, minsize=25)
