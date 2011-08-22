@@ -9,14 +9,19 @@ A summary of the descriptive statistics of an array object.
 }
 
 \usage{
-SummarizeData(obj, digits = NULL, units = NULL)
+SummarizeData(obj, digits = NULL, big.mark = "", scientific = FALSE,
+              dt.format = NULL)
 }
 
 \arguments{
 \item{obj}{an array object for which the summary is desired.}
-\item{digits}{integer; the decimal precision of the object. Only pertains to
-  objects of numeric class.}
-\item{units}{integer; the date and time format; its default is
+\item{digits}{integer; the arithmetic precision given as the number of
+  digits following a decimal point.}
+\item{big.mark}{character; if not empty used as mark between every 3
+  decimals before the decimal point.}
+\item{scientific}{logical; specifies whether elements should be encoded
+  in scientific format.}
+\item{dt.format}{character; the date and time format; its default is
   \dQuote{\%Y-\%m-\%d \%H:\%M:\%S}.}
 }
 

@@ -114,9 +114,11 @@ ManageData <- function(cols, vars, parent=NULL) {
     is.fun <- !identical(old.fun, new.fun)
     if (is.dig || is.unt || is.fun) {
       if (is.fun)
-        sum.dat <- SummarizeData(EvalFunction(new.fun, cols), new.dig, new.unt)
+        sum.dat <- SummarizeData(EvalFunction(new.fun, cols), digits=new.dig,
+                                 dt.format=new.unt)
       else
-        sum.dat <- SummarizeData(cols[[idx]]$summary, new.dig, new.unt)
+        sum.dat <- SummarizeData(cols[[idx]]$summary, digits=new.dig,
+                                 dt.format=new.unt)
       cols[[idx]]$summary <<- sum.dat
     }
 

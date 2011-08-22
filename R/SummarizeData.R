@@ -1,4 +1,5 @@
-SummarizeData <- function(obj, digits=NULL, units=NULL) {
+SummarizeData <- function(obj, digits=NULL, big.mark="", scientific=FALSE,
+                          dt.format=NULL) {
   # Summarizes the descriptive statistics of an array object.
 
   # Additional functions (subroutines)
@@ -7,19 +8,19 @@ SummarizeData <- function(obj, digits=NULL, units=NULL) {
 
   BuildString <- function(i) {
     if (s$Class == "POSIXct") {
-      if (is.na(dic[[i]][[3]]))
+      if (is.null(dic[[i]]$dt.format))
         val <- format(s[[i]])
       else
-        val <- format(s[[i]], format=dic[[i]][[3]])
+        val <- format(s[[i]], format=dic[[i]]$dt.format)
     } else {
-      if (is.na(dic[[i]][[2]])) {
+      if (is.null(dic[[i]]$digits))
         val <- format(s[[i]])
-      } else {
-        dig <- as.integer(dic[[i]][[2]])
-        val <- format(round(s[[i]], dig), nsmall=dig, trim=TRUE)
-      }
+      else
+        val <- format(round(s[[i]], dic[[i]]$digits), nsmall=dic[[i]]$digits,
+                      trim=TRUE, big.mark=dic[[i]]$big.mark,
+                      scientific=dic[[i]]$scientific)
     }
-    paste(dic[[i]][[1]], val, sep=": ")
+    paste(dic[[i]]$id, val, sep=": ")
   }
 
 
@@ -29,35 +30,43 @@ SummarizeData <- function(obj, digits=NULL, units=NULL) {
 
   if (is.null(obj))
     return(NULL)
-  if (is.null(digits) || (digits < 0 | digits > 20))
+
+  if (!is.numeric(digits) || (digits < 0 | digits > 20))
     digits <- getOption("digits")
-  if (is.null(units))
-    units <- ""
+  else
+    digits <- as.integer(digits)
 
   # Determine object class
 
   is.list.int <- inherits(obj, "list") && obj$Class == "integer"
   if(inherits(obj, "integer") || is.list.int)
-    digits <- 0
+    digits <- 0L
 
-  # Dictionary for element names in list
+  # Build dictionary with summary components
 
   dic <- list()
-  dic$"Class"     <- list("Class", NA, NA)
-  dic$"Time Per." <- list("Length of period", NA, NA)
-  dic$"NA's"      <- list("Number of NA's", 0, NA)
-  dic$"Count"     <- list("Count", 0, NA)
-  dic$"TRUE"      <- list("Number of TRUE values", 0, NA)
-  dic$"FALSE"     <- list("Number of FALSE values", 0, NA)
-  dic$"Unique"    <- list("Number of unique values", 0, NA)
-  dic$"Mean"      <- list("Mean", digits, NA)
-  dic$"Sum"       <- list("Sum", digits, NA)
-  dic$"Min."      <- list("Minimum", digits, units)
-  dic$"Max."      <- list("Maximum", digits, units)
-  dic$"1st Qu."   <- list("Lower quartile", digits, units)
-  dic$"3rd Qu."   <- list("Upper quartile", digits, units)
-  dic$"Median"    <- list("Median", digits, units)
-  dic$"St. Dev."  <- list("Standard deviation", digits, NA)
+
+  dic$"Class"     <- list(id="Class")
+  dic$"Time Per." <- list(id="Length of period")
+
+  add <- list(digits=0L, big.mark=",", scientific=FALSE)
+  dic$"NA's"      <- c(id="Number of NA's", add)
+  dic$"Count"     <- c(id="Count", add)
+  dic$"TRUE"      <- c(id="Number of TRUE values", add)
+  dic$"FALSE"     <- c(id="Number of FALSE values", add)
+  dic$"Unique"    <- c(id="Number of unique values",add)
+
+  add <- list(digits=digits, big.mark=big.mark, scientific=scientific)
+  dic$"Mean"      <- c(id="Mean", add)
+  dic$"Sum"       <- c(id="Sum", add)
+  dic$"St. Dev."  <- c(id="Standard deviation", add)
+
+  add <- c(add, dt.format=dt.format)
+  dic$"Min."      <- c(id="Minimum", add)
+  dic$"1st Qu."   <- c(id="Lower quartile", add)
+  dic$"Median"    <- c(id="Median", add)
+  dic$"3rd Qu."   <- c(id="Upper quartile", add)
+  dic$"Max."      <- c(id="Maximum", add)
 
   # A list indicates that only formatting on the summary text is desired
 

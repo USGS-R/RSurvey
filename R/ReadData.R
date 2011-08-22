@@ -134,7 +134,7 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
       cols[[idx]]$digits <- dig
       cols[[idx]]$class <- class(val)[1]
       cols[[idx]]$index <- idx
-      cols[[idx]]$summary <- SummarizeData(val, dig, unt)
+      cols[[idx]]$summary <- SummarizeData(val, digits=dig, dt.format=unt)
       cols[[idx]]$fun <- paste("DATA[[\"", id, "\"]]", sep="")
 
       d[, idx] <- val
