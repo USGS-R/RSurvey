@@ -327,9 +327,9 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   # Edit date and time format
 
-  CallEditDateFormat <- function() {
+  CallFormatDateTime <- function() {
     old.unit <- as.character(tclvalue(unit.var))
-    new.unit <- EditDateFormat(old.unit, tt)
+    new.unit <- FormatDateTime(old.unit, tt)
     if (!is.null(new.unit))
       tclvalue(unit.var) <- new.unit
   }
@@ -583,8 +583,8 @@ ManageData <- function(cols, vars, parent=NULL) {
   tkadd(nb, frame3, text="   Variable   ")
 
   frame3.lab.1.1 <- ttklabel(frame3, text="Name")
-  frame3.lab.2.1 <- ttklabel(frame3, text="Units")
-  frame3.lab.3.1 <- ttklabel(frame3, text="Decimals")
+  frame3.lab.2.1 <- ttklabel(frame3, text="Unit")
+  frame3.lab.3.1 <- ttklabel(frame3, text="Format")
   frame3.lab.4.1 <- ttklabel(frame3, text="Class")
   frame3.lab.5.1 <- ttklabel(frame3, text="Function")
 
@@ -599,7 +599,7 @@ ManageData <- function(cols, vars, parent=NULL) {
                            background="#ebebe4", borderwidth=1, font=fnt)
 
   frame3.but.2.3 <- ttkbutton(frame3, text="Edit", width=5,
-                              command=CallEditDateFormat)
+                              command=CallFormatDateTime)
   frame3.but.5.3 <- ttkbutton(frame3, text="Edit", width=5,
                               command=CallEditFunction)
 
@@ -621,6 +621,7 @@ ManageData <- function(cols, vars, parent=NULL) {
   tkgrid.configure(frame3.txt.5.2, padx=2, pady=2, sticky="nswe")
 
   tkgrid.configure(frame3.but.2.3, sticky="w")
+  tkgrid.configure(frame3.lab.5.1, pady=c(4, 0))
   tkgrid.configure(frame3.but.5.3, sticky="nw", pady=c(1, 0))
 
   tkgrid.columnconfigure(frame3, 1, weight=1, minsize=25)

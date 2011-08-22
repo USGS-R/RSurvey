@@ -395,14 +395,16 @@ ImportData <- function(parent=NULL) {
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Identify header lines")
 
-  txt <- "Names, short descriptive names for data in each column."
+  txt <- "The variable names for data in each column."
   frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=names.var,
                                    command=SetTags, text=txt)
-  txt <- "Units, measurement units associated with values in each column."
+  txt <- "The unit of measurement for data in each column."
   frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=units.var,
                                    command=SetTags, text=txt)
-  txt <- paste("Precision, number of decimal places used to",
-               "express data in each column.")
+  txt <- paste("For numeric data, the arithmetic precision ",
+               "given as the number of digits following a decimal point.\n",
+               "For date-time data, a required conversion ",
+               "specification (e.g. '%Y-%m-%d %H:%M:%OS').", sep="")
   frame2.chk.3.1 <- ttkcheckbutton(frame2, variable=decis.var,
                                    command=SetTags, text=txt)
 

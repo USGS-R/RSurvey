@@ -1,6 +1,6 @@
-\name{EditDateFormat}
+\name{FormatDateTime}
 
-\alias{EditDateFormat}
+\alias{FormatDateTime}
 
 \title{A \acronym{GUI} for constructing date and time formats.}
 
@@ -10,7 +10,7 @@ class \dQuote{POSIXt}, calendar dates and times.
 }
 
 \usage{
-EditDateFormat(spec = "", parent = NULL)
+FormatDateTime(spec = "", parent = NULL)
 }
 
 \arguments{
@@ -29,7 +29,7 @@ Returns a character string representing the formatted time.
 \author{Fisher, J.C.}
 
 \examples{
-\donttest{EditDateFormat(spec = "\%d/\%m/\%Y")}
+\donttest{FormatDateTime(spec = "\%d/\%m/\%Y")}
 }
 
 \keyword{misc}

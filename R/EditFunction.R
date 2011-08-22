@@ -97,8 +97,8 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
 
   # Call date and time format editor
 
-  CallEditDateFormat <- function() {
-    spec <- EditDateFormat(parent=tt)
+  CallFormatDateTime <- function() {
+    spec <- FormatDateTime(parent=tt)
     tkfocus(frame1.txt.2.1)
     if(!is.null(spec))
       InsertString(spec)
@@ -239,7 +239,7 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
   menu.tools <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Tools", menu=menu.tools, underline=0)
   tkadd(menu.tools, "command", label="Date and time format",
-        command=CallEditDateFormat)
+        command=CallFormatDateTime)
 
   # Finalize top menu
 
