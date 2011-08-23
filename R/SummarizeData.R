@@ -8,17 +8,22 @@ SummarizeData <- function(obj, digits=NULL, big.mark="", scientific=FALSE,
 
   BuildString <- function(i) {
     if (s$Class == "POSIXct") {
-      if (is.null(dic[[i]]$dt.format))
+      dt.format <- dic[[i]]$dt.format
+      if (is.null(dt.format))
         val <- format(s[[i]])
       else
-        val <- format(s[[i]], format=dic[[i]]$dt.format)
+        val <- format(s[[i]], format=dt.format)
     } else {
-      if (is.null(dic[[i]]$digits))
+      digits <- dic[[i]]$digits
+      scientific <- dic[[i]]$scientific
+      big.mark <- dic[[i]]$big.mark
+      if (is.null(digits)) {
         val <- format(s[[i]])
-      else
-        val <- format(round(s[[i]], dic[[i]]$digits), nsmall=dic[[i]]$digits,
-                      trim=TRUE, big.mark=dic[[i]]$big.mark,
-                      scientific=dic[[i]]$scientific)
+      } else if (scientific) {
+        val <- formatC(s[[i]], digits=digits, format="e")
+      } else {
+        val <- formatC(s[[i]], digits=digits, format="f", big.mark=big.mark)
+      }
     }
     paste(dic[[i]]$id, val, sep=": ")
   }

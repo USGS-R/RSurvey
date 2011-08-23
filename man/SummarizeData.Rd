@@ -55,7 +55,7 @@ following components:
 
 \examples{
 summary(attenu$dist, digits = 4)
-SummarizeData(attenu$dist, digits = 4)
+SummarizeData(attenu$dist, digits = 2)
 }
 
 \keyword{misc}
