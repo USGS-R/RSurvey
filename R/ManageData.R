@@ -331,7 +331,7 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   CallFormatDateTime <- function() {
     old.unit <- as.character(tclvalue(unit.var))
-    new.unit <- FormatDateTime(old.unit, tt)
+    new.unit <- FormatDateTime(spec=old.unit, parent=tt)
     if (!is.null(new.unit))
       tclvalue(unit.var) <- new.unit
   }
@@ -585,7 +585,7 @@ ManageData <- function(cols, vars, parent=NULL) {
   tkadd(nb, frame3, text="   Variable   ")
 
   frame3.lab.1.1 <- ttklabel(frame3, text="Name")
-  frame3.lab.2.1 <- ttklabel(frame3, text="Unit")
+  frame3.lab.2.1 <- ttklabel(frame3, text="Units")
   frame3.lab.3.1 <- ttklabel(frame3, text="Format")
   frame3.lab.4.1 <- ttklabel(frame3, text="Class")
   frame3.lab.5.1 <- ttklabel(frame3, text="Function")

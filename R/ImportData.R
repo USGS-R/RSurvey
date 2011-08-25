@@ -398,13 +398,12 @@ ImportData <- function(parent=NULL) {
   txt <- "The variable names for data in each column."
   frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=names.var,
                                    command=SetTags, text=txt)
-  txt <- "The measurement units for data in each column."
+  txt <- paste("The measurement units for data in each column;",
+               "programmatic manipulation of these units is not supported.")
   frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=units.var,
                                    command=SetTags, text=txt)
-  txt <- paste("For numeric data, the arithmetic precision ",
-               "given as the number of digits following a decimal point.\n",
-               "For date-time data, a required conversion ",
-               "specification format (e.g. '%Y-%m-%d %H:%M:%OS').", sep="")
+  txt <- paste("The conversion specification format for data in each column",
+               "(e.g. '%10.6f' or '%Y-%m-%d %H:%M').")
   frame2.chk.3.1 <- ttkcheckbutton(frame2, variable=decis.var,
                                    command=SetTags, text=txt)
 
@@ -426,18 +425,18 @@ ImportData <- function(parent=NULL) {
   frame3.lab.2.3 <- ttklabel(frame3, text="Quote")
   frame3.lab.2.5 <- ttklabel(frame3, text="Max lines")
 
-  frame3.box.1.2 <- ttkcombobox(frame3, width=16, state="readonly", value=sep1)
-  frame3.box.1.4 <- ttkcombobox(frame3, width=16, state="readonly", value=com1)
-  frame3.box.2.2 <- ttkcombobox(frame3, width=16, state="readonly", value=nas1)
-  frame3.box.2.4 <- ttkcombobox(frame3, width=16, state="readonly", value=quo1)
+  frame3.box.1.2 <- ttkcombobox(frame3, width=17, state="readonly", value=sep1)
+  frame3.box.1.4 <- ttkcombobox(frame3, width=17, state="readonly", value=com1)
+  frame3.box.2.2 <- ttkcombobox(frame3, width=17, state="readonly", value=nas1)
+  frame3.box.2.4 <- ttkcombobox(frame3, width=17, state="readonly", value=quo1)
 
   tkbind(frame3.box.1.2, "<<ComboboxSelected>>", RebuildTable)
   tkbind(frame3.box.1.4, "<<ComboboxSelected>>", RebuildTable)
   tkbind(frame3.box.2.2, "<<ComboboxSelected>>", RebuildTable)
   tkbind(frame3.box.2.4, "<<ComboboxSelected>>", RebuildTable)
 
-  frame3.ent.1.6 <- ttkentry(frame3, width=16, textvariable=skip.var)
-  frame3.ent.2.6 <- ttkentry(frame3, width=16, textvariable=nrow.var)
+  frame3.ent.1.6 <- ttkentry(frame3, width=17, textvariable=skip.var)
+  frame3.ent.2.6 <- ttkentry(frame3, width=17, textvariable=nrow.var)
 
   tkbind(frame3.ent.1.6, "<KeyRelease>",
          function() {

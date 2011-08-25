@@ -1,4 +1,5 @@
-FormatDateTime <- function(spec=NULL, parent=NULL) {
+FormatDateTime <- function(sample=as.POSIXct("1969-07-20 18:17:01"),
+                           spec=NULL, parent=NULL) {
   # A GUI for constructing a date-time format.
 
   # Additional functions (subroutines)
@@ -24,7 +25,7 @@ FormatDateTime <- function(spec=NULL, parent=NULL) {
 
   UpdateFormat <- function() {
     txt <- sub("%$", "", tclvalue(con.var))
-    tclvalue(fmt.var) <- if (txt == "") "" else format(d.t, format=txt)
+    tclvalue(fmt.var) <- if (txt == "") "" else format(sample, format=txt)
   }
 
   # Add string to conversion format entry
@@ -37,9 +38,24 @@ FormatDateTime <- function(spec=NULL, parent=NULL) {
     tkfocus(frame2b.ent)
   }
 
-  # Clear conversion specification format
+  # Copy conversion specification to clipboard
 
-  ClearAll <- function() {
+  CopySpec <- function() {
+    txt <- as.character(tclvalue(con.var))
+    writeClipboard(txt)
+  }
+
+  # Paste conversion specification from clipboard
+
+  PasteSpec <- function() {
+    tclvalue(con.var) <- readClipboard()
+    UpdateFormat()
+    tkfocus(frame2b.ent)
+  }
+
+ # Clear conversion specification
+
+  ClearSpec <- function() {
     tclvalue(con.var) <- ""
     UpdateFormat()
     tkfocus(frame2b.ent)
@@ -48,7 +64,9 @@ FormatDateTime <- function(spec=NULL, parent=NULL) {
 
   # Main program
 
-  d.t <- as.POSIXct("2009-07-16 13:05:42.123", format="%Y-%m-%d %H:%M:%OS")
+  if (!inherits(sample, "POSIXct"))
+    stop("Sample object must be of class POSIXct or POSIXlt.")
+
   cur.val <- NA
   new.spec <- NULL
 
@@ -128,70 +146,74 @@ FormatDateTime <- function(spec=NULL, parent=NULL) {
   id.sc <- tkinsert(frame1.tre, "", "end", tags="bg", text="second")
   id.wk <- tkinsert(frame1.tre, "", "end", tags="bg", text="week")
 
-  tkinsert(frame1.tre, id.dt, "end", text="month day year",
-           values=c("%m/%d/%Y", format(d.t, format="%m/%d/%Y")), tags="bg")
-  tkinsert(frame1.tre, id.dt, "end", text="month day year",
-           values=c("%m/%d/%y", format(d.t, format="%m/%d/%y")), tags="bg")
-  tkinsert(frame1.tre, id.dt, "end", text="year month day",
-           values=c("%Y-%m-%d", format(d.t, format="%Y-%m-%d")), tags="bg")
-  tkinsert(frame1.tre, id.dt, "end", text="day month year",
-           values=c("%d%b%Y", format(d.t, format="%d%b%Y")), tags="bg")
-  tkinsert(frame1.tre, id.dt, "end", text="weekday month day",
-           values=c("%A %B %d", format(d.t, format="%A %B %d")), tags="bg")
-  tkinsert(frame1.tre, id.dt, "end", text="weekday month day",
-           values=c("%a %b %d", format(d.t, format="%a %b %d")), tags="bg")
+  tkinsert(frame1.tre, id.dt, "end", tags="bg", text="month day year",
+           values=c("%m/%d/%Y", format(sample, format="%m/%d/%Y")))
+  tkinsert(frame1.tre, id.dt, "end", tags="bg", text="month day year",
+           values=c("%m/%d/%y", format(sample, format="%m/%d/%y")))
+  tkinsert(frame1.tre, id.dt, "end", tags="bg", text="year month day",
+           values=c("%Y-%m-%d", format(sample, format="%Y-%m-%d")))
+  tkinsert(frame1.tre, id.dt, "end", tags="bg", text="day month year",
+           values=c("%d%b%Y", format(sample, format="%d%b%Y")))
+  tkinsert(frame1.tre, id.dt, "end", tags="bg", text="weekday month day",
+           values=c("%A %B %d", format(sample, format="%A %B %d")))
+  tkinsert(frame1.tre, id.dt, "end", tags="bg", text="weekday month day",
+           values=c("%a %b %d", format(sample, format="%a %b %d")))
 
-  tkinsert(frame1.tre, id.tm, "end", text="hour minute second",
-           values=c("%H:%M:%S", format(d.t, format="%H:%M:%S")), tags="bg")
-  tkinsert(frame1.tre, id.tm, "end", text="hour minute second",
-           values=c("%H:%M:%OS", format(d.t, format="%H:%M:%OS")),
-           tags="bg")
-  tkinsert(frame1.tre, id.tm, "end", text="hour minute",
-           values=c("%I:%M %p", format(d.t, format="%I:%M %p")),
-           tags="bg")
+  tkinsert(frame1.tre, id.tm, "end", tags="bg", text="hour minute second",
+           values=c("%H:%M:%S", format(sample, format="%H:%M:%S")))
+  tkinsert(frame1.tre, id.tm, "end", tags="bg", text="hour minute second",
+           values=c("%H:%M:%OS", format(sample, format="%H:%M:%OS")))
+  tkinsert(frame1.tre, id.tm, "end", tags="bg", text="hour minute",
+           values=c("%I:%M %p", format(sample, format="%I:%M %p")))
 
-  tkinsert(frame1.tre, id.yr, "end", text="year without century (00-99)",
-           values=c("%y", format(d.t, format="%y")), tags="bg")
-  tkinsert(frame1.tre, id.yr, "end", text="year with century",
-           values=c("%Y", format(d.t, format="%Y")), tags="bg")
+  tkinsert(frame1.tre, id.yr, "end", tags="bg",
+           text="year without century (00-99)",
+           values=c("%y", format(sample, format="%y")))
+  tkinsert(frame1.tre, id.yr, "end", tags="bg", text="year with century",
+           values=c("%Y", format(sample, format="%Y")))
 
-  tkinsert(frame1.tre, id.mo, "end", text="month (01-12)",
-           values=c("%m", format(d.t, format="%m")), tags="bg")
-  tkinsert(frame1.tre, id.mo, "end", text="abbreviated month name",
-           values=c("%b", format(d.t, format="%b")), tags="bg")
-  tkinsert(frame1.tre, id.mo, "end", text="full month name",
-           values=c("%B", format(d.t, format="%B")), tags="bg")
+  tkinsert(frame1.tre, id.mo, "end", tags="bg", text="month (01-12)",
+           values=c("%m", format(sample, format="%m")))
+  tkinsert(frame1.tre, id.mo, "end", tags="bg", text="abbreviated month name",
+           values=c("%b", format(sample, format="%b")))
+  tkinsert(frame1.tre, id.mo, "end", tags="bg", text="full month name",
+           values=c("%B", format(sample, format="%B")))
 
-  tkinsert(frame1.tre, id.dy, "end", text="day of the month (01-31)",
-           values=c("%d", format(d.t, format="%d")), tags="bg")
-  tkinsert(frame1.tre, id.dy, "end", text="day of the year (001-366)",
-           values=c("%j", format(d.t, format="%j")), tags="bg")
-  tkinsert(frame1.tre, id.dy, "end", text="weekday (0-6, Sunday is 0)",
-           values=c("%w", format(d.t, format="%w")), tags="bg")
-  tkinsert(frame1.tre, id.dy, "end", text="abbreviated weekday name",
-           values=c("%a", format(d.t, format="%a")), tags="bg")
-  tkinsert(frame1.tre, id.dy, "end", text="full weekday name",
-           values=c("%A", format(d.t, format="%A")), tags="bg")
+  tkinsert(frame1.tre, id.dy, "end", tags="bg", text="day of the month (01-31)",
+           values=c("%d", format(sample, format="%d")))
+  tkinsert(frame1.tre, id.dy, "end", tags="bg",
+           text="day of the year (001-366)",
+           values=c("%j", format(sample, format="%j")))
+  tkinsert(frame1.tre, id.dy, "end",  tags="bg",
+           text="weekday (0-6, Sunday is 0)",
+           values=c("%w", format(sample, format="%w")))
 
-  tkinsert(frame1.tre, id.hr, "end", text="hours (00-23)",
-           values=c("%H", format(d.t, format="%H")), tags="bg")
-  tkinsert(frame1.tre, id.hr, "end", text="hours (01-12)",
-           values=c("%I", format(d.t, format="%I")), tags="bg")
-  tkinsert(frame1.tre, id.hr, "end", text="AM/PM indicator",
-           values=c("%p", format(d.t, format="%p")), tags="bg")
+  tkinsert(frame1.tre, id.dy, "end", tags="bg", text="abbreviated weekday name",
+           values=c("%a", format(sample, format="%a")))
+  tkinsert(frame1.tre, id.dy, "end", tags="bg", text="full weekday name",
+           values=c("%A", format(sample, format="%A")))
+  tkinsert(frame1.tre, id.hr, "end", tags="bg", text="hours (00-23)",
+           values=c("%H", format(sample, format="%H")))
+  tkinsert(frame1.tre, id.hr, "end", tags="bg", text="hours (01-12)",
+           values=c("%I", format(sample, format="%I")))
+  tkinsert(frame1.tre, id.hr, "end", tags="bg", text="AM/PM indicator",
+           values=c("%p", format(sample, format="%p")))
 
-  tkinsert(frame1.tre, id.mn, "end", text="minute (00-59)",
-           values=c("%M", format(d.t, format="%M")), tags="bg")
+  tkinsert(frame1.tre, id.mn, "end", tags="bg", text="minute (00-59)",
+           values=c("%M", format(sample, format="%M")))
 
-  tkinsert(frame1.tre, id.sc, "end", text="second (00-61)",
-           values=c("%S", format(d.t, format="%S")), tags="bg")
-  tkinsert(frame1.tre, id.sc, "end", text="second with decimal places",
-           values=c("%OS", format(d.t, format="%OS")), tags="bg")
+  tkinsert(frame1.tre, id.sc, "end", tags="bg", text="second (00-61)",
+           values=c("%S", format(sample, format="%S")))
+  tkinsert(frame1.tre, id.sc, "end",  tags="bg",
+           text="second with decimal places",
+           values=c("%OS", format(sample, format="%OS")))
 
-  tkinsert(frame1.tre, id.wk, "end", text="week of the year (00-53), US",
-           values=c("%U", format(d.t, format="%U")), tags="bg")
-  tkinsert(frame1.tre, id.wk, "end", text="week of the year (00-53), UK",
-           values=c("%W", format(d.t, format="%W")), tags="bg")
+  tkinsert(frame1.tre, id.wk, "end", tags="bg",
+           text="week of the year (00-53), US",
+           values=c("%U", format(sample, format="%U")))
+  tkinsert(frame1.tre, id.wk, "end", tags="bg",
+           text="week of the year (00-53), UK",
+           values=c("%W", format(sample, format="%W")))
 
   tktag.configure(frame1.tre, "bg", background="white")
 
@@ -201,17 +223,18 @@ FormatDateTime <- function(spec=NULL, parent=NULL) {
 
   frame2 <- ttkframe(pw, relief="flat")
 
-  frame2a <- ttklabelframe(frame2, relief="flat", borderwidth=3, padding=3,
+  frame2a <- ttklabelframe(frame2, relief="flat", borderwidth=5, padding=5,
                            text="Sample")
   frame2a.ent <- ttkentry(frame2a, textvariable=fmt.var, width=30,
                           state="readonly", takefocus=FALSE)
-  tkgrid(frame2a.ent, padx=5, pady=5)
+  tkgrid(frame2a.ent, padx=0, pady=5)
   tkgrid.configure(frame2a.ent, sticky="we")
   tcl("grid", "anchor", frame2a, "w")
   tkgrid.columnconfigure(frame2a, 0, weight=1, minsize=13)
   tkpack(frame2a, fill="both", expand=TRUE, padx=c(5, 0), pady=c(0, 2))
-  frame2b <- ttklabelframe(frame2, relief="flat", borderwidth=3, padding=3,
-                           text="Conversion format")
+
+  frame2b <- ttklabelframe(frame2, relief="flat", borderwidth=5, padding=5,
+                           text="Conversion specification")
 
   frame2b.ent <- ttkentry(frame2b, textvariable=con.var, width=30)
   tkicursor(frame2b.ent, "end")
@@ -226,24 +249,34 @@ FormatDateTime <- function(spec=NULL, parent=NULL) {
                              command=function() AddString(":"))
   frame2b.but.5 <- ttkbutton(frame2b, width=2, text=" ",
                              command=function() AddString(" "))
-  frame2b.but.6 <- ttkbutton(frame2b, width=5, text="Clear",
-                             command=ClearAll)
-  tkgrid(frame2b.ent, padx=5, pady=c(5, 0))
+
+  frame2b.but.6 <- ttkbutton(frame2b, width=2, image=GetBitmapImage("copy"),
+                             command=CopySpec)
+  frame2b.but.7 <- ttkbutton(frame2b, width=2, image=GetBitmapImage("paste"),
+                             command=PasteSpec)
+  frame2b.but.8 <- ttkbutton(frame2b, width=2, image=GetBitmapImage("delete"),
+                             command=ClearSpec)
+
+  tkgrid(frame2b.ent, pady=c(5, 0))
   tkgrid(frame2b.but.1, frame2b.but.2, frame2b.but.3, frame2b.but.4,
-         frame2b.but.5, frame2b.but.6, padx=2, pady=c(8, 5), sticky="e")
-  tkgrid.configure(frame2b.ent, sticky="we", columnspan=6)
-  tkgrid.configure(frame2b.but.1, padx=c(5, 2))
-  tkgrid.configure(frame2b.but.6, padx=c(15, 5))
+         frame2b.but.5, frame2b.but.6, frame2b.but.7, frame2b.but.8,
+         padx=c(0, 2), pady=c(8, 5), sticky="e")
+  tkgrid.configure(frame2b.ent, sticky="we", columnspan=8)
+
+  tkgrid.configure(frame2b.but.6, padx=c(5, 2))
+  tkgrid.configure(frame2b.but.8, padx=0)
+
   tcl("grid", "anchor", frame2b, "w")
   tkgrid.columnconfigure(frame2b, 0, weight=1, minsize=13)
   tkpack(frame2b, fill="both", expand=TRUE, padx=c(5, 0), pady=c(5, 2))
 
-  frame2c <- ttklabelframe(frame2, relief="flat", borderwidth=3, padding=3,
+  frame2c <- ttklabelframe(frame2, relief="flat", borderwidth=5, padding=5,
                            text="Example")
   fg <- "#414042"
   fmt <- "%Y-%m-%d %H:%M:%S"
   frame2c.lab.1 <- ttklabel(frame2c, foreground=fg, text=fmt)
-  frame2c.lab.2 <- ttklabel(frame2c, foreground=fg, text=format(d.t, format=fmt))
+  frame2c.lab.2 <- ttklabel(frame2c, foreground=fg,
+                            text=format(sample, format=fmt))
   tkgrid(frame2c.lab.1, padx=5, pady=c(5, 1))
   tkgrid(frame2c.lab.2, padx=5, pady=c(1, 5))
   tcl("grid", "anchor", frame2c, "w")

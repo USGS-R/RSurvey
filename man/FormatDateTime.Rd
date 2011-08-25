@@ -10,10 +10,12 @@ class \dQuote{POSIXt}, calendar dates and times.
 }
 
 \usage{
-FormatDateTime(spec = "", parent = NULL)
+FormatDateTime(sample = as.POSIXct("1969-07-20 18:17:01"),
+               spec = "", parent = NULL)
 }
 
 \arguments{
+\item{sample}{POSIXct or POSIXlt; a calendar date and time object.}
 \item{spec}{character; the conversion specification for date-time values.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
