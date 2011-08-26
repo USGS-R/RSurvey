@@ -10,7 +10,7 @@ class \dQuote{POSIXt}, calendar dates and times.
 }
 
 \usage{
-FormatDateTime(sample = as.POSIXct("1969-07-20 18:17:01"),
+FormatDateTime(sample = as.POSIXct("1991-08-25 20:57:08"),
                spec = "", parent = NULL)
 }
 
