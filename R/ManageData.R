@@ -520,9 +520,11 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   tkgrid(frame0.but.1, frame0.but.2, frame0.but.3, frame0.grp.4)
 
-  tkgrid.configure(frame0.but.1, frame0.but.2, sticky="e", padx=2, pady=c(2, 8))
+  tkgrid.configure(frame0.but.1, frame0.but.2, sticky="e",
+                   padx=2, pady=c(2, 10))
   tkgrid.configure(frame0.but.2, padx=c(2, 6))
-  tkgrid.configure(frame0.but.3, sticky="w", padx=c(2, 0), pady=c(2, 8), rowspan=2)
+  tkgrid.configure(frame0.but.3, sticky="w", padx=c(2, 0), pady=c(2, 10),
+                   rowspan=2)
   tkgrid.configure(frame0.grp.4, sticky="se")
 
   tkpack(frame0, side="bottom", anchor="e")
@@ -539,7 +541,7 @@ ManageData <- function(cols, vars, parent=NULL) {
                             command=function() Arrange("front"))
   frame1.but.4 <- ttkbutton(frame1, width=2, image=GetBitmapImage("down"),
                             command=function() Arrange("forward"))
-  frame1.but.5 <- ttkbutton(frame1, width=2, image=GetBitmapImage("new"),
+  frame1.but.5 <- ttkbutton(frame1, width=2, image=GetBitmapImage("plus"),
                             command=SaveNewVar)
   frame1.but.6 <- ttkbutton(frame1, width=2, image=GetBitmapImage("view"),
                             command=CallViewData)
@@ -693,7 +695,7 @@ ManageData <- function(cols, vars, parent=NULL) {
   # Insert notebook and paned window
 
   tkadd(pw, nb, weight=1)
-  tkpack(pw, fill="both", expand="yes", padx=c(10, 15), pady=c(10, 2))
+  tkpack(pw, fill="both", expand="yes", padx=10, pady=c(10, 2))
 
   # Bind events
 

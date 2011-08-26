@@ -19,9 +19,8 @@ GetBitmapImage(type)
 \details{
 Icon image types include: \var{left}, \var{right}, \var{up}, \var{down},
 \var{top}, \var{bottom}, \var{upleft}, \var{upright}, \var{downleft},
-\var{downright}, \var{next}, \var{previous},
-\var{copy}, \var{paste}, \var{find}, \var{new}, \var{delete}, \var{view}.
-\var{expand}, and \var{collapse}.
+\var{downright}, \var{next}, \var{previous}, \var{copy}, \var{paste},
+\var{find}, \var{delete}, \var{view}, \var{info}, \var{plus}, and \var{minus}.
 A recommended editor for bitmap design is Paul Obermeier's
 \href{http://www.posoft.de/html/poBitmapMain.html}{poBitmap} tool.
 }

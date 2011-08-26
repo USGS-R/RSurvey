@@ -238,8 +238,8 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
   tkgrid(frame0.but.1, frame0.but.2, frame0.grp.3)
 
-  tkgrid.configure(frame0.but.1, sticky="e", padx=2, pady=c(10, 10))
-  tkgrid.configure(frame0.but.2, sticky="w", padx=2, pady=c(10, 10), rowspan=2)
+  tkgrid.configure(frame0.but.1, sticky="e", padx=c(0, 4), pady=10)
+  tkgrid.configure(frame0.but.2, sticky="w", pady=10, rowspan=2)
   tkgrid.configure(frame0.grp.3, sticky="se")
 
   tkpack(frame0, side="bottom", anchor="e")
