@@ -1,4 +1,4 @@
-FormatDateTime <- function(sample=as.POSIXct("1969-07-20 18:17:01"),
+FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
                            spec=NULL, parent=NULL) {
   # A GUI for constructing a date-time format.
 
