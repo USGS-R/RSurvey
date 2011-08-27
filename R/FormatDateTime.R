@@ -131,10 +131,10 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
 
   tkgrid.configure(frame0.but.1, padx=c(10, 2), pady=4, sticky="n")
   tkgrid.configure(frame0.but.2, pady=4, sticky="n")
-  tkgrid.configure(frame0.but.4, frame0.but.5, padx=c(4, 0), pady=c(15, 10))
-  tkgrid.configure(frame0.but.5, columnspan=2, padx=c(4, 10))
-
+  tkgrid.configure(frame0.but.4, frame0.but.5, padx=c(0, 4), pady=c(15, 10))
+  tkgrid.configure(frame0.but.5, columnspan=2, padx=c(0, 10))
   tkgrid.configure(frame0.grp.6, sticky="se")
+
   tkraise(frame0.but.5, frame0.grp.6)
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")

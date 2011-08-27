@@ -54,14 +54,14 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
         is.odd <- !array(0:1, length(mn))
         mn[ is.odd] <- pts$m
         mn[!is.odd] <- pts$n
-        tkcreate(frame3.cvs, "polygon", .Tcl.args(mn), fill=col.fill,
+        tkcreate(frame2.cvs, "polygon", .Tcl.args(mn), fill=col.fill,
                  outline=col.line, width=1, tag=tag)
       }
     }
 
-    idxs <- as.integer(tkcurselection(frame2.lst)) + 1
+    idxs <- as.integer(tkcurselection(frame1.lst)) + 1
 
-    tcl(frame3.cvs, "delete", "all")
+    tcl(frame2.cvs, "delete", "all")
     xran <<- NULL
     yran <<- NULL
 
@@ -150,9 +150,9 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
   ScaleCanvas <- function() {
     w0 <- w
     h0 <- h
-    w <<- as.numeric(tkwinfo("width",  frame3.cvs))
-    h <<- as.numeric(tkwinfo("height", frame3.cvs))
-    tcl(frame3.cvs, "scale", "all", 0, 0, w / w0, h / h0)
+    w <<- as.numeric(tkwinfo("width",  frame2.cvs))
+    h <<- as.numeric(tkwinfo("height", frame2.cvs))
+    tcl(frame2.cvs, "scale", "all", 0, 0, w / w0, h / h0)
   }
 
   # Update pointer coordinates
@@ -193,7 +193,7 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
     old.names <- names(ply)
     cur.name <- NULL
 
-    idxs <- as.integer(tkcurselection(frame2.lst)) + 1
+    idxs <- as.integer(tkcurselection(frame1.lst)) + 1
     if (length(idxs) != 0)
       cur.name <- old.names[idxs[1]]
 
@@ -228,8 +228,8 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
     tcl("lappend", list.var, nam)
 
     idx <- length(ply) - 1
-    tkselection.clear(frame2.lst, 0, idx)
-    tkselection.set(frame2.lst, idx, idx)
+    tkselection.clear(frame1.lst, 0, idx)
+    tkselection.set(frame1.lst, idx, idx)
 
     tclvalue(rb.var) <- "add"
     PlotPolygon()
@@ -243,15 +243,15 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
       return()
     nams <- names(ply)
     idxs <- (1:n) - 1
-    sel <- as.integer(tkcurselection(frame2.lst))
+    sel <- as.integer(tkcurselection(frame1.lst))
     if (type == "all") {
-      tkselection.set(frame2.lst, 0, max(idxs))
+      tkselection.set(frame1.lst, 0, max(idxs))
     } else if (type == "none" | type == "inverse") {
-      tkselection.clear(frame2.lst, 0, max(idxs))
+      tkselection.clear(frame1.lst, 0, max(idxs))
     }
     if (type == "inverse") {
       for (i in idxs[!(idxs %in% sel)])
-        tkselection.set(frame2.lst, i)
+        tkselection.set(frame1.lst, i)
     }
     PlotPolygon()
   }
@@ -259,7 +259,7 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
   # Arrange polygon
 
   ArrangePolygon <- function(type) {
-    idxs <- as.integer(tkcurselection(frame2.lst)) + 1
+    idxs <- as.integer(tkcurselection(frame1.lst)) + 1
     if (length(idxs) == 0)
       return()
     if (type == "back") {
@@ -299,16 +299,16 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
     for (i in seq(along=ply))
       tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var),
                                 i - 1, i - 1, names(ply)[i])
-    tkselection.clear(frame2.lst, 0, "end")
+    tkselection.clear(frame1.lst, 0, "end")
     for (i in new.idxs - 1)
-      tkselection.set(frame2.lst, i)
+      tkselection.set(frame1.lst, i)
     PlotPolygon()
   }
 
   # Clear polygon
 
   ClearPolygon <- function() {
-    idxs <- as.integer(tkcurselection(frame2.lst)) + 1
+    idxs <- as.integer(tkcurselection(frame1.lst)) + 1
     if (length(idxs) == 0)
       return()
     for (idx in idxs) {
@@ -320,8 +320,8 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
     }
     ply <<- ply[-idxs]
     n <- length(ply)
-    tkselection.clear(frame2.lst, 0, n - 1)
-    tkselection.set(frame2.lst, n - 1)
+    tkselection.clear(frame1.lst, 0, n - 1)
+    tkselection.set(frame1.lst, n - 1)
     PlotPolygon()
   }
 
@@ -344,9 +344,9 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
       ply[[nam]] <<- new.poly
       tcl("lappend", list.var, nam)
     }
-    idxs <- as.integer(tkcurselection(frame2.lst))
+    idxs <- as.integer(tkcurselection(frame1.lst))
     if (length(idxs) == 0) {
-      tkselection.set(frame2.lst, length(ply) - 1)
+      tkselection.set(frame1.lst, length(ply) - 1)
       PlotPolygon()
     }
   }
@@ -354,7 +354,7 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
   # Export polygon
 
   ExportPolygon <- function() {
-    idxs <- as.integer(tkcurselection(frame2.lst)) + 1
+    idxs <- as.integer(tkcurselection(frame1.lst)) + 1
     if (length(idxs) == 0)
       return()
 
@@ -473,168 +473,167 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
 
   frame0 <- ttkframe(tt, relief="flat")
 
-  frame0.but.1 <- ttkbutton(frame0, width=12, text="OK",
-                            command=function() SavePolygon("ok"))
-  frame0.but.2 <- ttkbutton(frame0, width=12, text="Apply",
-                            command=function() SavePolygon("apply"))
-  frame0.but.3 <- ttkbutton(frame0, width=12, text="Cancel",
-                            command=function() tclvalue(tt.done.var) <- 1)
-
-  frame0.grp.4 <- ttksizegrip(frame0)
-
-  tkgrid(frame0.but.1, frame0.but.2, frame0.but.3, frame0.grp.4)
-
-  tkgrid.configure(frame0.but.1, frame0.but.2, sticky="e",
-                   padx=c(4, 0), pady=c(2, 10))
-  tkgrid.configure(frame0.but.3, sticky="w", padx=c(6, 0), pady=c(2, 10),
-                   rowspan=2)
-  tkgrid.configure(frame0.grp.4, sticky="se")
-
-  tkpack(frame0, side="bottom", anchor="e")
-
-  # Frame 1, polygon arrangement and deletion buttons
-
-  frame1 <- ttkframe(tt, relief="flat")
-
-  frame1.but.1 <- ttkbutton(frame1, width=2, image=GetBitmapImage("up"),
+  frame0.but.1 <- ttkbutton(frame0, width=2, image=GetBitmapImage("up"),
                             command=function() ArrangePolygon("backward"))
-  frame1.but.2 <- ttkbutton(frame1, width=2, image=GetBitmapImage("top"),
+  frame0.but.2 <- ttkbutton(frame0, width=2, image=GetBitmapImage("top"),
                             command=function() ArrangePolygon("back"))
-  frame1.but.3 <- ttkbutton(frame1, width=2, image=GetBitmapImage("bottom"),
+  frame0.but.3 <- ttkbutton(frame0, width=2, image=GetBitmapImage("bottom"),
                             command=function() ArrangePolygon("front"))
-  frame1.but.4 <- ttkbutton(frame1, width=2, image=GetBitmapImage("down"),
+  frame0.but.4 <- ttkbutton(frame0, width=2, image=GetBitmapImage("down"),
                             command=function() ArrangePolygon("forward"))
-  frame1.but.5 <- ttkbutton(frame1, width=2, image=GetBitmapImage("delete"),
+  frame0.but.5 <- ttkbutton(frame0, width=2, image=GetBitmapImage("delete"),
                             command=ClearPolygon)
 
-  tkgrid(frame1.but.1, frame1.but.2, frame1.but.3, frame1.but.4, frame1.but.5,
-         padx=c(0, 2), pady=c(4, 0))
-  tkgrid.configure(frame1.but.5, padx=c(5, 0))
+  frame0.but.7 <- ttkbutton(frame0, width=12, text="OK",
+                            command=function() SavePolygon("ok"))
+  frame0.but.8 <- ttkbutton(frame0, width=12, text="Apply",
+                            command=function() SavePolygon("apply"))
+  frame0.but.9 <- ttkbutton(frame0, width=12, text="Cancel",
+                            command=function() tclvalue(tt.done.var) <- 1)
 
-  tkpack(frame1, side="bottom", anchor="w", padx=c(10, 0))
+  frame0.grp.10 <- ttksizegrip(frame0)
+
+  tkgrid(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4, frame0.but.5,
+         "x", frame0.but.7, frame0.but.8, frame0.but.9, frame0.grp.10)
+
+
+  tkgrid.columnconfigure(frame0, 5, weight=1)
+
+  tkgrid.configure(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4,
+                   frame0.but.5, sticky="n", padx=c(0, 2), pady=c(4, 0))
+  tkgrid.configure(frame0.but.1, padx=c(10, 2))
+  tkgrid.configure(frame0.but.5, padx=c(5, 0))
+  tkgrid.configure(frame0.but.7, frame0.but.8, frame0.but.9,
+                   padx=c(0, 4), pady=c(15, 10))
+  tkgrid.configure(frame0.but.9, columnspan=2, padx=c(0, 10))
+  tkgrid.configure(frame0.grp.10, sticky="se")
+
+  tkraise(frame0.but.9, frame0.grp.10)
+
+  tkpack(frame0, fill="x", side="bottom", anchor="e")
 
   # Paned window
 
   pw <- ttkpanedwindow(tt, orient="horizontal")
 
+  # Frame 1
+
+  frame1 <- ttkframe(pw, relief="flat")
+
+  frame1.lst <- tklistbox(frame1, selectmode="extended", activestyle="none",
+                          relief="flat", borderwidth=5, width=20,
+                          exportselection=FALSE, listvariable=list.var,
+                          highlightthickness=0)
+  frame1.ysc <- ttkscrollbar(frame1, orient="vertical")
+
+  tkconfigure(frame1.lst, background="white",
+              yscrollcommand=paste(.Tk.ID(frame1.ysc), "set"))
+  tkconfigure(frame1.ysc, command=paste(.Tk.ID(frame1.lst), "yview"))
+
+  tkpack(frame1.lst, side="left",  fill="both", expand=TRUE)
+  tkpack(frame1.ysc, side="right", fill="y", anchor="w")
+
+  n <- length(ply)
+  if (n > 0)
+    tkselection.set(frame1.lst, n - 1)
+
   # Frame 2
 
   frame2 <- ttkframe(pw, relief="flat")
 
-  frame2.lst <- tklistbox(frame2, selectmode="extended", activestyle="none",
-                          relief="flat", borderwidth=5, width=20,
-                          exportselection=FALSE, listvariable=list.var,
-                          highlightthickness=0)
-  frame2.ysc <- ttkscrollbar(frame2, orient="vertical")
-
-  tkconfigure(frame2.lst, background="white",
-              yscrollcommand=paste(.Tk.ID(frame2.ysc), "set"))
-  tkconfigure(frame2.ysc, command=paste(.Tk.ID(frame2.lst), "yview"))
-
-  tkpack(frame2.lst, side="left",  fill="both", expand=TRUE)
-  tkpack(frame2.ysc, side="right", fill="y", anchor="w")
-
-  n <- length(ply)
-  if (n > 0)
-    tkselection.set(frame2.lst, n - 1)
+  frame2.cvs <- tkcanvas(frame2, relief="flat", width=w, height=h,
+                         background="white", confine=TRUE, closeenough=0,
+                         cursor="crosshair", borderwidth=0,
+                         highlightthickness=0)
 
   # Frame 3
 
   frame3 <- ttkframe(pw, relief="flat")
 
-  frame3.cvs <- tkcanvas(frame3, relief="flat", width=w, height=h,
-                         background="white", confine=TRUE, closeenough=0,
-                         cursor="crosshair", borderwidth=0,
-                         highlightthickness=0)
-
-  # Frame 4
-
-  frame4 <- ttkframe(pw, relief="flat")
-
-  frame4a <- ttklabelframe(frame4, relief="flat", borderwidth=5, padding=5,
+  frame3a <- ttklabelframe(frame3, relief="flat", borderwidth=5, padding=5,
                            text="Shape modes")
 
-  frame4a.rb.1 <- ttkradiobutton(frame4a, variable=rb.var, command=PlotPolygon,
+  frame3a.rb.1 <- ttkradiobutton(frame3a, variable=rb.var, command=PlotPolygon,
                                  value="add", text="Unite")
-  frame4a.rb.2 <- ttkradiobutton(frame4a, variable=rb.var, command=PlotPolygon,
+  frame3a.rb.2 <- ttkradiobutton(frame3a, variable=rb.var, command=PlotPolygon,
                                  value="sub", text="Minus front")
-  frame4a.rb.3 <- ttkradiobutton(frame4a, variable=rb.var, command=PlotPolygon,
+  frame3a.rb.3 <- ttkradiobutton(frame3a, variable=rb.var, command=PlotPolygon,
                                  value="int", text="Intersect")
-  frame4a.rb.4 <- ttkradiobutton(frame4a, variable=rb.var, command=PlotPolygon,
+  frame3a.rb.4 <- ttkradiobutton(frame3a, variable=rb.var, command=PlotPolygon,
                                  value="exc", text="Exclude overlapping")
 
-  frame4a.but <- ttkbutton(frame4a, width=12, text="Build",
+  frame3a.but <- ttkbutton(frame3a, width=12, text="Build",
                            command=SaveNewPolygon)
 
-  tkgrid(frame4a.rb.1, sticky="w")
-  tkgrid(frame4a.rb.2, sticky="w")
-  tkgrid(frame4a.rb.3, sticky="w")
-  tkgrid(frame4a.rb.4, sticky="w")
-  tkgrid(frame4a.but, pady=10)
+  tkgrid(frame3a.rb.1, sticky="w")
+  tkgrid(frame3a.rb.2, sticky="w")
+  tkgrid(frame3a.rb.3, sticky="w")
+  tkgrid(frame3a.rb.4, sticky="w")
+  tkgrid(frame3a.but, pady=10)
 
-  tcl("grid", "anchor", frame4a, "w")
+  tcl("grid", "anchor", frame3a, "w")
 
-  frame4b <- ttklabelframe(frame4, relief="flat", borderwidth=5, padding=5,
+  frame3b <- ttklabelframe(frame3, relief="flat", borderwidth=5, padding=5,
                            text="Attributes")
 
-  frame4b.lab.1.1 <- tklabel(frame4b, text="Area")
-  frame4b.lab.2.1 <- tklabel(frame4b, text="Polygons")
-  frame4b.lab.3.1 <- tklabel(frame4b, text="Holes")
-  frame4b.lab.4.1 <- tklabel(frame4b, text="Vertices")
+  frame3b.lab.1.1 <- tklabel(frame3b, text="Area")
+  frame3b.lab.2.1 <- tklabel(frame3b, text="Polygons")
+  frame3b.lab.3.1 <- tklabel(frame3b, text="Holes")
+  frame3b.lab.4.1 <- tklabel(frame3b, text="Vertices")
 
-  frame4b.lab.1.2 <- tklabel(frame4b, text=tclvalue(area.var))
-  frame4b.lab.2.2 <- tklabel(frame4b, text=tclvalue(poly.var))
-  frame4b.lab.3.2 <- tklabel(frame4b, text=tclvalue(hole.var))
-  frame4b.lab.4.2 <- tklabel(frame4b, text=tclvalue(vert.var))
+  frame3b.lab.1.2 <- tklabel(frame3b, text=tclvalue(area.var))
+  frame3b.lab.2.2 <- tklabel(frame3b, text=tclvalue(poly.var))
+  frame3b.lab.3.2 <- tklabel(frame3b, text=tclvalue(hole.var))
+  frame3b.lab.4.2 <- tklabel(frame3b, text=tclvalue(vert.var))
 
-  tkconfigure(frame4b.lab.1.2, textvariable=area.var)
-  tkconfigure(frame4b.lab.2.2, textvariable=poly.var)
-  tkconfigure(frame4b.lab.3.2, textvariable=hole.var)
-  tkconfigure(frame4b.lab.4.2, textvariable=vert.var)
+  tkconfigure(frame3b.lab.1.2, textvariable=area.var)
+  tkconfigure(frame3b.lab.2.2, textvariable=poly.var)
+  tkconfigure(frame3b.lab.3.2, textvariable=hole.var)
+  tkconfigure(frame3b.lab.4.2, textvariable=vert.var)
 
-  tkgrid(frame4b.lab.1.1, frame4b.lab.1.2)
-  tkgrid(frame4b.lab.2.1, frame4b.lab.2.2)
-  tkgrid(frame4b.lab.3.1, frame4b.lab.3.2)
-  tkgrid(frame4b.lab.4.1, frame4b.lab.4.2)
+  tkgrid(frame3b.lab.1.1, frame3b.lab.1.2)
+  tkgrid(frame3b.lab.2.1, frame3b.lab.2.2)
+  tkgrid(frame3b.lab.3.1, frame3b.lab.3.2)
+  tkgrid(frame3b.lab.4.1, frame3b.lab.4.2)
 
-  tkgrid.configure(frame4b.lab.1.1, frame4b.lab.2.1,
-                   frame4b.lab.3.1, frame4b.lab.4.1, sticky="e")
+  tkgrid.configure(frame3b.lab.1.1, frame3b.lab.2.1,
+                   frame3b.lab.3.1, frame3b.lab.4.1, sticky="e")
 
-  tkgrid.configure(frame4b.lab.1.2, frame4b.lab.2.2,
-                   frame4b.lab.3.2, frame4b.lab.4.2, sticky="w", padx=c(5, 0))
+  tkgrid.configure(frame3b.lab.1.2, frame3b.lab.2.2,
+                   frame3b.lab.3.2, frame3b.lab.4.2, sticky="w", padx=c(5, 0))
 
-  tcl("grid", "anchor", frame4b, "w")
+  tcl("grid", "anchor", frame3b, "w")
 
-  frame4c <- ttkframe(frame4, relief="flat", borderwidth=0, padding=0)
+  frame3c <- ttkframe(frame3, relief="flat", borderwidth=0, padding=0)
 
-  frame4c.lab.1 <- tklabel(frame4c, text=tclvalue(xy.var))
-  tkconfigure(frame4c.lab.1, textvariable=xy.var)
-  tkgrid(frame4c.lab.1)
+  frame3c.lab.1 <- tklabel(frame3c, text=tclvalue(xy.var))
+  tkconfigure(frame3c.lab.1, textvariable=xy.var)
+  tkgrid(frame3c.lab.1)
 
-  tkpack(frame4a, fill="both", expand=TRUE, padx=0, pady=c(0, 5))
-  tkpack(frame4b, fill="both", expand=TRUE, padx=0, pady=c(5, 5))
-  tkpack(frame4c)
+  tkpack(frame3a, fill="both", expand=TRUE, padx=0, pady=c(0, 5))
+  tkpack(frame3b, fill="both", expand=TRUE, padx=0, pady=c(5, 5))
+  tkpack(frame3c)
 
   # Final layout
 
-  tkgrid(frame3.cvs, sticky="news")
+  tkgrid(frame2.cvs, sticky="news")
 
-  tkgrid.configure(frame3.cvs, padx=5, pady=0)
+  tkgrid.configure(frame2.cvs, padx=5, pady=0)
 
-  tkgrid.rowconfigure(frame3, frame3.cvs, weight=1)
-  tkgrid.columnconfigure(frame3, frame3.cvs, weight=1)
+  tkgrid.rowconfigure(frame2, frame2.cvs, weight=1)
+  tkgrid.columnconfigure(frame2, frame2.cvs, weight=1)
 
-  tkadd(pw, frame2, weight=0)
-  tkadd(pw, frame3, weight=1)
-  tkadd(pw, frame4, weight=0)
+  tkadd(pw, frame1, weight=0)
+  tkadd(pw, frame2, weight=1)
+  tkadd(pw, frame3, weight=0)
 
   tkpack(pw, fill="both", expand=TRUE, padx=10, pady=c(10, 0))
 
   # Bind events
 
-  tkbind(frame3.cvs, "<Motion>", function(x, y) MouseMotion(x, y))
-  tkbind(frame3.cvs, "<Leave>", MouseLeave)
-  tkbind(frame3.cvs, "<Configure>", ScaleCanvas)
+  tkbind(frame2.cvs, "<Motion>", function(x, y) MouseMotion(x, y))
+  tkbind(frame2.cvs, "<Leave>", MouseLeave)
+  tkbind(frame2.cvs, "<Configure>", ScaleCanvas)
 
   tkbind(tt, "<Control-o>", ImportPolygon)
   tkbind(tt, "<Control-s>", ExportPolygon)
@@ -651,7 +650,7 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
   tkbind(tt, "<Delete>", ClearPolygon)
   tkbind(tt, "<Control-r>", RenamePolygon)
 
-  tkbind(frame2.lst, "<<ListboxSelect>>", PlotPolygon)
+  tkbind(frame1.lst, "<<ListboxSelect>>", PlotPolygon)
 
   # GUI control
 

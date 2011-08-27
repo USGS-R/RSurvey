@@ -215,7 +215,7 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
   tclServiceMode(FALSE)
 
-  tt <- tktoplevel(padx=0, pady=0)
+  tt <- tktoplevel()
 
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
@@ -230,19 +230,23 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
   frame0 <- ttkframe(tt, relief="flat")
 
-  frame0.but.1 <- ttkbutton(frame0, width=12, text="Copy",
+  frame0.but.2 <- ttkbutton(frame0, width=12, text="Copy",
                             command=CopyValues)
-  frame0.but.2 <- ttkbutton(frame0, width=12, text="Close",
+  frame0.but.3 <- ttkbutton(frame0, width=12, text="Close",
                             command=function() tclvalue(tt.done.var) <- 1)
-  frame0.grp.3 <- ttksizegrip(frame0)
+  frame0.grp.4 <- ttksizegrip(frame0)
 
-  tkgrid(frame0.but.1, frame0.but.2, frame0.grp.3)
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.grp.4)
 
-  tkgrid.configure(frame0.but.1, sticky="e", padx=c(0, 4), pady=10)
-  tkgrid.configure(frame0.but.2, sticky="w", pady=10, rowspan=2)
-  tkgrid.configure(frame0.grp.3, sticky="se")
+  tkgrid.columnconfigure(frame0, 0, weight=1)
 
-  tkpack(frame0, side="bottom", anchor="e")
+  tkgrid.configure(frame0.but.2, frame0.but.3, padx=c(0, 4), pady=c(4, 10))
+  tkgrid.configure(frame0.but.3, columnspan=2, padx=c(0, 10))
+  tkgrid.configure(frame0.grp.4, sticky="se")
+
+  tkraise(frame0.but.3, frame0.grp.4)
+
+  tkpack(frame0, fill="x", side="bottom", anchor="e")
 
   # Frame 1, line search
 

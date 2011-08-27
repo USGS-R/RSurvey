@@ -109,7 +109,7 @@ SetConfiguration <- function(parent=NULL) {
   # Open GUI
 
   tclServiceMode(FALSE)
-  tt <- tktoplevel(padx=0, pady=0)
+  tt <- tktoplevel()
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
@@ -129,11 +129,10 @@ SetConfiguration <- function(parent=NULL) {
   frame0.but.2 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() tclvalue(tt.done.var) <- 1)
 
-  tkgrid(frame0.but.1, frame0.but.2)
+  tkgrid(frame0.but.1, frame0.but.2, pady=c(0, 10))
 
-  tkgrid.configure(frame0.but.1, sticky="e", padx=c(4,0), pady=c(5,8))
-  tkgrid.configure(frame0.but.2, sticky="w", padx=c(4,8), pady=c(5,8),
-                   rowspan=2)
+  tkgrid.configure(frame0.but.1, sticky="e", padx=c(0, 4))
+  tkgrid.configure(frame0.but.2, sticky="w", padx=c(0, 10), rowspan=2)
 
   tkpack(frame0, side="bottom", anchor="e")
 
@@ -143,7 +142,7 @@ SetConfiguration <- function(parent=NULL) {
 
   # Frame 1 contains parameters
 
-  frame1 <- ttkframe(pw, relief="flat", borderwidth=5, padding=8)
+  frame1 <- ttkframe(pw, relief="flat", borderwidth=0, padding=10)
 
   txt <- "Approximate number of contour levels"
   frame1.lab.1.1 <- ttklabel(frame1, text=txt)
@@ -211,19 +210,20 @@ SetConfiguration <- function(parent=NULL) {
            tclvalue(tgap.var) <- CheckEntry("numeric", tclvalue(tgap.var))
          })
 
-  tkgrid(frame1.lab.1.1, frame1.ent.1.2, padx=1, pady=c(0, 4))
-  tkgrid(frame1.lab.2.1, frame1.ent.2.2, padx=1, pady=c(0, 4))
-  tkgrid(frame1.lab.3.1, frame1.ent.3.2, padx=1, pady=c(0, 4))
-  tkgrid(frame1.lab.4.1, frame1.ent.4.2, padx=1, pady=c(0, 4))
-  tkgrid(frame1.lab.5.1, frame1.ent.5.2, padx=1, pady=c(0, 4))
-  tkgrid(frame1.lab.6.1, frame1.ent.6.2, padx=1, pady=c(0, 4))
-  tkgrid(frame1.lab.7.1, frame1.ent.7.2, padx=1, pady=c(0, 4))
-  tkgrid(frame1.lab.8.1, frame1.ent.8.2, padx=1, pady=c(0, 4))
-  tkgrid(frame1.lab.9.1, frame1.ent.9.2, padx=1)
+  tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(0, 4))
+  tkgrid(frame1.lab.2.1, frame1.ent.2.2, pady=c(0, 4))
+  tkgrid(frame1.lab.3.1, frame1.ent.3.2, pady=c(0, 4))
+  tkgrid(frame1.lab.4.1, frame1.ent.4.2, pady=c(0, 4))
+  tkgrid(frame1.lab.5.1, frame1.ent.5.2, pady=c(0, 4))
+  tkgrid(frame1.lab.6.1, frame1.ent.6.2, pady=c(0, 4))
+  tkgrid(frame1.lab.7.1, frame1.ent.7.2, pady=c(0, 4))
+  tkgrid(frame1.lab.8.1, frame1.ent.8.2, pady=c(0, 4))
+  tkgrid(frame1.lab.9.1, frame1.ent.9.2)
 
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, frame1.lab.3.1,
                    frame1.lab.4.1, frame1.lab.5.1, frame1.lab.6.1,
-                   frame1.lab.7.1, frame1.lab.8.1, frame1.lab.9.1, sticky="e")
+                   frame1.lab.7.1, frame1.lab.8.1, frame1.lab.9.1,
+                   sticky="e", padx=c(0, 2))
   tkgrid.configure(frame1.ent.1.2, frame1.ent.2.2, frame1.ent.3.2,
                    frame1.ent.4.2, frame1.ent.5.2, frame1.ent.6.2,
                    frame1.ent.7.2, frame1.ent.8.2, frame1.ent.9.2, sticky="we")
@@ -232,7 +232,7 @@ SetConfiguration <- function(parent=NULL) {
 
   # Frame 2 contains plot features
 
-  frame2 <- ttkframe(pw, relief="flat", borderwidth=5, padding=8)
+  frame2 <- ttkframe(pw, relief="flat", borderwidth=0, padding=10)
 
   txt <- "reverse legend"
   frame2.chk.01.1 <- ttkcheckbutton(frame2, text=txt, variable=rkey.var)
@@ -266,7 +266,7 @@ SetConfiguration <- function(parent=NULL) {
 
   # Final layout
 
-  tkgrid(frame1, frame2, padx=2, pady=2, sticky="nswe")
+  tkgrid(frame1, frame2, sticky="nswe")
   tkgrid.columnconfigure(pw, 0, weight=2)
   tkpack(pw, fill="x", expand=TRUE)
 

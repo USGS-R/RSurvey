@@ -452,7 +452,7 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
 
   # Insert notebook
 
-  tkpack(nb, fill="x", expand=TRUE, padx=5)
+  tkpack(nb, fill="x", expand=TRUE, padx=5, pady=c(5, 0))
 
   # Frame 4 contains ok and cancel buttons
 
