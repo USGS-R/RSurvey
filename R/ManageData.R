@@ -523,9 +523,10 @@ ManageData <- function(cols, vars, parent=NULL) {
   tkgrid.configure(frame0.but.1, frame0.but.2, sticky="e",
                    padx=2, pady=c(2, 10))
   tkgrid.configure(frame0.but.2, padx=c(2, 6))
-  tkgrid.configure(frame0.but.3, sticky="w", padx=c(2, 0), pady=c(2, 10),
-                   rowspan=2)
+  tkgrid.configure(frame0.but.3, sticky="w", padx=c(2, 10), pady=c(2, 10),
+                   rowspan=2, columnspan=2)
   tkgrid.configure(frame0.grp.4, sticky="se")
+  tkraise(frame0.but.3, frame0.grp.4)
 
   tkpack(frame0, side="bottom", anchor="e")
 
