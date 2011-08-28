@@ -2,7 +2,7 @@
 
 \alias{FormatDateTime}
 
-\title{A \acronym{GUI} for constructing date and time formats.}
+\title{Build calendar date and time string formats.}
 
 \description{
 A \acronym{GUI} for converting between character representations and objects of
@@ -21,7 +21,7 @@ FormatDateTime(sample = as.POSIXct("1991-08-25 20:57:08"),
 }
 
 \value{
-Returns a character string representing the formatted time.
+Returns a character string representing the formatted date-time value.
 }
 
 \seealso{

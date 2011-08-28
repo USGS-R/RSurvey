@@ -1,5 +1,5 @@
 Format <- function(sample=pi, fmt=NULL, parent=NULL) {
-  # A GUI for constructing C-style string formats.
+  # Build C-style string formats.
 
   # Additional functions (subroutines)
 

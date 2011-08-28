@@ -1,6 +1,6 @@
 FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
                            fmt=NULL, parent=NULL) {
-  # A GUI for constructing a date-time format.
+  # Build calendar date and time string formats.
 
   # Additional functions (subroutines)
 

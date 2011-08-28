@@ -2,7 +2,7 @@
 
 \alias{Format}
 
-\title{A \acronym{GUI} for constructing C-style string formats.}
+\title{Build C-style string formats.}
 
 \description{
 A \acronym{GUI} for the system \code{sprintf} C-library function.
