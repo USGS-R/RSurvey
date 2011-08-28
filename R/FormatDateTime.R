@@ -4,7 +4,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
 
   # Additional functions (subroutines)
 
-  # Save conversion specification format
+  # Save format
 
   SaveFormat <- function() {
     new.fmt <<- as.character(tclvalue(fmt.var))
@@ -21,43 +21,43 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
       AddString(cur.val)
   }
 
-  # Update formated date-time entry
+  # Update sample date-time entry
 
-  UpdateFormat <- function() {
+  UpdateSample <- function() {
     txt <- sub("%$", "", tclvalue(fmt.var))
     tclvalue(sample.var) <- if (txt == "") "" else format(sample, format=txt)
   }
 
-  # Add string to conversion format entry
+  # Add string to format entry
 
   AddString <- function(txt) {
     if (as.logical(tcl(frame2b.ent, "selection", "present")))
       tcl(frame2b.ent, "delete", "sel.first", "sel.last")
     tkinsert(frame2b.ent, "insert", txt)
-    UpdateFormat()
+    UpdateSample()
     tkfocus(frame2b.ent)
   }
 
-  # Copy conversion specification to clipboard
+  # Copy format to clipboard
 
-  CopySpec <- function() {
+  CopyFormat <- function() {
     txt <- as.character(tclvalue(fmt.var))
     writeClipboard(txt)
   }
 
-  # Paste conversion specification from clipboard
+  # Paste format from clipboard
 
-  PasteSpec <- function() {
+  PasteFormat <- function() {
     tclvalue(fmt.var) <- readClipboard()
-    UpdateFormat()
+    UpdateSample()
     tkfocus(frame2b.ent)
   }
 
- # Clear conversion specification
+ # Clear format from entry
 
-  ClearSpec <- function() {
+  ClearFormat <- function() {
     tclvalue(fmt.var) <- ""
-    UpdateFormat()
+    UpdateSample()
     tkfocus(frame2b.ent)
   }
 
@@ -92,7 +92,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   fmt.var <- tclVar()
   if (!is.null(fmt) && is.character(fmt)) {
      tclvalue(fmt.var) <- fmt
-     UpdateFormat()
+     UpdateSample()
   }
 
   tt.done.var <- tclVar(0)
@@ -264,7 +264,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
 
   frame2b.ent <- ttkentry(frame2b, textvariable=fmt.var, width=30)
   tkicursor(frame2b.ent, "end")
-  tkbind(frame2b.ent, "<KeyRelease>", UpdateFormat)
+  tkbind(frame2b.ent, "<KeyRelease>", UpdateSample)
   frame2b.but.1 <- ttkbutton(frame2b, width=2, text="/",
                              command=function() AddString("/"))
   frame2b.but.2 <- ttkbutton(frame2b, width=2, text="-",
@@ -277,11 +277,11 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
                              command=function() AddString(" "))
 
   frame2b.but.6 <- ttkbutton(frame2b, width=2, image=GetBitmapImage("copy"),
-                             command=CopySpec)
+                             command=CopyFormat)
   frame2b.but.7 <- ttkbutton(frame2b, width=2, image=GetBitmapImage("paste"),
-                             command=PasteSpec)
+                             command=PasteFormat)
   frame2b.but.8 <- ttkbutton(frame2b, width=2, image=GetBitmapImage("delete"),
-                             command=ClearSpec)
+                             command=ClearFormat)
 
   tkgrid(frame2b.ent, pady=c(5, 0))
   tkgrid(frame2b.but.1, frame2b.but.2, frame2b.but.3, frame2b.but.4,
