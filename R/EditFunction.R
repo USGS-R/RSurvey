@@ -245,12 +245,6 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
 
   tkconfigure(tt, menu=top.menu)
 
-
-
-
-
-
-
   # Frame 0, ok and cancel buttons, and size grip
 
   frame0 <- tkframe(tt, relief="flat", padx=0, pady=0)

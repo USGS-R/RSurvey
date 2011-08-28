@@ -11,12 +11,12 @@ class \dQuote{POSIXt}, calendar dates and times.
 
 \usage{
 FormatDateTime(sample = as.POSIXct("1991-08-25 20:57:08"),
-               spec = "", parent = NULL)
+               fmt = NULL, parent = NULL)
 }
 
 \arguments{
 \item{sample}{POSIXct or POSIXlt; a calendar date and time object.}
-\item{spec}{character; the conversion specification for date-time values.}
+\item{fmt}{character; the conversion specification format for date-time values.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
@@ -31,7 +31,7 @@ Returns a character string representing the formatted time.
 \author{Fisher, J.C.}
 
 \examples{
-\donttest{FormatDateTime(spec = "\%d/\%m/\%Y")}
+\donttest{FormatDateTime(fmt = "\%d/\%m/\%Y")}
 }
 
 \keyword{misc}

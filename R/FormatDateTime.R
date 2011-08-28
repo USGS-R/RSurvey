@@ -1,5 +1,5 @@
 FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
-                           spec=NULL, parent=NULL) {
+                           fmt=NULL, parent=NULL) {
   # A GUI for constructing a date-time format.
 
   # Additional functions (subroutines)
@@ -7,7 +7,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   # Save conversion specification format
 
   SaveFormat <- function() {
-    new.spec <<- as.character(tclvalue(con.var))
+    new.fmt <<- as.character(tclvalue(fmt.var))
     tclvalue(tt.done.var) <- 1
   }
 
@@ -24,8 +24,8 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   # Update formated date-time entry
 
   UpdateFormat <- function() {
-    txt <- sub("%$", "", tclvalue(con.var))
-    tclvalue(fmt.var) <- if (txt == "") "" else format(sample, format=txt)
+    txt <- sub("%$", "", tclvalue(fmt.var))
+    tclvalue(sample.var) <- if (txt == "") "" else format(sample, format=txt)
   }
 
   # Add string to conversion format entry
@@ -41,14 +41,14 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   # Copy conversion specification to clipboard
 
   CopySpec <- function() {
-    txt <- as.character(tclvalue(con.var))
+    txt <- as.character(tclvalue(fmt.var))
     writeClipboard(txt)
   }
 
   # Paste conversion specification from clipboard
 
   PasteSpec <- function() {
-    tclvalue(con.var) <- readClipboard()
+    tclvalue(fmt.var) <- readClipboard()
     UpdateFormat()
     tkfocus(frame2b.ent)
   }
@@ -56,7 +56,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
  # Clear conversion specification
 
   ClearSpec <- function() {
-    tclvalue(con.var) <- ""
+    tclvalue(fmt.var) <- ""
     UpdateFormat()
     tkfocus(frame2b.ent)
   }
@@ -80,18 +80,18 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
 
   # Main program
 
-  if (!inherits(sample, "POSIXct"))
+  if (!inherits(sample, c("POSIXct", "POSIXlt")))
     stop("Sample object must be of class POSIXct or POSIXlt.")
 
   cur.val <- NA
-  new.spec <- NULL
+  new.fmt <- NULL
 
   # Assign variables linked to Tk widgets
 
-  con.var <- tclVar()
+  sample.var <- tclVar()
   fmt.var <- tclVar()
-  if (!is.null(spec) && is.character(spec)) {
-     tclvalue(con.var) <- spec
+  if (!is.null(fmt) && is.character(fmt)) {
+     tclvalue(fmt.var) <- fmt
      UpdateFormat()
   }
 
@@ -251,7 +251,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
 
   frame2a <- ttklabelframe(frame2, relief="flat", borderwidth=5, padding=5,
                            text="Sample")
-  frame2a.ent <- ttkentry(frame2a, textvariable=fmt.var, width=30,
+  frame2a.ent <- ttkentry(frame2a, textvariable=sample.var, width=30,
                           state="readonly", takefocus=FALSE)
   tkgrid(frame2a.ent, padx=0, pady=5)
   tkgrid.configure(frame2a.ent, sticky="we")
@@ -260,9 +260,9 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   tkpack(frame2a, fill="both", expand=TRUE, padx=c(5, 0), pady=c(0, 2))
 
   frame2b <- ttklabelframe(frame2, relief="flat", borderwidth=5, padding=5,
-                           text="Conversion specification")
+                           text="Conversion specification format")
 
-  frame2b.ent <- ttkentry(frame2b, textvariable=con.var, width=30)
+  frame2b.ent <- ttkentry(frame2b, textvariable=fmt.var, width=30)
   tkicursor(frame2b.ent, "end")
   tkbind(frame2b.ent, "<KeyRelease>", UpdateFormat)
   frame2b.but.1 <- ttkbutton(frame2b, width=2, text="/",
@@ -338,5 +338,5 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  new.spec
+  new.fmt
 }

@@ -331,7 +331,7 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   CallFormatDateTime <- function() {
     old.unit <- as.character(tclvalue(unit.var))
-    new.unit <- FormatDateTime(spec=old.unit, parent=tt)
+    new.unit <- FormatDateTime(fmt=old.unit, parent=tt)
     if (!is.null(new.unit))
       tclvalue(unit.var) <- new.unit
   }

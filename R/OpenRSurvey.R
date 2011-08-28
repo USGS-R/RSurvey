@@ -1029,11 +1029,11 @@ OpenRSurvey <- function() {
   frame1.box.5.2 <- ttkcombobox(frame1, state="readonly")
   frame1.box.6.2 <- ttkcombobox(frame1, state="readonly")
 
-  tkgrid(frame1.lab.1.1, frame1.box.1.2)
-  tkgrid(frame1.lab.2.1, frame1.box.2.2)
-  tkgrid(frame1.lab.3.1, frame1.box.3.2)
-  tkgrid(frame1.lab.4.1, frame1.box.4.2)
-  tkgrid(frame1.lab.5.1, frame1.box.5.2)
+  tkgrid(frame1.lab.1.1, frame1.box.1.2, pady=c(0, 4))
+  tkgrid(frame1.lab.2.1, frame1.box.2.2, pady=c(0, 4))
+  tkgrid(frame1.lab.3.1, frame1.box.3.2, pady=c(0, 4))
+  tkgrid(frame1.lab.4.1, frame1.box.4.2, pady=c(0, 4))
+  tkgrid(frame1.lab.5.1, frame1.box.5.2, pady=c(0, 4))
   tkgrid(frame1.lab.6.1, frame1.box.6.2)
 
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, frame1.lab.3.1,
@@ -1043,7 +1043,7 @@ OpenRSurvey <- function() {
   tkgrid.configure(frame1.box.1.2, frame1.box.2.2, frame1.box.3.2,
                    frame1.box.4.2, frame1.box.5.2, frame1.box.6.2, sticky="we")
   tkgrid.configure(frame1.box.1.2, frame1.box.2.2, frame1.box.3.2,
-                   frame1.box.4.2, frame1.box.5.2, pady=c(0, 4))
+                   frame1.box.4.2, frame1.box.5.2)
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=25)
 
