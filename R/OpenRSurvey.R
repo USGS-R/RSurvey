@@ -657,9 +657,9 @@ OpenRSurvey <- function() {
     }
     col.names <- sapply(state.idxs, function(i) fun(i, "name"))
     col.units <- sapply(state.idxs, function(i) fun(i, "unit"))
-    col.digs <- sapply(state.idxs, function(i) fun(i, "digits"))
+    col.formats <- sapply(state.idxs, function(i) fun(i, "format"))
 
-    ViewData(d, col.names, col.units, col.digs, parent=tt)
+    ViewData(d, col.names, col.units, col.formats, parent=tt)
 
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)

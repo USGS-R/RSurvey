@@ -1,5 +1,5 @@
-ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
-                     parent=NULL) {
+ViewData <- function(d, column.names=NULL, column.units=NULL,
+                     column.formats=NULL, parent=NULL) {
   # A GUI for viewing table formatted data.
 
   # Additional functions (subroutines)
@@ -135,64 +135,77 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
 
   matched.cells <- NULL
 
-  # Number of rows and columns
+  # Table dimensions
 
   m <- nrow(d)
   n <- ncol(d)
   if (m == 0)
     return()
 
-  # Row titles
-
-  rows <- row.names(d)
-
   # Height and width of viewable table
 
   height <- if (m > 15) 15 else m
   width <- if (n > 6) 6 else n
 
-  # Table titles
+  # Row titles
 
-  col.width.title <- nchar(max(as.integer(row.names(d)))) + 1
+  rows <- row.names(d)
 
-  if (is.null(col.names)) {
-    cols <- rep("", n)
+  # Account for missing arguments
+
+  if (is.null(column.names)) {
+    column.names <- rep("", n)
   } else {
-    cols <- col.names[1:n]
-    cols[is.na(cols)] <- ""
+    column.names <- column.names[1:n]
+    column.names[is.na(column.names)] <- ""
   }
 
-  if (is.null(col.units))
-    col.units <- rep(NA, n)
+  if (is.null(column.units))
+    column.units <- rep(NA, n)
   else
-    col.units <- as.character(col.units[1:n])
-  not.na <- !is.na(col.units)
-  cols[not.na] <- paste(cols[not.na], col.units[not.na], sep="\n")
+    column.units <- as.character(column.units[1:n])
 
-  col.digs <- if (is.null(col.units)) rep(NA, n) else as.integer(col.digs[1:n])
+  if (is.null(column.formats))
+    column.formats <- rep(NA, n)
+  else
+    column.formats <- as.character(column.formats[1:n])
 
-  col.height.title <- max(sapply(strsplit(cols, "\n"), length))
+  # Build table titles
 
-  # Identify column classses
+  cols <- column.names
+  is.not.na <- !is.na(column.units)
+  cols[is.not.na] <- paste(cols[is.not.na], column.units[is.not.na], sep="\n")
 
-  col.class <- sapply(d, function(i) class(i)[1])
-  dt.cols <- which(col.class %in% c("POSIXt", "POSIXct", "POSIXlt"))
-  no.cols <- which(col.class %in% c("numeric", "integer"))
+  # Determine width and height of column 0 and row 0, respectively
+
+  col.0.width <- nchar(max(as.integer(row.names(d)))) + 1
+  row.0.height <- max(sapply(strsplit(cols, "\n"), length))
+
+  # Column classes
+
+  posix.columns <- sapply(d, function(i) inherits(i, c("POSIXct", "POSIXlt")))
+  numeric.columns <- sapply(d, function(i) inherits(i, c("numeric", "integer")))
 
   # Format data table and determine column widths
 
   col.width <- NULL
   for (j in 1:n) {
-    if (j %in% dt.cols && !is.na(col.units[j])) {
-      d[, j] <- format(d[, j], format=col.units[j])
-    } else if (j %in% no.cols && !is.na(col.digs[j])) {
-      d[, j] <- format(round(d[, j], col.digs[j]), nsmall=col.digs[j], trim=TRUE)
-    } else {
+    if (is.na(column.formats[j])) {
       d[, j] <- format(d[, j])
+    } else if (inherits(d[, j], c("POSIXct", "POSIXlt"))) {
+      d[, j] <- format(d[, j], format=column.formats[j])
+    } else {
+      d[, j] <- try(sprintf(column.formats[j], d[, j]), silent=TRUE)
+      if (inherits(d[, j], "try-error"))
+        d[, j] <- format(d[, j])
     }
 
-    len <- if (cols[j] == "") 0 else nchar(strsplit(cols[j], "\n")[[1]])
-    len <- max(c(nchar(sample(d[,j], height)), len)) + 3
+    if (cols[j] == "")
+      nchar.title <- 0
+    else
+      nchar.title <- max(sapply(strsplit(cols[j], "\n"), function(i) nchar(i)))
+    nchar.data <- nchar(sample(d[,j], height))
+    len <- max(c(nchar.title, nchar.data)) + 3
     if (len < 10)
       len <- if (n == 1) 20 else 10
     col.width[j] <- len
@@ -321,8 +334,8 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
   frame2.ysc <- tkscrollbar(frame2, orient="vertical",
                             command=function(...) tkyview(frame2.tbl,...))
 
-  tcl(frame2.tbl, "width", 0, col.width.title)
-  tcl(frame2.tbl, "height", 0, col.height.title)
+  tcl(frame2.tbl, "width", 0, col.0.width)
+  tcl(frame2.tbl, "height", 0, row.0.height)
   for (j in 1:n)
     tcl(frame2.tbl, "width", j, col.width[j])
 
@@ -345,7 +358,7 @@ ViewData <- function(d, col.names=NULL, col.units=NULL, col.digs=NULL,
   tcl(frame2.tbl, "tag", "col", "rowtitles", 0)
   tktag.configure(frame2.tbl, "rowtitles", anchor="ne", justify="right")
 
-  tag.cols <- c(no.cols, dt.cols)
+  tag.cols <- c(numeric.columns, posix.columns)
   if (length(tag.cols) > 0) {
     for (j in tag.cols)
       tcl(frame2.tbl, "tag", "col", "numeric", j)

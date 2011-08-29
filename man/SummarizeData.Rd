@@ -9,20 +9,13 @@ A summary of the descriptive statistics of an array object.
 }
 
 \usage{
-SummarizeData(obj, digits = NULL, big.mark = "", scientific = FALSE,
-              dt.format = NULL)
+SummarizeData(obj, fmt = NULL)
 }
 
 \arguments{
 \item{obj}{an array object for which the summary is desired.}
-\item{digits}{integer; the arithmetic precision given as the number of
-  digits following a decimal point.}
-\item{big.mark}{character; if not empty used as mark between every 3
-  decimals before the decimal point.}
-\item{scientific}{logical; specifies whether elements should be encoded
-  in scientific format.}
-\item{dt.format}{character; the date and time format; its default is
-  \dQuote{\%Y-\%m-\%d \%H:\%M:\%S}.}
+\item{fmt}{character; the conversion specification format,
+  see \code{\link{sprintf}}.}
 }
 
 \value{
@@ -55,7 +48,8 @@ following components:
 
 \examples{
 summary(attenu$dist, digits = 4)
-SummarizeData(attenu$dist, digits = 2)
+SummarizeData(attenu$dist, fmt = "\%.2f")
+SummarizeData(as.POSIXct(Sys.time() + 1:10), fmt = "\%a \%H:\%M:\%S")
 }
 
 \keyword{misc}

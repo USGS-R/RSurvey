@@ -91,13 +91,13 @@ ManageData <- function(cols, vars, parent=NULL) {
       new.unt <- NULL
     cols[[idx]]$unit <<- new.unt
 
-    # Save decimals
+    # Save format
 
-    old.dig <- cols[[idx]]$digits
-    new.dig <- as.integer(tclvalue(digs.var))
-    if (is.na(new.dig))
-      new.dig <- NULL
-    cols[[idx]]$digits <<- new.dig
+    old.fmt <- cols[[idx]]$format
+    new.fmt <- as.character(tclvalue(fmt.var))
+    if (is.na(new.fmt))
+      new.fmt <- NULL
+    cols[[idx]]$format <<- new.fmt
 
     # Save function
 
@@ -109,17 +109,15 @@ ManageData <- function(cols, vars, parent=NULL) {
 
     # Save summary
 
-    is.dig <- !identical(old.dig, new.dig)
-    is.unt <- !identical(old.unt, new.unt) && cols[[idx]]$class == "POSIXct"
     is.fun <- !identical(old.fun, new.fun)
-    if (is.dig || is.unt || is.fun) {
-      if (is.fun)
-        sum.dat <- SummarizeData(EvalFunction(new.fun, cols), digits=new.dig,
-                                 dt.format=new.unt)
-      else
-        sum.dat <- SummarizeData(cols[[idx]]$summary, digits=new.dig,
-                                 dt.format=new.unt)
-      cols[[idx]]$summary <<- sum.dat
+    is.fmt <- !identical(old.fmt, new.fmt)
+
+    if (is.fun) {
+      obj <- EvalFunction(new.fun, cols)
+      cols[[idx]]$summary <<- SummarizeData(obj, fmt=new.fmt)
+      cols[[idx]]$sample <<- na.omit(obj)[1]
+    } else if (is.fmt) {
+      cols[[idx]]$summary <<- SummarizeData(cols[[idx]]$summary, fmt=new.fmt)
     }
 
     # Save class
@@ -162,33 +160,20 @@ ManageData <- function(cols, vars, parent=NULL) {
       saved.unit <- ""
     tclvalue(unit.var) <- saved.unit
 
-    if (cols[[idx]]$class == "POSIXct") {
-      tkconfigure(frame2.ent.2.2, state="readonly")
-      tkconfigure(frame2.but.2.3, state="normal")
-    } else {
-      tkconfigure(frame2.ent.2.2, state="normal")
-      tkconfigure(frame2.but.2.3, state="disabled")
-    }
-
-    # Update decimals
+    # Update format
 
     tkconfigure(frame2.ent.3.2, state="normal")
-    tclvalue(digs.var) <- cols[[idx]]$digits
-    if (cols[[idx]]$class == "numeric") {
-      saved.digs <- cols[[idx]]$digits
-      if (is.null(saved.digs))
-        saved.digs <- ""
-      tclvalue(digs.var) <- saved.digs
-    } else {
-      tclvalue(digs.var) <- ""
-      tkconfigure(frame2.ent.3.2, state="disabled")
-    }
+    saved.fmt <- cols[[idx]]$format
+    if (is.null(saved.fmt))
+      saved.fmt <- ""
+    tclvalue(fmt.var) <- saved.fmt
+    tkconfigure(frame2.ent.3.2, state="readonly")
 
     # Update class
 
     tkconfigure(frame2.ent.4.2, state="normal")
-    tclvalue(clas.var) <- cols[[idx]]$class
-    tkconfigure(frame2.ent.4.2, state="disabled")
+    tclvalue(class.var) <- cols[[idx]]$class
+    tkconfigure(frame2.ent.4.2, state="readonly")
 
     # Update function
 
@@ -327,13 +312,20 @@ ManageData <- function(cols, vars, parent=NULL) {
     UpdateNb()
   }
 
-  # Edit date and time format
+  # Edit format
 
-  CallFormatDateTime <- function() {
-    old.unit <- as.character(tclvalue(unit.var))
-    new.unit <- FormatDateTime(fmt=old.unit, parent=tt)
-    if (!is.null(new.unit))
-      tclvalue(unit.var) <- new.unit
+  CallFormat <- function() {
+    idx <- as.integer(tkcurselection(frame1.lst)) + 1
+    sample.value <- cols[[idx]]$sample
+
+    old.fmt <- as.character(tclvalue(fmt.var))
+    if (inherits(sample.value, "POSIXct"))
+      new.fmt <- FormatDateTime(sample=sample.value, fmt=old.fmt, parent=tt)
+    else
+      new.fmt <- Format(sample=sample.value, fmt=old.fmt, parent=tt)
+
+    if (!is.null(new.fmt))
+      tclvalue(fmt.var) <- new.fmt
   }
 
   # Arrange variables in listbox
@@ -429,18 +421,20 @@ ManageData <- function(cols, vars, parent=NULL) {
   # View data for selected variable
 
   CallViewData <- function() {
-    col.names <- as.character(tclvalue(name.var))
-    if (col.names == "")
-      col.names <- NA
-    col.units <- as.character(tclvalue(unit.var))
-    if (col.units == "")
-      col.units <- NA
-    col.digs <- as.integer(tclvalue(digs.var))
+    col.name <- as.character(tclvalue(name.var))
+    if (col.name == "")
+      col.name <- NULL
+    col.unit <- as.character(tclvalue(unit.var))
+    if (col.unit == "")
+      col.unit <- NULL
+    col.fmt <- as.character(tclvalue(fmt.var))
+    if (col.fmt == "")
+      col.fmt <- NULL
 
     fun <- as.character(tclvalue(tkget(frame2.txt.5.2, '1.0', 'end-1c')))
     d <- as.data.frame(EvalFunction(fun, cols))
 
-    ViewData(d, col.names, col.units, col.digs, parent=tt)
+    ViewData(d, col.name, col.unit, col.fmt, parent=tt)
   }
 
 
@@ -462,8 +456,8 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   name.var <- tclVar()
   unit.var <- tclVar()
-  digs.var <- tclVar()
-  clas.var <- tclVar()
+  fmt.var  <- tclVar()
+  class.var <- tclVar()
 
   tt.done.var <- tclVar(0)
 
@@ -593,22 +587,22 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   frame2.ent.1.2 <- ttkentry(frame2, textvariable=name.var)
   frame2.ent.2.2 <- ttkentry(frame2, textvariable=unit.var)
-  frame2.ent.3.2 <- ttkentry(frame2, textvariable=digs.var)
-  frame2.ent.4.2 <- ttkentry(frame2, textvariable=clas.var, foreground="black")
+  frame2.ent.3.2 <- ttkentry(frame2, textvariable=fmt.var)
+  frame2.ent.4.2 <- ttkentry(frame2, textvariable=class.var)
 
   fnt <- tkfont.create(family="Courier New", size=9)
   frame2.txt.5.2 <- tktext(frame2, padx=2, pady=2, width=45, height=3,
                            undo=1, wrap="none", foreground="black",
                            background="#ebebe4", borderwidth=1, font=fnt)
 
-  frame2.but.2.3 <- ttkbutton(frame2, text="Edit", width=5,
-                              command=CallFormatDateTime)
+  frame2.but.3.3 <- ttkbutton(frame2, text="Edit", width=5,
+                              command=CallFormat)
   frame2.but.5.3 <- ttkbutton(frame2, text="Edit", width=5,
                               command=CallEditFunction)
 
   tkgrid(frame2.lab.1.1, frame2.ent.1.2, "x")
-  tkgrid(frame2.lab.2.1, frame2.ent.2.2, frame2.but.2.3)
-  tkgrid(frame2.lab.3.1, frame2.ent.3.2, "x")
+  tkgrid(frame2.lab.2.1, frame2.ent.2.2, "x")
+  tkgrid(frame2.lab.3.1, frame2.ent.3.2, frame2.but.3.3)
   tkgrid(frame2.lab.4.1, frame2.ent.4.2, "x")
   tkgrid(frame2.lab.5.1, frame2.txt.5.2, frame2.but.5.3)
 
@@ -623,7 +617,7 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   tkgrid.configure(frame2.txt.5.2, padx=2, pady=2, sticky="nswe")
 
-  tkgrid.configure(frame2.but.2.3, sticky="w")
+  tkgrid.configure(frame2.but.3.3, sticky="w")
   tkgrid.configure(frame2.lab.5.1, pady=c(4, 0))
   tkgrid.configure(frame2.but.5.3, sticky="nw", pady=c(1, 0))
 
@@ -632,11 +626,6 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   tkbind(frame2.ent.1.2, "<Return>", function() SetVarId())
   tkbind(frame2.ent.2.2, "<Return>", function() SetVarId())
-
-  tkbind(frame2.ent.3.2, "<KeyRelease>",
-         function() {
-           tclvalue(digs.var) <- CheckEntry("integer", tclvalue(digs.var))
-         })
 
   # Frame 3, summary
 

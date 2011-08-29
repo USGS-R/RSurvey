@@ -60,11 +60,10 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
     }
 
     if (headers[3]) {
-      digs <- suppressWarnings(as.integer(d[1, ]))
-      digs[is.na(digs) | (digs < 0 | digs > 20)] <- NA
+      fmts <- as.character(d[1, ])
       d <- d[-1, , drop=FALSE]
     } else {
-      digs <- rep(NA, n)
+      fmts <- rep(NA, n)
     }
 
     # Reset row names
@@ -82,11 +81,11 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
     for (idx in 1:n) {
       val <- d[, idx]
       unt <- if (is.na(unts[idx])) NULL else unts[idx]
-      dig <- if (is.na(digs[idx])) NULL else digs[idx]
+      fmt <- if (is.na(fmts[idx])) NULL else fmts[idx]
 
       is.date <- FALSE
-      if (!is.null(unt) && !all(is.na(val))) {
-        date.time <- as.POSIXct(val, format=unt)
+      if (!is.null(fmt) && !all(is.na(val))) {
+        date.time <- as.POSIXct(val, format=fmt)
         is.date <- all(!is.na(date.time[!is.na(val)]))
       }
 
@@ -94,9 +93,9 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
 
       val <- if (is.date) date.time else type.convert(d[, idx], as.is=TRUE)
 
-      # Class integer or numeric
+      # Class numeric or integer
 
-      if (inherits(val, c("integer", "numeric"))) {
+      if (inherits(val, c("numeric", "integer"))) {
         val[!is.finite(val)] <- NA
         if (is.null(vars$x)) {
           vars$x <- idx
@@ -118,12 +117,12 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
       nam <- nams[idx]
 
       id <- paste(c(nam, unt), collapse=", ")
-      i <- 1
+      i <- 1L
 
       hold.id <- id
       while (id %in% ids) {
         id <- paste(hold.id, " (", i, ")", sep="")
-        i <- i + 1
+        i <- i + 1L
       }
       ids <- c(ids, id)
 
@@ -131,11 +130,12 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
       cols[[idx]]$id <- id
       cols[[idx]]$name <- nam
       cols[[idx]]$unit <- unt
-      cols[[idx]]$digits <- dig
+      cols[[idx]]$format <- fmt
       cols[[idx]]$class <- class(val)[1]
       cols[[idx]]$index <- idx
-      cols[[idx]]$summary <- SummarizeData(val, digits=dig, dt.format=unt)
       cols[[idx]]$fun <- paste("DATA[[\"", id, "\"]]", sep="")
+      cols[[idx]]$sample <- na.omit(val)[1]
+      cols[[idx]]$summary <- SummarizeData(val, fmt=fmt)
 
       d[, idx] <- val
     }
