@@ -156,7 +156,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
   if (is.character(fmt)) {
     tclvalue(custom.var) <- 1
-    tclvalue(fmt) <- fmt
+    tclvalue(fmt.var) <- fmt
   }
   UpdateSample()
 

@@ -30,7 +30,9 @@ Returns a character string.
 \author{Fisher, J.C.}
 
 \examples{
-\donttest{Format(sample = pi, fmt = "\%3.8f")}
+\donttest{Format(sample = pi, fmt = "\%3.8f")
+Format(sample = as.integer(pi))
+Format(sample = as.character("string"))}
 }
 
 \keyword{misc}
