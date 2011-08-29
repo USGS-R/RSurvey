@@ -3,13 +3,6 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
   # Additional functions (subroutines)
 
-  # Save conversion specification format
-
-  SaveFormat <- function() {
-    new.fmt <<- as.character(tclvalue(fmt.var))
-    tclvalue(tt.done.var) <- 1
-  }
-
   # Add string to conversion format entry
 
   AddString <- function(txt) {
@@ -132,6 +125,13 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     tkfocus(frame2.ent.1)
   }
 
+  # Save conversion specification format
+
+  SaveFormat <- function() {
+    new.fmt <<- as.character(tclvalue(fmt.var))
+    tclvalue(tt.done.var) <- 1
+  }
+
 
     # Main program
 
@@ -234,13 +234,32 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   frame2a.but.12 <- ttkbutton(frame2a, width=2, image=GetBitmapImage("paste"),
                              command=PasteFormat)
 
-  tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
-         frame2a.but.05, frame2a.but.06, frame2a.but.07, frame2a.but.08,
-         frame2a.but.09, frame2a.but.10, frame2a.but.11, frame2a.but.12,
-         pady=c(2, 0), padx=c(0, 2))
+  if (is.numeric(sample)) {
+    if (is.integer(sample))
+      tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
+             frame2a.but.05, frame2a.but.06, frame2a.but.07, frame2a.but.08,
+             frame2a.but.09, frame2a.but.10, frame2a.but.11, frame2a.but.12,
+             pady=c(2, 0), padx=c(0, 2))
+    else
+      tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
+             frame2a.but.05, frame2a.but.06, frame2a.but.07, frame2a.but.08,
+             frame2a.but.10, frame2a.but.11, frame2a.but.12,
+             pady=c(2, 0), padx=c(0, 2))
+
+
+  } else {
+    if (is.logical(sample))
+      tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
+             frame2a.but.05, frame2a.but.06, frame2a.but.09, frame2a.but.10,
+             frame2a.but.11, frame2a.but.12, pady=c(2, 0), padx=c(0, 2))
+    else
+      tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
+             frame2a.but.05, frame2a.but.06, frame2a.but.10, frame2a.but.11,
+             frame2a.but.12, pady=c(2, 0), padx=c(0, 2))
+  }
+
   tkgrid(frame2.ent.1, frame2.chk.2)
   tkgrid(frame2a, "x", pady=c(2, 0), sticky="w")
-
 
   tkgrid.configure(frame2.ent.1, sticky="we", padx=c(0, 2))
   tkgrid.configure(frame2a.but.10, padx=c(0, 10))
@@ -282,19 +301,19 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
            frame3.chk.1.5, pady=c(15, 10))
 
     tkgrid.configure(frame3.lab.1.3, padx=c(10, 2))
-    tkgrid.configure(frame3.chk.1.5, padx=c(2, 0))
+    tkgrid.configure(frame3.chk.1.5, padx=c(2, 10))
   } else {
     tkgrid(frame3.lab.1.1, frame3.ent.1.2, "x", pady=c(15, 10), sticky="w")
     tkgrid.columnconfigure(frame3, 2, weight=1)
     tkgrid(frame3.chk.2.1, columnspan=3, sticky="w")
   }
-  tkgrid.configure(frame3.lab.1.1, padx=c(0, 2))
+  tkgrid.configure(frame3.lab.1.1, padx=c(10, 2))
 
   if (is.numeric(sample)) {
-    tkgrid(frame3.chk.2.1, columnspan=5, sticky="w")
-    tkgrid(frame3.chk.3.1, columnspan=5, sticky="w")
-    tkgrid(frame3.chk.4.1, columnspan=5, sticky="w")
-    tkgrid(frame3.chk.5.1, columnspan=5, sticky="w")
+    tkgrid(frame3.chk.2.1, columnspan=5, sticky="w", padx=c(10, 0))
+    tkgrid(frame3.chk.3.1, columnspan=5, sticky="w", padx=c(10, 0))
+    tkgrid(frame3.chk.4.1, columnspan=5, sticky="w", padx=c(10, 0))
+    tkgrid(frame3.chk.5.1, columnspan=5, sticky="w", padx=c(10, 0))
   }
 
   tkpack(frame3, padx=10, pady=0, anchor="w")
@@ -319,4 +338,3 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
   new.fmt
 }
-

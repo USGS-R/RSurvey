@@ -4,13 +4,6 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
 
   # Additional functions (subroutines)
 
-  # Save format
-
-  SaveFormat <- function() {
-    new.fmt <<- as.character(tclvalue(fmt.var))
-    tclvalue(tt.done.var) <- 1
-  }
-
   # Selection change in the viewtree
 
   SelectionChange <- function() {
@@ -38,6 +31,22 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
     tkfocus(frame2b.ent)
   }
 
+  # Expand or collapse nodes in treeview
+
+  ToggleTreeView <- function(open.nodes) {
+    tclServiceMode(FALSE)
+    tcl(frame1.tre, "item", id.dt, "-open", open.nodes)
+    tcl(frame1.tre, "item", id.tm, "-open", open.nodes)
+    tcl(frame1.tre, "item", id.yr, "-open", open.nodes)
+    tcl(frame1.tre, "item", id.mo, "-open", open.nodes)
+    tcl(frame1.tre, "item", id.dy, "-open", open.nodes)
+    tcl(frame1.tre, "item", id.hr, "-open", open.nodes)
+    tcl(frame1.tre, "item", id.mn, "-open", open.nodes)
+    tcl(frame1.tre, "item", id.sc, "-open", open.nodes)
+    tcl(frame1.tre, "item", id.wk, "-open", open.nodes)
+    tclServiceMode(TRUE)
+  }
+
   # Copy format to clipboard
 
   CopyFormat <- function() {
@@ -61,20 +70,11 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
     tkfocus(frame2b.ent)
   }
 
-  # Expand or collapse nodes in treeview
+  # Save format
 
-  ToggleTreeView <- function(open.nodes) {
-    tclServiceMode(FALSE)
-    tcl(frame1.tre, "item", id.dt, "-open", open.nodes)
-    tcl(frame1.tre, "item", id.tm, "-open", open.nodes)
-    tcl(frame1.tre, "item", id.yr, "-open", open.nodes)
-    tcl(frame1.tre, "item", id.mo, "-open", open.nodes)
-    tcl(frame1.tre, "item", id.dy, "-open", open.nodes)
-    tcl(frame1.tre, "item", id.hr, "-open", open.nodes)
-    tcl(frame1.tre, "item", id.mn, "-open", open.nodes)
-    tcl(frame1.tre, "item", id.sc, "-open", open.nodes)
-    tcl(frame1.tre, "item", id.wk, "-open", open.nodes)
-    tclServiceMode(TRUE)
+  SaveFormat <- function() {
+    new.fmt <<- as.character(tclvalue(fmt.var))
+    tclvalue(tt.done.var) <- 1
   }
 
 

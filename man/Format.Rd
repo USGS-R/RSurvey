@@ -31,8 +31,9 @@ Returns a character string.
 
 \examples{
 \donttest{Format(sample = pi, fmt = "\%3.8f")
-Format(sample = as.integer(pi))
-Format(sample = as.character("string"))}
+Format(sample = 3L)
+Format(sample = TRUE)
+Format(sample = "string")}
 }
 
 \keyword{misc}
