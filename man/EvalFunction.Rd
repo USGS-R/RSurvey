@@ -33,8 +33,8 @@ numeric vectors.
 }
 
 \seealso{
-\code{\link{parse}}, \code{\link{eval}}, \code{\link{round}},
-\code{\link{is.infinite}}, \code{\link{is.nan}}
+\code{\link{parse}}, \code{\link{eval}}, \code{\link{is.infinite}},
+\code{\link{is.nan}}
 }
 
 \author{Fisher, J.C.}
@@ -44,8 +44,6 @@ Data("data.raw", as.data.frame(tritest))
 cols <- list()
 cols[[1]] <- list(id = "X", index = 1, fun = "DATA[[\"X\"]]")
 cols[[2]] <- list(id = "Y", index = 2, fun = "DATA[[\"Y\"]]")
-EvalFunction("DATA[[\"X\"]]", cols)
-cols[[1]]$digits <- 0
 EvalFunction("DATA[[\"X\"]]", cols)
 EvalFunction("DATA[[\"X\"]] + DATA[[\"Y\"]]", cols)
 EvalFunction("rnorm(12)", cols)

@@ -12,8 +12,6 @@ EvalFunction <- function(txt, cols) {
         d[[i]] <- EvalFunction(cols[[i]]$fun, cols)
       } else {
         d[[i]] <- Data("data.raw")[, cols[[i]]$index]
-        if (!is.null(cols[[i]]$digits))
-          d[[i]] <- round(d[[i]], cols[[i]]$digits)
       }
     }
   }

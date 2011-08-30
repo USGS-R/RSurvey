@@ -15,7 +15,7 @@ ManageData <- function(cols, vars, parent=NULL) {
       tclvalue(tt.done.var) <- 1
   }
 
-  # Set variable identification and update functions to reflect this change
+  # Set variable id and update functions to reflect this change
 
   SetVarId <- function(idx=NULL) {
     if (is.null(idx))
@@ -246,6 +246,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     n <- length(cols)
     tkselection.clear(frame1.lst, 0, n)
     tkselection.set(frame1.lst, n, n)
+    tkyview(frame1.lst, n - 1L)
     cols[[n + 1]] <<- list(name=id, class="logical", fun="NA")
     UpdateNb()
     SetVarId()
@@ -316,13 +317,17 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   CallFormat <- function() {
     idx <- as.integer(tkcurselection(frame1.lst)) + 1
+
     sample.value <- cols[[idx]]$sample
 
     old.fmt <- as.character(tclvalue(fmt.var))
-    if (inherits(sample.value, "POSIXct"))
+    if (inherits(sample.value, "POSIXct")) {
       new.fmt <- FormatDateTime(sample=sample.value, fmt=old.fmt, parent=tt)
-    else
+    } else {
+      if (is.null(sample.value))
+        sample.value <- NA
       new.fmt <- Format(sample=sample.value, fmt=old.fmt, parent=tt)
+    }
 
     if (!is.null(new.fmt))
       tclvalue(fmt.var) <- new.fmt

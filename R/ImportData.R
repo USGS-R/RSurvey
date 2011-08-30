@@ -292,7 +292,7 @@ ImportData <- function(parent=NULL) {
 
   sep0 <- c("\t", "", ",", ";", "|")
   sep1 <- c("Tab ( \\t )", "White space (  )", "Comma ( , )",
-            "Semicolon ( ; )", "Vertical bar ( | )")
+            "Semicolon ( ; )", "Pipe ( | )")
 
   nas0 <- c("NA", "na", "N/A", "n/a")
   nas1 <- c("NA", "na", "N/A", "n/a")

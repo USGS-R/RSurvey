@@ -3,6 +3,95 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
   # Additional functions (subroutines)
 
+  # Translate format string
+
+  TranslateFormat <- function() {
+    if (nchar(fmt) < 2)
+      return(TRUE)
+    if (substr(fmt, 1, 1) != "%")
+      return(TRUE)
+
+    code <- substr(fmt, nchar(fmt), nchar(fmt))
+    if (inherits(sample, "integer")) {
+      if (code != "d")
+        return(TRUE)
+    } else if (inherits(sample, "numeric")) {
+      if (!code %in% c("f", "e"))
+        return(TRUE)
+    } else {
+      if(code != "s")
+        return(TRUE)
+    }
+
+    width <- ""
+    precision <- ""
+
+    is.scientific <- if (code == "e") TRUE else FALSE
+
+    len <- attr(regexpr("\\-", fmt), "match.length")
+    is.left <- if (len > 0) TRUE else FALSE
+    if (len > 1)
+      return(TRUE)
+
+    len <- attr(regexpr("\\.", fmt), "match.length")
+    is.period <- if (len > 0) TRUE else FALSE
+    if (len > 1 | (is.period & code %in% c("d", "s")))
+      return(TRUE)
+
+    len <- attr(regexpr("[[:space:]]", fmt), "match.length")
+    is.space <- if (len > 0) TRUE else FALSE
+    if (len > 1 | (is.space & code == "s"))
+      return(TRUE)
+
+    len <- attr(regexpr("\\+", fmt), "match.length")
+    is.sign <- if (len > 0) TRUE else FALSE
+    if (len > 1 | (is.sign & code == "s"))
+      return(TRUE)
+
+    is.pad <- FALSE
+
+    if (nchar(fmt) > 2L) {
+      fmt <- substr(fmt, 2L, nchar(fmt) - 1L)
+
+      if (is.period) {
+        fmt.split <- strsplit(fmt, "\\.")[[1L]]
+        if (length(fmt.split) > 1L) {
+          precision <- suppressWarnings(as.integer(fmt.split[2L]))
+          if (is.na(precision))
+            return(TRUE)
+        }
+        fmt <- fmt.split[1L]
+      }
+
+      fmt <- sub("[[:space:]]", "", fmt)
+      fmt <- sub("\\+", "", fmt)
+      fmt <- sub("\\-", "", fmt)
+
+      if (nchar(fmt) > 2L) {
+        if (substr(fmt, 1L, 1L) == "0")
+          is.pad <- TRUE
+        fmt <- substr(fmt, 2L, nchar(fmt))
+      }
+      if (nchar(fmt) > 0L) {
+        width <- suppressWarnings(as.integer(fmt))
+        if (is.na(width))
+          return(TRUE)
+      }
+    }
+
+    tclvalue(custom.var) <- FALSE
+    tclvalue(width.var) <- width
+    tclvalue(precision.var) <- precision
+    tclvalue(scientific.var) <- is.scientific
+    tclvalue(left.var) <- is.left
+    tclvalue(sign.var) <- is.sign
+    tclvalue(space.var) <- is.space
+    tclvalue(pad.var) <- is.pad
+
+    BuildFormat()
+    return(FALSE)
+  }
+
   # Add string to conversion format entry
 
   AddString <- function(txt) {
@@ -48,8 +137,12 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     tkconfigure(frame3.chk.5.1, state=s)
     tclServiceMode(TRUE)
 
-    if (!is.custom )
+    if (is.custom ) {
+      tkfocus(frame2.ent.1)
+    } else {
       BuildFormat()
+      tkfocus(frame3.ent.1.2)
+    }
   }
 
   # Update sample value
@@ -82,7 +175,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
       is.sign  <- as.logical(as.integer(tclvalue(sign.var)))
 
       space <- if (is.space) " " else ""
-      pad <- if (is.pad) "0" else ""
+      pad <- if (is.pad & width != "") "0" else ""
       sign <- if (is.sign) "+" else ""
       period <- ""
       precision <- ""
@@ -93,7 +186,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
         tclvalue(precision.var) <- CheckEntry("integer",
                                               tclvalue(precision.var))
         precision <- as.character(tclvalue(precision.var))
-        if (precision != "")
+        if (!(width == "" & precision == ""))
           period <- "."
 
         is.scientific <- as.logical(as.integer(tclvalue(scientific.var)))
@@ -135,8 +228,10 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
     # Main program
 
-  if (!inherits(sample, c("numeric", "integer", "character", "factor", "logical")))
-    stop("Class of sample object is not acceptable.")
+  if (!inherits(sample, c("numeric", "integer", "character",
+                          "factor", "logical")))
+    stop(paste("Class of sample object is not acceptable:",
+               class(sample), ".", sep=""))
 
   new.fmt <- NULL
 
@@ -158,7 +253,10 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     tclvalue(custom.var) <- 1
     tclvalue(fmt.var) <- fmt
   }
-  UpdateSample()
+
+  is.custom <- TranslateFormat()
+  if (is.custom)
+    UpdateSample()
 
   # Open GUI
 
@@ -301,7 +399,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
            frame3.chk.1.5, pady=c(15, 10))
 
     tkgrid.configure(frame3.lab.1.3, padx=c(10, 2))
-    tkgrid.configure(frame3.chk.1.5, padx=c(2, 10))
+    tkgrid.configure(frame3.chk.1.5, padx=c(2, 2))
   } else {
     tkgrid(frame3.lab.1.1, frame3.ent.1.2, "x", pady=c(15, 10), sticky="w")
     tkgrid.columnconfigure(frame3, 2, weight=1)

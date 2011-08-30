@@ -144,7 +144,7 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
     edit.fun.id <- ids[index]
     ids <- ids[-index]
     cls <- cls[-index]
-    win.title <- paste(win.title, " (", edit.fun.id, ")", sep="")
+    win.title <- paste(win.title, "-", edit.fun.id, sep=" ")
   }
 
   # Class types

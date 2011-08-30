@@ -54,9 +54,9 @@ WriteFile <- function(ext="txt") {
                          rtn <- NA
                        rtn
                      })
-  col.digs <- sapply(1:ncols,
+  col.fmts <- sapply(1:ncols,
                      function(i) {
-                       rtn <- cols[[i]]$digits
+                       rtn <- cols[[i]]$format
                        if (is.null(rtn))
                          rtn <- NA
                        rtn
@@ -88,22 +88,15 @@ WriteFile <- function(ext="txt") {
     # Format data
 
     for (i in 1:ncols) {
-      if (col.clas[i] == "numeric") {
-        dig <- col.digs[i]
-        if (is.na(dig))
-          dig <- getOption("digits")
-        d[, i] <- format(round(d[, i], dig), nsmall=dig)
-        if (ext == "shp")
-          d[, i] <- as.numeric(d[, i])
-      } else if (col.clas[i] == "integer") {
-        d[, i] <- format(d[, i], nsmall=0)
-        if (ext == "shp")
-          d[, i] <- as.integer(d[, i])
+      fmt <- col.fmts[i]
+      if (is.na(fmt)) {
+        if (ext != "shp")
+          d[, i] <- format(d[, i])
       } else if (col.clas[i] == "POSIXct") {
-        fmt <- col.unts[i]
-        if (is.na(fmt))
-          fmt <- "%Y-%m-%d %H:%M:%S"
         d[, i] <- format(d[, i], format=fmt)
+      } else {
+        if (ext != "shp")
+          d[, i] <- sprintf(fmt, d[, i])
       }
     }
   }
@@ -121,7 +114,6 @@ WriteFile <- function(ext="txt") {
                         unique=TRUE))
       colnames(d) <- col.names
       coordinates(d) <- col.names[c(vars$x, vars$y)]
-
       writeOGR(obj=d, dsn=f$dir, layer=f$name, driver="ESRI Shapefile",
                verbose=TRUE)
   } else {
@@ -131,8 +123,8 @@ WriteFile <- function(ext="txt") {
       h <- t(col.nams)
       if (!all(is.na(col.unts)))
         h <- rbind(h, col.unts)
-      if (!all(is.na(col.digs)))
-        h <- rbind(h, col.digs)
+      if (!all(is.na(col.fmts)))
+        h <- rbind(h, col.fmts)
 
       # Value seperator
 
