@@ -3,12 +3,12 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
   # Additional functions (subroutines)
 
-  # Translate format string
+  # Translate format string, return TRUE if custom format
 
   TranslateFormat <- function() {
-    if (nchar(fmt) < 2)
+    if (nchar(fmt) < 2L)
       return(TRUE)
-    if (substr(fmt, 1, 1) != "%")
+    if (substr(fmt, 1L, 1L) != "%")
       return(TRUE)
 
     code <- substr(fmt, nchar(fmt), nchar(fmt))
@@ -29,23 +29,23 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     is.scientific <- if (code == "e") TRUE else FALSE
 
     len <- attr(regexpr("\\-", fmt), "match.length")
-    is.left <- if (len > 0) TRUE else FALSE
-    if (len > 1)
+    is.left <- if (len > 0L) TRUE else FALSE
+    if (len > 1L)
       return(TRUE)
 
     len <- attr(regexpr("\\.", fmt), "match.length")
-    is.period <- if (len > 0) TRUE else FALSE
-    if (len > 1 | (is.period & code %in% c("d", "s")))
+    is.period <- if (len > 0L) TRUE else FALSE
+    if (len > 1L | (is.period & code %in% c("d", "s")))
       return(TRUE)
 
     len <- attr(regexpr("[[:space:]]", fmt), "match.length")
-    is.space <- if (len > 0) TRUE else FALSE
-    if (len > 1 | (is.space & code == "s"))
+    is.space <- if (len > 0L) TRUE else FALSE
+    if (len > 1L | (is.space & code == "s"))
       return(TRUE)
 
     len <- attr(regexpr("\\+", fmt), "match.length")
-    is.sign <- if (len > 0) TRUE else FALSE
-    if (len > 1 | (is.sign & code == "s"))
+    is.sign <- if (len > 0L) TRUE else FALSE
+    if (len > 1L | (is.sign & code == "s"))
       return(TRUE)
 
     is.pad <- FALSE
@@ -212,7 +212,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   # Paste format from clipboard
 
   PasteFormat <- function() {
-    tclvalue(custom.var) <- 1
+    tclvalue(custom.var) <- TRUE
     ToggleState()
     tclvalue(fmt.var) <- readClipboard()
     UpdateSample()
@@ -222,8 +222,15 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   # Save conversion specification format
 
   SaveFormat <- function() {
-    new.fmt <<- as.character(tclvalue(fmt.var))
-    tclvalue(tt.done.var) <- 1
+    fmt <- as.character(tclvalue(fmt.var))
+    if (as.character(tclvalue(sample.var)) == "") {
+      msg <- paste("Invalid format '", fmt, "'; please try again.", sep="")
+      tkmessageBox(icon="error", message=msg, title="Error", type="ok",
+                   parent=tt)
+    } else {
+      new.fmt <<- fmt
+      tclvalue(tt.done.var) <- 1
+    }
   }
 
 
@@ -251,7 +258,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   tt.done.var    <- tclVar(0)
 
   if (is.character(fmt)) {
-    tclvalue(custom.var) <- 1
+    tclvalue(custom.var) <- TRUE
     tclvalue(fmt.var) <- fmt
   }
 
