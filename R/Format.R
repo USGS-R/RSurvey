@@ -68,9 +68,10 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
       fmt <- sub("\\-", "", fmt)
 
       if (nchar(fmt) > 1L) {
-        if (substr(fmt, 1L, 1L) == "0")
+        if (substr(fmt, 1L, 1L) == "0") {
           is.pad <- TRUE
-        fmt <- substr(fmt, 2L, nchar(fmt))
+          fmt <- substr(fmt, 2L, nchar(fmt))
+        }
       }
       if (nchar(fmt) > 0L) {
         width <- suppressWarnings(as.integer(fmt))
