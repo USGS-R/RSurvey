@@ -5,9 +5,12 @@ ImportData <- function(parent=NULL) {
 
   # Raise error message for bad connection
 
-  RaiseError <- function() {
-    msg <- "Connection to data source failed."
-    tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
+  RaiseError <- function(type, detail) {
+    msg <- NULL
+    msg[1L] <- "Connection to data source failed."
+    msg[2L] <- "Problems occured while reading data from text file."
+    tkmessageBox(icon="error", message=msg[type], detail=detail, title="Error",
+                 type="ok", parent=tt)
   }
 
   # Raise warning message if data already exists
@@ -46,7 +49,7 @@ ImportData <- function(parent=NULL) {
     con <- GetConnection(src)
 
     if (inherits(con, "try-error") || !isOpen(con, "r")) {
-      RaiseError()
+      RaiseError(1L, con)
       return()
     }
 
@@ -74,7 +77,7 @@ ImportData <- function(parent=NULL) {
                           flush=TRUE), silent=TRUE)
       close(con)
       if (inherits(d, "try-error")) {
-        RaiseError()
+        RaiseError(2L, d)
         return()
       }
 
@@ -102,7 +105,7 @@ ImportData <- function(parent=NULL) {
       close(con)
 
       if (inherits(ans, "try-error")) {
-        RaiseError()
+        RaiseError(2L, ans)
         return()
       }
 
