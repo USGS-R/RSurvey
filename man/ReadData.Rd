@@ -36,6 +36,10 @@ ReadData(con, headers = c(FALSE, FALSE, FALSE), sep = "\t",
   input.}
 }
 
+\format{
+The imported data table is required to have at least two numeric variables.
+}
+
 \details{
 This function is the primary method for importing table formatted data from
 a text file.
@@ -47,21 +51,17 @@ will contain the names and formats of variables, respectively;
 measurement units are not included. If \code{headers = c(FALSE, FALSE, FALSE)},
 the default, no header information is contained within the data table.
 Formats are character representations of object types that are
-used to identify column classes during data
-import and format output during export. Specifying formats in the
-header and the maximum number of rows to read in, \code{nrows}, will greatly
-help memory usage.
-}
-
-
-\format{
-Conversion specification formats are based on C-style string formatting
+used to identify column classes during data import and format output during
+export. Conversion specifications are based on C-style string formatting
 commands for \code{numeric}, \code{integer}, and \code{character}
 object classes; for example,
 a format string of "\%.5f" applied to the mathematical constant pi
 results in "3.14159". Calendar date time objects of class \code{POSIXct} are
 defined by the ISO C99 / POSIX standard; for example,
 "02/26/2010 02:05:39 PM" is represented using "\%d/\%m/\%Y \%I:\%M:\%S \%p".
+Performance issues associated with reading large files can be alleviated
+by specifying formats in the header and giving the maximum number of
+rows to read in, \code{nrows}.
 }
 
 \value{
