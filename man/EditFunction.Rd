@@ -2,7 +2,7 @@
 
 \alias{EditFunction}
 
-\title{Function editor for table data}
+\title{Function Editor for Table Data}
 
 \description{
 A \acronym{GUI} for defining functions in the \R language.
@@ -26,7 +26,7 @@ pre-existing data frame.
 \value{
 Results in a character string of the user defined function; when evaluated,
 this string must be parseable and result in a vector length equal to the
-number of rows in the \code{data.raw} data frame (see \code{\link{ReadData}}).
+number of rows in the \code{data.raw} data frame, see \code{\link{ReadData}}.
 }
 
 \author{Fisher, J.C.}

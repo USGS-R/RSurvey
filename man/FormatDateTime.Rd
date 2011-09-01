@@ -2,7 +2,7 @@
 
 \alias{FormatDateTime}
 
-\title{Build calendar date and time string formats.}
+\title{Build Date-Time String Formats}
 
 \description{
 A \acronym{GUI} for converting between character representations and objects of

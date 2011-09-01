@@ -2,7 +2,7 @@
 
 \alias{Format}
 
-\title{Build C-style string formats.}
+\title{Build C-Style String Formats}
 
 \description{
 A \acronym{GUI} for the system \code{sprintf} C-library function.
@@ -13,9 +13,10 @@ Format(sample = pi, fmt = NULL, parent = NULL)
 }
 
 \arguments{
-\item{sample}{a sample value. Only logical, integer, numeric, character, and
-  factor classes are supported.}
-\item{fmt}{character; the conversion specification format, see \code{\link{sprintf}}.}
+\item{sample}{logical, integer, numeric, character, or factor;
+  a sample value.}
+\item{fmt}{character; the conversion specification format,
+  see \code{\link{sprintf}}.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 

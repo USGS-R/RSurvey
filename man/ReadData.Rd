@@ -16,7 +16,7 @@ ReadData(con, headers = c(FALSE, FALSE, FALSE), sep = "\t",
 
 \arguments{
 \item{con}{connection; a \code{\link{connection}} object.}
-\item{headers}{logical; a vector of length three that indicates whether the
+\item{headers}{logical; a vector of length 3 that indicates whether the
   data table contains header lines: see \sQuote{Details}.}
 \item{sep}{character; the field separator string. Values on each line of the
   file are separated by this string.}
@@ -37,39 +37,42 @@ ReadData(con, headers = c(FALSE, FALSE, FALSE), sep = "\t",
 }
 
 \format{
-The imported data table is required to have at least two numeric variables.
+The imported data table requires at least two numeric variables.
 }
 
 \details{
 This function is the primary method for importing table formatted data from
-a text file.
-The \code{headers} argument, a logical vector of length three, indicates
-whether the file contains the names, measurement units, and coversion
-specification formats of variables as its initial lines of text. For example,
-\code{headers = c(TRUE, FALSE, TRUE)} indicates that the first and second lines
-will contain the names and formats of variables, respectively;
-measurement units are not included. If \code{headers = c(FALSE, FALSE, FALSE)},
-the default, no header information is contained within the data table.
-Formats are character representations of object types that are
-used to identify column classes during data import and format output during
-export. Conversion specifications are based on C-style string formatting
+a text file. The \code{headers} argument, a logical vector of length 3,
+indicates whether the file contains the names, measurement units, and conversion
+specification formats of the variables as its initial lines. For example,
+\code{headers = c(TRUE, FALSE, TRUE)} indicates that the first and second
+lines contain the names and formats of variables, respectively; with
+measurement units excluded. If \code{headers = c(FALSE, FALSE, FALSE)},
+the default, no header information is contained within the file.
+
+Formats are the character representation of object types
+used to: identify column classes prior to reading in data,
+and format values for printing.
+Conversion specifications are based on C-style string formatting
 commands for \code{numeric}, \code{integer}, and \code{character}
-object classes; for example,
-a format string of "\%.5f" applied to the mathematical constant pi
-results in "3.14159". Calendar date time objects of class \code{POSIXct} are
-defined by the ISO C99 / POSIX standard; for example,
-"02/26/2010 02:05:39 PM" is represented using "\%d/\%m/\%Y \%I:\%M:\%S \%p".
-Performance issues associated with reading large files can be alleviated
-by specifying formats in the header and giving the maximum number of
-rows to read in, \code{nrows}.
+object classes, see \code{\link{sprintf}}; for example,
+a format string of "\%.5f" applied to the mathematical constant \emph{pi}
+results in "3.14159". Calendar date and time objects of class \code{POSIXct} are
+defined by the ISO C99 / POSIX standard, see \code{\link{strftime}};
+for example, "02/26/2010 02:05:39 PM" is represented using
+"\%d/\%m/\%Y \%I:\%M:\%S \%p".
+
+Performance issues associated with reading in large files can be alleviated
+by specifying formats in a header line, and giving the maximum number of
+rows to read in.
 }
 
 \value{
 Returns a list with the following components:
 \item{dat}{data.frame; a data table with headers and comments removed.}
 \item{cols}{list; length equal to the current number of data variables.
-  Each component in \code{cols} is linked to a specific variable
-  (see \code{\link{ManageData}}).}
+  Each component in \code{cols} is linked to a specific variable,
+  see \code{\link{ManageData}}.}
 \item{vars}{list; an initial guess of the state variables. Integer components
   \code{x}, \code{y}, \code{z}, and \code{t} specify the index number in
   \code{cols} that correspond to the respective state variable.}

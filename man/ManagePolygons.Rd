@@ -42,7 +42,7 @@ See \code{read.polyfile} within the \pkg{gpclib} package for details.
 
 \value{
 Queries and sets the \code{ply}, \code{poly.data}, and \code{poly.crop}
-components of \code{\link{Data}} (see \code{\link{SetPolygonLimits}}).
+components of \code{\link{Data}}, see \code{\link{SetPolygonLimits}}.
 }
 
 \author{Fisher, J.C.}
