@@ -411,7 +411,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   } else {
     tkgrid(frame3.lab.1.1, frame3.ent.1.2, "x", pady=c(15, 10), sticky="w")
     tkgrid.columnconfigure(frame3, 2, weight=1)
-    tkgrid(frame3.chk.2.1, columnspan=3, sticky="w")
+    tkgrid(frame3.chk.2.1, columnspan=3, sticky="w", padx=c(10, 0))
   }
   tkgrid.configure(frame3.lab.1.1, padx=c(10, 2))
 
