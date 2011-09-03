@@ -6,34 +6,90 @@ ExportData <- function(ids, type="txt", parent=NULL) {
   # Final export of data to file
 
   ExportToFile <- function() {
-    print("notyet")
+    is.processed <- as.character(tclvalue(records.var)) == "processed"
+
+    headers <- c(as.logical(tclvalue(head.names.var)),
+                 as.logical(tclvalue(head.units.var)),
+                 as.logical(tclvalue(head.fmts.var)))
+
+    seperator <- as.character(tclvalue(sep.var))
+    if (seperator == "other")
+      seperator <- as.character(tclvalue(sep.other.var))
+
+    f <- as.character(tclvalue(file.var))
+    is.compress <- as.logical(as.character(tclvalue(compress.var)))
+
+
+
+
+
+
+    tclvalue(tt.done.var) <- 1
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   # Select all or none from variable list
 
   SelectVariables <- function(sel) {
-    print("notyet")
+    n <- length(ids) - 1L
+    if (sel == "all")
+      tkselection.set(frame1.lst.1.1, 0, n)
+    else
+      tkselection.clear(frame1.lst.1.1, 0, n)
   }
 
   # Get file
 
   GetDataFile <- function() {
-    print("notyet")
+    if (type == "txt") {
+      default.ext <- "txt"
+      exts <- c("txt", "csv", "dat")
+      is.compress <- as.logical(as.integer(tclvalue(compress.var)))
+      if (is.compress) {
+        default.ext <- "gz"
+        exts <- "gz"
+      }
+    } else {
+      default.ext <- "shp"
+      exts <- "shp"
+    }
+    f <- GetFile(cmd="Save As", exts=exts, file=NULL, win.title="Save Data As",
+               defaultextension=default.ext)
+    if (is.null(f))
+      return()
+
+    tclvalue(file.var) <- f$path
   }
 
-  # Toggle state of compression level entry
+  # Toggle gz extension on file entry
 
-  ToggleLevel <- function() {
+  ToggleExtension <- function() {
+    f <- as.character(tclvalue(file.var))
+    n <- nchar(f)
+    if (nchar(f) < 5L)
+      return()
+    is.gz <- substr(f, n - 2L, n) == ".gz"
     is.compress <- as.logical(as.integer(tclvalue(compress.var)))
-    if (is.compress) {
-      tkconfigure(frame4.ent.2.3, state="normal")
-      compress.lev <- as.character(tclvalue(compress.lev.var))
-      if (is.compress == "")
-        tclvalue(compress.lev.var) <- 6
-      tkfocus(frame4.ent.2.3)
-    } else {
-      tkconfigure(frame4.ent.2.3, state="readonly")
-    }
+    if (is.compress & !is.gz)
+      f.new <- paste(f, ".gz", sep="")
+    if (!is.compress & is.gz)
+      f.new <- substr(f, 1L, n - 3L)
+    if (!identical(f, f.new))
+      tclvalue(file.var) <- f.new
   }
 
   # Toggle state of other seperator entry
@@ -47,9 +103,6 @@ ExportData <- function(ids, type="txt", parent=NULL) {
       tkconfigure(frame3.ent.2.4, state="readonly")
     }
   }
-
-
-
 
 
   # Main program
@@ -73,7 +126,6 @@ ExportData <- function(ids, type="txt", parent=NULL) {
   sep.other.var    <- tclVar()
   file.var         <- tclVar()
   compress.var     <- tclVar(0)
-  compress.lev.var <- tclVar(6)
   tt.done.var      <- tclVar(0)
 
   for (i in seq(along=ids))
@@ -163,7 +215,7 @@ ExportData <- function(ids, type="txt", parent=NULL) {
   frame2.chk.1.2 <- ttkcheckbutton(frame2, variable=head.units.var,
                                    text="Measurement units", width=18)
   frame2.chk.1.3 <- ttkcheckbutton(frame2, variable=head.fmts.var,
-                                   text="Format stings")
+                                   text="Formats")
 
   tkgrid(frame2.chk.1.1, frame2.chk.1.2, frame2.chk.1.3)
 
@@ -174,7 +226,7 @@ ExportData <- function(ids, type="txt", parent=NULL) {
   # Frame 3, field seperator
 
   frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Select a field seperator string")
+                          text="Select a field seperator")
 
   frame3.ent.2.4 <- ttkentry(frame3, width=7, textvariable=sep.other.var,
                              state="readonly")
@@ -185,14 +237,14 @@ ExportData <- function(ids, type="txt", parent=NULL) {
   frame3.rad.1.2 <- ttkradiobutton(frame3, variable=sep.var, value="",
                                    text="Space", width=13,
                                    command=ToggleSeperator)
-  frame3.rad.1.3 <- ttkradiobutton(frame3, variable=sep.var, value=",",
-                                   text="Comma",
+  frame3.rad.1.3 <- ttkradiobutton(frame3, variable=sep.var, value="|",
+                                   text="Pipe",
                                    command=ToggleSeperator)
   frame3.rad.2.1 <- ttkradiobutton(frame3, variable=sep.var, value=";",
                                    text="Semicolon", width=13,
                                    command=ToggleSeperator)
-  frame3.rad.2.2 <- ttkradiobutton(frame3, variable=sep.var, value="|",
-                                   text="Pipe", width=13,
+  frame3.rad.2.2 <- ttkradiobutton(frame3, variable=sep.var, value=",",
+                                   text="Comma", width=13,
                                    command=ToggleSeperator)
   frame3.rad.2.3 <- ttkradiobutton(frame3, variable=sep.var,
                                    value="other", text="Other",
@@ -218,24 +270,23 @@ ExportData <- function(ids, type="txt", parent=NULL) {
   frame4.but.1.3 <- ttkbutton(frame4, width=8, text="Browse",
                               command=GetDataFile)
 
-  txt <- "Compress file using gzip; use compression level 0-9:"
+  txt <- "Compress file using gzip; extension 'gz' added to file."
   frame4.chk.2.2 <- ttkcheckbutton(frame4, variable=compress.var, text=txt,
-                                   command=ToggleLevel)
+                                   command=ToggleExtension)
 
-  frame4.ent.2.3 <- ttkentry(frame4, width=7, textvariable=compress.lev.var,
-                             state="readonly")
+  tkgrid(frame4.ent.1.1, frame4.but.1.3)
+  tkgrid(frame4.chk.2.2, "x", pady=c(4, 0), sticky="w")
 
-  tkgrid(frame4.ent.1.1, "x", "x", frame4.but.1.3)
-  tkgrid("x", frame4.chk.2.2, frame4.ent.2.3, "x", pady=c(4, 0), sticky="e")
+  tkgrid.configure(frame4.ent.1.1, sticky="we", padx=c(0, 2))
 
-  tkgrid.configure(frame4.ent.1.1, sticky="we", columnspan=3, padx=c(0, 2))
-  tkgrid.configure(frame4.ent.2.3, sticky="w", padx=c(0, 2))
-
-  tkgrid.columnconfigure(frame4, 1, weight=1)
+  tkgrid.columnconfigure(frame4, 0, weight=1)
 
   tkpack(frame4, fill="x", padx=10, pady=c(0, 15))
 
   # GUI control
+
+  SelectVariables("all")
+  tkfocus(frame1.lst.1.1)
 
   tkgrab(tt)
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
@@ -248,4 +299,3 @@ ExportData <- function(ids, type="txt", parent=NULL) {
   tkdestroy(tt)
   tclServiceMode(TRUE)
 }
-
