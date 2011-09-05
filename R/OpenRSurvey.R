@@ -231,11 +231,18 @@ OpenRSurvey <- function() {
 
   # Export data
 
-  ExportData <- function(ext) {
+  CallExportData <- function(file.type) {
     if (is.null(Data("data.raw")))
       return()
     CallProcessData()
-    WriteFile(c("txt", "csv", "dat", "gz", "shp", "grd"))
+
+    if (file.type == "grid") {
+      WriteFile(file.type="grid")
+    } else {
+      col.ids <- sapply(Data("cols"), function(i) i$id)
+      ExportData(col.ids, file.type=file.type, parent=tt)
+    }
+
     tkfocus(tt)
   }
 
@@ -809,8 +816,18 @@ OpenRSurvey <- function() {
   tkadd(menu.file, "separator")
   tkadd(menu.file, "command", label="Import data",
         command=CallImportData)
-  tkadd(menu.file, "command", label="Export data as",
-        command=ExportData)
+
+
+  menu.file.export <- tkmenu(tt, tearoff=0)
+
+  tkadd(menu.file.export, "command", label="Text file",
+        command=function() CallExportData("text"))
+  tkadd(menu.file.export, "command", label="ESRI shapefile",
+        command=function() CallExportData("shape"))
+  tkadd(menu.file, "cascade", label="Export data points as", menu=menu.file.export)
+
+  tkadd(menu.file, "command", label="Export data grid",
+        command=function() CallExportData("grid"))
 
   tkadd(menu.file, "separator")
   menu.file.save <- tkmenu(tt, tearoff=0)

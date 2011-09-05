@@ -1,4 +1,4 @@
-ExportData <- function(col.ids, type="txt", parent=NULL) {
+ExportData <- function(col.ids, file.type="text", parent=NULL) {
   # Export data to file
 
   # Additional functions (subroutines)
@@ -6,31 +6,25 @@ ExportData <- function(col.ids, type="txt", parent=NULL) {
   # Final export of data to file
 
   ExportToFile <- function() {
-    f <- as.character(tclvalue(file.var))
+    file.name <- as.character(tclvalue(file.var))
 
     idxs <- as.integer(tkcurselection(frame1.lst.1.1)) + 1L
     col.ids <- col.ids[idxs]
 
     is.processed <- as.character(tclvalue(records.var)) == "processed"
 
-
-
     headers <- c(as.logical(as.integer(tclvalue(head.names.var))),
                  as.logical(as.integer(tclvalue(head.units.var))),
                  as.logical(as.integer(tclvalue(head.fmts.var))))
 
-    seperator <- as.character(tclvalue(sep.var))
-    if (seperator == "other")
-      seperator <- as.character(tclvalue(sep.other.var))
+    sep <- as.character(tclvalue(sep.var))
+    if (sep == "other")
+      sep <- as.character(tclvalue(sep.other.var))
 
     is.compress <- as.logical(as.integer(tclvalue(compress.var)))
 
-### WriteFile(f, col.ids, headers, seperator, is.processed, is.compress)
-
-
-
-
-
+    WriteFile(file.type, file.name, col.ids, headers, sep, is.processed,
+              is.compress)
 
     tclvalue(tt.done.var) <- 1
   }
@@ -49,7 +43,7 @@ ExportData <- function(col.ids, type="txt", parent=NULL) {
   # Get file
 
   GetDataFile <- function() {
-    if (type == "txt") {
+    if (file.type == "text") {
       default.ext <- "txt"
       exts <- c("txt", "csv", "dat")
       is.compress <- as.logical(as.integer(tclvalue(compress.var)))
@@ -118,7 +112,7 @@ ExportData <- function(col.ids, type="txt", parent=NULL) {
   if (missing(col.ids) || length(col.ids) < 1L || !is.character(col.ids))
     stop()
 
-  if (!type %in% c("txt", "shp"))
+  if (!file.type %in% c("text", "shape"))
     stop()
 
   # Assign variables linked to Tk widgets
@@ -126,8 +120,8 @@ ExportData <- function(col.ids, type="txt", parent=NULL) {
   variables.var    <- tclVar()
   records.var      <- tclVar("processed")
   head.names.var   <- tclVar(1)
-  head.units.var   <- tclVar(0)
-  head.fmts.var    <- tclVar(0)
+  head.units.var   <- tclVar(1)
+  head.fmts.var    <- tclVar(1)
   sep.var          <- tclVar("\t")
   sep.other.var    <- tclVar()
   file.var         <- tclVar()
@@ -149,7 +143,7 @@ ExportData <- function(col.ids, type="txt", parent=NULL) {
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
 
-  if (type == "txt")
+  if (file.type == "text")
     tktitle(tt) <- "Export To Text File"
   else
     tktitle(tt) <- "Export To Shapefile"
@@ -214,7 +208,7 @@ ExportData <- function(col.ids, type="txt", parent=NULL) {
 
   tkbind(frame1.lst.1.1, "<<ListboxSelect>>", ToggleExport)
 
-  if (type == "txt") {
+  if (file.type == "text") {
 
     # Frame 2, header lines
 
@@ -287,7 +281,7 @@ ExportData <- function(col.ids, type="txt", parent=NULL) {
                                    command=ToggleExtension)
 
   tkgrid(frame4.ent.1.1, frame4.but.1.3)
-  if (type == "txt")
+  if (file.type == "text")
     tkgrid(frame4.chk.2.2, "x", pady=c(4, 0), sticky="w")
 
   tkgrid.configure(frame4.ent.1.1, sticky="we", padx=c(0, 2))

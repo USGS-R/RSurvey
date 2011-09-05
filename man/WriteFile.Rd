@@ -5,15 +5,25 @@
 \title{Write Data File}
 
 \description{
-Exports post-processed data to a file.
+Writes data to a file.
 }
 
 \usage{
-WriteFile(ext = "txt")
+WriteFile(file.type = "text", file.name = NULL, col.ids = NULL,
+          headers = c(FALSE, FALSE, FALSE), sep = "\t",
+          is.processed = TRUE, is.compress = FALSE,
+          encoding = getOption("encoding"))
 }
 
 \arguments{
-\item{ext}{character; the default file extension.}
+\item{file.type}{character; somthing.}
+\item{file.name}{character; somthing.}
+\item{col.ids}{character; somthing.}
+\item{headers}{logical; somthing.}
+\item{sep}{character; somthing.}
+\item{is.processed}{logical; somthing.}
+\item{is.compress}{logical; somthing.}
+\item{encoding}{character; somthing.}
 }
 
 \value{
@@ -37,7 +47,7 @@ contents of \code{data.grd} to a text file; and a selection of
 \donttest{
 data(project)
 Data(replace.all = project)
-WriteFile("txt")
+WriteFile(file.type = "grid")
 }
 }
 

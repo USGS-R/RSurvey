@@ -1,39 +1,52 @@
-WriteFile <- function(ext="txt") {
+WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
+                      headers=c(FALSE, FALSE, FALSE), sep="\t",
+                      is.processed=TRUE, is.compress=FALSE,
+                      encoding=getOption("encoding")) {
   # Exports post-processed data to a file.
 
   # Check for necessary information
 
-  if ("shp" %in% ext) {
+  if (file.type == "shape") {
     is.pkg <- suppressPackageStartupMessages(require("rgdal",
                                                      character.only=TRUE,
                                                      quietly=TRUE))
     if (!is.pkg)
-      ext <- ext[-which(ext %in% "shp")]
+      stop()
   }
-  if (is.null(Data("data.raw")) || is.null(ext))
-    return()
-  if (is.null(Data("data.pts")) && "shp" %in% ext)
-    return()
-  if (is.null(Data("data.grd")) && "grd" %in% ext)
-    ext <- ext[ext != "grd"]
 
-  # Select output file
-
-  f <- GetFile(cmd="Save As", exts=ext, file=NULL, win.title="Save Data As",
-               defaultextension="txt")
-  if (is.null(f))
+  if (is.null(Data("data.raw")))
+    return()
+  if (is.null(Data("data.pts")) && file.type == "shape")
+    return()
+  if (is.null(Data("data.grd")) && file.type == "grid")
     return()
 
-  ext <- f$ext
+  # Establish connection
 
-  # Open connection
+  if (is.null(file.name)) {
+    if (file.type == "text") {
+      ext <- "txt"
+    } else if (file.type == "shape") {
+      ext <- "shp"
+    } else if (file.type == "grid") {
+      ext <- "grd"
+    }
+    f <- GetFile(cmd="Save As", exts=ext, file=NULL,
+                 win.title="Save Data As", defaultextension=ext)
+    if (is.null(f))
+      return()
+    file.name <- f$path
+  }
 
-  enc <- Data("encoding")
-
-  if (ext == "gz") {
-    con <- gzfile(description=f$path, open="w", encoding=enc, compression=6)
-  } else if (ext != "shp") {
-    con <- file(description=f$path, open="w", encoding=enc)
+  if (file.type %in% c("text", "grid")) {
+    if (is.compress)
+      con <- gzfile(description=file.name, open="w", encoding=encoding,
+                    compression=6)
+    else
+      con <- file(description=file.name, open="w", encoding=encoding)
+    if (!inherits(con, "connection"))
+      stop()
+    on.exit(close(con))
   }
 
   # Organize data
@@ -41,20 +54,34 @@ WriteFile <- function(ext="txt") {
   vars <- Data("vars")
   cols <- Data("cols")
 
-  ncols <- length(cols)
+  n <- length(cols)
 
-  col.ids  <- sapply(1:ncols, function(i) cols[[i]]$id)
-  col.funs <- sapply(1:ncols, function(i) cols[[i]]$fun)
-  col.clas <- sapply(1:ncols, function(i) cols[[i]]$class)
-  col.nams <- sapply(1:ncols, function(i) cols[[i]]$name)
-  col.unts <- sapply(1:ncols,
+  if (is.null(col.ids)) {
+    col.idxs <- 1:n
+  } else {
+    all.col.ids <- sapply(1:n, function(i) cols[[i]]$id)
+    if (file.type == "shape") {
+      id.x <- all.col.ids[vars$x]
+      id.y <- all.col.ids[vars$y]
+      if (!id.x %in% col.ids)
+        col.ids <- c(col.ids, id.x)
+      if (!id.y %in% col.ids)
+        col.ids <- c(col.ids, id.y)
+    }
+    col.idxs <- which(all.col.ids %in% col.ids)
+  }
+
+  col.ids  <- sapply(col.idxs, function(i) cols[[i]]$id)
+  col.funs <- sapply(col.idxs, function(i) cols[[i]]$fun)
+  col.nams <- sapply(col.idxs, function(i) cols[[i]]$name)
+  col.unts <- sapply(col.idxs,
                      function(i) {
                        rtn <- cols[[i]]$unit
                        if (is.null(rtn))
                          rtn <- NA
                        rtn
                      })
-  col.fmts <- sapply(1:ncols,
+  col.fmts <- sapply(col.idxs,
                      function(i) {
                        rtn <- cols[[i]]$format
                        if (is.null(rtn))
@@ -62,82 +89,100 @@ WriteFile <- function(ext="txt") {
                        rtn
                      })
 
-  # Prepare for export
+  # Identify data set and records
 
-  if (ext == "grd") {
+  if (file.type == "grid") {
     d <- Data("data.grd")
   } else {
+    if (is.processed)
+      row.idxs <- as.integer(row.names(Data("data.pts")))
+    else
+      row.idxs <- as.integer(row.names(Data("data.raw")))
 
-    # Get row indexs
+    n <- length(col.idxs)
+    m <- length(row.idxs)
+    d <- as.data.frame(matrix(NA, nrow=m, ncol=n))
 
-    idxs <- row.names(Data("data.pts"))
-    if (is.null(idxs))
-      idxs <- row.names(Data("data.raw"))
+    for (i in 1:n) {
+      obj <- EvalFunction(col.funs[i], cols)[row.idxs]
 
-    idxs <- as.integer(idxs)
+      # Format data
 
-    # Initialize data table for export
-
-    d <- as.data.frame(matrix(NA, nrow=length(idxs), ncol=length(cols)))
-
-    # Evaluate functions
-
-    for (i in 1:ncols)
-      d[, i] <- EvalFunction(cols[[i]]$fun, cols)[idxs]
-
-    # Format data
-
-    for (i in 1:ncols) {
       fmt <- col.fmts[i]
-      if (is.na(fmt)) {
-        if (ext != "shp")
-          d[, i] <- format(d[, i])
-      } else if (col.clas[i] == "POSIXct") {
-        d[, i] <- format(d[, i], format=fmt)
+      if (inherits(obj, "POSIXt")) {
+        if (is.na(fmt))
+          d[, i] <- format(obj)
+        else
+          d[, i] <- format(obj, format=fmt)
+      } else if (file.type == "shape") {
+        d[, i] <- obj
       } else {
-        if (ext != "shp")
-          d[, i] <- sprintf(fmt, d[, i])
+        if (is.na(fmt)) {
+          d[, i] <- format(obj)
+        } else {
+          ans <- try(sprintf(fmt, obj), silent=TRUE)
+          if (inherits(ans, "try-error"))
+            d[, i] <- format(obj)
+          else
+            d[, i] <- ans
+        }
       }
     }
   }
 
   # Write data to ouput file
 
-  if (ext == "grd") {
-      dput(d, file=con)
-  } else if (ext == "shp") {
+  if (file.type == "grid") {
+    dput(d, file=con)
+  } else if (file.type == "shape") {
 
-      # Names are finicky for shapefiles, rules are convoluted,
-      # 8-bit names and no periods
+    # Names are finicky for shapefiles, rules are convoluted,
+    # 8-bit names and no periods
 
-      col.names <- gsub("\\.", "", make.names(substr(col.ids, 1, 7),
-                        unique=TRUE))
-      colnames(d) <- col.names
-      coordinates(d) <- col.names[c(vars$x, vars$y)]
-      writeOGR(obj=d, dsn=f$dir, layer=f$name, driver="ESRI Shapefile",
-               verbose=TRUE)
+    column.names <- gsub("\\.", "", make.names(substr(col.ids, 1L, 7L),
+                         unique=TRUE))
+    colnames(d) <- column.names
+
+    idx.x <- which(col.ids %in% id.x)
+    idx.y <- which(col.ids %in% id.y)
+    coordinates(d) <- column.names[c(idx.x, idx.y)]
+
+    file.dir <- dirname(file.name)
+    file.base <- basename(file.name)
+
+    file.ext <- tolower(tail(unlist(strsplit(file.base, "\\."))[-1L], 1L))
+    if (length(file.ext) == 0L)
+      file.layer <- basename(file.name)
+    else
+      file.layer <- sub(paste(".", file.ext, "$", sep=""), "", file.base)
+
+    writeOGR(obj=d, dsn=file.dir, layer=file.layer, driver="ESRI Shapefile",
+             verbose=TRUE)
   } else {
 
-      # Construct header
+    # Construct header
 
-      h <- t(col.nams)
-      if (!all(is.na(col.unts)))
-        h <- rbind(h, col.unts)
-      if (!all(is.na(col.fmts)))
-        h <- rbind(h, col.fmts)
-
-      # Value seperator
-
-      sep <- ifelse(ext == "csv", ",", "\t")
-
-      # Write table to file
+    if (any(headers)) {
+      m <- sum(as.integer(headers))
+      n <- ncol(d)
+      h <- as.data.frame(matrix(NA, nrow=m, ncol=n))
+      i <- 1L
+      if (headers[1]) {
+        h[i, ] <- col.nams
+        i <- i + 1L
+      }
+      if (headers[2]) {
+        h[i, ] <- col.unts
+        i <- i + 1L
+      }
+      if (headers[3])
+        h[i, ] <- col.fmts
 
       write.table(h, file=con, append=FALSE, quote=FALSE, row.names=FALSE,
                   col.names=FALSE, sep=sep)
-      write.table(d, file=con, append=TRUE,  quote=FALSE, row.names=FALSE,
-                  col.names=FALSE, sep=sep)
-  }
+    }
 
-  if (exists("con"))
-    close(con)
+    write.table(d, file=con, append=TRUE, quote=FALSE, row.names=FALSE,
+                col.names=FALSE, sep=sep)
+  }
 }
