@@ -162,7 +162,8 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
 
     # Construct header
 
-    if (any(headers)) {
+    is.header <- any(headers)
+    if (is.header) {
       m <- sum(as.integer(headers))
       n <- ncol(d)
       h <- as.data.frame(matrix(NA, nrow=m, ncol=n))
@@ -182,7 +183,7 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
                   col.names=FALSE, sep=sep)
     }
 
-    write.table(d, file=con, append=TRUE, quote=FALSE, row.names=FALSE,
+    write.table(d, file=con, append=is.header, quote=FALSE, row.names=FALSE,
                 col.names=FALSE, sep=sep)
   }
 }
