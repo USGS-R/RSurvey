@@ -16,8 +16,6 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
 
   if (is.null(Data("data.raw")))
     return()
-  if (is.null(Data("data.pts")) && file.type == "shape")
-    return()
   if (is.null(Data("data.grd")) && file.type == "grid")
     return()
 
@@ -61,6 +59,8 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
   } else {
     all.col.ids <- sapply(1:n, function(i) cols[[i]]$id)
     if (file.type == "shape") {
+      if (is.null(vars$x) | is.null(vars$y))
+        stop("Shapefiles require coordinate values")
       id.x <- all.col.ids[vars$x]
       id.y <- all.col.ids[vars$y]
       if (!id.x %in% col.ids)
@@ -94,7 +94,7 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
   if (file.type == "grid") {
     d <- Data("data.grd")
   } else {
-    if (file.type == "shape" | is.processed)
+    if (is.processed & !is.null(Data("data.pts")))
       row.idxs <- as.integer(row.names(Data("data.pts")))
     else
       row.idxs <- as.integer(row.names(Data("data.raw")))
