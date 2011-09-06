@@ -11,21 +11,24 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     idxs <- as.integer(tkcurselection(frame1.lst.1.1)) + 1L
     col.ids <- col.ids[idxs]
 
-    is.processed <- as.character(tclvalue(records.var)) == "processed"
+    if (file.type == "text") {
+      is.processed <- as.character(tclvalue(records.var)) == "processed"
 
-    headers <- c(as.logical(as.integer(tclvalue(head.names.var))),
-                 as.logical(as.integer(tclvalue(head.units.var))),
-                 as.logical(as.integer(tclvalue(head.fmts.var))))
+      headers <- c(as.logical(as.integer(tclvalue(head.names.var))),
+                   as.logical(as.integer(tclvalue(head.units.var))),
+                   as.logical(as.integer(tclvalue(head.fmts.var))))
 
-    sep <- as.character(tclvalue(sep.var))
-    if (sep == "other")
-      sep <- as.character(tclvalue(sep.other.var))
+      sep <- as.character(tclvalue(sep.var))
+      if (sep == "other")
+        sep <- as.character(tclvalue(sep.other.var))
 
-    is.compress <- as.logical(as.integer(tclvalue(compress.var)))
+      is.compressed <- as.logical(as.integer(tclvalue(compress.var)))
 
-    WriteFile(file.type, file.name, col.ids, headers, sep, is.processed,
-              is.compress)
-
+      WriteFile(file.type, file.name, col.ids, headers, sep, is.processed,
+                is.compressed)
+    } else {
+      WriteFile(file.type, file.name, col.ids)
+    }
     tclvalue(tt.done.var) <- 1
   }
 
@@ -46,8 +49,8 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     if (file.type == "text") {
       default.ext <- "txt"
       exts <- c("txt", "csv", "dat")
-      is.compress <- as.logical(as.integer(tclvalue(compress.var)))
-      if (is.compress) {
+      is.compressed <- as.logical(as.integer(tclvalue(compress.var)))
+      if (is.compressed) {
         default.ext <- "gz"
         exts <- "gz"
       }
@@ -72,12 +75,12 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     if (nchar(f) < 3L)
       return()
     is.gz <- substr(f, n - 2L, n) == ".gz"
-    is.compress <- as.logical(as.integer(tclvalue(compress.var)))
+    is.compressed <- as.logical(as.integer(tclvalue(compress.var)))
 
     f.new <- f
-    if (is.compress & !is.gz)
+    if (is.compressed & !is.gz)
       f.new <- paste(f, ".gz", sep="")
-    if (!is.compress & is.gz)
+    if (!is.compressed & is.gz)
       f.new <- substr(f, 1L, n - 3L)
     if (!identical(f, f.new))
       tclvalue(file.var) <- f.new
@@ -171,11 +174,14 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
   # Frame 1, sample entry
 
-  frame1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Select variables and records to export")
+  if (file.type == "text")
+    txt <- "Select variables and records to export"
+  else
+    txt <- "Select variables to export"
+  frame1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text=txt)
 
   frame1.lst.1.1 <- tklistbox(frame1, selectmode="extended", activestyle="none",
-                              relief="flat", borderwidth=5, width=15, height=4,
+                              relief="flat", borderwidth=5, width=50, height=4,
                               exportselection=FALSE, listvariable=variables.var,
                               highlightthickness=0)
   frame1.ysc.1.7 <- ttkscrollbar(frame1, orient="vertical")

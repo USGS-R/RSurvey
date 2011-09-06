@@ -9,9 +9,14 @@ ProcessData <- function(d, type="p", lim=NULL, ply=NULL,
 
     var.names <- names(d)
 
-    # Remove NA's for spatial and temporal data
+    # Remove records with NA's for spatial or temporal data
 
-    d <- d[rowSums(is.na(d[, var.names %in% c("x", "y", "t")])) == 0, ]
+    if ("x" %in% var.names)
+      d <- d[!is.na(d[, "x"]), ]
+    if ("y" %in% var.names)
+      d <- d[!is.na(d[, "y"]), ]
+    if ("t" %in% var.names)
+      d <- d[!is.na(d[, "t"]), ]
 
     # Set range limits
 

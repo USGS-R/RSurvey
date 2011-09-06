@@ -15,16 +15,16 @@ ProcessData(d, type = "p", lim = NULL, ply = NULL,
 }
 
 \arguments{
-\item{d}{data.frame; the data to be processed, a table with required
-  numeric variables \code{x} and \code{y}, and optional variables
-  \code{z}, \code{t}, \code{vx}, \code{vy}, and \code{vz}.}
+\item{d}{data.frame; the data to be processed, a table
+  with variables \code{x}, \code{y}, \code{z}, \code{t},
+  \code{vx}, \code{vy}, and \code{vz}.}
 \item{type}{character; a 1-character string giving the resulting
   output type. The following values are possible: "p" for points
   and "g" for interpolated grid.}
 \item{lim}{list; contains numeric vector components giving the minimum
   and maximum values for each variable in \code{d}.}
-\item{ply}{gpc.poly; if \code{type="p"} a polygon that defines either the
-  data limits, else if \code{type="g"} a crop region for gridded data.}
+\item{ply}{gpc.poly; if \code{type = "p"} a polygon that defines either the
+  data limits, else if \code{type = "g"} a crop region for gridded data.}
 \item{grid.res}{list; numeric components giving the grid spacing along
   the x- and y-axis for interpolated values, see \code{\link{SetPreferences}}.}
 \item{grid.mba}{list; integer components giving the input parameters for the

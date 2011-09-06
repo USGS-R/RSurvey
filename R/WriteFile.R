@@ -1,6 +1,6 @@
 WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
                       headers=c(FALSE, FALSE, FALSE), sep="\t",
-                      is.processed=TRUE, is.compress=FALSE,
+                      is.processed=TRUE, is.compressed=FALSE,
                       encoding=getOption("encoding")) {
   # Exports post-processed data to a file.
 
@@ -39,7 +39,7 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
   }
 
   if (file.type %in% c("text", "grid")) {
-    if (is.compress)
+    if (is.compressed)
       con <- gzfile(description=file.name, open="w", encoding=encoding,
                     compression=6)
     else
@@ -94,7 +94,7 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
   if (file.type == "grid") {
     d <- Data("data.grd")
   } else {
-    if (is.processed)
+    if (file.type == "shape" | is.processed)
       row.idxs <- as.integer(row.names(Data("data.pts")))
     else
       row.idxs <- as.integer(row.names(Data("data.raw")))

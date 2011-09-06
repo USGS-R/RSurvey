@@ -116,7 +116,7 @@ OpenRSurvey <- function() {
     tkconfigure(frame2.but.2.2, state=s)
 
     s <- "normal"
-    if (is.null(vars$x) | is.null(vars$y) | is.null(vars$z) | is.null(vars$t))
+    if (is.null(vars$z) | is.null(vars$t))
       s <- "disabled"
     tkconfigure(frame2.but.2.1, state=s)
   }
@@ -235,6 +235,10 @@ OpenRSurvey <- function() {
     if (is.null(Data("data.raw")))
       return()
     CallProcessData()
+
+    is.coordinate <- !is.null(Data("vars")$x) & !is.null(Data("vars")$y)
+    if (!is.coordinate & file.type %in% c("shape", "grid"))
+      stop("Spatial coordinates missing")
 
     if (file.type == "grid") {
       WriteFile(file.type="grid")
@@ -709,6 +713,8 @@ OpenRSurvey <- function() {
         ply <- Data("poly.data")
         if (!is.null(ply))
           ply <- Data(c("poly", ply))
+      } else {
+        ply <- NULL
       }
 
       data.pts <- ProcessData(d, type="p", lim=lim, ply=ply)
@@ -717,6 +723,7 @@ OpenRSurvey <- function() {
 
     if (is.null(Data("data.pts"))) {
       Data("data.grd", NULL)
+      tkconfigure(tt, cursor="arrow")
       return()
     }
 
