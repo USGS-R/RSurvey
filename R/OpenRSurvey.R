@@ -817,16 +817,14 @@ OpenRSurvey <- function() {
   tkadd(menu.file, "command", label="Import data",
         command=CallImportData)
 
-
   menu.file.export <- tkmenu(tt, tearoff=0)
-
   tkadd(menu.file.export, "command", label="Text file",
         command=function() CallExportData("text"))
   tkadd(menu.file.export, "command", label="ESRI shapefile",
         command=function() CallExportData("shape"))
-  tkadd(menu.file, "cascade", label="Export data points as", menu=menu.file.export)
+  tkadd(menu.file, "cascade", label="Export point data as", menu=menu.file.export)
 
-  tkadd(menu.file, "command", label="Export data grid",
+  tkadd(menu.file, "command", label="Export grid data as",
         command=function() CallExportData("grid"))
 
   tkadd(menu.file, "separator")
