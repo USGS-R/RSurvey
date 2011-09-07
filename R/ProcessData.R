@@ -7,15 +7,20 @@ ProcessData <- function(d, type="p", lim=NULL, ply=NULL,
 
   if (type == "p") {
 
+    # Check for missing variables
+
     var.names <- names(d)
+    is.x <- "x" %in% var.names
+    is.y <- "y" %in% var.names
+    is.t <- "t" %in% var.names
 
     # Remove records with NA's for spatial or temporal data
 
-    if ("x" %in% var.names)
+    if (is.x)
       d <- d[!is.na(d[, "x"]), ]
-    if ("y" %in% var.names)
+    if (is.y)
       d <- d[!is.na(d[, "y"]), ]
-    if ("t" %in% var.names)
+    if (is.t)
       d <- d[!is.na(d[, "t"]), ]
 
     # Set range limits
@@ -33,7 +38,8 @@ ProcessData <- function(d, type="p", lim=NULL, ply=NULL,
 
     # Incorporate polygon spatial domain
 
-    if (!is.null(ply) && inherits(ply, "gpc.poly")) {
+    is.ply <- !is.null(ply) && inherits(ply, "gpc.poly")
+    if (is.ply && is.x && is.y) {
       all.pts <- get.pts(ply)
       for (i in seq(along=all.pts)) {
         pts <- all.pts[[i]]
