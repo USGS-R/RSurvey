@@ -376,7 +376,8 @@ ManageData <- function(cols, vars, parent=NULL) {
       tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var),
                                 i - 1, i - 1, ids[i])
     tkselection.clear(frame1.lst, 0, "end")
-    tkselection.set(frame1.lst, new.idx - 1)
+    tkselection.set(frame1.lst, new.idx - 1L)
+    tkyview(frame1.lst, new.idx - 1L)
   }
 
   # Draw histogram in canvas

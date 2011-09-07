@@ -11,6 +11,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     idxs <- as.integer(tkcurselection(frame1.lst.1.1)) + 1L
     col.ids <- col.ids[idxs]
 
+    tkconfigure(tt, cursor="watch")
     if (file.type == "text") {
       is.processed <- as.character(tclvalue(records.var)) == "processed"
 
@@ -29,6 +30,8 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     } else {
       WriteFile(file.type, file.name, col.ids)
     }
+    tkconfigure(tt, cursor="arrow")
+
     tclvalue(tt.done.var) <- 1
   }
 
@@ -62,7 +65,8 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
                defaultextension=default.ext)
     if (is.null(f))
       return()
-
+    if (f$ext == "csv")
+      tclvalue(sep.var) <- ","
     tclvalue(file.var) <- f$path
     ToggleExport()
   }
