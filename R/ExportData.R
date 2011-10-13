@@ -217,13 +217,14 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                             text="Select header lines to include")
     frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=head.names.var,
-                                     text="Variable names", width=18)
+                                     text="Variable names")
     frame2.chk.1.2 <- ttkcheckbutton(frame2, variable=head.units.var,
-                                     text="Measurement units", width=18)
+                                     text="Measurement units")
     frame2.chk.1.3 <- ttkcheckbutton(frame2, variable=head.fmts.var,
                                      text="Formats")
 
     tkgrid(frame2.chk.1.1, frame2.chk.1.2, frame2.chk.1.3)
+    tkgrid.configure(frame2.chk.1.2, padx=15)
 
     tcl("grid", "anchor", frame2, "center")
 

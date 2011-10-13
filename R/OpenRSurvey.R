@@ -175,9 +175,6 @@ OpenRSurvey <- function() {
     if (!is.null(vars$vy))
       tcl(frame1.box.6.2, "current", which(vars$vy == idxs.n))
 
-    Data("data.pts", NULL)
-    Data("data.grd", NULL)
-
     ButtonState(vars)
   }
 
@@ -953,6 +950,8 @@ OpenRSurvey <- function() {
       tkadd(menu.help, "command", label="Restore R session",
             command=function() {
               CloseGUI()
+              Data("data.pts", NULL)
+              Data("data.grd", NULL)
               RestoreSession(file.path(getwd(), "R"), save.objs="Data",
                              fun.call="OpenRSurvey")
             })
