@@ -40,6 +40,7 @@ SetConfiguration <- function(parent=NULL) {
     Data("show.2.axes", as.integer(tclvalue(show.2.axes.var)))
     Data("minor.ticks", as.integer(tclvalue(minor.ticks.var)))
     Data("ticks.inside", as.integer(tclvalue(ticks.inside.var)))
+    Data("point.line", as.integer(tclvalue(point.line.var)))
 
     tclvalue(tt.done.var) <- 1
   }
@@ -66,6 +67,7 @@ SetConfiguration <- function(parent=NULL) {
   show.2.axes.var  <- tclVar()
   minor.ticks.var  <- tclVar()
   ticks.inside.var <- tclVar()
+  point.line.var   <- tclVar()
 
   if (!is.null(Data("nlevels")))
     tclvalue(nlevels.var) <- Data("nlevels")
@@ -103,6 +105,8 @@ SetConfiguration <- function(parent=NULL) {
     tclvalue(minor.ticks.var) <- Data("minor.ticks")
   if (!is.null(Data("ticks.inside")))
     tclvalue(ticks.inside.var) <- Data("ticks.inside")
+  if (!is.null(Data("point.line")))
+    tclvalue(point.line.var) <- Data("point.line")
 
   tt.done.var <- tclVar(0)
 
@@ -253,6 +257,8 @@ SetConfiguration <- function(parent=NULL) {
   frame2.chk.08.1 <- ttkcheckbutton(frame2, text=txt, variable=minor.ticks.var)
   txt <- "place tickmarks inside plot region"
   frame2.chk.09.1 <- ttkcheckbutton(frame2, text=txt, variable=ticks.inside.var)
+  txt <- "draw point symbol line boundary"
+  frame2.chk.10.1 <- ttkcheckbutton(frame2, text=txt, variable=point.line.var)
 
   tkgrid(frame2.chk.01.1, sticky="w", pady=c(0, 2))
   tkgrid(frame2.chk.02.1, sticky="w", pady=c(0, 2))
@@ -262,7 +268,8 @@ SetConfiguration <- function(parent=NULL) {
   tkgrid(frame2.chk.06.1, sticky="w", pady=c(0, 2))
   tkgrid(frame2.chk.07.1, sticky="w", pady=c(0, 2))
   tkgrid(frame2.chk.08.1, sticky="w", pady=c(0, 2))
-  tkgrid(frame2.chk.09.1, sticky="w")
+  tkgrid(frame2.chk.09.1, sticky="w", pady=c(0, 2))
+  tkgrid(frame2.chk.10.1, sticky="w")
 
   # Final layout
 

@@ -403,11 +403,6 @@ OpenRSurvey <- function() {
     lim          <- Data("lim.axes")
     cols         <- Data("cols")
     vars         <- Data("vars")
-    tgap         <- Data("tgap")
-    width        <- Data("width")
-    cex.pts      <- Data("cex.pts")
-    minor.ticks  <- Data("minor.ticks")
-    ticks.inside <- Data("ticks.inside")
 
     ylab <- cols[[vars$z]]$id
 
@@ -417,9 +412,11 @@ OpenRSurvey <- function() {
 
     tkconfigure(tt, cursor="watch")
     PlotTimeSeries(x=dat$t, y=dat$z, xlim=lim$t, ylim=lim$z, ylab=ylab,
-                   tgap=tgap, width=width, cex.pts=cex.pts,
-                   axis.side=axis.side, minor.ticks=minor.ticks,
-                   ticks.inside=ticks.inside)
+                   tgap=Data("tgap"), width=Data("width"),
+                   cex.pts=Data("cex.pts"), axis.side=axis.side,
+                   minor.ticks=Data("minor.ticks"),
+                   ticks.inside=Data("ticks.inside"),
+                   point.line=Data("point.line"))
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }
@@ -522,7 +519,7 @@ OpenRSurvey <- function() {
            vuni=Data("vuni"), vmax=Data("vmax"),
            vxby=Data("vxby"), vyby=Data("vyby"),
            axis.side=axis.side, minor.ticks=Data("minor.ticks"),
-           ticks.inside=Data("ticks.inside"),
+           ticks.inside=Data("ticks.inside"), point.line=Data("point.line"),
            add.contour.lines=show.lines)
 
     if (show.poly)

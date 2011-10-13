@@ -5,7 +5,7 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
                    color.palette=terrain.colors, vuni=FALSE, vmax=NULL,
                    vxby=NULL, vyby=NULL, axis.side=1:2,
                    minor.ticks=FALSE, ticks.inside=FALSE,
-                   add.contour.lines=FALSE) {
+                   add.contour.lines=FALSE, point.line=FALSE) {
   # Draws a scatter plot with arrows or contour plot with arrows. A key showing
   # how the colors map to state variable values is shown to the right of the
   # plot.
@@ -369,14 +369,15 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
     if (is.null(z) | is.matrix(z)) {
       points(x, y, pch=21, cex=cex.pts, col="black", bg="white", lwd=lwd)
     } else {
+      col.pts <- if (point.line) "black" else NA
       for (i in seq(along=col)) {
         logic <- z >= levels[i] & z <= levels[i + 1]
-        points(x[logic], y[logic], pch=21, cex=cex.pts, col="black",
+        points(x[logic], y[logic], pch=21, cex=cex.pts, col=col.pts,
                bg=col[i], lwd=lwd)
       }
       logic <- is.na(z)
-      points(x[logic], y[logic], pch=21, cex=cex.pts, col="black",
-             bg=NA, lwd=lwd)
+      points(x[logic], y[logic], pch=21, cex=cex.pts, col=col.pts,
+             bg="black", lwd=lwd)
     }
   }
 

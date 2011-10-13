@@ -1,14 +1,14 @@
 PlotTimeSeries <- function(x, y=NULL, xlim=NULL, ylim=NULL, ylab=NULL,
                            tgap=NULL, width=7, cex.pts=1, pointsize=12,
                            fmt=NULL, axis.side=1:2, minor.ticks=FALSE,
-                           ticks.inside=FALSE) {
+                           ticks.inside=FALSE, point.line=FALSE) {
   # A time series plot is drawn with points and connecting lines.
 
   # Additional functions (subroutines)
 
   # Plot points and line segments seperated by time gap
 
-  PlotData <- function(x, y, gap, col="black") {
+  PlotData <- function(x, y, gap) {
     if (!is.null(tgap)) {
       idxs <- (1:(length(x) - 1))[diff(as.numeric(x)) > tgap]
       for (i in idxs) {
@@ -20,10 +20,12 @@ PlotTimeSeries <- function(x, y=NULL, xlim=NULL, ylim=NULL, ylab=NULL,
       y <- y[idxs]
     }
     lwd <- 0.8 * (96 / (6 * 12))
-    lines(x, y, col=col, lwd=lwd)
+    lines(x, y, col="black", lwd=lwd)
 
     lwd <- 0.5 * (96 / (6 * 12))
-    points(x, y, pch=21, cex=cex.pts, col=col, bg="gray", lwd=lwd)
+
+    col.pts <- if (point.line) "black" else NA
+    points(x, y, pch=21, cex=cex.pts, col=col.pts, bg="gray", lwd=lwd)
   }
 
 

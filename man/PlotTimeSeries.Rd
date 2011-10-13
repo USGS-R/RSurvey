@@ -12,7 +12,8 @@ Draws a time-series plot with points and connecting lines.
 PlotTimeSeries(x, y = NULL, xlim = NULL, ylim = NULL, ylab = NULL,
                tgap = NULL, width = 7, cex.pts = 1,
                pointsize = 12, fmt = NULL, axis.side = 1:2,
-               minor.ticks = FALSE, ticks.inside = FALSE)
+               minor.ticks = FALSE, ticks.inside = FALSE,
+               point.line = FALSE)
 }
 
 \arguments{
@@ -34,6 +35,8 @@ PlotTimeSeries(x, y = NULL, xlim = NULL, ylim = NULL, ylab = NULL,
   plot; its default is \code{FALSE}.}
 \item{ticks.inside}{logical; if \code{TRUE} tickmarks are placed inside the
   plot region; its default is \code{FALSE}.}
+\item{point.line}{logical; if \code{TRUE} draw point symbol line boundary;
+  its default is \code{FALSE}.}
 }
 
 \details{
@@ -51,7 +54,7 @@ points are greater than \code{tgap}.
 data(project)
 d <- project$data.pts
 PlotTimeSeries(x = d$t, y = d$z)
-PlotTimeSeries(x = d$t, y = d$z, tgap = 3000)
+PlotTimeSeries(x = d$t, y = d$z, tgap = 3000, point.line=TRUE)
 }
 
 \keyword{hplot}
