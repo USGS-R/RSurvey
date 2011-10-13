@@ -14,7 +14,7 @@ ProcessData <- function(d, type="p", lim=NULL, ply=NULL,
     is.y <- "y" %in% var.names
     is.t <- "t" %in% var.names
 
-    # Remove records with NA's for spatial or temporal data
+    # Remove records with NA's for spatial and temporal data
 
     if (is.x)
       d <- d[!is.na(d[, "x"]), ]

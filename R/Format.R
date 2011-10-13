@@ -206,15 +206,19 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
   CopyFormat <- function() {
     txt <- as.character(tclvalue(fmt.var))
-    writeClipboard(txt)
+    cat(txt, file="clipboard")
   }
 
   # Paste format from clipboard
 
   PasteFormat <- function() {
+    cb <- try(scan(file="clipboard", what="character", sep="\n", quiet=TRUE),
+              silent=TRUE)
+    if (inherits(cb, "try-error"))
+      return()
     tclvalue(custom.var) <- TRUE
     ToggleState()
-    tclvalue(fmt.var) <- readClipboard()
+    tclvalue(fmt.var) <- cb
     UpdateSample()
     tkfocus(frame2.ent.1)
   }

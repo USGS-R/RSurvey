@@ -200,9 +200,11 @@ ImportData <- function(parent=NULL) {
 
   PasteData <- function() {
     tkselection.set(frame4.tbl, "origin")
-    cb <- try(as.character(tclvalue(tkXselection.get(selection="CLIPBOARD"))),
+
+    cb <- try(scan(file="clipboard", what="character", sep="\n", quiet=TRUE),
               silent=TRUE)
     cb <<- if (inherits(cb, "try-error")) NULL else cb
+
     if (is.null(cb))
       return()
     tclvalue(source.var) <- ""

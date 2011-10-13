@@ -14,24 +14,19 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     tkconfigure(tt, cursor="watch")
     if (file.type == "text") {
       is.processed <- as.character(tclvalue(records.var)) == "processed"
-
       headers <- c(as.logical(as.integer(tclvalue(head.names.var))),
                    as.logical(as.integer(tclvalue(head.units.var))),
                    as.logical(as.integer(tclvalue(head.fmts.var))))
-
       sep <- as.character(tclvalue(sep.var))
       if (sep == "other")
         sep <- as.character(tclvalue(sep.other.var))
-
       is.compressed <- as.logical(as.integer(tclvalue(compress.var)))
-
       WriteFile(file.type, file.name, col.ids, headers, sep, is.processed,
                 is.compressed)
     } else {
       WriteFile(file.type, file.name, col.ids)
     }
     tkconfigure(tt, cursor="arrow")
-
     tclvalue(tt.done.var) <- 1
   }
 
@@ -118,7 +113,6 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
   if (missing(col.ids) || length(col.ids) < 1L || !is.character(col.ids))
     stop()
-
   if (!file.type %in% c("text", "shape"))
     stop()
 
@@ -126,9 +120,9 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
   variables.var    <- tclVar()
   records.var      <- tclVar("processed")
-  head.names.var   <- tclVar(1)
-  head.units.var   <- tclVar(1)
-  head.fmts.var    <- tclVar(1)
+  head.names.var   <- tclVar(0)
+  head.units.var   <- tclVar(0)
+  head.fmts.var    <- tclVar(0)
   sep.var          <- tclVar("\t")
   sep.other.var    <- tclVar()
   file.var         <- tclVar()
@@ -165,9 +159,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   frame0.grp.4 <- ttksizegrip(frame0)
 
   tkgrid("x", frame0.but.2, frame0.but.3, frame0.grp.4)
-
   tkgrid.columnconfigure(frame0, 0, weight=1)
-
   tkgrid.configure(frame0.but.2, frame0.but.3, padx=c(0, 4), pady=c(4, 10))
   tkgrid.configure(frame0.but.3, columnspan=2, padx=c(0, 10))
   tkgrid.configure(frame0.grp.4, sticky="se")
@@ -244,7 +236,6 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
     frame3.ent.2.4 <- ttkentry(frame3, width=7, textvariable=sep.other.var,
                                state="readonly")
-
     frame3.rad.1.1 <- ttkradiobutton(frame3, variable=sep.var, value="\t",
                                      text="Tab", width=13,
                                      command=ToggleSeperator)
@@ -274,7 +265,6 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     tcl("grid", "anchor", frame3, "center")
 
     tkpack(frame3, fill="x", padx=10, pady=c(0, 10))
-
   }
 
   # Frame 4, output file and compression
@@ -282,11 +272,10 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   frame4 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Specify output file")
   frame4.ent.1.1 <- ttkentry(frame4, width=12, textvariable=file.var)
-
   frame4.but.1.3 <- ttkbutton(frame4, width=8, text="Browse",
                               command=GetDataFile)
 
-  txt <- "Compress file using gzip; extension 'gz' added to file."
+  txt <- "Compress file using gzip; extension 'gz' added to file name."
   frame4.chk.2.2 <- ttkcheckbutton(frame4, variable=compress.var, text=txt,
                                    command=ToggleExtension)
 
@@ -295,16 +284,14 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     tkgrid(frame4.chk.2.2, "x", pady=c(4, 0), sticky="w")
 
   tkgrid.configure(frame4.ent.1.1, sticky="we", padx=c(0, 2))
-
   tkgrid.columnconfigure(frame4, 0, weight=1)
-
   tkpack(frame4, fill="x", padx=10, pady=c(0, 15))
-
   tkbind(frame4.ent.1.1, "<KeyRelease>", ToggleExport)
 
   # GUI control
 
-  SelectVariables("all")
+  ToggleExport()
+
   tkfocus(frame1.lst.1.1)
 
   tkgrab(tt)

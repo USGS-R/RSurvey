@@ -51,13 +51,17 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
 
   CopyFormat <- function() {
     txt <- as.character(tclvalue(fmt.var))
-    writeClipboard(txt)
+    cat(txt, file="clipboard")
   }
 
   # Paste format from clipboard
 
   PasteFormat <- function() {
-    tclvalue(fmt.var) <- readClipboard()
+    cb <- try(scan(file="clipboard", what="character", sep="\n", quiet=TRUE),
+              silent=TRUE)
+    if (inherits(cb, "try-error"))
+      return()
+    tclvalue(fmt.var) <- cb
     UpdateSample()
     tkfocus(frame2b.ent)
   }
