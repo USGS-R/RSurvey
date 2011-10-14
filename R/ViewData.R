@@ -365,7 +365,7 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
   tcl(frame2.tbl, "tag", "col", "rowtitles", 0)
   tktag.configure(frame2.tbl, "rowtitles", anchor="ne", justify="right")
 
-  tag.cols <- c(numeric.columns, posix.columns)
+  tag.cols <- which(numeric.columns | posix.columns)
   if (length(tag.cols) > 0) {
     for (j in tag.cols)
       tcl(frame2.tbl, "tag", "col", "numeric", j)
