@@ -51,7 +51,7 @@ ChoosePch <- function(pch, parent=NULL) {
 
   # Write title
 
-  WriteTitle <- function(pch, title.header="Choose a point symbol") {
+  WriteTitle <- function(pch, title.header="Choose a graphic symbol") {
     if (is.null(pch)) {
       tktitle(tt) <- title.header
     } else {
@@ -62,8 +62,6 @@ ChoosePch <- function(pch, parent=NULL) {
 
 
   # Main program
-
-  title.header <- "Choose a graphics symbol"
 
   brw.fill <- ""
   sel.fill <- "#FDFEC4"
