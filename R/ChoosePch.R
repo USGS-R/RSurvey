@@ -51,7 +51,7 @@ ChoosePch <- function(pch, parent=NULL) {
 
   # Write title
 
-  WriteTitle <- function(pch, title.header="Choose a graphic symbol") {
+  WriteTitle <- function(pch, title.header="Choose A Graphic Symbol") {
     if (is.null(pch)) {
       tktitle(tt) <- title.header
     } else {
