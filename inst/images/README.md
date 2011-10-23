@@ -9,7 +9,7 @@ Image files in this directory are covered by the following public licenses:
 
 - - -
 
-**Images:** axes.gif, polygon.gif, transect.gif  
+**Images:** axes.gif, polygon.gif, transect.gif, pch.gif  
 **Designer:** Jason C. Fisher  
 **License:** GNU General Public License ([GPL][gpl])
 
