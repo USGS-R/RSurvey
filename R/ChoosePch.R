@@ -35,10 +35,10 @@ ChoosePch <- function(pch, parent=NULL) {
   # Draw polygon
 
   DrawPolygon <- function(i, j, fill, outline, tag) {
-    x1 <- j * dx - dx
-    y1 <- i * dy - dy
-    x2 <- j * dx - 1L
-    y2 <- i * dy - 1L
+    x1 <- j * dx - dx - 0.5
+    y1 <- i * dy - dy - 0.5
+    x2 <- j * dx - 1.5
+    y2 <- i * dy - 1.5
     pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2))
     tkcreate(frame1.cvs, "polygon", pts, fill=fill, outline=outline, tag=tag)
   }
@@ -76,8 +76,8 @@ ChoosePch <- function(pch, parent=NULL) {
   m <- 6
   n <- 6
 
-  dx <- w / m
-  dy <- h / n
+  dx <- w / n
+  dy <- h / m
   center <- .Tcl.args(c(w / 2, h / 2))
 
   rtn.pch <- NULL

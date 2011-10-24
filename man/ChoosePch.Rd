@@ -2,7 +2,7 @@
 
 \alias{ChoosePch}
 
-\title{Set Graphich Symbol}
+\title{Set Graphic Symbol}
 
 \description{
 A \acronym{GUI} for selecting a graphic symbol (pch).
