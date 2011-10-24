@@ -21,10 +21,10 @@ ChooseColor <- function(col="#000000", parent=NULL) {
   # Draw polygon in frame 1 canvas
 
   DrawPolygon1 <- function(i, j, fill, outline, tag) {
-    x1 <- j * dx - dx - 0.5
-    y1 <- i * dy - dy - 0.5
-    x2 <- j * dx - 0.5
-    y2 <- i * dy - 0.5
+    x1 <- j * dx - dx
+    y1 <- i * dy - dy
+    x2 <- j * dx
+    y2 <- i * dy
     pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2))
     tkcreate(frame1.cvs, "polygon", pts, fill=fill, outline=outline, tag=tag)
   }
@@ -42,20 +42,21 @@ ChooseColor <- function(col="#000000", parent=NULL) {
   # Frame cell based on mouse location
 
   MouseMotion <- function(x, y) {
-    i <- ceiling(as.numeric(y) / dy)
-    j <- ceiling(as.numeric(x) / dx)
-    color <- d[i, j]
-    tclvalue(col.var) <- color
-    DrawPolygon0(color)
-    tcl(frame1.cvs, "delete", "brw")
-    DrawPolygon1(i, j, fill=color, outline="#000000", tag="brw")
+    i <- ceiling((as.numeric(y)) / dy)
+    j <- ceiling((as.numeric(x)) / dx)
+    if (i != 0 && j != 0) {
+      color <- d[i, j]
+      tclvalue(col.var) <- color
+      DrawPolygon0(color)
+      tcl(frame1.cvs, "delete", "brw")
+      DrawPolygon1(i, j, fill=color, outline="#000000", tag="brw")
+    }
   }
 
   # Update color based on text string in entry-box
 
   UpdateColor <- function() {
     color <- AsHex(as.character(tclvalue(col.var)))
-
     tcl(frame1.cvs, "delete", "brw")
     if (color %in% d) {
       ij <- which(d == color, arr.ind=TRUE)
@@ -63,7 +64,6 @@ ChooseColor <- function(col="#000000", parent=NULL) {
       j <- ij[2]
       DrawPolygon1(i, j, fill=color, outline="#000000", tag="brw")
     }
-
     DrawPolygon0(color)
   }
 
@@ -78,7 +78,6 @@ ChooseColor <- function(col="#000000", parent=NULL) {
 
     sep.txt <- strsplit(txt, "")[[1]]
     idxs <- which(sapply(sep.txt, function(i) i %in% hex.digits))
-
     txt <- paste(sep.txt[idxs], collapse="")
 
     nc <- nchar(txt)
@@ -98,6 +97,8 @@ ChooseColor <- function(col="#000000", parent=NULL) {
 
   # Main program
 
+  w <- 400
+  h <- 240
   m <- 12
   n <- 20
   d <- matrix(c("#000000", "#000000", "#000000", "#003300", "#006600",
@@ -150,13 +151,9 @@ ChooseColor <- function(col="#000000", parent=NULL) {
                 "#FF33FF", "#FF66FF", "#FF99FF", "#FFCCFF", "#FFFFFF"),
             nrow=m, ncol=n, byrow=TRUE)
 
-  brw.fill <- ""
-  sel.fill <- "#FDFEC4"
-  brw.outline <- "#CA0020"
-  sel.outline <- ""
-
-  w <- 400
-  h <- 240
+  hex.digits <- list("#", 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                     "a", "b", "c", "d", "e", "f",
+                     "A", "B", "C", "D", "E", "F")
 
   dx <- w / n
   dy <- h / m
@@ -165,15 +162,10 @@ ChooseColor <- function(col="#000000", parent=NULL) {
     col <- "#000000"
   rtn.col <- NULL
 
-  hex.digits <- list("#", 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                     "a", "b", "c", "d", "e", "f",
-                     "A", "B", "C", "D", "E", "F")
-
   # Assign variables linked to Tk widgets
 
   col.var <- tclVar(col)
   tt.done.var <- tclVar(0)
-
 
   # Open GUI
 
@@ -196,7 +188,7 @@ ChooseColor <- function(col="#000000", parent=NULL) {
   frame0.cvs.1 <- tkcanvas(frame0, relief="flat", width=dx - 1, height=dy - 1,
                            background="white", confine=TRUE, closeenough=0,
                            borderwidth=0, highlightthickness=0)
-  frame0.ent.2 <- ttkentry(frame0, textvariable=col.var, width=12)
+  frame0.ent.2 <- ttkentry(frame0, textvariable=col.var, width=10)
 
 
   frame0.but.4 <- ttkbutton(frame0, width=12, text="OK", command=SaveColor)

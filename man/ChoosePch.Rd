@@ -9,7 +9,7 @@ A \acronym{GUI} for selecting a graphic symbol (pch).
 }
 
 \usage{
-ChoosePch(pch, parent = NULL)
+ChoosePch(pch = 21, parent = NULL)
 }
 
 \arguments{
@@ -24,7 +24,7 @@ Returns a numeric or integer value based on user selection.
 \author{Fisher, J.C.}
 
 \examples{
-\donttest{ChoosePch(pch = 21)}
+\donttest{ChoosePch(pch = "+")}
 }
 
 \keyword{misc}

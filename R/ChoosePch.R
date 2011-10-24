@@ -1,4 +1,4 @@
-ChoosePch <- function(pch, parent=NULL) {
+ChoosePch <- function(pch=21, parent=NULL) {
 # ChoosePch(pch=21)
 
   # Additional functions (subroutines)
@@ -6,22 +6,9 @@ ChoosePch <- function(pch, parent=NULL) {
   # Save pch and quit
 
    SavePch <- function() {
-     rtn.pch <<- pch
+     rtn.pch <<- tclvalue(pch.var)
      tclvalue(tt.done.var) <- 1
    }
-
-  # Select Pch from image
-
-  SelectPch <- function(x, y) {
-    i <- ceiling(as.numeric(y) / dy)
-    j <- ceiling(as.numeric(x) / dx)
-    pch <<- pch.lst[[(m * (j - 1)) + i]]
-    tcl(frame1.cvs, "delete", "all")
-    DrawPolygon(i, j, fill=sel.fill, outline=sel.outline, tag="sel")
-    DrawImage()
-    DrawPolygon(i, j, fill=brw.fill, outline=brw.outline, tag="brw")
-    WriteTitle(pch)
-  }
 
   # Frame cell based on mouse location
 
@@ -30,6 +17,8 @@ ChoosePch <- function(pch, parent=NULL) {
     j <- ceiling(as.numeric(x) / dx)
     tcl(frame1.cvs, "delete", "brw")
     DrawPolygon(i, j, fill=brw.fill, outline=brw.outline, tag="brw")
+    pch <- pch.lst[[(m * (j - 1)) + i]]
+    UpdatePch(pch)
   }
 
   # Draw polygon
@@ -49,15 +38,14 @@ ChoosePch <- function(pch, parent=NULL) {
     tkcreate(frame1.cvs, "image", center, anchor="center", image=img.var)
   }
 
-  # Write title
+  # Update pch
 
-  WriteTitle <- function(pch, title.header="Choose A Graphic Symbol") {
-    if (is.null(pch)) {
-      tktitle(tt) <- title.header
-    } else {
-      pch.str <- if(is.integer(pch)) pch else dQuote(pch)
-      tktitle(tt) <- paste(title.header, ", pch = ", pch.str, sep="")
-    }
+  UpdatePch <- function(pch) {
+    if (is.null(pch))
+      pch.str <- ""
+    else
+      pch.str <- if(is.integer(pch)) pch else paste("\"", pch, "\"", sep="")
+    tclvalue(pch.var) <- pch.str
   }
 
 
@@ -81,10 +69,12 @@ ChoosePch <- function(pch, parent=NULL) {
   center <- .Tcl.args(c(w / 2, h / 2))
 
   rtn.pch <- NULL
-  if (missing(pch) || !pch %in% pch.lst) {
+  if (!pch %in% pch.lst) {
     pch <- NULL
   } else if (is.numeric(pch)) {
     pch <- as.integer(pch)
+  } else {
+    pch <- paste("\"", pch, "\"", sep="")
   }
 
   if ("package:RSurvey" %in% search())
@@ -94,6 +84,7 @@ ChoosePch <- function(pch, parent=NULL) {
 
   # Assign variables linked to Tk widgets
 
+  pch.var <- tclVar()
   img.var <- tclVar()
   tt.done.var <- tclVar(0)
 
@@ -109,7 +100,7 @@ ChoosePch <- function(pch, parent=NULL) {
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
   tkwm.resizable(tt, 0, 0)
-  WriteTitle(pch)
+  tktitle(tt) <- "Choose A Graphic Symbol"
 
   # Create image
 
@@ -118,17 +109,28 @@ ChoosePch <- function(pch, parent=NULL) {
   # Frame 0 contains ok and cancel buttons
 
   frame0 <- ttkframe(tt, relief="flat")
-  frame0.but.1 <- ttkbutton(frame0, width=12, text="OK", command=SavePch)
-  frame0.but.2 <- ttkbutton(frame0, width=12, text="Cancel",
+
+  frame0.lab.1 <- ttklabel(frame0, text="Graphic symbol, pch =")
+  frame0.ent.2 <- ttkentry(frame0, textvariable=pch.var, width=6)
+  frame0.but.3 <- ttkbutton(frame0, width=12, text="OK", command=SavePch)
+  frame0.but.4 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() {
                               pch <<- NULL
                               tclvalue(tt.done.var) <- 1
                             })
 
-  tkgrid(frame0.but.1, frame0.but.2, pady=c(5, 10))
-  tkgrid.configure(frame0.but.1, sticky="e", padx=c(0, 4))
-  tkgrid.configure(frame0.but.2, sticky="w", padx=c(0, 10), rowspan=2)
-  tkpack(frame0, side="bottom", anchor="e")
+  tkgrid(frame0.lab.1, frame0.ent.2, "x", frame0.but.3, frame0.but.4,
+         pady=c(0, 10))
+  tkgrid.columnconfigure(frame0, 2, weight=1)
+
+  tkgrid.configure(frame0.lab.1, sticky="w", padx=c(10, 0))
+  tkgrid.configure(frame0.ent.2, padx=c(2, 0))
+
+
+  tkgrid.configure(frame0.but.3, sticky="e", padx=c(0, 4))
+  tkgrid.configure(frame0.but.4, sticky="w", padx=c(0, 10))
+
+  tkpack(frame0, fill="x", side="bottom", anchor="e")
 
   # Canvas
 
@@ -151,7 +153,7 @@ ChoosePch <- function(pch, parent=NULL) {
 
   # Binds on canvas
 
-  tkbind(frame1.cvs, "<ButtonPress>", function(x, y) SelectPch(x, y))
+  tkbind(frame1.cvs, "<ButtonPress>", SavePch)
   tkbind(frame1.cvs, "<Motion>", function(x, y) MouseMotion(x, y))
   tkbind(frame1.cvs, "<Leave>", function() tcl(frame1.cvs, "delete", "brw"))
 
