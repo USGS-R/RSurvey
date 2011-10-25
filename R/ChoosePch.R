@@ -47,13 +47,10 @@ ChoosePch <- function(pch=NA, parent=NULL) {
 
   DrawImage <- function() {
     tkcreate(frame1.cvs, "image", center, anchor="center", image=img.var)
-
     for (i in 1:nrow(x.lines))
       tkcreate(frame1.cvs, "line", x.lines[i, ], fill="#CCCCCC", tag="grid")
     for (i in 1:nrow(y.lines))
       tkcreate(frame1.cvs, "line", y.lines[i, ], fill="#CCCCCC", tag="grid")
-
-
   }
 
   # Pch to text string
@@ -116,8 +113,8 @@ ChoosePch <- function(pch=NA, parent=NULL) {
 
   x.seq <- seq(dx, w - dx, dx)
   y.seq <- seq(dy, h - dy, dy)
-  x.lines <- cbind(x1=0, y1=y.seq, x2=w, y2=y.seq)
-  y.lines <- cbind(x1=x.seq, y1=0, x2=x.seq, y2=h)
+  x.lines <- cbind(x1=0, y1=y.seq, x2=w + 1, y2=y.seq)
+  y.lines <- cbind(x1=x.seq, y1=0, x2=x.seq, y2=h + 1)
 
   rtn.pch <- NULL
 
