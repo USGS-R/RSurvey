@@ -18,10 +18,14 @@ ChoosePch(pch = NA, parent = NULL)
 }
 
 \value{
-Returns a numeric or integer value based on user selection.
+Returns a numeric or integer value based on a user selection.
 }
 
 \author{Fisher, J.C.}
+
+\seealso{
+\code{\link{points}}
+}
 
 \examples{
 \donttest{ChoosePch(pch = "+")}

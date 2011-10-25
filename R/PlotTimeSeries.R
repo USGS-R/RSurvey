@@ -1,7 +1,7 @@
 PlotTimeSeries <- function(x, y=NULL, xlim=NULL, ylim=NULL, ylab=NULL,
                            tgap=NULL, width=7, cex.pts=1, pointsize=12,
                            fmt=NULL, axis.side=1:2, minor.ticks=FALSE,
-                           ticks.inside=FALSE, point.line=FALSE) {
+                           ticks.inside=FALSE, rm.pnt.line=FALSE) {
   # A time series plot is drawn with points and connecting lines.
 
   # Additional functions (subroutines)
@@ -24,7 +24,7 @@ PlotTimeSeries <- function(x, y=NULL, xlim=NULL, ylim=NULL, ylab=NULL,
 
     lwd <- 0.5 * (96 / (6 * 12))
 
-    col.pts <- if (point.line) "black" else NA
+    col.pts <- if (rm.pnt.line) NA else "black"
     points(x, y, pch=21, cex=cex.pts, col=col.pts, bg="gray", lwd=lwd)
   }
 

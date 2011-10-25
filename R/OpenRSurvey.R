@@ -416,7 +416,7 @@ OpenRSurvey <- function() {
                    cex.pts=Data("cex.pts"), axis.side=axis.side,
                    minor.ticks=Data("minor.ticks"),
                    ticks.inside=Data("ticks.inside"),
-                   point.line=Data("point.line"))
+                   rm.pnt.line=Data("rm.pnt.line"))
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }
@@ -519,7 +519,7 @@ OpenRSurvey <- function() {
            vuni=Data("vuni"), vmax=Data("vmax"),
            vxby=Data("vxby"), vyby=Data("vyby"),
            axis.side=axis.side, minor.ticks=Data("minor.ticks"),
-           ticks.inside=Data("ticks.inside"), point.line=Data("point.line"),
+           ticks.inside=Data("ticks.inside"), rm.pnt.line=Data("rm.pnt.line"),
            add.contour.lines=show.lines)
 
     if (show.poly)

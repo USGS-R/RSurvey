@@ -55,8 +55,8 @@ Queries and sets the following components of \code{\link{Data}}:
   plot; its default is \code{FALSE}.}
 \item{ticks.inside}{logical; if \code{TRUE} tickmarks are placed inside the
   plot region; its default is \code{FALSE}.}
-\item{point.line}{logical; if \code{TRUE} draw point symbol line boundary;
-  its default is \code{FALSE}.}
+\item{rm.pnt.line}{logical; if \code{TRUE} the line boundary on point symbols is
+  not drawn; its default is \code{FALSE}.}
 }
 
 \note{
