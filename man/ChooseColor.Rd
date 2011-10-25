@@ -9,7 +9,7 @@ A \acronym{GUI} for electing a graphic color.
 }
 
 \usage{
-ChooseColor(col = "#000000", parent = NULL)
+ChooseColor(col = NA, parent = NULL)
 }
 
 \arguments{

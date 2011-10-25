@@ -9,7 +9,7 @@ A \acronym{GUI} for selecting a graphic symbol (pch).
 }
 
 \usage{
-ChoosePch(pch = 21, parent = NULL)
+ChoosePch(pch = NA, parent = NULL)
 }
 
 \arguments{

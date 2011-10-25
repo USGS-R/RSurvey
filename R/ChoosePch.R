@@ -1,4 +1,4 @@
-ChoosePch <- function(pch=21, parent=NULL) {
+ChoosePch <- function(pch=NA, parent=NULL) {
 # ChoosePch(pch=21)
 
   # Additional functions (subroutines)
@@ -6,7 +6,7 @@ ChoosePch <- function(pch=21, parent=NULL) {
   # Save pch and quit
 
    SavePch <- function() {
-     rtn.pch <<- tclvalue(pch.var)
+     rtn.pch <<- TxtToPch(tclvalue(pch.var))
      tclvalue(tt.done.var) <- 1
    }
 
@@ -15,10 +15,21 @@ ChoosePch <- function(pch=21, parent=NULL) {
   MouseMotion <- function(x, y) {
     i <- ceiling(as.numeric(y) / dy)
     j <- ceiling(as.numeric(x) / dx)
-    tcl(frame1.cvs, "delete", "brw")
-    DrawPolygon(i, j, fill=brw.fill, outline=brw.outline, tag="brw")
-    pch <- pch.lst[[(m * (j - 1)) + i]]
-    UpdatePch(pch)
+    tcl(frame1.cvs, "delete", "browse")
+    if (i == 0 || j == 0) {
+      pch <- "NA"
+    } else {
+      DrawPolygon(i, j, fill="", outline="#CA0020", tag="browse")
+      pch <- PchToTxt(pch.show[[(m * (j - 1)) + i]])
+    }
+    tclvalue(pch.var) <- pch
+  }
+
+  # Mouse leaves canvas
+
+  MouseLeavesCanvas <- function() {
+    tcl(frame1.cvs, "delete", "browse")
+    tclvalue(pch.var) <- "NA"
   }
 
   # Draw polygon
@@ -26,8 +37,8 @@ ChoosePch <- function(pch=21, parent=NULL) {
   DrawPolygon <- function(i, j, fill, outline, tag) {
     x1 <- j * dx - dx - 0.5
     y1 <- i * dy - dy - 0.5
-    x2 <- j * dx - 1.5
-    y2 <- i * dy - 1.5
+    x2 <- j * dx - 0.5
+    y2 <- i * dy - 0.5
     pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2))
     tkcreate(frame1.cvs, "polygon", pts, fill=fill, outline=outline, tag=tag)
   }
@@ -36,28 +47,63 @@ ChoosePch <- function(pch=21, parent=NULL) {
 
   DrawImage <- function() {
     tkcreate(frame1.cvs, "image", center, anchor="center", image=img.var)
+
+    for (i in 1:nrow(x.lines))
+      tkcreate(frame1.cvs, "line", x.lines[i, ], fill="#CCCCCC", tag="grid")
+    for (i in 1:nrow(y.lines))
+      tkcreate(frame1.cvs, "line", y.lines[i, ], fill="#CCCCCC", tag="grid")
+
+
   }
 
-  # Update pch
+  # Pch to text string
 
-  UpdatePch <- function(pch) {
-    if (is.null(pch))
-      pch.str <- ""
-    else
-      pch.str <- if(is.integer(pch)) pch else paste("\"", pch, "\"", sep="")
-    tclvalue(pch.var) <- pch.str
+  PchToTxt <- function(pch) {
+    if (is.na(pch)) {
+      txt <- "NA"
+    } else if (is.numeric(pch)) {
+      txt <- as.character(as.integer(pch))
+    } else {
+      txt <- paste("\"", pch, "\"", sep="")
+    }
+    txt
+  }
+
+  # Text string to pch
+
+  TxtToPch <- function(txt) {
+    txt <- as.character(txt)
+    if (txt %in% c("NA", "\"\"", "")) {
+      pch <- NA
+    } else if (suppressWarnings(!is.na(as.integer(txt)))) {
+      pch <- as.integer(txt)
+      if (!pch %in% pch.all.int)
+        pch <- NA
+    } else {
+      txt.1 <- substr(txt, 1, 1)
+      if (txt.1 == "\"")
+        pch <- substr(txt, 2, 2)
+      else
+        pch <- txt.1
+    }
+    pch
   }
 
 
   # Main program
 
-  brw.fill <- ""
-  sel.fill <- "#FDFEC4"
-  brw.outline <- "#CA0020"
-  sel.outline <- ""
+  if ("package:RSurvey" %in% search())
+    image.path <- file.path(system.file("images", package="RSurvey"), "pch.gif")
+  else
+    image.path <- file.path(getwd(), "inst", "images", "pch.gif")
 
-  pch.lst <- as.list(0:35)
-  pch.lst[27:36] <- as.list(c("*", ".", "o", "O", "0", "+", "-", "|", "%", "#"))
+  pch.all.int <- as.integer(c(0:25, 32:127, 160:255, NA))
+
+  extras <- c("*", ".", "o", "O", "0", "+", "-", "|", "%", "#")
+  nex <- length(extras)
+  np <- 26 + nex
+  pch.show <- as.list(0:(np - 1))
+  pch.show[26 + 1:nex] <- as.list(extras)
 
   w <- 390
   h <- 330
@@ -68,23 +114,16 @@ ChoosePch <- function(pch=21, parent=NULL) {
   dy <- h / m
   center <- .Tcl.args(c(w / 2, h / 2))
 
-  rtn.pch <- NULL
-  if (!pch %in% pch.lst) {
-    pch <- NULL
-  } else if (is.numeric(pch)) {
-    pch <- as.integer(pch)
-  } else {
-    pch <- paste("\"", pch, "\"", sep="")
-  }
+  x.seq <- seq(dx, w - dx, dx)
+  y.seq <- seq(dy, h - dy, dy)
+  x.lines <- cbind(x1=0, y1=y.seq, x2=w, y2=y.seq)
+  y.lines <- cbind(x1=x.seq, y1=0, x2=x.seq, y2=h)
 
-  if ("package:RSurvey" %in% search())
-    image.path <- file.path(system.file("images", package="RSurvey"), "pch.gif")
-  else
-    image.path <- file.path(getwd(), "inst", "images", "pch.gif")
+  rtn.pch <- NULL
 
   # Assign variables linked to Tk widgets
 
-  pch.var <- tclVar()
+  pch.var <- tclVar(PchToTxt(pch))
   img.var <- tclVar()
   tt.done.var <- tclVar(0)
 
@@ -135,27 +174,28 @@ ChoosePch <- function(pch=21, parent=NULL) {
   # Canvas
 
   frame1 <- ttkframe(tt, relief="flat")
-  frame1.cvs <- tkcanvas(frame1, relief="flat", width=w, height=h,
+  frame1.cvs <- tkcanvas(frame1, relief="flat", width=w + 1, height=h + 1,
                          background="white", confine=TRUE, closeenough=0,
                          borderwidth=0, highlightthickness=0)
   tkgrid(frame1.cvs, padx=10, pady=10)
   tkpack(frame1)
 
-  # Draw intial polyon and image
+  # Draw image and intial selection polyon
 
-  if (!is.null(pch)) {
-    idx <- which(pch.lst %in% pch)
+  DrawImage()
+  if (pch %in% pch.show) {
+    idx <- which(pch.show %in% pch)
     j <- ceiling(idx / m)
     i <- idx - m * (j - 1L)
-    DrawPolygon(i, j, fill=sel.fill, outline=sel.outline, tag="sel")
+    DrawPolygon(i, j, fill="", outline="#CA0020", tag="browse")
   }
-  DrawImage()
 
-  # Binds on canvas
+  # Set widget binds
 
+  tkbind(frame0.ent.2, "<Return>", SavePch)
   tkbind(frame1.cvs, "<ButtonPress>", SavePch)
   tkbind(frame1.cvs, "<Motion>", function(x, y) MouseMotion(x, y))
-  tkbind(frame1.cvs, "<Leave>", function() tcl(frame1.cvs, "delete", "brw"))
+  tkbind(frame1.cvs, "<Leave>", MouseLeavesCanvas)
 
   # GUI control
 

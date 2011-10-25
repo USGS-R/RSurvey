@@ -1,4 +1,4 @@
-ChooseColor <- function(col="#000000", parent=NULL) {
+ChooseColor <- function(col=NA, parent=NULL) {
 # ChooseColor("#669933")
 
   # Additional functions (subroutines)
@@ -6,25 +6,28 @@ ChooseColor <- function(col="#000000", parent=NULL) {
   # Save color and quit
 
   SaveColor <- function() {
-    rtn.col <<- AsHex(as.character(tclvalue(col.var)))
+    hex <- TxtToHex(tclvalue(col.var))
+    if (hex == "")
+      hex <- NA
+    rtn.col <<- hex
     tclvalue(tt.done.var) <- 1
   }
 
-  # Draw polygon in frame 0 canvas
+  # Draw polygon on small canvas
 
-  DrawPolygon0 <- function(color) {
+  DrawPolygonSmall <- function(color) {
     tcl(frame0.cvs.1, "delete", "col")
     pts <- .Tcl.args(c(0, 0, dx, 0, dx, dy, 0, dy))
     tkcreate(frame0.cvs.1, "polygon", pts, fill=color, outline="", tag="col")
   }
 
-  # Draw polygon in frame 1 canvas
+  # Draw polygon on large canvas
 
-  DrawPolygon1 <- function(i, j, fill, outline, tag) {
-    x1 <- j * dx - dx
-    y1 <- i * dy - dy
-    x2 <- j * dx
-    y2 <- i * dy
+  DrawPolygonLarge <- function(i, j, fill, outline, tag) {
+    x1 <- j * dx - dx - 0.5
+    y1 <- i * dy - dy - 0.5
+    x2 <- j * dx - 0.5
+    y2 <- i * dy - 0.5
     pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2))
     tkcreate(frame1.cvs, "polygon", pts, fill=fill, outline=outline, tag=tag)
   }
@@ -34,7 +37,7 @@ ChooseColor <- function(col="#000000", parent=NULL) {
   DrawColorChart <- function() {
     for (i in 1:m) {
       for (j in 1:n) {
-        DrawPolygon1(i, j, fill=d[i, j], outline="#FFFFFF", tag="")
+        DrawPolygonLarge(i, j, fill=d[i, j], outline="#FFFFFF", tag="")
       }
     }
   }
@@ -44,54 +47,70 @@ ChooseColor <- function(col="#000000", parent=NULL) {
   MouseMotion <- function(x, y) {
     i <- ceiling((as.numeric(y)) / dy)
     j <- ceiling((as.numeric(x)) / dx)
-    if (i != 0 && j != 0) {
+    tcl(frame1.cvs, "delete", "browse")
+    if (i == 0 || j == 0) {
+      color <- ""
+    } else {
       color <- d[i, j]
-      tclvalue(col.var) <- color
-      DrawPolygon0(color)
-      tcl(frame1.cvs, "delete", "brw")
-      DrawPolygon1(i, j, fill=color, outline="#000000", tag="brw")
+      DrawPolygonSmall(color)
+      DrawPolygonLarge(i, j, fill="", outline="#000000", tag="browse")
     }
+    tclvalue(col.var) <- color
+  }
+
+  # Mouse leaves canvas
+
+  MouseLeavesCanvas <- function() {
+    tclvalue(col.var) <- ""
+    UpdateColor()
   }
 
   # Update color based on text string in entry-box
 
   UpdateColor <- function() {
-    color <- AsHex(as.character(tclvalue(col.var)))
-    tcl(frame1.cvs, "delete", "brw")
+    color <- TxtToHex(tclvalue(col.var))
+    tcl(frame1.cvs, "delete", "browse")
     if (color %in% d) {
       ij <- which(d == color, arr.ind=TRUE)
       i <- ij[1]
       j <- ij[2]
-      DrawPolygon1(i, j, fill=color, outline="#000000", tag="brw")
+
+      DrawPolygonLarge(i, j, fill="", outline="#000000", tag="browse")
     }
-    DrawPolygon0(color)
+    if (is.na(color) || color == "")
+      color <- "#FFFFFF"
+    DrawPolygonSmall(color)
   }
 
   # Coerces text string to hexadecimal color string
 
-  AsHex <- function(txt) {
-    if (!inherits(try(col2rgb(txt), silent=TRUE), "try-error"))
-      return(txt)
+  TxtToHex <- function(txt) {
+    txt <- as.character(txt)
+    if (txt %in% d | txt == "") {
+      hex <- txt
+    } else {
+      sep.txt <- strsplit(txt, "")[[1]]
+      idxs <- which(sapply(sep.txt, function(i) i %in% hex.digits))
+      txt <- paste(sep.txt[idxs], collapse="")
+      tclvalue(col.var) <- txt
 
-    if (substr(txt, 1, 1) != "#")
-      txt <- paste("#", txt, sep="")
+      if (substr(txt, 1, 1) != "#")
+        txt <- paste("#", txt, sep="")
 
-    sep.txt <- strsplit(txt, "")[[1]]
-    idxs <- which(sapply(sep.txt, function(i) i %in% hex.digits))
-    txt <- paste(sep.txt[idxs], collapse="")
+      nc <- nchar(txt)
+      if (nc > 7) {
+        txt <- substr(txt, 1, 7)
+      } else if (nc < 7) {
+        code <- substr(txt, 2, nc)
+        txt <- paste("#", gsub(" ", "0", sprintf("%06s", code)), sep="")
+      }
 
-    nc <- nchar(txt)
-    if (nc > 7) {
-      txt <- substr(txt, 1, 7)
-    } else if (nc < 7) {
-      hex <- substr(txt, 2, nc)
-      txt <- paste("#", gsub(" ", "0", sprintf("%06s", hex)), sep="")
+      if (inherits(try(col2rgb(txt), silent=TRUE), "try-error"))
+        hex <- ""
+      else
+        hex <- txt
     }
-
-    if (inherits(try(col2rgb(txt), silent=TRUE), "try-error"))
-      stop(paste("Error in hexadecimal color string:", txt))
-
-    txt
+    hex
   }
 
 
@@ -158,13 +177,13 @@ ChooseColor <- function(col="#000000", parent=NULL) {
   dx <- w / n
   dy <- h / m
 
-  if (!inherits(col, "character"))
-    col <- "#000000"
+  if (is.na(col) | !inherits(col, "character"))
+    col <- ""
   rtn.col <- NULL
 
   # Assign variables linked to Tk widgets
 
-  col.var <- tclVar(col)
+  col.var <- tclVar(TxtToHex(col))
   tt.done.var <- tclVar(0)
 
   # Open GUI
@@ -227,7 +246,9 @@ ChooseColor <- function(col="#000000", parent=NULL) {
 
   tkbind(frame1.cvs, "<ButtonPress>", SaveColor)
   tkbind(frame1.cvs, "<Motion>", function(x, y) MouseMotion(x, y))
+  tkbind(frame1.cvs, "<Leave>", MouseLeavesCanvas)
   tkbind(frame0.ent.2, "<KeyRelease>", UpdateColor)
+  tkbind(frame0.ent.2, "<Return>", SaveColor)
 
   # GUI control
 
