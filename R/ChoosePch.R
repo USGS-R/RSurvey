@@ -102,8 +102,8 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   pch.show <- as.list(0:(np - 1))
   pch.show[26 + 1:nex] <- as.list(extras)
 
-  w <- 390
-  h <- 330
+  w <- 240
+  h <- 240
   m <- 6
   n <- 6
 
@@ -146,8 +146,8 @@ ChoosePch <- function(pch=NA, parent=NULL) {
 
   frame0 <- ttkframe(tt, relief="flat")
 
-  frame0.lab.1 <- ttklabel(frame0, text="Graphic symbol, pch =")
-  frame0.ent.2 <- ttkentry(frame0, textvariable=pch.var, width=6)
+  frame0.lab.1 <- ttklabel(frame0, text="pch =")
+  frame0.ent.2 <- ttkentry(frame0, textvariable=pch.var, width=4)
   frame0.but.3 <- ttkbutton(frame0, width=12, text="OK", command=SavePch)
   frame0.but.4 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() {
