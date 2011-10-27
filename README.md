@@ -38,7 +38,7 @@ by choosing to customize the startup options and specifying the SDI interface
 Install required R packages from CRAN using a simple call to
 `install.packages()`:
 
-    > install.packages(c('sp', 'gpclib', 'rgl', 'MBA', 'tripack', 'RSurvey'))
+    > install.packages(c('sp', 'gpclib', 'rgl', 'MBA', 'tripack', 'RColorBrewer', 'RSurvey'))
 
 Install an optional R package
 [rgdal](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal")
