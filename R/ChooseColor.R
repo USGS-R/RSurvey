@@ -6,7 +6,7 @@ ChooseColor <- function(col=NA, parent=NULL) {
   # Save color and quit
 
   SaveColor <- function() {
-    hex <- TxtToHex(tclvalue(col.var))
+    hex <- Txt2Hex(tclvalue(col.var))
     if (hex == "")
       hex <- NA
     rtn.col <<- hex
@@ -37,14 +37,14 @@ ChooseColor <- function(col=NA, parent=NULL) {
   DrawColorChart <- function() {
     for (i in 1:m) {
       for (j in 1:n) {
-        DrawPolygonLarge(i, j, fill=d[i, j], outline="#FFFFFF", tag="")
+        DrawPolygonLarge(i, j, fill=d[i, j], outline="black", tag="")
       }
     }
   }
 
-  # Frame cell based on mouse location
+  # Frame cell based on mouse selection
 
-  MouseMotion <- function(x, y) {
+  MouseSelect <- function(x, y) {
     i <- ceiling((as.numeric(y)) / dy)
     j <- ceiling((as.numeric(x)) / dx)
     tcl(frame1.cvs, "delete", "browse")
@@ -53,29 +53,42 @@ ChooseColor <- function(col=NA, parent=NULL) {
     } else {
       color <- d[i, j]
       DrawPolygonSmall(color)
-      DrawPolygonLarge(i, j, fill="", outline="#000000", tag="browse")
+      DrawPolygonLarge(i, j, fill="", outline="white", tag="browse")
     }
+
+
+
     tclvalue(col.var) <- color
-  }
 
-  # Mouse leaves canvas
 
-  MouseLeavesCanvas <- function() {
-    tclvalue(col.var) <- ""
-    UpdateColor()
+    rgba <- col2rgb(color)
+    nr <<- rgba[1]
+    ng <<- rgba[2]
+    nb <<- rgba[3]
+
+
+
+    tclvalue(r.scl.var) <- nr
+    tclvalue(g.scl.var) <- ng
+    tclvalue(b.scl.var) <- nb
+    tclvalue(r.ent.var) <- nr
+    tclvalue(g.ent.var) <- ng
+    tclvalue(b.ent.var) <- nb
+
+
   }
 
   # Update color based on text string in entry-box
 
   UpdateColor <- function() {
-    color <- TxtToHex(tclvalue(col.var))
+    color <- Txt2Hex(tclvalue(col.var))
     tcl(frame1.cvs, "delete", "browse")
     if (color %in% d) {
-      ij <- which(d == color, arr.ind=TRUE)
+      ij <- which(d == color, arr.ind=TRUE)[1, ]
       i <- ij[1]
       j <- ij[2]
-
-      DrawPolygonLarge(i, j, fill="", outline="#000000", tag="browse")
+#     browser()
+      DrawPolygonLarge(i, j, fill="", outline="white", tag="browse")
     }
     if (is.na(color) || color == "")
       color <- "#FFFFFF"
@@ -84,7 +97,7 @@ ChooseColor <- function(col=NA, parent=NULL) {
 
   # Coerces text string to hexadecimal color string
 
-  TxtToHex <- function(txt) {
+  Txt2Hex <- function(txt) {
     txt <- as.character(txt)
     if (txt %in% d | txt == "") {
       hex <- txt
@@ -112,6 +125,84 @@ ChooseColor <- function(col=NA, parent=NULL) {
     }
     hex
   }
+
+
+
+
+
+
+
+
+  CheckColorComponent <- function(...) {
+    val <- as.integer(...)
+    if (is.na(val) || val < 0) {
+      val <- 0
+    } else if (val > 255) {
+      val <- 255
+    }
+    val
+  }
+
+  Num2Hex <- function() {
+    if (na == 255)
+      hex <- rgb(nr, ng, nb, maxColorValue=255)
+    else
+      hex <- rgb(nr, ng, nb, na, maxColorValue=255)
+    tclvalue(col.var) <- hex
+    UpdateColor()
+
+  }
+
+  ScaleRed <- function(...) {
+    nr <<- CheckColorComponent(...)
+    tclvalue(r.ent.var) <- nr
+    Num2Hex()
+  }
+  ScaleGrn <- function(...) {
+    ng <<- CheckColorComponent(...)
+    tclvalue(g.ent.var) <- ng
+    Num2Hex()
+  }
+  ScaleBlu <- function(...) {
+    nb <<- CheckColorComponent(...)
+    tclvalue(b.ent.var) <- nb
+    Num2Hex()
+  }
+  ScaleAlp <- function(...) {
+    na <<- CheckColorComponent(...)
+    tclvalue(a.ent.var) <- na
+    Num2Hex()
+  }
+
+  EntryRed <- function() {
+    nr <<- CheckColorComponent(tclvalue(r.ent.var))
+    tclvalue(r.ent.var) <- nr
+    tclvalue(r.scl.var) <- nr
+    Num2Hex()
+  }
+  EntryGrn <- function() {
+    ng <<- CheckColorComponent(tclvalue(g.ent.var))
+    tclvalue(g.ent.var) <- ng
+    tclvalue(g.scl.var) <- ng
+    Num2Hex()
+  }
+  EntryBlu <- function() {
+    ng <<- CheckColorComponent(tclvalue(b.ent.var))
+    tclvalue(b.ent.var) <- nb
+    tclvalue(b.scl.var) <- nb
+    Num2Hex()
+  }
+  EntryAlp <- function() {
+    na <<- CheckColorComponent(tclvalue(a.ent.var))
+    tclvalue(a.ent.var) <- na
+    tclvalue(a.scl.var) <- na
+    Num2Hex()
+  }
+
+
+
+
+
 
 
   # Main program
@@ -181,10 +272,45 @@ ChooseColor <- function(col=NA, parent=NULL) {
     col <- ""
   rtn.col <- NULL
 
+
+
+  hex <- Txt2Hex(col)
+  rgba <- col2rgb(hex, alpha=TRUE)
+  nr <- rgba[1]
+  ng <- rgba[2]
+  nb <- rgba[3]
+  na <- rgba[4]
+
+
+
+
   # Assign variables linked to Tk widgets
 
-  col.var <- tclVar(TxtToHex(col))
+
+
+  col.var <- tclVar(hex)
+
+  r.scl.var <- tclVar(nr)
+  r.ent.var <- tclVar(nr)
+  g.scl.var <- tclVar(ng)
+  g.ent.var <- tclVar(ng)
+  b.scl.var <- tclVar(nb)
+  b.ent.var <- tclVar(nb)
+  a.scl.var <- tclVar(na)
+  a.ent.var <- tclVar(na)
+
   tt.done.var <- tclVar(0)
+
+
+
+
+
+
+
+
+
+
+
 
   # Open GUI
 
@@ -200,7 +326,7 @@ ChooseColor <- function(col=NA, parent=NULL) {
   tkwm.resizable(tt, 0, 0)
   tktitle(tt) <- "Choose Color"
 
-  # Frame 0 contains ok and cancel buttons
+  # Frame 0, ok and cancel buttons
 
   frame0 <- ttkframe(tt, relief="flat")
 
@@ -218,10 +344,10 @@ ChooseColor <- function(col=NA, parent=NULL) {
                             })
 
   tkgrid(frame0.cvs.1, frame0.ent.2, "x", frame0.but.4, frame0.but.5,
-         pady=c(0, 10))
+         pady=c(10, 10))
   tkgrid.columnconfigure(frame0, 2, weight=1)
 
-  tkgrid.configure(frame0.cvs.1, sticky="w", padx=c(11, 1), pady=c(1, 11))
+  tkgrid.configure(frame0.cvs.1, sticky="w", padx=c(11, 1), pady=c(11, 11))
   tkgrid.configure(frame0.ent.2, padx=c(5, 0))
 
   tkgrid.configure(frame0.but.4, sticky="e", padx=c(0, 4))
@@ -229,11 +355,11 @@ ChooseColor <- function(col=NA, parent=NULL) {
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
-  # Canvas
+  # Frame 1, color chart
 
   frame1 <- ttkframe(tt, relief="flat")
   frame1.cvs <- tkcanvas(frame1, relief="flat", width=w + 1, height=h + 1,
-                         background="white", confine=TRUE, closeenough=0,
+                         background="black", confine=TRUE, closeenough=0,
                          borderwidth=0, highlightthickness=0)
   tkgrid(frame1.cvs, padx=10, pady=10)
   tkpack(frame1)
@@ -242,13 +368,61 @@ ChooseColor <- function(col=NA, parent=NULL) {
 
   UpdateColor()
 
-  # Binds on canvas
-
-  tkbind(frame1.cvs, "<ButtonPress>", SaveColor)
-  tkbind(frame1.cvs, "<Motion>", function(x, y) MouseMotion(x, y))
-  tkbind(frame1.cvs, "<Leave>", MouseLeavesCanvas)
+  tkbind(frame1.cvs, "<ButtonPress>", function(x, y) MouseSelect(x, y))
   tkbind(frame0.ent.2, "<KeyRelease>", UpdateColor)
   tkbind(frame0.ent.2, "<Return>", SaveColor)
+
+
+
+
+
+  # Frame 2, red, blue, green, alpha sliders
+
+  frame2 <- ttkframe(tt, relief="flat")
+
+  frame2.lab.1.1 <- ttklabel(frame2, text="R:")
+  frame2.lab.2.1 <- ttklabel(frame2, text="G:")
+  frame2.lab.3.1 <- ttklabel(frame2, text="B:")
+  frame2.lab.4.1 <- ttklabel(frame2, text="A:")
+
+  frame2.scl.1.2 <- tkwidget(frame2, "ttk::scale", from=0, to=255,
+                             orient="horizontal", value=nr, variable=r.scl.var,
+                             command=function(...) ScaleRed(...))
+  frame2.scl.2.2 <- tkwidget(frame2, "ttk::scale", from=0, to=255,
+                             orient="horizontal", value=ng, variable=g.scl.var,
+                             command=function(...) ScaleGrn(...))
+  frame2.scl.3.2 <- tkwidget(frame2, "ttk::scale", from=0, to=255,
+                             orient="horizontal", value=nb, variable=b.scl.var,
+                             command=function(...) ScaleBlu(...))
+  frame2.scl.4.2 <- tkwidget(frame2, "ttk::scale", from=0, to=255,
+                             orient="horizontal", value=na, variable=a.scl.var,
+                             command=function(...) ScaleAlp(...))
+
+  frame2.ent.1.3 <- ttkentry(frame2, textvariable=r.ent.var, width=4)
+  frame2.ent.2.3 <- ttkentry(frame2, textvariable=g.ent.var, width=4)
+  frame2.ent.3.3 <- ttkentry(frame2, textvariable=b.ent.var, width=4)
+  frame2.ent.4.3 <- ttkentry(frame2, textvariable=a.ent.var, width=4)
+
+  tkgrid(frame2.lab.1.1, frame2.scl.1.2, frame2.ent.1.3, pady=c(0, 5))
+  tkgrid(frame2.lab.2.1, frame2.scl.2.2, frame2.ent.2.3, pady=c(0, 5))
+  tkgrid(frame2.lab.3.1, frame2.scl.3.2, frame2.ent.3.3, pady=c(0, 5))
+  tkgrid(frame2.lab.4.1, frame2.scl.4.2, frame2.ent.4.3)
+
+  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, frame2.lab.3.1,
+                   frame2.lab.4.1, sticky="e", padx=c(10, 2))
+  tkgrid.configure(frame2.scl.1.2, frame2.scl.2.2, frame2.scl.3.2,
+                   frame2.scl.4.2, sticky="we", padx=2)
+  tkgrid.configure(frame2.ent.1.3, frame2.ent.2.3, frame2.ent.3.3,
+                   frame2.ent.4.3, padx=c(10, 10))
+
+  tkgrid.columnconfigure(frame2, 1, weight=1)
+
+  tkpack(frame2, fill="x")
+
+  tkbind(frame2.ent.1.3, "<KeyRelease>", EntryRed)
+  tkbind(frame2.ent.2.3, "<KeyRelease>", EntryGrn)
+  tkbind(frame2.ent.3.3, "<KeyRelease>", EntryBlu)
+  tkbind(frame2.ent.4.3, "<KeyRelease>", EntryAlp)
 
   # GUI control
 
