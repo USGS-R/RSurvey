@@ -56,17 +56,15 @@ ChooseColor <- function(col=NA, parent=NULL) {
       DrawPolygonLarge(i, j, fill="", outline="white", tag="browse")
     }
 
-
-
-    tclvalue(col.var) <- color
-
-
     rgba <- col2rgb(color)
     nr <<- rgba[1]
     ng <<- rgba[2]
     nb <<- rgba[3]
-
-
+    if (na == 255)
+      hex <- rgb(nr, ng, nb, maxColorValue=255)
+    else
+      hex <- rgb(nr, ng, nb, na, maxColorValue=255)
+    tclvalue(col.var) <- hex
 
     tclvalue(r.scl.var) <- nr
     tclvalue(g.scl.var) <- ng
@@ -74,20 +72,17 @@ ChooseColor <- function(col=NA, parent=NULL) {
     tclvalue(r.ent.var) <- nr
     tclvalue(g.ent.var) <- ng
     tclvalue(b.ent.var) <- nb
-
-
   }
 
-  # Update color based on text string in entry-box
+  # Update color polygons based on text string in entry-box
 
-  UpdateColor <- function() {
+  UpdatePolygons <- function() {
     color <- Txt2Hex(tclvalue(col.var))
     tcl(frame1.cvs, "delete", "browse")
     if (color %in% d) {
       ij <- which(d == color, arr.ind=TRUE)[1, ]
       i <- ij[1]
       j <- ij[2]
-#     browser()
       DrawPolygonLarge(i, j, fill="", outline="white", tag="browse")
     }
     if (is.na(color) || color == "")
@@ -119,19 +114,24 @@ ChooseColor <- function(col=NA, parent=NULL) {
       }
 
       if (inherits(try(col2rgb(txt), silent=TRUE), "try-error"))
-        hex <- ""
+        hex <- "#000000"
       else
         hex <- txt
     }
     hex
   }
 
+  # Coerces numeric values to hexadecimal color string
 
+  Num2Hex <- function() {
+    if (na == 255)
+      hex <- rgb(nr, ng, nb, maxColorValue=255)
+    else
+      hex <- rgb(nr, ng, nb, na, maxColorValue=255)
+    hex
+  }
 
-
-
-
-
+  # Check that numeric color component is in the 0 to 255 range
 
   CheckColorComponent <- function(...) {
     val <- as.integer(...)
@@ -143,69 +143,74 @@ ChooseColor <- function(col=NA, parent=NULL) {
     val
   }
 
-  Num2Hex <- function() {
-    if (na == 255)
-      hex <- rgb(nr, ng, nb, maxColorValue=255)
-    else
-      hex <- rgb(nr, ng, nb, na, maxColorValue=255)
-    tclvalue(col.var) <- hex
-    UpdateColor()
-
-  }
+  # Updates based on change in scale
 
   ScaleRed <- function(...) {
     nr <<- CheckColorComponent(...)
     tclvalue(r.ent.var) <- nr
-    Num2Hex()
+    tclvalue(col.var) <- Num2Hex()
+    UpdatePolygons()
   }
+
   ScaleGrn <- function(...) {
     ng <<- CheckColorComponent(...)
     tclvalue(g.ent.var) <- ng
-    Num2Hex()
+    tclvalue(col.var) <- Num2Hex()
+    UpdatePolygons()
   }
+
   ScaleBlu <- function(...) {
     nb <<- CheckColorComponent(...)
     tclvalue(b.ent.var) <- nb
-    Num2Hex()
+    tclvalue(col.var) <- Num2Hex()
+    UpdatePolygons()
   }
+
   ScaleAlp <- function(...) {
     na <<- CheckColorComponent(...)
     tclvalue(a.ent.var) <- na
-    Num2Hex()
+    tclvalue(col.var) <- Num2Hex()
+    UpdatePolygons()
   }
+
+  # Updates based on change in entry of numeric colors
 
   EntryRed <- function() {
     nr <<- CheckColorComponent(tclvalue(r.ent.var))
     tclvalue(r.ent.var) <- nr
     tclvalue(r.scl.var) <- nr
-    Num2Hex()
+    tclvalue(col.var) <- Num2Hex()
+    UpdatePolygons()
   }
+
   EntryGrn <- function() {
     ng <<- CheckColorComponent(tclvalue(g.ent.var))
     tclvalue(g.ent.var) <- ng
     tclvalue(g.scl.var) <- ng
-    Num2Hex()
+    tclvalue(col.var) <- Num2Hex()
+    UpdatePolygons()
   }
+
   EntryBlu <- function() {
-    ng <<- CheckColorComponent(tclvalue(b.ent.var))
+    nb <<- CheckColorComponent(tclvalue(b.ent.var))
     tclvalue(b.ent.var) <- nb
     tclvalue(b.scl.var) <- nb
-    Num2Hex()
+    tclvalue(col.var) <- Num2Hex()
+    UpdatePolygons()
   }
+
   EntryAlp <- function() {
     na <<- CheckColorComponent(tclvalue(a.ent.var))
     tclvalue(a.ent.var) <- na
     tclvalue(a.scl.var) <- na
-    Num2Hex()
+    tclvalue(col.var) <- Num2Hex()
+    UpdatePolygons()
   }
 
 
-
-
-
-
-
   # Main program
+
+  # Color chart information
 
   w <- 400
   h <- 240
@@ -261,32 +266,34 @@ ChooseColor <- function(col=NA, parent=NULL) {
                 "#FF33FF", "#FF66FF", "#FF99FF", "#FFCCFF", "#FFFFFF"),
             nrow=m, ncol=n, byrow=TRUE)
 
-  hex.digits <- list("#", 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                     "a", "b", "c", "d", "e", "f",
-                     "A", "B", "C", "D", "E", "F")
-
   dx <- w / n
   dy <- h / m
 
-  if (is.na(col) | !inherits(col, "character"))
-    col <- ""
+  # All possible digits in color character string
+
+  hex.digits <- list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+                     "a", "b", "c", "d", "e", "f",
+                     "A", "B", "C", "D", "E", "F", "#")
+
+  # Initialize color to return
+
   rtn.col <- NULL
 
+  # Account for improper color argument (col)
 
-
+  if (!inherits(col, "character"))
+    col <- "#000000"
   hex <- Txt2Hex(col)
+
+  # Initialize red, green, blue, and alpha color components
+
   rgba <- col2rgb(hex, alpha=TRUE)
   nr <- rgba[1]
   ng <- rgba[2]
   nb <- rgba[3]
   na <- rgba[4]
 
-
-
-
   # Assign variables linked to Tk widgets
-
-
 
   col.var <- tclVar(hex)
 
@@ -300,17 +307,6 @@ ChooseColor <- function(col=NA, parent=NULL) {
   a.ent.var <- tclVar(na)
 
   tt.done.var <- tclVar(0)
-
-
-
-
-
-
-
-
-
-
-
 
   # Open GUI
 
@@ -333,7 +329,7 @@ ChooseColor <- function(col=NA, parent=NULL) {
   frame0.cvs.1 <- tkcanvas(frame0, relief="flat", width=dx - 1, height=dy - 1,
                            background="white", confine=TRUE, closeenough=0,
                            borderwidth=0, highlightthickness=0)
-  frame0.ent.2 <- ttkentry(frame0, textvariable=col.var, width=10)
+  frame0.ent.2 <- ttkentry(frame0, textvariable=col.var, width=12)
 
 
   frame0.but.4 <- ttkbutton(frame0, width=12, text="OK", command=SaveColor)
@@ -366,17 +362,13 @@ ChooseColor <- function(col=NA, parent=NULL) {
 
   DrawColorChart()
 
-  UpdateColor()
+  UpdatePolygons()
 
   tkbind(frame1.cvs, "<ButtonPress>", function(x, y) MouseSelect(x, y))
-  tkbind(frame0.ent.2, "<KeyRelease>", UpdateColor)
+  tkbind(frame0.ent.2, "<KeyRelease>", UpdatePolygons)
   tkbind(frame0.ent.2, "<Return>", SaveColor)
 
-
-
-
-
-  # Frame 2, red, blue, green, alpha sliders
+  # Frame 2, red, blue, green, and alpha sliders
 
   frame2 <- ttkframe(tt, relief="flat")
 
