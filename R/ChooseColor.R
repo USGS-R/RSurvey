@@ -1,4 +1,4 @@
-ChooseColor <- function(col=NA, parent=NULL) {
+ChooseColor <- function(col, parent=NULL) {
 # ChooseColor("#669933")
 
   # Additional functions (subroutines)
@@ -281,7 +281,7 @@ ChooseColor <- function(col=NA, parent=NULL) {
 
   # Account for improper color argument (col)
 
-  if (!inherits(col, "character"))
+  if (missing(col) || !inherits(col, "character"))
     col <- "#000000"
   hex <- Txt2Hex(col)
 
