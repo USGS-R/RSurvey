@@ -207,6 +207,28 @@ ChooseColor <- function(col, parent=NULL) {
     UpdatePolygons()
   }
 
+  # Toggle transparency check-box
+
+  ToggleTransparency <- function() {
+    if (as.logical(as.integer(tclvalue(trans.var)))) {
+      tkconfigure(frame2.lab.4.1, state="noraml")
+      tcl(frame2.scl.4.2, "state", "!disabled")
+      tkconfigure(frame2.ent.4.3, state="noraml")
+    } else {
+      tkconfigure(frame2.lab.4.1, state="disabled")
+      tcl(frame2.scl.4.2, "state", "disabled")
+      tkconfigure(frame2.ent.4.3, state="disabled")
+    }
+  }
+
+
+
+
+
+
+
+
+
 
   # Main program
 
@@ -297,6 +319,8 @@ ChooseColor <- function(col, parent=NULL) {
 
   col.var <- tclVar(hex)
 
+  trans.var <- tclVar(FALSE)
+
   r.scl.var <- tclVar(nr)
   r.ent.var <- tclVar(nr)
   g.scl.var <- tclVar(ng)
@@ -330,24 +354,25 @@ ChooseColor <- function(col, parent=NULL) {
                            background="white", confine=TRUE, closeenough=0,
                            borderwidth=0, highlightthickness=0)
   frame0.ent.2 <- ttkentry(frame0, textvariable=col.var, width=12)
+  frame0.chk.3 <- ttkcheckbutton(frame0, variable=trans.var, text="Transparency",
+                                 command=ToggleTransparency)
 
-
-  frame0.but.4 <- ttkbutton(frame0, width=12, text="OK", command=SaveColor)
-  frame0.but.5 <- ttkbutton(frame0, width=12, text="Cancel",
+  frame0.but.5 <- ttkbutton(frame0, width=12, text="OK", command=SaveColor)
+  frame0.but.6 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() {
                               rtn.col <<- NULL
                               tclvalue(tt.done.var) <- 1
                             })
 
-  tkgrid(frame0.cvs.1, frame0.ent.2, "x", frame0.but.4, frame0.but.5,
+  tkgrid(frame0.cvs.1, frame0.ent.2,  frame0.chk.3, "x", frame0.but.5, frame0.but.6,
          pady=c(10, 10))
-  tkgrid.columnconfigure(frame0, 2, weight=1)
+  tkgrid.columnconfigure(frame0, 3, weight=1)
 
   tkgrid.configure(frame0.cvs.1, sticky="w", padx=c(11, 1), pady=c(11, 11))
-  tkgrid.configure(frame0.ent.2, padx=c(5, 0))
+  tkgrid.configure(frame0.ent.2, padx=c(4, 4))
 
-  tkgrid.configure(frame0.but.4, sticky="e", padx=c(0, 4))
-  tkgrid.configure(frame0.but.5, sticky="w", padx=c(0, 10), rowspan=2)
+  tkgrid.configure(frame0.but.5, sticky="e", padx=c(0, 4))
+  tkgrid.configure(frame0.but.6, sticky="w", padx=c(0, 10), rowspan=2)
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
@@ -394,6 +419,8 @@ ChooseColor <- function(col, parent=NULL) {
   frame2.ent.2.3 <- ttkentry(frame2, textvariable=g.ent.var, width=4)
   frame2.ent.3.3 <- ttkentry(frame2, textvariable=b.ent.var, width=4)
   frame2.ent.4.3 <- ttkentry(frame2, textvariable=a.ent.var, width=4)
+
+  ToggleTransparency()
 
   tkgrid(frame2.lab.1.1, frame2.scl.1.2, frame2.ent.1.3, pady=c(0, 5))
   tkgrid(frame2.lab.2.1, frame2.scl.2.2, frame2.ent.2.3, pady=c(0, 5))
