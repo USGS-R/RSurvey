@@ -89,15 +89,14 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   DrawPchImageTemplate <- function() {
     m <- 15
     n <- 15
-    r <- c(0:25, 33:126, 161:255)
-    cex <- rep(1, length(r))
+    cex <- rep(1, length(pch.show))
     cex[1:26] <- rep(1.5, 26)
     postscript(file="pch.template.eps")
     op <- par(pty="s")
     plot(c(-1, m), c(-1, n), type="n", xlab="", ylab="", xaxs="i", yaxs="i")
     grid(2 * (m + 1), 2 * (n + 1), lty=1)
-    for (i in seq(along=r))
-      points((i - 1) %% m, (n - 1) - ((i - 1) %/% n), pch=r[i],
+    for (i in seq(along=pch.show))
+      points((i - 1) %% m, (n - 1) - ((i - 1) %/% n), pch=pch.show[i],
              col="black", bg="green", cex=cex[i])
     par(op)
     dev.off()
