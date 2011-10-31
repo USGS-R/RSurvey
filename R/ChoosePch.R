@@ -10,26 +10,24 @@ ChoosePch <- function(pch=NA, parent=NULL) {
      tclvalue(tt.done.var) <- 1
    }
 
-  # Frame cell based on mouse location
+  # FFrame cell based on mouse selection
 
-  MouseMotion <- function(x, y) {
+  MouseSelect <- function(x, y) {
     i <- ceiling(as.numeric(y) / dy)
     j <- ceiling(as.numeric(x) / dx)
+    if (i == 0)
+      i <- 1
+    if (j == 0)
+      j <- 1
     tcl(frame1.cvs, "delete", "browse")
-    if (i == 0 || j == 0) {
+    idx <- (n * (i - 1)) + j
+    if (idx > length(pch.show)) {
       pch <- "NA"
     } else {
       DrawPolygon(i, j, fill="", outline="#CA0020", tag="browse")
-      pch <- PchToTxt(pch.show[[(m * (j - 1)) + i]])
+      pch <- PchToTxt(pch.show[[idx]])
     }
     tclvalue(pch.var) <- pch
-  }
-
-  # Mouse leaves canvas
-
-  MouseLeavesCanvas <- function() {
-    tcl(frame1.cvs, "delete", "browse")
-    tclvalue(pch.var) <- "NA"
   }
 
   # Draw polygon
@@ -74,7 +72,7 @@ ChoosePch <- function(pch=NA, parent=NULL) {
       pch <- NA
     } else if (suppressWarnings(!is.na(as.integer(txt)))) {
       pch <- as.integer(txt)
-      if (!pch %in% pch.all.int)
+      if (!pch %in% pch.show)
         pch <- NA
     } else {
       txt.1 <- substr(txt, 1, 1)
@@ -86,6 +84,25 @@ ChoosePch <- function(pch=NA, parent=NULL) {
     pch
   }
 
+  # Draw pch image template (included for development purposes)
+
+  DrawPchImageTemplate <- function() {
+    m <- 15
+    n <- 15
+    r <- c(0:25, 33:126, 161:255)
+    cex <- rep(1, length(r))
+    cex[1:26] <- rep(1.5, 26)
+    postscript(file="pch.template.eps")
+    op <- par(pty="s")
+    plot(c(-1, m), c(-1, n), type="n", xlab="", ylab="", xaxs="i", yaxs="i")
+    grid(2 * (m + 1), 2 * (n + 1), lty=1)
+    for (i in seq(along=r))
+      points((i - 1) %% m, (n - 1) - ((i - 1) %/% n), pch=r[i],
+             col="black", bg="green", cex=cex[i])
+    par(op)
+    dev.off()
+  }
+
 
   # Main program
 
@@ -94,18 +111,12 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   else
     image.path <- file.path(getwd(), "inst", "images", "pch.gif")
 
-  pch.all.int <- as.integer(c(0:25, 32:127, 160:255, NA))
+  pch.show <- c(0:25, 33:126, 161:255)
 
-  extras <- c("*", ".", "o", "O", "0", "+", "-", "|", "%", "#")
-  nex <- length(extras)
-  np <- 26 + nex
-  pch.show <- as.list(0:(np - 1))
-  pch.show[26 + 1:nex] <- as.list(extras)
-
-  w <- 240
-  h <- 240
-  m <- 6
-  n <- 6
+  w <- 375
+  h <- 375
+  m <- 15
+  n <- 15
 
   dx <- w / n
   dy <- h / m
@@ -182,17 +193,15 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   DrawImage()
   if (pch %in% pch.show) {
     idx <- which(pch.show %in% pch)
-    j <- ceiling(idx / m)
-    i <- idx - m * (j - 1L)
+    i <- ceiling(idx / n)
+    j <- idx - n * (i - 1L)
     DrawPolygon(i, j, fill="", outline="#CA0020", tag="browse")
   }
 
   # Set widget binds
 
   tkbind(frame0.ent.2, "<Return>", SavePch)
-  tkbind(frame1.cvs, "<ButtonPress>", SavePch)
-  tkbind(frame1.cvs, "<Motion>", function(x, y) MouseMotion(x, y))
-  tkbind(frame1.cvs, "<Leave>", MouseLeavesCanvas)
+  tkbind(frame1.cvs, "<ButtonPress>", function(x, y) MouseSelect(x, y))
 
   # GUI control
 
