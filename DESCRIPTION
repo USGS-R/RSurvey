@@ -12,3 +12,4 @@ Description: This package is a processing program for spatially
   polygon clipping. A graphical user interface is provided.
 License: GPL (>= 2)
 URL: http://rsurvey.org
+ByteCompile: yes
