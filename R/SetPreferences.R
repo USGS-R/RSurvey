@@ -102,15 +102,6 @@ SetPreferences <- function(parent=NULL) {
   frame1.ent.1.2 <- ttkentry(frame1, width=15, textvariable=grid.dx.var)
   frame1.ent.2.2 <- ttkentry(frame1, width=15, textvariable=grid.dy.var)
 
-  tkbind(frame1.ent.1.2, "<KeyRelease>",
-         function() {
-           tclvalue(grid.dx.var) <- CheckEntry("numeric", tclvalue(grid.dx.var))
-         })
-  tkbind(frame1.ent.1.2, "<KeyRelease>",
-         function() {
-           tclvalue(grid.dy.var) <- CheckEntry("numeric", tclvalue(grid.dy.var))
-         })
-
   tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(10, 4))
   tkgrid(frame1.lab.2.1, frame1.ent.2.2, pady=c(0, 10))
 
@@ -148,13 +139,25 @@ SetPreferences <- function(parent=NULL) {
 
   tkpack(frame2, fill="both", expand="yes", padx=10, pady=c(0, 0))
 
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
+  tkbind(frame1.ent.1.2, "<KeyRelease>",
+         function() {
+           tclvalue(grid.dx.var) <- CheckEntry("numeric", tclvalue(grid.dx.var))
+         })
+  tkbind(frame1.ent.1.2, "<KeyRelease>",
+         function() {
+           tclvalue(grid.dy.var) <- CheckEntry("numeric", tclvalue(grid.dy.var))
+         })
+
   # GUI control
 
   tkfocus(tt)
   tkgrab(tt)
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
-
-  tclServiceMode(TRUE)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

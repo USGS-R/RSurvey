@@ -378,8 +378,6 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
   tkpack(frame2, fill="x", padx=10, pady=0)
 
-  tkbind(frame2.ent.1, "<KeyRelease>", UpdateSample)
-
 # Frame 3
 
   frame3 <- ttkframe(tt, relief="flat", borderwidth=0, padding=0)
@@ -428,6 +426,14 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
   tkpack(frame3, padx=10, pady=0, anchor="w")
 
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
+  tkbind(frame2.ent.1, "<KeyRelease>", UpdateSample)
+
   tkbind(frame3.ent.1.2, "<KeyRelease>", BuildFormat)
   tkbind(frame3.ent.1.4, "<KeyRelease>", BuildFormat)
 
@@ -436,9 +442,6 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   ToggleState()
 
   tkgrab(tt)
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
-
-  tclServiceMode(TRUE)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

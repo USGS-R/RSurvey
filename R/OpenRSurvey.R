@@ -843,12 +843,6 @@ OpenRSurvey <- function() {
   tkadd(menu.file, "command", label="Exit",
         command=CloseGUI)
 
-  tkbind(tt, "<Control-n>", ClearObjs)
-  tkbind(tt, "<Control-o>", OpenProj)
-  tkbind(tt, "<Control-s>", SaveProj)
-  tkbind(tt, "<Shift-Control-S>", SaveProjAs)
-  tkbind(tt, "<Control-r>", SaveRDevice)
-
   # Edit menu
 
   menu.edit <- tkmenu(tt, tearoff=0)
@@ -930,7 +924,6 @@ OpenRSurvey <- function() {
   tkadd(menu.plot, "separator")
   tkadd(menu.plot, "command", label="Close all plots", accelerator="Ctrl+F4",
         command=CloseDevices)
-  tkbind(tt, "<Control-F4>", CloseDevices)
 
   # Help menu
 
@@ -1099,9 +1092,22 @@ OpenRSurvey <- function() {
   tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE,
          padx=10, pady=c(0, 10))
 
-  # Variables
+  # Set variables
 
   SetVars()
+
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", CloseGUI)
+
+  tkbind(tt, "<Control-n>", ClearObjs)
+  tkbind(tt, "<Control-o>", OpenProj)
+  tkbind(tt, "<Control-s>", SaveProj)
+  tkbind(tt, "<Shift-Control-S>", SaveProjAs)
+  tkbind(tt, "<Control-r>", SaveRDevice)
+  tkbind(tt, "<Control-F4>", CloseDevices)
 
   tkbind(frame1.box.1.2, "<<ComboboxSelected>>", RefreshVars)
   tkbind(frame1.box.2.2, "<<ComboboxSelected>>", RefreshVars)
@@ -1112,9 +1118,6 @@ OpenRSurvey <- function() {
 
   # GUI closure
 
-  tkbind(tt, "<Destroy>", CloseGUI)
   tkfocus(force=tt)
-  tclServiceMode(TRUE)
-
   invisible()
 }

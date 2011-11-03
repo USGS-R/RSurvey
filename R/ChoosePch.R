@@ -197,18 +197,21 @@ ChoosePch <- function(pch=NA, parent=NULL) {
     DrawPolygon(i, j, fill="", outline="#CA0020", tag="browse")
   }
 
-  # Set widget binds
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
   tkbind(frame0.ent.2, "<Return>", SavePch)
+
   tkbind(frame1.cvs, "<ButtonPress>", function(x, y) MouseSelect(x, y))
 
   # GUI control
 
   tkfocus(tt)
   tkgrab(tt)
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tclServiceMode(TRUE)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

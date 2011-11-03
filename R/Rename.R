@@ -83,8 +83,6 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
 
   tkpack(frame0, fill="x", expand=TRUE, padx=10, pady=c(10, 0))
 
-  tkbind(frame0.box.1, "<<ComboboxSelected>>", UpdateEntry)
-
   # Frame 1
 
   frame1 <- ttkframe(tt, relief="flat")
@@ -99,16 +97,20 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
 
   tkpack(frame1, anchor="e")
 
-  UpdateEntry()
+  # Bind events
 
-  # GUI control
-
-  tkfocus(tt)
-  tkgrab(tt)
+  tclServiceMode(TRUE)
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tclServiceMode(TRUE)
+  tkbind(frame0.box.1, "<<ComboboxSelected>>", UpdateEntry)
+
+  # GUI control
+
+  UpdateEntry()
+
+  tkfocus(tt)
+  tkgrab(tt)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

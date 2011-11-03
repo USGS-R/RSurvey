@@ -405,8 +405,6 @@ ImportData <- function(parent=NULL) {
 
   tkpack(frame1, fill="x", anchor="w", padx=10)
 
-  tkbind(frame1.ent.1, "<Return>", RebuildTable)
-
   # Frame 2, header line information
 
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
@@ -447,26 +445,8 @@ ImportData <- function(parent=NULL) {
   frame3.box.2.2 <- ttkcombobox(frame3, width=17, state="readonly", value=nas1)
   frame3.box.2.4 <- ttkcombobox(frame3, width=17, state="readonly", value=quo1)
 
-  tkbind(frame3.box.1.2, "<<ComboboxSelected>>", RebuildTable)
-  tkbind(frame3.box.1.4, "<<ComboboxSelected>>", RebuildTable)
-  tkbind(frame3.box.2.2, "<<ComboboxSelected>>", RebuildTable)
-  tkbind(frame3.box.2.4, "<<ComboboxSelected>>", RebuildTable)
-
   frame3.ent.1.6 <- ttkentry(frame3, width=17, textvariable=skip.var)
   frame3.ent.2.6 <- ttkentry(frame3, width=17, textvariable=nrow.var)
-
-  tkbind(frame3.ent.1.6, "<KeyRelease>",
-         function() {
-           tclvalue(skip.var) <- CheckEntry("integer", tclvalue(skip.var))
-           RebuildTable()
-         }
-  )
-  tkbind(frame3.ent.2.6, "<KeyRelease>",
-         function() {
-           tclvalue(nrow.var) <- CheckEntry("integer", tclvalue(nrow.var))
-           RebuildTable()
-         }
-  )
 
   frame3.but.2.7 <- ttkbutton(frame3, width=2, image=GetBitmapImage("find"),
                               command=NumLinesInFile)
@@ -543,18 +523,41 @@ ImportData <- function(parent=NULL) {
 
   tkpack(frame4, fill="both", expand=TRUE)
 
-  tkbind(frame4.tbl, "<<Paste>>", PasteData)
-
   tkselection.set(frame4.tbl, "origin")
+
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
+  tkbind(frame1.ent.1, "<Return>", RebuildTable)
+
+  tkbind(frame3.box.1.2, "<<ComboboxSelected>>", RebuildTable)
+  tkbind(frame3.box.1.4, "<<ComboboxSelected>>", RebuildTable)
+  tkbind(frame3.box.2.2, "<<ComboboxSelected>>", RebuildTable)
+  tkbind(frame3.box.2.4, "<<ComboboxSelected>>", RebuildTable)
+
+  tkbind(frame3.ent.1.6, "<KeyRelease>",
+         function() {
+           tclvalue(skip.var) <- CheckEntry("integer", tclvalue(skip.var))
+           RebuildTable()
+         }
+  )
+  tkbind(frame3.ent.2.6, "<KeyRelease>",
+         function() {
+           tclvalue(nrow.var) <- CheckEntry("integer", tclvalue(nrow.var))
+           RebuildTable()
+         }
+  )
+
+  tkbind(frame4.tbl, "<<Paste>>", PasteData)
 
   # GUI control
 
   RebuildTable()
 
   tkgrab(tt)
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
-
-  tclServiceMode(TRUE)
   tkfocus(tt)
   tkwait.variable(tt.done.var)
 

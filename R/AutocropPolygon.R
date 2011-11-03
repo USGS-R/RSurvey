@@ -138,10 +138,6 @@ AutocropPolygon <- function(d, parent=NULL, ...) {
 
   frame1.lab.1.1 <- ttklabel(frame1, text="Maximum outer arc length")
   frame1.ent.1.2 <- ttkentry(frame1, width=20, textvariable=max.len.var)
-  tkbind(frame1.ent.1.2, "<KeyRelease>",
-         function() {
-           tclvalue(max.len.var) <- CheckEntry("numeric", tclvalue(max.len.var))
-         })
 
   tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(10, 0))
 
@@ -154,13 +150,21 @@ AutocropPolygon <- function(d, parent=NULL, ...) {
 
   tkpack(frame1, fill="both")
 
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+  tkbind(frame1.ent.1.2, "<KeyRelease>",
+         function() {
+           tclvalue(max.len.var) <- CheckEntry("numeric", tclvalue(max.len.var))
+         })
+
   # GUI control
 
   tkfocus(tt)
   tkgrab(tt)
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tclServiceMode(TRUE)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

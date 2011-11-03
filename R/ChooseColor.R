@@ -386,14 +386,6 @@ ChooseColor <- function(col, parent=NULL) {
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
-  tkbind(frame0.ent.2, "<KeyRelease>",
-         function() {
-           tclvalue(col.var) <- CheckColorStr(tclvalue(col.var))
-           color <- Txt2Hex(tclvalue(col.var))
-           UpdatePolygons(color)
-         })
-  tkbind(frame0.ent.2, "<Return>", SaveColor)
-
   # Frame 1, color chart
 
   frame1 <- ttkframe(tt, relief="flat")
@@ -404,10 +396,7 @@ ChooseColor <- function(col, parent=NULL) {
   tkpack(frame1)
 
   DrawColorChart()
-
   UpdatePolygons(col)
-
-  tkbind(frame1.cvs, "<ButtonPress>", function(x, y) MouseSelect(x, y))
 
   # Frame 2, red, blue, green, and alpha sliders
 
@@ -454,6 +443,22 @@ ChooseColor <- function(col, parent=NULL) {
 
   tkpack(frame2, fill="x")
 
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
+  tkbind(frame0.ent.2, "<KeyRelease>",
+         function() {
+           tclvalue(col.var) <- CheckColorStr(tclvalue(col.var))
+           color <- Txt2Hex(tclvalue(col.var))
+           UpdatePolygons(color)
+         })
+  tkbind(frame0.ent.2, "<Return>", SaveColor)
+
+  tkbind(frame1.cvs, "<ButtonPress>", function(x, y) MouseSelect(x, y))
+
   tkbind(frame2.ent.1.3, "<KeyRelease>", EntryRed)
   tkbind(frame2.ent.2.3, "<KeyRelease>", EntryGrn)
   tkbind(frame2.ent.3.3, "<KeyRelease>", EntryBlu)
@@ -463,9 +468,7 @@ ChooseColor <- function(col, parent=NULL) {
 
   tkfocus(tt)
   tkgrab(tt)
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tclServiceMode(TRUE)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

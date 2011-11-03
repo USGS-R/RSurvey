@@ -247,8 +247,6 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
 
   tktag.configure(frame1.tre, "bg", background="white")
 
-  tkbind(frame1.tre, "<<TreeviewSelect>>", SelectionChange)
-
   # Frame 2
 
   frame2 <- ttkframe(pw, relief="flat")
@@ -268,7 +266,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
 
   frame2b.ent <- ttkentry(frame2b, textvariable=fmt.var, width=30)
   tkicursor(frame2b.ent, "end")
-  tkbind(frame2b.ent, "<KeyRelease>", UpdateSample)
+
   frame2b.but.1 <- ttkbutton(frame2b, width=2, text="/",
                              command=function() AddString("/"))
   frame2b.but.2 <- ttkbutton(frame2b, width=2, text="-",
@@ -328,13 +326,20 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
 
   tkpack(pw, fill="both", expand=TRUE, padx=10, pady=c(10, 0))
 
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
+  tkbind(frame1.tre, "<<TreeviewSelect>>", SelectionChange)
+
+  tkbind(frame2b.ent, "<KeyRelease>", UpdateSample)
+
   # GUI control
 
   tkfocus(frame2b.ent)
   tkgrab(tt)
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
-
-  tclServiceMode(TRUE)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

@@ -631,6 +631,10 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
 
   # Bind events
 
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
   tkbind(frame2.cvs, "<Motion>", function(x, y) MouseMotion(x, y))
   tkbind(frame2.cvs, "<Leave>", MouseLeave)
   tkbind(frame2.cvs, "<Configure>", ScaleCanvas)
@@ -658,10 +662,9 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
 
   tkfocus(tt)
   tkgrab(tt)
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
   PlotPolygon()
 
-  tclServiceMode(TRUE)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

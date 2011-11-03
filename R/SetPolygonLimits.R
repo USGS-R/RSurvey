@@ -100,14 +100,16 @@ SetPolygonLimits <- function(poly.names=NULL, poly.data=NULL, poly.crop=NULL,
 
   tkpack(frame1, fill="x", expand=TRUE, padx=10)
 
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
   # GUI control
 
   tkfocus(tt)
   tkgrab(tt)
-
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
-
-  tclServiceMode(TRUE)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

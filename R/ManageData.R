@@ -630,8 +630,7 @@ ManageData <- function(cols, vars, parent=NULL) {
   tkgrid.columnconfigure(frame2, 1, weight=1, minsize=25)
   tkgrid.rowconfigure(frame2, 4, weight=1, minsize=25)
 
-  tkbind(frame2.ent.1.2, "<Return>", function() SetVarId())
-  tkbind(frame2.ent.2.2, "<Return>", function() SetVarId())
+
 
   # Frame 3, summary
 
@@ -693,21 +692,25 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   # Bind events
 
-  tkbind(tt, "<Control-n>", SaveNewVar)
+  tclServiceMode(TRUE)
 
+  tkbind(tt, "<Control-n>", SaveNewVar)
   tkbind(tt, "<Control-]>", function() Arrange("forward"))
   tkbind(tt, "<Shift-Control-}>", function() Arrange("front"))
   tkbind(tt, "<Control-[>", function() Arrange("backward"))
   tkbind(tt, "<Shift-Control-{>", function() Arrange("back"))
+  tkbind(tt, "<Configure>", ScaleCanvas)
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
   tkbind(nb, "<<NotebookTabChanged>>", ChangeTab)
-  tkbind(tt, "<Configure>", ScaleCanvas)
 
   tkbind(frame1.lst, "<ButtonPress-1>", SaveNb)
   tkbind(frame1.lst, "<Up>", SaveNb)
   tkbind(frame1.lst, "<Down>", SaveNb)
-
   tkbind(frame1.lst, "<<ListboxSelect>>", UpdateNb)
+
+  tkbind(frame2.ent.1.2, "<Return>", function() SetVarId())
+  tkbind(frame2.ent.2.2, "<Return>", function() SetVarId())
 
   # GUI control
 
@@ -715,9 +718,6 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   tkfocus(tt)
   tkgrab(tt)
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
-
-  tclServiceMode(TRUE)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

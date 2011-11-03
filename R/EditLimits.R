@@ -190,15 +190,6 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
   frame0.ent.2.2 <- ttkentry(frame0, textvariable=x2.var,
                              state=tclvalue(x2.sta.var))
 
-  tkbind(frame0.ent.1.2, "<KeyRelease>",
-         function() {
-           tclvalue(x1.var) <- CheckEntry("numeric", tclvalue(x1.var))
-         })
-  tkbind(frame0.ent.2.2, "<KeyRelease>",
-         function() {
-           tclvalue(x2.var) <- CheckEntry("numeric", tclvalue(x2.var))
-         })
-
   frame0.chk.1.3 <- ttkcheckbutton(frame0, variable=x1.chk.var, text="Auto",
                     command=function() {
                       if (as.integer(tclvalue(x1.chk.var))) {
@@ -244,15 +235,6 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
   frame1.ent.2.2 <- ttkentry(frame1, textvariable=y2.var,
                              state=tclvalue(y2.sta.var))
 
-  tkbind(frame1.ent.1.2, "<KeyRelease>",
-         function() {
-           tclvalue(y1.var) <- CheckEntry("numeric", tclvalue(y1.var))
-         })
-  tkbind(frame1.ent.2.2, "<KeyRelease>",
-         function() {
-           tclvalue(y2.var) <- CheckEntry("numeric", tclvalue(y2.var))
-         })
-
   frame1.chk.1.3 <- ttkcheckbutton(frame1, variable=y1.chk.var, text="Auto",
                     command=function() {
                       if (as.integer(tclvalue(y1.chk.var))) {
@@ -295,15 +277,6 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
                              state=tclvalue(z1.sta.var))
   frame2.ent.2.2 <- ttkentry(frame2, textvariable=z2.var,
                              state=tclvalue(z2.sta.var))
-
-  tkbind(frame2.ent.1.2, "<KeyRelease>",
-         function() {
-           tclvalue(z1.var) <- CheckEntry("numeric", tclvalue(z1.var))
-         })
-  tkbind(frame2.ent.2.2, "<KeyRelease>",
-         function() {
-           tclvalue(z2.var) <- CheckEntry("numeric", tclvalue(z2.var))
-         })
 
   frame2.chk.1.3 <- ttkcheckbutton(frame2, variable=z1.chk.var, text="Auto",
                     command=function() {
@@ -369,40 +342,6 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
   frame3.ent.2.5 <- ttkentry(frame3, width= 5, textvariable=t2s.var,
                              state=tclvalue(t2.sta.var))
 
-  tkbind(frame3.ent.1.2, "<KeyRelease>",
-         function() {
-           tclvalue(t1d.var) <- CheckEntry("date", tclvalue(t1d.var))
-         })
-  tkbind(frame3.ent.1.3, "<KeyRelease>",
-         function() {
-           tclvalue(t1h.var) <- CheckEntry("hour", tclvalue(t1h.var))
-         })
-  tkbind(frame3.ent.1.4, "<KeyRelease>",
-         function() {
-           tclvalue(t1m.var) <- CheckEntry("minute", tclvalue(t1m.var))
-         })
-  tkbind(frame3.ent.1.5, "<KeyRelease>",
-         function() {
-           tclvalue(t1s.var) <- CheckEntry("second", tclvalue(t1s.var))
-         })
-
-  tkbind(frame3.ent.2.2, "<KeyRelease>",
-         function() {
-           tclvalue(t2d.var) <- CheckEntry("date", tclvalue(t2d.var))
-         })
-  tkbind(frame3.ent.2.3, "<KeyRelease>",
-         function() {
-           tclvalue(t2h.var) <- CheckEntry("hour", tclvalue(t2h.var))
-         })
-  tkbind(frame3.ent.2.4, "<KeyRelease>",
-         function() {
-           tclvalue(t2m.var) <- CheckEntry("minute", tclvalue(t2m.var))
-         })
-  tkbind(frame3.ent.2.5, "<KeyRelease>",
-         function() {
-           tclvalue(t2s.var) <- CheckEntry("second", tclvalue(t2s.var))
-         })
-
   frame3.chk.1.6 <- ttkcheckbutton(frame3, variable=t1.chk.var, text="Auto",
                     command=function() {
                       if (as.integer(tclvalue(t1.chk.var)))
@@ -466,13 +405,78 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
   tkgrid(frame4.but.1, frame4.but.2, padx=2, pady=c(10, 5))
   tkpack(frame4, anchor="e", padx=5)
 
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
+  tkbind(frame0.ent.1.2, "<KeyRelease>",
+         function() {
+           tclvalue(x1.var) <- CheckEntry("numeric", tclvalue(x1.var))
+         })
+  tkbind(frame0.ent.2.2, "<KeyRelease>",
+         function() {
+           tclvalue(x2.var) <- CheckEntry("numeric", tclvalue(x2.var))
+         })
+
+  tkbind(frame1.ent.1.2, "<KeyRelease>",
+         function() {
+           tclvalue(y1.var) <- CheckEntry("numeric", tclvalue(y1.var))
+         })
+  tkbind(frame1.ent.2.2, "<KeyRelease>",
+         function() {
+           tclvalue(y2.var) <- CheckEntry("numeric", tclvalue(y2.var))
+         })
+
+  tkbind(frame2.ent.1.2, "<KeyRelease>",
+         function() {
+           tclvalue(z1.var) <- CheckEntry("numeric", tclvalue(z1.var))
+         })
+  tkbind(frame2.ent.2.2, "<KeyRelease>",
+         function() {
+           tclvalue(z2.var) <- CheckEntry("numeric", tclvalue(z2.var))
+         })
+
+  tkbind(frame3.ent.1.2, "<KeyRelease>",
+         function() {
+           tclvalue(t1d.var) <- CheckEntry("date", tclvalue(t1d.var))
+         })
+  tkbind(frame3.ent.1.3, "<KeyRelease>",
+         function() {
+           tclvalue(t1h.var) <- CheckEntry("hour", tclvalue(t1h.var))
+         })
+  tkbind(frame3.ent.1.4, "<KeyRelease>",
+         function() {
+           tclvalue(t1m.var) <- CheckEntry("minute", tclvalue(t1m.var))
+         })
+  tkbind(frame3.ent.1.5, "<KeyRelease>",
+         function() {
+           tclvalue(t1s.var) <- CheckEntry("second", tclvalue(t1s.var))
+         })
+
+  tkbind(frame3.ent.2.2, "<KeyRelease>",
+         function() {
+           tclvalue(t2d.var) <- CheckEntry("date", tclvalue(t2d.var))
+         })
+  tkbind(frame3.ent.2.3, "<KeyRelease>",
+         function() {
+           tclvalue(t2h.var) <- CheckEntry("hour", tclvalue(t2h.var))
+         })
+  tkbind(frame3.ent.2.4, "<KeyRelease>",
+         function() {
+           tclvalue(t2m.var) <- CheckEntry("minute", tclvalue(t2m.var))
+         })
+  tkbind(frame3.ent.2.5, "<KeyRelease>",
+         function() {
+           tclvalue(t2s.var) <- CheckEntry("second", tclvalue(t2s.var))
+         })
+
   # GUI control
 
   tkfocus(tt)
   tkgrab(tt)
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tclServiceMode(TRUE)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

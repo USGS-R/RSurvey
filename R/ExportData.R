@@ -208,8 +208,6 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
   tkpack(frame1, fill="both", expand=TRUE, side="top", padx=10, pady=10)
 
-  tkbind(frame1.lst.1.1, "<<ListboxSelect>>", ToggleExport)
-
   if (file.type == "text") {
 
     # Frame 2, header lines
@@ -287,6 +285,15 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   tkgrid.configure(frame4.ent.1.1, sticky="we", padx=c(0, 2))
   tkgrid.columnconfigure(frame4, 0, weight=1)
   tkpack(frame4, fill="x", padx=10, pady=c(0, 15))
+
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
+  tkbind(frame1.lst.1.1, "<<ListboxSelect>>", ToggleExport)
+
   tkbind(frame4.ent.1.1, "<KeyRelease>", ToggleExport)
 
   # GUI control
@@ -294,11 +301,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   ToggleExport()
 
   tkfocus(frame1.lst.1.1)
-
   tkgrab(tt)
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
-
-  tclServiceMode(TRUE)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

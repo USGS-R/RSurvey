@@ -177,43 +177,6 @@ SetConfiguration <- function(parent=NULL) {
   frame1.ent.8.2 <- ttkentry(frame1, width=8, textvariable=vyby.var)
   frame1.ent.9.2 <- ttkentry(frame1, width=8, textvariable=tgap.var)
 
-  tkbind(frame1.ent.1.2, "<KeyRelease>",
-         function() {
-           tclvalue(nlevels.var) <- CheckEntry("integer", tclvalue(nlevels.var))
-         })
-  tkbind(frame1.ent.2.2, "<KeyRelease>",
-         function() {
-           tclvalue(width.var) <- CheckEntry("numeric", tclvalue(width.var))
-         })
-  tkbind(frame1.ent.3.2, "<KeyRelease>",
-         function() {
-           tclvalue(cex.pts.var) <- CheckEntry("numeric", tclvalue(cex.pts.var))
-         })
-  tkbind(frame1.ent.4.2, "<KeyRelease>",
-         function() {
-           tclvalue(asp.yx.var) <- CheckEntry("numeric", tclvalue(asp.yx.var))
-         })
-  tkbind(frame1.ent.5.2, "<KeyRelease>",
-         function() {
-           tclvalue(asp.zx.var) <- CheckEntry("numeric", tclvalue(asp.zx.var))
-         })
-  tkbind(frame1.ent.6.2, "<KeyRelease>",
-         function() {
-           tclvalue(vmax.var) <- CheckEntry("numeric", tclvalue(vmax.var))
-         })
-  tkbind(frame1.ent.7.2, "<KeyRelease>",
-         function() {
-           tclvalue(vxby.var) <- CheckEntry("integer", tclvalue(vxby.var))
-         })
-  tkbind(frame1.ent.8.2, "<KeyRelease>",
-         function() {
-           tclvalue(vyby.var) <- CheckEntry("integer", tclvalue(vyby.var))
-         })
-  tkbind(frame1.ent.9.2, "<KeyRelease>",
-         function() {
-           tclvalue(tgap.var) <- CheckEntry("numeric", tclvalue(tgap.var))
-         })
-
   tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(0, 4))
   tkgrid(frame1.lab.2.1, frame1.ent.2.2, pady=c(0, 4))
   tkgrid(frame1.lab.3.1, frame1.ent.3.2, pady=c(0, 4))
@@ -277,13 +240,53 @@ SetConfiguration <- function(parent=NULL) {
   tkgrid.columnconfigure(pw, 0, weight=2)
   tkpack(pw, fill="x", expand=TRUE)
 
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
+  tkbind(frame1.ent.1.2, "<KeyRelease>",
+         function() {
+           tclvalue(nlevels.var) <- CheckEntry("integer", tclvalue(nlevels.var))
+         })
+  tkbind(frame1.ent.2.2, "<KeyRelease>",
+         function() {
+           tclvalue(width.var) <- CheckEntry("numeric", tclvalue(width.var))
+         })
+  tkbind(frame1.ent.3.2, "<KeyRelease>",
+         function() {
+           tclvalue(cex.pts.var) <- CheckEntry("numeric", tclvalue(cex.pts.var))
+         })
+  tkbind(frame1.ent.4.2, "<KeyRelease>",
+         function() {
+           tclvalue(asp.yx.var) <- CheckEntry("numeric", tclvalue(asp.yx.var))
+         })
+  tkbind(frame1.ent.5.2, "<KeyRelease>",
+         function() {
+           tclvalue(asp.zx.var) <- CheckEntry("numeric", tclvalue(asp.zx.var))
+         })
+  tkbind(frame1.ent.6.2, "<KeyRelease>",
+         function() {
+           tclvalue(vmax.var) <- CheckEntry("numeric", tclvalue(vmax.var))
+         })
+  tkbind(frame1.ent.7.2, "<KeyRelease>",
+         function() {
+           tclvalue(vxby.var) <- CheckEntry("integer", tclvalue(vxby.var))
+         })
+  tkbind(frame1.ent.8.2, "<KeyRelease>",
+         function() {
+           tclvalue(vyby.var) <- CheckEntry("integer", tclvalue(vyby.var))
+         })
+  tkbind(frame1.ent.9.2, "<KeyRelease>",
+         function() {
+           tclvalue(tgap.var) <- CheckEntry("numeric", tclvalue(tgap.var))
+         })
+
   # GUI control
 
   tkfocus(tt)
   tkgrab(tt)
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
-
-  tclServiceMode(TRUE)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

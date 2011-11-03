@@ -307,9 +307,6 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
   tkgrid.rowconfigure(frame1, 1, weight=1)
   tkgrid.columnconfigure(frame1, 0, weight=1, minsize=20)
 
-  tkbind(frame1.lst.2.1, "<ButtonRelease-1>", InsertVar)
-  tkbind(frame1.box.3.1, "<<ComboboxSelected>>", RebuildList)
-
   # Frame 1
 
   frame2 <- tkframe(pw, relief="flat", padx=0, pady=0)
@@ -402,7 +399,14 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
 
   tkpack(pw, fill="both", expand="yes")
 
-  # Text bindings
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
+  tkbind(frame1.lst.2.1, "<ButtonRelease-1>", InsertVar)
+  tkbind(frame1.box.3.1, "<<ComboboxSelected>>", RebuildList)
 
   tkbind("Text", "<Control-z>", EditUndo)
   tkbind("Text", "<Control-y>", EditRedo)
@@ -413,9 +417,7 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
 
   tkfocus(frame2.txt.2.1)
   tkgrab(tt)
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tclServiceMode(TRUE)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

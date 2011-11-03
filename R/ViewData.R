@@ -275,15 +275,6 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
   frame1.ent.1.2 <- ttkentry(frame1, width=15, textvariable=pattern.var)
   frame1.ent.2.2 <- ttkentry(frame1, width=15, textvariable=line.no.var)
 
-  tkbind(frame1.ent.1.2, "<KeyRelease>",
-         function() {
-           matched.cells <<- NULL
-         })
-  tkbind(frame1.ent.2.2, "<KeyRelease>",
-         function() {
-           tclvalue(line.no.var) <- CheckEntry("integer", tclvalue(line.no.var))
-         })
-
   frame1.but.1.3 <- ttkbutton(frame1, width=2, image=GetBitmapImage("previous"),
                               command=function() Find("prev"))
   frame1.but.1.4 <- ttkbutton(frame1, width=2, image=GetBitmapImage("next"),
@@ -379,7 +370,20 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
 
   tkselection.set(frame2.tbl, "origin")
 
-  # Text bindings
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
+  tkbind(frame1.ent.1.2, "<KeyRelease>",
+         function() {
+           matched.cells <<- NULL
+         })
+  tkbind(frame1.ent.2.2, "<KeyRelease>",
+         function() {
+           tclvalue(line.no.var) <- CheckEntry("integer", tclvalue(line.no.var))
+         })
 
   tkbind(tt, "<Control-a>", SelectAll)
   tkbind(frame1.ent.1.2, "<Return>", function() Find("next"))
@@ -390,9 +394,6 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
   # GUI control
 
   tkgrab(tt)
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
-
-  tclServiceMode(TRUE)
   tkfocus(tt)
   tkwait.variable(tt.done.var)
 
