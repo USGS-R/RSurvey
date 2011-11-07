@@ -14,16 +14,6 @@ It features graphing tools, query building, and polygon clipping.
 A graphical user interface (\acronym{GUI}) is provided.
 }
 
-\details{
-  \tabular{ll}{
-    Package: \tab RSurvey\cr
-    Type: \tab Package\cr
-    Version: \tab 0.6-8\cr
-    Date: \tab 2011-11-03\cr
-    License: \tab GPL (>= 2)
-  }
-}
-
 \note{
 The \pkg{RSurvey} \acronym{GUI} requires \R operate as an \acronym{SDI}
 application, using multiple top-level windows for the console, graphics, and
@@ -42,14 +32,9 @@ The set of standards used for coding \pkg{RSurvey} is documented in
 \href{http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html}{Google's R Style Guide}.
 }
 
-\author{
-Jason C. Fisher
-
-Maintainer: <\email{jfisher@usgs.gov}>
-}
-
 \examples{
-\donttest{library(RSurvey)}
+\donttest{library(RSurvey)
+OpenRSurvey()}
 }
 
 \keyword{package}
