@@ -4,7 +4,7 @@ Date: 2011-11-03
 Title: Analysis of Spatially Distributed Data
 Author: Jason C. Fisher
 Maintainer: Jason C. Fisher <jfisher@usgs.gov>
-Depends: R (>= 2.12.0), tcltk, sp, gpclib, rgl, MBA, tripack, RColorBrewer
+Depends: R (>= 2.12.0), tcltk, sp, gpclib, rgl, MBA, tripack
 Suggests: rgdal
 SystemRequirements: Tcl/Tk (>= 8.5), Tktable (>= 2.9, optional)
 Description: This package is a processing program for spatially

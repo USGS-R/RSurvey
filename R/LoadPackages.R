@@ -3,12 +3,11 @@ LoadPackages <- function(repo="http://cran.r-project.org") {
   # package is unavailable on the local computer an attempt is made to
   # acquire the package from CRAN using an existing network connection.
 
-  require.pkgs <- c("tcltk", "sp", "gpclib", "rgl", "MBA", "tripack",
-                    "RColorBrewer")
+  require.pkgs <- c("tcltk", "sp", "gpclib", "rgl", "MBA", "tripack")
   suggest.pkgs <- c("rgdal")
 
   # Packages that may be useful for future work:
-  # "udunits", "mgcv", "RColorBrewer", "classInt", "maptools"
+  # "udunits", "mgcv", "classInt", "maptools"
 
   available.pkgs <- .packages(all.available=TRUE)
 
