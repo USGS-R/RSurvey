@@ -48,11 +48,11 @@ ChooseColor <- function(col, parent=NULL) {
     col.ramp <<- colorRampPalette(unique(c("#FFFFFF", col.hex, "#000000")),
                                   space="Lab")
     tcl(frame2.cvs, "delete", "ramp")
-    dx <- (w - 1) / nramp
+    dx <- (w - 1) / n
     x2 <- 1
     y1 <- 1
     y2 <- dy / 2
-    for (i in col.ramp(nramp)) {
+    for (i in col.ramp(n)) {
       x1 <- x2
       x2 <- x1 + dx
       pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2))
@@ -78,9 +78,8 @@ ChooseColor <- function(col, parent=NULL) {
     DrawSamplePolygon(col.hex)
     UpdateColorRamp(col.hex)
 
-    col.rgb <- col2rgb(col.hex, alpha=FALSE)
-
     if (!is.hsva) {
+      col.rgb <- col2rgb(col.hex, alpha=FALSE)
       col.hsv <- rgb2hsv(col.rgb, maxColorValue=255)
       nh <<- col.hsv[1]
       ns <<- col.hsv[2]
@@ -94,19 +93,15 @@ ChooseColor <- function(col, parent=NULL) {
       tclvalue(v.ent.var) <- sprintf("%.2f", nv)
       tclvalue(a.ent.var) <- sprintf("%.2f", na)
     }
-    if (!is.color) {
-      if (is.transparent)
-        col.hex <- rgb(col.rgb[1], col.rgb[2], col.rgb[3], na * 255,
-                       maxColorValue=255)
-      tclvalue(col.var) <- col.hex
-    }
+    if (!is.color)
+      tclvalue(col.var) <- Hsv2Hex()
   }
 
   # Select ramp color
 
   SelectRampColor <- function(x) {
-    i <- ceiling((as.numeric(x)) / ((w - 1) / nramp))
-    col.hex <- col.ramp(nramp)[i]
+    i <- ceiling((as.numeric(x)) / ((w - 1) / n))
+    col.hex <- col.ramp(n)[i]
     ChangeColor(col.hex)
   }
 
@@ -279,8 +274,8 @@ ChooseColor <- function(col, parent=NULL) {
 
   m <- 12
   dx <- dy <- 20
-  d1 <- cbind(rainbow_hcl(m), heat_hcl(m), terrain_hcl(m),
-              gray.colors(m, start=0, end=1, gamma=1.0))
+  d1 <- cbind(rainbow_hcl(m),
+              rev(gray.colors(m, start=0.1, end=0.9, gamma=1.0)))
   d2 <- c("#000000", "#000033", "#000066", "#000099", "#0000CC", "#0000FF",
           "#990000", "#990033", "#990066", "#990099", "#9900CC", "#9900FF",
           "#003300", "#003333", "#003366", "#003399", "#0033CC", "#0033FF",
@@ -336,7 +331,6 @@ ChooseColor <- function(col, parent=NULL) {
   # Initialize color ramp palette
 
   col.ramp <- NULL
-  nramp <- 31
 
   # Account for improper color argument (col)
 
