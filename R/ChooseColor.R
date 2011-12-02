@@ -110,9 +110,9 @@ ChooseColor <- function(col, parent=NULL) {
     ChangeColor(col.hex)
   }
 
-  # Select default color
+  # Select from color chart
 
-  SelectDefaultColor <- function(x, y) {
+  SelectColor <- function(x, y) {
     tcl(frame1.cvs, "delete", "browse")
     i <- ceiling((as.numeric(y)) / dy)
     j <- ceiling((as.numeric(x)) / dx)
@@ -502,7 +502,7 @@ ChooseColor <- function(col, parent=NULL) {
   tkbind(frame0.ent.2, "<KeyRelease>", EditColorEntry)
   tkbind(frame0.ent.2, "<Return>", SaveColor)
 
-  tkbind(frame1.cvs, "<ButtonPress>", function(x, y) SelectDefaultColor(x, y))
+  tkbind(frame1.cvs, "<ButtonPress>", function(x, y) SelectColor(x, y))
   tkbind(frame2.cvs, "<ButtonPress>", function(x) SelectRampColor(x))
 
   tkbind(frame3.ent.1.3, "<KeyRelease>", EntryH)
