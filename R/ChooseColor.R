@@ -251,9 +251,6 @@ ChooseColor <- function(col, parent=NULL) {
       tkconfigure(frame3.lab.4.1, state="disabled")
       tcl(frame3.scl.4.2, "state", "disabled")
       tkconfigure(frame3.ent.4.3, state="disabled")
-      na <<- 1
-      tclvalue(a.scl.var) <- na
-      tclvalue(a.ent.var) <- sprintf("%.2f", na)
     }
     tclvalue(col.var) <- Hsv2Hex()
   }
