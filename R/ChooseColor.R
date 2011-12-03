@@ -13,7 +13,7 @@ ChooseColor <- function(col, parent=NULL) {
     tclvalue(tt.done.var) <- 1
   }
 
-  # Draw sample polygon
+  # Draw polygon on color sample
 
   DrawSamplePolygon <- function(fill) {
     tcl(frame0.cvs.1, "delete", "col")
@@ -21,9 +21,9 @@ ChooseColor <- function(col, parent=NULL) {
     tkcreate(frame0.cvs.1, "polygon", pts, fill=fill, outline="", tag="col")
   }
 
-  # Draw polygon on large canvas
+  # Draw polygon on color chart
 
-  DrawPolygon <- function(i, j, fill, outline, tag) {
+  DrawChartPolygon <- function(i, j, fill, outline, tag) {
     x1 <- j * dx - dx
     y1 <- i * dy - dy
     x2 <- j * dx
@@ -37,7 +37,7 @@ ChooseColor <- function(col, parent=NULL) {
   BuildColorChart <- function() {
     for (i in 1:m) {
       for (j in 1:n) {
-        DrawPolygon(i, j, fill=d[i, j], outline="black", tag="")
+        DrawChartPolygon(i, j, fill=d[i, j], outline="black", tag="")
       }
     }
   }
@@ -45,14 +45,14 @@ ChooseColor <- function(col, parent=NULL) {
   # Update color ramp
 
   UpdateColorRamp <- function(col.hex) {
-    col.ramp <<- colorRampPalette(unique(c("#FFFFFF", col.hex, "#000000")),
-                                  space="Lab")
+    col.ramp <<- colorRampPalette(c("#FFFFFF", col.hex, "#000000"),
+                                  space="Lab")(n + 4)[3:(n + 2)]
     tcl(frame2.cvs, "delete", "ramp")
     dx <- (w - 1) / n
     x2 <- 1
     y1 <- 1
     y2 <- dy / 2
-    for (i in col.ramp(n)) {
+    for (i in col.ramp) {
       x1 <- x2
       x2 <- x1 + dx
       pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2))
@@ -60,9 +60,9 @@ ChooseColor <- function(col, parent=NULL) {
     }
   }
 
-  # Change color
+  # Change chart color
 
-  ChangeColor <- function(col.hex, is.hsva=FALSE, is.color=FALSE) {
+  ChangeChartColor <- function(col.hex, is.hsva=FALSE, is.color=FALSE) {
     col.hex <- substr(col.hex, 1, 7)
     if (is.na(col.hex) || col.hex == "")
       col.hex <- "#000000"
@@ -72,7 +72,7 @@ ChooseColor <- function(col, parent=NULL) {
       ij <- which(d == col.hex, arr.ind=TRUE)[1, ]
       i <- ij[1]
       j <- ij[2]
-      DrawPolygon(i, j, fill="", outline="white", tag="browse")
+      DrawChartPolygon(i, j, fill="", outline="white", tag="browse")
     }
 
     DrawSamplePolygon(col.hex)
@@ -101,8 +101,8 @@ ChooseColor <- function(col, parent=NULL) {
 
   SelectRampColor <- function(x) {
     i <- ceiling((as.numeric(x)) / ((w - 1) / n))
-    col.hex <- col.ramp(n)[i]
-    ChangeColor(col.hex)
+    col.hex <- col.ramp[i]
+    ChangeChartColor(col.hex)
   }
 
   # Select from color chart
@@ -115,8 +115,8 @@ ChooseColor <- function(col, parent=NULL) {
       i <- 1
     if (j == 0)
       j <- 1
-    DrawPolygon(i, j, fill="", outline="white", tag="browse")
-    ChangeColor(d[i, j])
+    DrawChartPolygon(i, j, fill="", outline="white", tag="browse")
+    ChangeChartColor(d[i, j])
   }
 
   # Coerces text string to hexadecimal color
@@ -182,21 +182,21 @@ ChooseColor <- function(col, parent=NULL) {
     nh <<- as.numeric(...)
     tclvalue(h.scl.var) <- nh
     tclvalue(h.ent.var) <- sprintf("%.2f", nh)
-    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeChartColor(Hsv2Hex(), is.hsva=TRUE)
   }
 
   ScaleS <- function(...) {
     ns <<- as.numeric(...)
     tclvalue(s.scl.var) <- ns
     tclvalue(s.ent.var) <- sprintf("%.2f", ns)
-    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeChartColor(Hsv2Hex(), is.hsva=TRUE)
   }
 
   ScaleV <- function(...) {
     nv <<- as.numeric(...)
     tclvalue(v.scl.var) <- nv
     tclvalue(v.ent.var) <- sprintf("%.2f", nv)
-    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeChartColor(Hsv2Hex(), is.hsva=TRUE)
   }
 
   ScaleA <- function(...) {
@@ -212,7 +212,7 @@ ChooseColor <- function(col, parent=NULL) {
     nh <<- CheckColorNum(txt)
     tclvalue(h.scl.var) <- nh
     tclvalue(h.ent.var) <- txt
-    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeChartColor(Hsv2Hex(), is.hsva=TRUE)
   }
 
   EntryS <- function() {
@@ -220,7 +220,7 @@ ChooseColor <- function(col, parent=NULL) {
     ns <<- CheckColorNum(txt)
     tclvalue(s.scl.var) <- ns
     tclvalue(s.ent.var) <- txt
-    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeChartColor(Hsv2Hex(), is.hsva=TRUE)
   }
 
   EntryV <- function() {
@@ -228,7 +228,7 @@ ChooseColor <- function(col, parent=NULL) {
     nv <<- CheckColorNum(txt)
     tclvalue(v.scl.var) <- nv
     tclvalue(v.ent.var) <- txt
-    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeChartColor(Hsv2Hex(), is.hsva=TRUE)
   }
 
   EntryA <- function() {
@@ -261,7 +261,7 @@ ChooseColor <- function(col, parent=NULL) {
     txt <- CheckColorStr(tclvalue(col.var))
     tclvalue(col.var) <- txt
     col.hex <- Txt2Hex(txt)
-    ChangeColor(col.hex, is.color=TRUE)
+    ChangeChartColor(col.hex, is.color=TRUE)
   }
 
 
@@ -482,7 +482,7 @@ ChooseColor <- function(col, parent=NULL) {
   # Initial commands
 
   BuildColorChart()
-  ChangeColor(col.hex)
+  ChangeChartColor(col.hex)
 
   # Bind events
 
