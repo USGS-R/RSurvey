@@ -60,9 +60,9 @@ ChooseColor <- function(col, parent=NULL) {
     }
   }
 
-  # Change chart color
+  # Change color
 
-  ChangeChartColor <- function(col.hex, is.hsva=FALSE, is.color=FALSE) {
+  ChangeColor <- function(col.hex, is.hsva=FALSE, is.color=FALSE) {
     col.hex <- substr(col.hex, 1, 7)
     if (is.na(col.hex) || col.hex == "")
       col.hex <- "#000000"
@@ -102,12 +102,12 @@ ChooseColor <- function(col, parent=NULL) {
   SelectRampColor <- function(x) {
     i <- ceiling((as.numeric(x)) / ((w - 1) / n))
     col.hex <- col.ramp[i]
-    ChangeChartColor(col.hex)
+    ChangeColor(col.hex)
   }
 
-  # Select from color chart
+  # Select chart color
 
-  SelectColor <- function(x, y) {
+  SelectChartColor <- function(x, y) {
     tcl(frame1.cvs, "delete", "browse")
     i <- ceiling((as.numeric(y)) / dy)
     j <- ceiling((as.numeric(x)) / dx)
@@ -116,10 +116,10 @@ ChooseColor <- function(col, parent=NULL) {
     if (j == 0)
       j <- 1
     DrawChartPolygon(i, j, fill="", outline="white", tag="browse")
-    ChangeChartColor(d[i, j])
+    ChangeColor(d[i, j])
   }
 
-  # Coerces text string to hexadecimal color
+  # Coerce text string to hexadecimal color
 
   Txt2Hex <- function(txt) {
     txt <- CheckColorStr(as.character(txt))
@@ -140,7 +140,7 @@ ChooseColor <- function(col, parent=NULL) {
     txt
   }
 
-  # Coerces numeric hsv values to hexadecimal color
+  # Coerce numeric HSV values to hexadecimal color
 
   Hsv2Hex <- function() {
     if (is.transparent)
@@ -150,7 +150,7 @@ ChooseColor <- function(col, parent=NULL) {
     col.hex
   }
 
-  # Check range of numeric color component
+  # Check range of numeric color attribute
 
   CheckColorNum <- function(...) {
     num <- suppressWarnings(as.numeric(...))
@@ -162,7 +162,7 @@ ChooseColor <- function(col, parent=NULL) {
     num
   }
 
-  # Check digits of hexadecimal character string
+  # Check hexadecimal character string
 
   CheckColorStr <- function(txt) {
     txt <- as.character(txt)
@@ -176,27 +176,27 @@ ChooseColor <- function(col, parent=NULL) {
     txt
   }
 
-  # Updates based on change in scale
+  # Update based on change in scales
 
   ScaleH <- function(...) {
     nh <<- as.numeric(...)
     tclvalue(h.scl.var) <- nh
     tclvalue(h.ent.var) <- sprintf("%.2f", nh)
-    ChangeChartColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
   }
 
   ScaleS <- function(...) {
     ns <<- as.numeric(...)
     tclvalue(s.scl.var) <- ns
     tclvalue(s.ent.var) <- sprintf("%.2f", ns)
-    ChangeChartColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
   }
 
   ScaleV <- function(...) {
     nv <<- as.numeric(...)
     tclvalue(v.scl.var) <- nv
     tclvalue(v.ent.var) <- sprintf("%.2f", nv)
-    ChangeChartColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
   }
 
   ScaleA <- function(...) {
@@ -205,14 +205,14 @@ ChooseColor <- function(col, parent=NULL) {
     tclvalue(col.var) <- Hsv2Hex()
   }
 
-  # Updates based on change in entry of numeric colors
+  # Update based on change in numeric color attributes
 
   EntryH <- function() {
     txt <- tclvalue(h.ent.var)
     nh <<- CheckColorNum(txt)
     tclvalue(h.scl.var) <- nh
     tclvalue(h.ent.var) <- txt
-    ChangeChartColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
   }
 
   EntryS <- function() {
@@ -220,7 +220,7 @@ ChooseColor <- function(col, parent=NULL) {
     ns <<- CheckColorNum(txt)
     tclvalue(s.scl.var) <- ns
     tclvalue(s.ent.var) <- txt
-    ChangeChartColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
   }
 
   EntryV <- function() {
@@ -228,7 +228,7 @@ ChooseColor <- function(col, parent=NULL) {
     nv <<- CheckColorNum(txt)
     tclvalue(v.scl.var) <- nv
     tclvalue(v.ent.var) <- txt
-    ChangeChartColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
   }
 
   EntryA <- function() {
@@ -261,7 +261,7 @@ ChooseColor <- function(col, parent=NULL) {
     txt <- CheckColorStr(tclvalue(col.var))
     tclvalue(col.var) <- txt
     col.hex <- Txt2Hex(txt)
-    ChangeChartColor(col.hex, is.color=TRUE)
+    ChangeColor(col.hex, is.color=TRUE)
   }
 
 
@@ -329,7 +329,7 @@ ChooseColor <- function(col, parent=NULL) {
 
   col.ramp <- NULL
 
-  # Account for improper color argument (col)
+  # Account for improper color argument
 
   if (missing(col) || !inherits(col, "character"))
     col <- "#000000"
@@ -385,7 +385,7 @@ ChooseColor <- function(col, parent=NULL) {
   tkwm.resizable(tt, 0, 0)
   tktitle(tt) <- "Choose Color"
 
-  # Frame 0, ok and cancel buttons
+  # Frame 0, ok and cancel buttons, and sample color
 
   frame0 <- ttkframe(tt, relief="flat")
 
@@ -434,7 +434,7 @@ ChooseColor <- function(col, parent=NULL) {
   tkgrid(frame2.cvs, padx=10, pady=c(0, 10))
   tkpack(frame2)
 
-  # Frame 3, red, blue, green, and alpha sliders
+  # Frame 3, color attriubte sliders
 
   frame3 <- ttkframe(tt, relief="flat")
 
@@ -482,7 +482,7 @@ ChooseColor <- function(col, parent=NULL) {
   # Initial commands
 
   BuildColorChart()
-  ChangeChartColor(col.hex)
+  ChangeColor(col.hex)
 
   # Bind events
 
@@ -493,7 +493,7 @@ ChooseColor <- function(col, parent=NULL) {
   tkbind(frame0.ent.2, "<KeyRelease>", EditColorEntry)
   tkbind(frame0.ent.2, "<Return>", SaveColor)
 
-  tkbind(frame1.cvs, "<ButtonPress>", function(x, y) SelectColor(x, y))
+  tkbind(frame1.cvs, "<ButtonPress>", function(x, y) SelectChartColor(x, y))
   tkbind(frame2.cvs, "<ButtonPress>", function(x) SelectRampColor(x))
 
   tkbind(frame3.ent.1.3, "<KeyRelease>", EntryH)
