@@ -6,7 +6,7 @@ ChooseColor <- function(col, parent=NULL) {
   # Save color and quit
 
   SaveColor <- function() {
-    col.hex <- Txt2Hex(tclvalue(col.var))
+    col.hex <- Txt2hex(tclvalue(col.var))
     if (col.hex == "")
       col.hex <- NA
     rtn.col <<- col.hex
@@ -94,7 +94,7 @@ ChooseColor <- function(col, parent=NULL) {
       tclvalue(a.ent.var) <- sprintf("%.2f", na)
     }
     if (!is.color)
-      tclvalue(col.var) <- Hsv2Hex()
+      tclvalue(col.var) <- HSV2hex()
   }
 
   # Select ramp color
@@ -121,7 +121,7 @@ ChooseColor <- function(col, parent=NULL) {
 
   # Coerce text string to hexadecimal color
 
-  Txt2Hex <- function(txt) {
+  Txt2hex <- function(txt) {
     txt <- CheckColorStr(as.character(txt))
     if (substr(txt, 1, 1) != "#")
       txt <- paste("#", txt, sep="")
@@ -142,12 +142,18 @@ ChooseColor <- function(col, parent=NULL) {
 
   # Coerce numeric HSV values to hexadecimal color
 
-  Hsv2Hex <- function() {
+  HSV2hex <- function() {
     if (is.transparent)
       col.hex <- hsv(h=nh, s=ns, v=nv, alpha=na)
     else
       col.hex <- hsv(h=nh, s=ns, v=nv)
     col.hex
+  }
+
+  # Coerce hexadecimal color to numeric HCL values
+
+  hex2HCL <- function(x) {
+    as(hex2RGB(x, gamma=FALSE), "polarLUV")
   }
 
   # Check range of numeric color attribute
@@ -182,27 +188,27 @@ ChooseColor <- function(col, parent=NULL) {
     nh <<- as.numeric(...)
     tclvalue(h.scl.var) <- nh
     tclvalue(h.ent.var) <- sprintf("%.2f", nh)
-    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeColor(HSV2hex(), is.hsva=TRUE)
   }
 
   ScaleS <- function(...) {
     ns <<- as.numeric(...)
     tclvalue(s.scl.var) <- ns
     tclvalue(s.ent.var) <- sprintf("%.2f", ns)
-    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeColor(HSV2hex(), is.hsva=TRUE)
   }
 
   ScaleV <- function(...) {
     nv <<- as.numeric(...)
     tclvalue(v.scl.var) <- nv
     tclvalue(v.ent.var) <- sprintf("%.2f", nv)
-    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeColor(HSV2hex(), is.hsva=TRUE)
   }
 
   ScaleA <- function(...) {
     na <<- as.numeric(...)
     tclvalue(a.ent.var) <- sprintf("%.2f", na)
-    tclvalue(col.var) <- Hsv2Hex()
+    tclvalue(col.var) <- HSV2hex()
   }
 
   # Update based on change in numeric color attributes
@@ -212,7 +218,7 @@ ChooseColor <- function(col, parent=NULL) {
     nh <<- CheckColorNum(txt)
     tclvalue(h.scl.var) <- nh
     tclvalue(h.ent.var) <- txt
-    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeColor(HSV2hex(), is.hsva=TRUE)
   }
 
   EntryS <- function() {
@@ -220,7 +226,7 @@ ChooseColor <- function(col, parent=NULL) {
     ns <<- CheckColorNum(txt)
     tclvalue(s.scl.var) <- ns
     tclvalue(s.ent.var) <- txt
-    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeColor(HSV2hex(), is.hsva=TRUE)
   }
 
   EntryV <- function() {
@@ -228,7 +234,7 @@ ChooseColor <- function(col, parent=NULL) {
     nv <<- CheckColorNum(txt)
     tclvalue(v.scl.var) <- nv
     tclvalue(v.ent.var) <- txt
-    ChangeColor(Hsv2Hex(), is.hsva=TRUE)
+    ChangeColor(HSV2hex(), is.hsva=TRUE)
   }
 
   EntryA <- function() {
@@ -236,7 +242,7 @@ ChooseColor <- function(col, parent=NULL) {
     na <<- CheckColorNum(txt)
     tclvalue(a.scl.var) <- na
     tclvalue(a.ent.var) <- txt
-    tclvalue(col.var) <- Hsv2Hex()
+    tclvalue(col.var) <- HSV2hex()
   }
 
   # Toggle transparency check-box
@@ -252,7 +258,7 @@ ChooseColor <- function(col, parent=NULL) {
       tcl(frame3.scl.4.2, "state", "disabled")
       tkconfigure(frame3.ent.4.3, state="disabled")
     }
-    tclvalue(col.var) <- Hsv2Hex()
+    tclvalue(col.var) <- HSV2hex()
   }
 
   # Edit color entry
@@ -260,7 +266,7 @@ ChooseColor <- function(col, parent=NULL) {
   EditColorEntry <- function() {
     txt <- CheckColorStr(tclvalue(col.var))
     tclvalue(col.var) <- txt
-    col.hex <- Txt2Hex(txt)
+    col.hex <- Txt2hex(txt)
     ChangeColor(col.hex, is.color=TRUE)
   }
 
@@ -343,7 +349,7 @@ ChooseColor <- function(col, parent=NULL) {
 
   # Color is intially required to be in hexadecimal format
 
-  col.hex <- Txt2Hex(col)
+  col.hex <- Txt2hex(col)
 
   # Initialize hue, saturation, value, and alpha color components
 
