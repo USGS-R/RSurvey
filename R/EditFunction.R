@@ -339,11 +339,11 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
                               command=function() InsertString("/"))
   frame2a.but.05 <- ttkbutton(frame2a, width=3, text="x\u207f",
                               command=function() InsertString("^"))
-  frame2a.but.06 <- ttkbutton(frame2a, width=3, text="And",
+  frame2a.but.06 <- ttkbutton(frame2a, width=4, text="And",
                               command=function() InsertString("&"))
-  frame2a.but.07 <- ttkbutton(frame2a, width=3, text="Or",
+  frame2a.but.07 <- ttkbutton(frame2a, width=4, text="Or",
                               command=function() InsertString("|"))
-  frame2a.but.08 <- ttkbutton(frame2a, width=3, text="Not",
+  frame2a.but.08 <- ttkbutton(frame2a, width=4, text="Not",
                               command=function() InsertString("!"))
   frame2a.but.09 <- ttkbutton(frame2a, width=3, text=">",
                               command=function() InsertString(">"))
