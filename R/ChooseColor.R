@@ -438,10 +438,10 @@ ChooseColor <- function(col, parent=NULL) {
 
   frame3 <- ttkframe(tt, relief="flat")
 
-  frame3.lab.1.1 <- ttklabel(frame3, text="H:")
-  frame3.lab.2.1 <- ttklabel(frame3, text="S:")
-  frame3.lab.3.1 <- ttklabel(frame3, text="V:")
-  frame3.lab.4.1 <- ttklabel(frame3, text="A:")
+  frame3.lab.1.1 <- ttklabel(frame3, text="H")
+  frame3.lab.2.1 <- ttklabel(frame3, text="S")
+  frame3.lab.3.1 <- ttklabel(frame3, text="V")
+  frame3.lab.4.1 <- ttklabel(frame3, text="A")
 
   frame3.scl.1.2 <- tkwidget(frame3, "ttk::scale", from=0, to=1,
                              orient="horizontal", value=nh, variable=h.scl.var,
