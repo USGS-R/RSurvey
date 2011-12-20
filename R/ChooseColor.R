@@ -94,7 +94,7 @@ ChooseColor <- function(col, parent=NULL) {
       tclvalue(a.ent.var) <- sprintf("%.2f", na)
     }
     if (!is.color)
-      tclvalue(col.var) <- HSV2hex()
+      tclvalue(col.var) <- Hsv2hex()
   }
 
   # Select ramp color
@@ -142,18 +142,12 @@ ChooseColor <- function(col, parent=NULL) {
 
   # Coerce numeric HSV values to hexadecimal color
 
-  HSV2hex <- function() {
+  Hsv2hex <- function() {
     if (is.transparent)
       col.hex <- hsv(h=nh, s=ns, v=nv, alpha=na)
     else
       col.hex <- hsv(h=nh, s=ns, v=nv)
     col.hex
-  }
-
-  # Coerce hexadecimal color to numeric HCL values
-
-  hex2HCL <- function(x) {
-    as(hex2RGB(x, gamma=FALSE), "polarLUV")
   }
 
   # Check range of numeric color attribute
@@ -188,27 +182,27 @@ ChooseColor <- function(col, parent=NULL) {
     nh <<- as.numeric(...)
     tclvalue(h.scl.var) <- nh
     tclvalue(h.ent.var) <- sprintf("%.2f", nh)
-    ChangeColor(HSV2hex(), is.hsva=TRUE)
+    ChangeColor(Hsv2hex(), is.hsva=TRUE)
   }
 
   ScaleS <- function(...) {
     ns <<- as.numeric(...)
     tclvalue(s.scl.var) <- ns
     tclvalue(s.ent.var) <- sprintf("%.2f", ns)
-    ChangeColor(HSV2hex(), is.hsva=TRUE)
+    ChangeColor(Hsv2hex(), is.hsva=TRUE)
   }
 
   ScaleV <- function(...) {
     nv <<- as.numeric(...)
     tclvalue(v.scl.var) <- nv
     tclvalue(v.ent.var) <- sprintf("%.2f", nv)
-    ChangeColor(HSV2hex(), is.hsva=TRUE)
+    ChangeColor(Hsv2hex(), is.hsva=TRUE)
   }
 
   ScaleA <- function(...) {
     na <<- as.numeric(...)
     tclvalue(a.ent.var) <- sprintf("%.2f", na)
-    tclvalue(col.var) <- HSV2hex()
+    tclvalue(col.var) <- Hsv2hex()
   }
 
   # Update based on change in numeric color attributes
@@ -218,7 +212,7 @@ ChooseColor <- function(col, parent=NULL) {
     nh <<- CheckColorNum(txt)
     tclvalue(h.scl.var) <- nh
     tclvalue(h.ent.var) <- txt
-    ChangeColor(HSV2hex(), is.hsva=TRUE)
+    ChangeColor(Hsv2hex(), is.hsva=TRUE)
   }
 
   EntryS <- function() {
@@ -226,7 +220,7 @@ ChooseColor <- function(col, parent=NULL) {
     ns <<- CheckColorNum(txt)
     tclvalue(s.scl.var) <- ns
     tclvalue(s.ent.var) <- txt
-    ChangeColor(HSV2hex(), is.hsva=TRUE)
+    ChangeColor(Hsv2hex(), is.hsva=TRUE)
   }
 
   EntryV <- function() {
@@ -234,7 +228,7 @@ ChooseColor <- function(col, parent=NULL) {
     nv <<- CheckColorNum(txt)
     tclvalue(v.scl.var) <- nv
     tclvalue(v.ent.var) <- txt
-    ChangeColor(HSV2hex(), is.hsva=TRUE)
+    ChangeColor(Hsv2hex(), is.hsva=TRUE)
   }
 
   EntryA <- function() {
@@ -242,7 +236,7 @@ ChooseColor <- function(col, parent=NULL) {
     na <<- CheckColorNum(txt)
     tclvalue(a.scl.var) <- na
     tclvalue(a.ent.var) <- txt
-    tclvalue(col.var) <- HSV2hex()
+    tclvalue(col.var) <- Hsv2hex()
   }
 
   # Toggle transparency check-box
@@ -258,7 +252,7 @@ ChooseColor <- function(col, parent=NULL) {
       tcl(frame3.scl.4.2, "state", "disabled")
       tkconfigure(frame3.ent.4.3, state="disabled")
     }
-    tclvalue(col.var) <- HSV2hex()
+    tclvalue(col.var) <- Hsv2hex()
   }
 
   # Edit color entry
@@ -277,7 +271,7 @@ ChooseColor <- function(col, parent=NULL) {
 
   m <- 12
   dx <- dy <- 20
-  d1 <- cbind(rainbow_hcl(m),
+  d1 <- cbind(rainbow_hcl(m), heat_hcl(m), terrain_hcl(m),
               rev(gray.colors(m, start=0.1, end=0.9, gamma=1.0)))
   d2 <- c("#000000", "#000033", "#000066", "#000099", "#0000CC", "#0000FF",
           "#990000", "#990033", "#990066", "#990099", "#9900CC", "#9900FF",
