@@ -1,4 +1,4 @@
-ChoosePalette <- function(n=25, H=c(0, 90), C=c(100, 30), L=c(50, 90),
+ChoosePalette <- function(n=5, H=c(0, 90), C=c(100, 30), L=c(50, 90),
                           power=c(0.2, 1), parent=NULL) {
 # A GUI for selecting a color palette.
 
@@ -115,7 +115,7 @@ ChoosePalette <- function(n=25, H=c(0, 90), C=c(100, 30), L=c(50, 90),
            }
       formals(f) <- alist(n=, h=c(h1, h2), c.=c(c1, c2), l=c(l1, l2),
                           power=c(p1, p2))
-    } else {
+    } else if (type == "Diverging") {
       f <- function(n, h, c, l, power) {
              diverge_hcl(n, h=h, c=c, l=l, power=power)
            }
@@ -141,6 +141,43 @@ ChoosePalette <- function(n=25, H=c(0, 90), C=c(100, 30), L=c(50, 90),
     }
   }
 
+  # Update data type
+
+  UpdateDataType <- function() {
+    type <- as.character(tclvalue(nature.var))
+
+    if (type == "Qualitative") {
+      is.normal <- c(TRUE, FALSE, FALSE, FALSE, FALSE)
+    } else if (type == "Sequential (single hue)") {
+      is.normal <- c(FALSE, TRUE, TRUE, TRUE, FALSE)
+    } else if (type == "Sequential (multiple hues)") {
+      is.normal <- c(TRUE, TRUE, TRUE, TRUE, TRUE)
+    } else if (type == "Diverging") {
+      is.normal <- c(TRUE, FALSE, TRUE, TRUE, FALSE)
+    }
+
+    s <- ifelse(is.normal, "normal", "disabled")
+    tkconfigure(frame3.lab.2.1, state=s[1])
+    tkconfigure(frame3.lab.4.1, state=s[2])
+    tkconfigure(frame3.lab.6.1, state=s[3])
+    tkconfigure(frame3.lab.7.1, state=s[4])
+    tkconfigure(frame3.lab.8.1, state=s[5])
+    tkconfigure(frame3.ent.2.3, state=s[1])
+    tkconfigure(frame3.ent.4.3, state=s[2])
+    tkconfigure(frame3.ent.6.3, state=s[3])
+    tkconfigure(frame3.ent.7.3, state=s[4])
+    tkconfigure(frame3.ent.8.3, state=s[5])
+
+    s <- ifelse(is.normal, "!disabled", "disabled")
+    tcl(frame3.scl.2.2, "state", s[1])
+    tcl(frame3.scl.4.2, "state", s[2])
+    tcl(frame3.scl.6.2, "state", s[3])
+    tcl(frame3.scl.7.2, "state", s[4])
+    tcl(frame3.scl.8.2, "state", s[5])
+
+    UpdatePalette()
+  }
+
 
 
 
@@ -157,7 +194,6 @@ ChoosePalette <- function(n=25, H=c(0, 90), C=c(100, 30), L=c(50, 90),
 
 
 
-  n <- 20
 
   h1 <- H[1]
   h2 <- H[2]
@@ -268,26 +304,11 @@ ChoosePalette <- function(n=25, H=c(0, 90), C=c(100, 30), L=c(50, 90),
 
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Default color schemes")
-
   frame2.cvs.1.1 <- tkcanvas(frame2, relief="flat", width= 50, height=50,
                              background="white", confine=TRUE, closeenough=0,
                              borderwidth=0, highlightthickness=0)
-
-  frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=colorblind.safe.var,
-                                   text="Colorblind safe",
-                                   command=function() print("notyet"))
-  frame2.chk.2.2 <- ttkcheckbutton(frame2, variable=print.friendly.var,
-                                   text="Print friendly",
-                                   command=function() print("notyet"))
-  frame2.chk.2.3 <- ttkcheckbutton(frame2, variable=photocoy.able.var,
-                                   text="Photocopy-able",
-                                   command=function() print("notyet"))
-
-  tkgrid(frame2.cvs.1.1, sticky="we", columnspan=4)
-  tkgrid("x", frame2.chk.2.1, frame2.chk.2.2, frame2.chk.2.3,
-         padx=c(5, 0), pady=c(2, 0))
+  tkgrid(frame2.cvs.1.1, sticky="we")
   tkgrid.columnconfigure(frame2, 0, weight=1)
-
   tkpack(frame2, fill="x", padx=10)
 
   # Frame 3, color description
@@ -359,8 +380,8 @@ ChoosePalette <- function(n=25, H=c(0, 90), C=c(100, 30), L=c(50, 90),
 
   # Frame 4, number of colors in palette
 
-  frame4 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Number of colors in palette (does not affect returned palette)")
+  txt <- "Number of colors in palette (does not affect returned palette)"
+  frame4 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text=txt)
 
   frame4.lab.1 <- ttklabel(frame4, text="n", width=2)
   frame4.scl.2 <- tkwidget(frame4, "ttk::scale", from=1, to=50,
@@ -390,10 +411,13 @@ ChoosePalette <- function(n=25, H=c(0, 90), C=c(100, 30), L=c(50, 90),
   # Initial commands
 
   UpdatePalette()
+  UpdateDataType()
 
   # Bind events
 
   tclServiceMode(TRUE)
+
+  tkbind(frame1.box.2, "<<ComboboxSelected>>", UpdateDataType)
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
