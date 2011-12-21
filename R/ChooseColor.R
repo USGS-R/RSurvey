@@ -211,7 +211,6 @@ ChooseColor <- function(col, parent=NULL) {
     txt <- tclvalue(h.ent.var)
     nh <<- CheckColorNum(txt)
     tclvalue(h.scl.var) <- nh
-    tclvalue(h.ent.var) <- txt
     ChangeColor(Hsv2hex(), is.hsva=TRUE)
   }
 
@@ -219,7 +218,6 @@ ChooseColor <- function(col, parent=NULL) {
     txt <- tclvalue(s.ent.var)
     ns <<- CheckColorNum(txt)
     tclvalue(s.scl.var) <- ns
-    tclvalue(s.ent.var) <- txt
     ChangeColor(Hsv2hex(), is.hsva=TRUE)
   }
 
@@ -227,7 +225,6 @@ ChooseColor <- function(col, parent=NULL) {
     txt <- tclvalue(v.ent.var)
     nv <<- CheckColorNum(txt)
     tclvalue(v.scl.var) <- nv
-    tclvalue(v.ent.var) <- txt
     ChangeColor(Hsv2hex(), is.hsva=TRUE)
   }
 
@@ -235,7 +232,6 @@ ChooseColor <- function(col, parent=NULL) {
     txt <- tclvalue(a.ent.var)
     na <<- CheckColorNum(txt)
     tclvalue(a.scl.var) <- na
-    tclvalue(a.ent.var) <- txt
     tclvalue(col.var) <- Hsv2hex()
   }
 
