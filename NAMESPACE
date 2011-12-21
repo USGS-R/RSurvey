@@ -4,6 +4,7 @@ importFrom(rgl, surface3d, points3d)
 importFrom(gpclib, read.polyfile, write.polyfile, get.pts, get.bbox, area.poly,
            union, setdiff, intersect)
 importClassesFrom(gpclib, gpc.poly)
+importFrom(colorspace, rainbow_hcl, polarLUV)
 
 export(AddAxis,
        Autocrop,
@@ -11,6 +12,7 @@ export(AddAxis,
        BuildPackage,
        CheckEntry,
        ChooseColor,
+       ChoosePalette,
        ChoosePch,
        CutoutPolygon,
        Data,
