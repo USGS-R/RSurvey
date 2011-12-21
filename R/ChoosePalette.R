@@ -265,6 +265,21 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
   tkwm.resizable(tt, 0, 0)
   tktitle(tt) <- "Choose Palette"
 
+  # Top file menu
+
+  top.menu <- tkmenu(tt, tearoff=0)
+  menu.file <- tkmenu(tt, tearoff=0)
+  tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
+
+  tkadd(menu.file, "command", label="Open palette", accelerator="Ctrl+O",
+        command=function() print("notyet"))
+  tkadd(menu.file, "command", label="Save palette", accelerator="Ctrl+S",
+        command=function() print("notyet"))
+  tkadd(menu.file, "command", label="Save palette as",
+        accelerator="Shift+Ctrl+S", command=function() print("notyet"))
+
+  tkconfigure(tt, menu=top.menu)
+
   # Frame 0, ok and cancel buttons
 
   frame0 <- ttkframe(tt, relief="flat")
@@ -303,7 +318,7 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
 
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Default color schemes")
-  frame2.cvs.1.1 <- tkcanvas(frame2, relief="flat", width=50, height=50,
+  frame2.cvs.1.1 <- tkcanvas(frame2, relief="flat", width=50, height=70,
                              background="white", confine=TRUE, closeenough=0,
                              borderwidth=0, highlightthickness=0)
   tkgrid(frame2.cvs.1.1, sticky="we")
