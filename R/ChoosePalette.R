@@ -6,7 +6,7 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
   # Save palette and quit
 
   SavePalette <- function() {
-    pal <- GetPalette()
+    pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)
     pal.cols <- pal(n)
     if (any(is.na(pal.cols))) {
       msg <- "Palette can not be translated to valid RGB values, try again."
@@ -27,7 +27,7 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
     assign(v, x, inherits=TRUE)
     fmt <- ifelse(v %in% c("p1", "p2"), "%.1f", "%.0f")
     tclvalue(x.ent.var) <- sprintf(fmt, x)
-    UpdatePalette()
+    DrawPalette(v == "n")
   }
 
   # Entry change
@@ -45,12 +45,12 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
     }
     assign(v, x, inherits=TRUE)
     tclvalue(x.scl.var) <- x
-    UpdatePalette()
+    DrawPalette(v == "n")
   }
 
   # Get color palette as function of n
 
-  GetPalette <- function() {
+  GetPalette <- function(h1, h2, c1, c2, l1, l2, p1, p2) {
     type <- as.character(tclvalue(nature.var))
     if (type == "Qualitative") {
       f <- rainbow_hcl
@@ -79,10 +79,12 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
     f
   }
 
-  # Update palette
+  # Draw palette
 
-  UpdatePalette <- function() {
-    pal <- GetPalette()
+  DrawPalette <- function(is.n=FALSE) {
+    pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)
+    if (!is.n)
+      tcl(frame2.cvs, "delete", "browse")
     tcl(frame5.cvs, "delete", "pal")
     pal.cols <- pal(n)
     if (any(is.na(pal.cols)))
@@ -106,13 +108,18 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
 
     if (type == "Qualitative") {
       is.normal <- c(TRUE, FALSE, FALSE, FALSE, FALSE)
+      default.pals <<- qual.pals
     } else if (type == "Sequential (single hue)") {
       is.normal <- c(FALSE, TRUE, TRUE, TRUE, FALSE)
+      default.pals <<- seqs.pals
     } else if (type == "Sequential (multiple hues)") {
       is.normal <- c(TRUE, TRUE, TRUE, TRUE, TRUE)
+      default.pals <<- seqm.pals
     } else if (type == "Diverging") {
       is.normal <- c(TRUE, FALSE, TRUE, TRUE, FALSE)
+      default.pals <<- dive.pals
     }
+    DrawDefaultPalettes(default.pals, type)
 
     s <- ifelse(is.normal, "normal", "disabled")
     tkconfigure(frame3.lab.2.1, state=s[1])
@@ -133,16 +140,77 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
     tcl(frame3.scl.7.2, "state", s[4])
     tcl(frame3.scl.8.2, "state", s[5])
 
-    UpdatePalette()
+    DrawPalette()
   }
 
+  # Draw default palettes in canvas
 
+  DrawDefaultPalettes <- function(pals, type) {
+    tcl(frame2.cvs, "delete", "default")
+    x1 <- 10
+    for (i in 1:length(pals)) {
+      pal <- do.call(GetPalette, args=as.list(pals[[i]]))
+      y2 <- 10
+      for (j in pal(5)) {
+        x2 <- x1 + 20
+        y1 <- y2
+        y2 <- y1 + 10
+        pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2))
+        tkcreate(frame2.cvs, "polygon", pts, fill=j, tag="default")
+      }
+      x1 <- x1 + 30
+    }
+  }
 
+  # Select default palette
 
+  SelectDefaultPalette <- function(x, y) {
+    x <- as.numeric(x)
+    y <- as.numeric(y)
+    if (is.na(x) | is.na(y))
+      return()
+    y1 <- 5
+    y2 <- 65
+    if (y < y1 | y > y2)
+      return()
+    max.x <- length(default.pals) * 30 + 10
+    if (x < 5 | x > max.x)
+      return()
 
+    x.seq <- seq(5, max.x, by=30)
+    i <- findInterval(x, x.seq, rightmost.closed=TRUE)
+    x1 <- x.seq[i]
+    x2 <- x.seq[i + 1]
 
+    for (j in 1:length(vars)) {
+      val <- default.pals[[i]][j]
+      if (is.na(val))
+        val <- 0
+      assign(vars[j], val, inherits=TRUE)
+    }
 
+    tclvalue(h1.ent.var) <- sprintf("%.0f", h1)
+    tclvalue(h2.ent.var) <- sprintf("%.0f", h2)
+    tclvalue(c1.ent.var) <- sprintf("%.0f", c1)
+    tclvalue(c2.ent.var) <- sprintf("%.0f", c2)
+    tclvalue(h1.ent.var) <- sprintf("%.0f", l1)
+    tclvalue(h2.ent.var) <- sprintf("%.0f", l2)
+    tclvalue(p1.ent.var) <- sprintf("%.1f", p1)
+    tclvalue(p2.ent.var) <- sprintf("%.1f", p2)
+    tclvalue(h1.scl.var) <- h1
+    tclvalue(h2.scl.var) <- h2
+    tclvalue(c1.scl.var) <- c1
+    tclvalue(c2.scl.var) <- c2
+    tclvalue(l1.scl.var) <- l1
+    tclvalue(l2.scl.var) <- l2
+    tclvalue(p1.scl.var) <- p1
+    tclvalue(p2.scl.var) <- p2
 
+    DrawPalette()
+
+    pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2))
+    tkcreate(frame2.cvs, "polygon", pts, fill="", outline="black", tag="browse")
+  }
 
 
   # Main program
@@ -151,68 +219,75 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
 
   pal.rtn <- NULL
 
-  # Initialize default palette
+  # Initialize default palettes
+
+  default.pals <- NULL
+
+  # Set default and initial palettes
+
+  vars <- c("h1", "h2", "c1", "c2", "l1", "l2", "p1", "p2")
+  for (i in vars)
+    assign(i, 0)
+
+  qual.pals <- list()
+  qual.pals[[1]] <- c( 30,  300,  50, NA, 70, NA,  NA,  NA)
+  qual.pals[[2]] <- c( 60,  240,  50, NA, 70, NA,  NA,  NA)
+  qual.pals[[3]] <- c(270,  150,  50, NA, 70, NA,  NA,  NA)
+  qual.pals[[4]] <- c( 90,  -30,  50, NA, 70, NA,  NA,  NA)
+  seqs.pals <- list()
+  seqs.pals[[1]] <- c(260,   NA,  80,  0, 30, 90, 1.5,  NA)
+  seqs.pals[[2]] <- c(260,   NA,   0,  0, 30, 90, 1.5,  NA)
+  seqm.pals <- list()
+  seqm.pals[[1]] <- c(  0,   90, 100, 30, 50, 90, 0.2, 1.0)
+  seqm.pals[[2]] <- c(  0,   90,  80, 30, 30, 90, 0.2, 2.0)
+  seqm.pals[[3]] <- c(130,   30,  80,  0, 60, 95, 0.1, 1.0)
+  seqm.pals[[4]] <- c(130,   30,  65,  0, 45, 90, 0.5, 1.5)
+  seqm.pals[[5]] <- c(  0, -100,  40, 80, 75, 40, 1.0, 0.0)
+  dive.pals <- list()
+  dive.pals[[1]] <- c(260,    0,  80, NA, 30, 90, 1.5,  NA)
+  dive.pals[[2]] <- c(260,    0, 100, NA, 50, 90, 1.0,  NA)
+  dive.pals[[3]] <- c(130,   43, 100, NA, 70, 90, 1.0,  NA)
+  dive.pals[[4]] <- c(180,  330,  59, NA, 75, 95, 1.5,  NA)
 
   if (missing(pal) || is.null(pal)) {
-    nature <- "Sequential (multiple hues)"
-    h1 <- 0
-    h2 <- 90
-    c1 <- 100
-    c2 <- 30
-    l1 <- 50
-    l2 <- 90
-    p1 <- 0.2
-    p2 <- 1.0
+    initial.nat <- "Sequential (multiple hues)"
+    initial.pal <- seqm.pals[[1]]
   } else {
     arg <- formals(pal)
-    h1 <- h2 <- c1 <- c2 <- l1 <- l2 <- p1 <- p2 <- 0
     what <- c("numeric", "integer")
-    a <- c("c", "l", "start", "end")
-    if (all(sapply(a, function(i) inherits(arg[[i]], what)))) {
-      nature <- "Qualitative"
-      h1 <- arg$start
-      h2 <- arg$end
-      c1 <- arg$c
-      l1 <- arg$l
-    }
-    a <- c("h", "c", "l", "power")
-    if (all(sapply(a, function(i) inherits(arg[[i]], what)))) {
-      nature <- "Diverging"
-      h1 <- arg$h[1]
-      h2 <- arg$h[2]
-      c1 <- arg$c
-      l1 <- arg$l[1]
-      l2 <- arg$l[2]
-      p1 <- arg$power
-    }
-    a <- c("h", "c.", "l", "power")
-    if (all(sapply(a, function(i) inherits(arg[[i]], what)))) {
+
+    q.args <- c("c", "l", "start", "end")
+    d.args <- c("h", "c", "l", "power")
+    s.args <- c("h", "c.", "l", "power")
+
+    if (all(sapply(q.args, function(i) inherits(arg[[i]], what)))) {
+      initial.nat <- "Qualitative"
+      initial.pal <- c(arg$start, arg$end, arg$c, NA, arg$l, NA, NA, NA)
+    } else if (all(sapply(s.args, function(i) inherits(arg[[i]], what)))) {
       if (length(arg$h) == 1 && length(arg$p) == 1) {
-        nature <- "Sequential (single hue)"
-        h1 <- arg$h
-        c1 <- arg$c.[1]
-        c2 <- arg$c.[2]
-        l1 <- arg$l[1]
-        l2 <- arg$l[2]
-        p1 <- arg$power
+        initial.nat <- "Sequential (single hue)"
+        initial.pal <- c(arg$h, NA, arg$c., arg$l, arg$power, NA)
       } else {
-        nature <- "Sequential (multiple hues)"
-        h1 <- arg$h[1]
-        h2 <- arg$h[2]
-        c1 <- arg$c.[1]
-        c2 <- arg$c.[2]
-        l1 <- arg$l[1]
-        l2 <- arg$l[2]
-        p1 <- arg$power[1]
-        p2 <- arg$power[2]
+        initial.nat <- "Sequential (multiple hues)"
+        initial.pal <- c(arg$h, arg$c., arg$l, arg$power)
       }
+    } else if (all(sapply(d.args, function(i) inherits(arg[[i]], what)))) {
+      initial.nat <- "Diverging"
+      initial.pal <- c(arg$h, arg$c, NA, arg$l, arg$power, NA)
     }
+  }
+
+  for (i in 1:length(vars)) {
+    if (is.na(initial.pal[i]))
+      assign(vars[i], 0)
+    else
+      assign(vars[i], initial.pal[i])
   }
 
   # Set limits for palette attributes
 
   n.lim <- c(1, 50)
-  h.lim <- c(0, 360)
+  h.lim <- c(-360, 360)
   c.lim <- c(0, 100)
   l.lim <- c(0, 100)
   p.lim <- c(0, 5)
@@ -224,7 +299,7 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
 
   # Assign additional variables linked to Tk widgets
 
-  nature.var <- tclVar(nature)
+  nature.var <- tclVar(initial.nat)
 
   n.scl.var <- tclVar(n)
   n.ent.var <- tclVar(n)
@@ -233,17 +308,14 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
   h1.ent.var <- tclVar(h1)
   h2.scl.var <- tclVar(h2)
   h2.ent.var <- tclVar(h2)
-
   c1.scl.var <- tclVar(c1)
   c1.ent.var <- tclVar(c1)
   c2.scl.var <- tclVar(c2)
   c2.ent.var <- tclVar(c2)
-
   l1.scl.var <- tclVar(l1)
   l1.ent.var <- tclVar(l1)
   l2.scl.var <- tclVar(l2)
   l2.ent.var <- tclVar(l2)
-
   p1.scl.var <- tclVar(p1)
   p1.ent.var <- tclVar(p1)
   p2.scl.var <- tclVar(p2)
@@ -263,7 +335,7 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
   tkwm.resizable(tt, 0, 0)
-  tktitle(tt) <- "Choose Palette"
+  tktitle(tt) <- "Choose Color Palette"
 
   # Top file menu
 
@@ -318,16 +390,16 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
 
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Default color schemes")
-  frame2.cvs.1.1 <- tkcanvas(frame2, relief="flat", width=50, height=70,
-                             background="white", confine=TRUE, closeenough=0,
-                             borderwidth=0, highlightthickness=0)
-  tkgrid(frame2.cvs.1.1, sticky="we")
+  frame2.cvs <- tkcanvas(frame2, relief="flat", width=50, height=70,
+                         background="white", confine=TRUE, closeenough=0,
+                         borderwidth=0, highlightthickness=0)
+  tkgrid(frame2.cvs, sticky="we")
   tkgrid.columnconfigure(frame2, 0, weight=1)
   tkpack(frame2, fill="x", padx=10)
 
   # Frame 3, color description
 
-  txt <- "Color description: hue, croma, luminance, power"
+  txt <- "Color description: Hue, Croma, Luminance, Power"
   frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text=txt)
 
   frame3.lab.1.1 <- ttklabel(frame3, text="H1", width=2)
@@ -417,7 +489,7 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
 
   # Frame 4, number of colors in palette
 
-  txt <- "Number of colors in palette (does not affect returned palette)"
+  txt <- "Number of colors in palette"
   frame4 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text=txt)
 
   frame4.lab.1 <- ttklabel(frame4, text="n", width=2)
@@ -447,7 +519,7 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
 
   # Initial commands
 
-  UpdatePalette()
+  DrawPalette()
   UpdateDataType()
 
   # Bind events
@@ -455,6 +527,8 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
   tclServiceMode(TRUE)
 
   tkbind(frame1.box.2, "<<ComboboxSelected>>", UpdateDataType)
+
+  tkbind(frame2.cvs, "<ButtonPress>", function(x, y) SelectDefaultPalette(x, y))
 
   tkbind(frame3.ent.1.3, "<KeyRelease>",
          function() EntryChange("h1", h.lim, h1.ent.var, h1.scl.var))
