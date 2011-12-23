@@ -3,6 +3,18 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
 
   # Additional functions (subroutines)
 
+  # Save palette to file
+
+  SavePaletteToFile <- function() {
+    f <- GetFile(cmd="Save As", exts="R", win.title="Save Color Palette As",
+                   initialfile="ColorPalette", defaultextension="R",
+                   parent=tt)
+    if (is.null(f))
+      return()
+    pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)
+    dput(pal, file=f)
+  }
+
   # Save palette and quit
 
   SavePalette <- function() {
@@ -345,10 +357,19 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
 
   tkadd(menu.file, "command", label="Open palette", accelerator="Ctrl+O",
         command=function() print("notyet"))
-  tkadd(menu.file, "command", label="Save palette", accelerator="Ctrl+S",
-        command=function() print("notyet"))
   tkadd(menu.file, "command", label="Save palette as",
-        accelerator="Shift+Ctrl+S", command=function() print("notyet"))
+        accelerator="Shift+Ctrl+S", command=SavePaletteToFile)
+
+  menu.file.colors <- tkmenu(tt, tearoff=0)
+  tkadd(menu.file.colors, "command", label="RGM",
+        command=function() print("notyet"))
+  tkadd(menu.file.colors, "command", label="HSV",
+        command=function() print("notyet"))
+  tkadd(menu.file.colors, "command", label="HEX",
+        command=function() print("notyet"))
+  tkadd(menu.file.colors, "command", label="CMYK",
+        command=function() print("notyet"))
+  tkadd(menu.file, "cascade", label="Save colors as", menu=menu.file.colors)
 
   tkconfigure(tt, menu=top.menu)
 
