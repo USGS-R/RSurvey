@@ -434,10 +434,10 @@ ChooseColor <- function(col, parent=NULL) {
 
   frame3 <- ttkframe(tt, relief="flat")
 
-  frame3.lab.1.1 <- ttklabel(frame3, text="H")
-  frame3.lab.2.1 <- ttklabel(frame3, text="S")
-  frame3.lab.3.1 <- ttklabel(frame3, text="V")
-  frame3.lab.4.1 <- ttklabel(frame3, text="A")
+  frame3.lab.1.1 <- ttklabel(frame3, text="H", justify="center")
+  frame3.lab.2.1 <- ttklabel(frame3, text="S", justify="center")
+  frame3.lab.3.1 <- ttklabel(frame3, text="V", justify="center")
+  frame3.lab.4.1 <- ttklabel(frame3, text="A", justify="center")
 
   frame3.scl.1.2 <- tkwidget(frame3, "ttk::scale", from=0, to=1,
                              orient="horizontal", value=nh, variable=h.scl.var,
@@ -465,7 +465,7 @@ ChooseColor <- function(col, parent=NULL) {
   tkgrid(frame3.lab.4.1, frame3.scl.4.2, frame3.ent.4.3)
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, frame3.lab.3.1,
-                   frame3.lab.4.1, sticky="e", padx=c(10, 2))
+                   frame3.lab.4.1, padx=c(10, 2))
   tkgrid.configure(frame3.scl.1.2, frame3.scl.2.2, frame3.scl.3.2,
                    frame3.scl.4.2, sticky="we", padx=2)
   tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, frame3.ent.3.3,
@@ -509,5 +509,5 @@ ChooseColor <- function(col, parent=NULL) {
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  rtn.col
+  invisible(rtn.col)
 }

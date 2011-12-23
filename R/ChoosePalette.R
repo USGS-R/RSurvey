@@ -12,7 +12,7 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
     if (is.null(f))
       return()
     pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)
-    dput(pal, file=f)
+    dput(pal, file=f$path)
   }
 
   # Save palette and quit
@@ -220,7 +220,7 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
 
     DrawPalette()
 
-    pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2))
+    pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2) - 0.5)
     tkcreate(frame2.cvs, "polygon", pts, fill="", outline="black", tag="browse")
   }
 
