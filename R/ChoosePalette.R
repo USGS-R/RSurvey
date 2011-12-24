@@ -1,14 +1,49 @@
-ChoosePalette <- function(pal, n=5L, parent=NULL) {
+ChoosePalette <- function(pal, n=12L, parent=NULL) {
 # A GUI for selecting a color palette.
 
   # Additional functions (subroutines)
 
+  # Save colors to file
+
+  SaveColorsToFile <- function(type) {
+    f <- GetFile(cmd="Save As", exts="txt", win.title="Save Colors As",
+                 initialfile=paste("Colors", type, sep=""),
+                 defaultextension="txt", parent=tt)
+    if (is.null(f))
+      return()
+    cols <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)(n)
+    cols <- hex2RGB(cols)
+    if (type == "HEX") {
+      writehex(cols, file=f$path)
+    } else {
+      if (type == "sRGB") {
+        cols <- as(cols, "sRGB")@coords
+      } else if (type == "HSV") {
+        cols <- as(cols, "HSV")@coords
+      } else if (type == "HCL") {
+        cols <- as(cols, "polarLUV")@coords
+      } else if (type == "CMYK") {
+        cols <- as(cols, "RGB")@coords
+        red   <- cols[, "R"]
+        green <- cols[, "G"]
+        blue  <- cols[, "B"]
+        black <- sapply(1:n, function(i) min(c(1 - red[i], 1 - green[i],
+                                               1 - blue[i])))
+        cyan <- (1 - red - black) / (1 - black)
+        magenta <- (1 - green - black) / (1 - black)
+        yellow <- (1 - blue - black) / (1 - black)
+        cols <- as.matrix(as.data.frame(list(C=cyan, M=black, Y=yellow,
+                                             K=black)))
+      }
+      write.table(cols, file=f$path, quote=FALSE, row.names=FALSE, sep="\t")
+    }
+  }
+
   # Save palette to file
 
   SavePaletteToFile <- function() {
-    f <- GetFile(cmd="Save As", exts="R", win.title="Save Color Palette As",
-                   initialfile="ColorPalette", defaultextension="R",
-                   parent=tt)
+    f <- GetFile(cmd="Save As", exts="R", win.title="Save Palette As",
+                 initialfile="ColorPalette", defaultextension="R", parent=tt)
     if (is.null(f))
       return()
     pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)
@@ -361,14 +396,16 @@ ChoosePalette <- function(pal, n=5L, parent=NULL) {
         accelerator="Shift+Ctrl+S", command=SavePaletteToFile)
 
   menu.file.colors <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.colors, "command", label="RGM",
-        command=function() print("notyet"))
-  tkadd(menu.file.colors, "command", label="HSV",
-        command=function() print("notyet"))
   tkadd(menu.file.colors, "command", label="HEX",
-        command=function() print("notyet"))
+        command=function() SaveColorsToFile("HEX"))
+  tkadd(menu.file.colors, "command", label="sRGB",
+        command=function()  SaveColorsToFile("sRGB"))
+  tkadd(menu.file.colors, "command", label="HSV",
+        command=function()  SaveColorsToFile("HSV"))
+  tkadd(menu.file.colors, "command", label="HCL",
+        command=function()  SaveColorsToFile("HCL"))
   tkadd(menu.file.colors, "command", label="CMYK",
-        command=function() print("notyet"))
+        command=function()  SaveColorsToFile("CMYK"))
   tkadd(menu.file, "cascade", label="Save colors as", menu=menu.file.colors)
 
   tkconfigure(tt, menu=top.menu)
