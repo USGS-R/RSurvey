@@ -9,7 +9,7 @@ A \acronym{GUI} for viewing or manipulating color palettes.
 }
 
 \usage{
-ChoosePalette(pal, n = 12L, parent = NULL)
+ChoosePalette(pal, n = 7L, parent = NULL)
 }
 
 \arguments{

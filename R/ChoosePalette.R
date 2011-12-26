@@ -1,7 +1,30 @@
-ChoosePalette <- function(pal, n=12L, parent=NULL) {
+ChoosePalette <- function(pal, n=7L, parent=NULL) {
 # A GUI for selecting a color palette.
 
   # Additional functions (subroutines)
+
+  # Open file and save
+
+
+
+
+
+
+
+
+
+
+
+  # Save palette to file
+
+  SavePaletteToFile <- function() {
+    f <- GetFile(cmd="Save As", exts="R", win.title="Save Palette As",
+                 initialfile="ColorPalette", defaultextension="R", parent=tt)
+    if (is.null(f))
+      return()
+    pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)
+    dput(pal, file=f$path)
+  }
 
   # Save colors to file
 
@@ -11,8 +34,8 @@ ChoosePalette <- function(pal, n=12L, parent=NULL) {
                  defaultextension="txt", parent=tt)
     if (is.null(f))
       return()
-    cols <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)(n)
-    cols <- hex2RGB(cols)
+    pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)
+    cols <- hex2RGB(pal(n))
     if (type == "HEX") {
       writehex(cols, file=f$path)
     } else {
@@ -39,24 +62,13 @@ ChoosePalette <- function(pal, n=12L, parent=NULL) {
     }
   }
 
-  # Save palette to file
-
-  SavePaletteToFile <- function() {
-    f <- GetFile(cmd="Save As", exts="R", win.title="Save Palette As",
-                 initialfile="ColorPalette", defaultextension="R", parent=tt)
-    if (is.null(f))
-      return()
-    pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)
-    dput(pal, file=f$path)
-  }
-
   # Save palette and quit
 
   SavePalette <- function() {
     pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)
     pal.cols <- pal(n)
     if (any(is.na(pal.cols))) {
-      msg <- "Palette can not be translated to valid RGB values, try again."
+      msg <- "Palette can not be converted to valid RGB values, try again."
       tkmessageBox(icon="error", message=msg, title="Palette Error",
                    parent=tt)
       return()
@@ -152,7 +164,6 @@ ChoosePalette <- function(pal, n=12L, parent=NULL) {
 
   UpdateDataType <- function() {
     type <- as.character(tclvalue(nature.var))
-
     if (type == "Qualitative") {
       is.normal <- c(TRUE, FALSE, FALSE, FALSE, FALSE)
       default.pals <<- qual.pals
@@ -166,7 +177,23 @@ ChoosePalette <- function(pal, n=12L, parent=NULL) {
       is.normal <- c(TRUE, FALSE, TRUE, TRUE, FALSE)
       default.pals <<- dive.pals
     }
-    DrawDefaultPalettes(default.pals, type)
+
+    # Default palettes
+
+    tcl(frame2.cvs, "delete", "default")
+    x1 <- 10
+    for (i in 1:length(default.pals)) {
+      pal <- do.call(GetPalette, args=as.list(default.pals[[i]]))
+      y2 <- 10
+      for (j in pal(5)) {
+        x2 <- x1 + 20
+        y1 <- y2
+        y2 <- y1 + 10
+        pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2))
+        tkcreate(frame2.cvs, "polygon", pts, fill=j, tag="default")
+      }
+      x1 <- x1 + 30
+    }
 
     s <- ifelse(is.normal, "normal", "disabled")
     tkconfigure(frame3.lab.2.1, state=s[1])
@@ -179,7 +206,6 @@ ChoosePalette <- function(pal, n=12L, parent=NULL) {
     tkconfigure(frame3.ent.6.3, state=s[3])
     tkconfigure(frame3.ent.7.3, state=s[4])
     tkconfigure(frame3.ent.8.3, state=s[5])
-
     s <- ifelse(is.normal, "!disabled", "disabled")
     tcl(frame3.scl.2.2, "state", s[1])
     tcl(frame3.scl.4.2, "state", s[2])
@@ -188,25 +214,6 @@ ChoosePalette <- function(pal, n=12L, parent=NULL) {
     tcl(frame3.scl.8.2, "state", s[5])
 
     DrawPalette()
-  }
-
-  # Draw default palettes in canvas
-
-  DrawDefaultPalettes <- function(pals, type) {
-    tcl(frame2.cvs, "delete", "default")
-    x1 <- 10
-    for (i in 1:length(pals)) {
-      pal <- do.call(GetPalette, args=as.list(pals[[i]]))
-      y2 <- 10
-      for (j in pal(5)) {
-        x2 <- x1 + 20
-        y1 <- y2
-        y2 <- y1 + 10
-        pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2))
-        tkcreate(frame2.cvs, "polygon", pts, fill=j, tag="default")
-      }
-      x1 <- x1 + 30
-    }
   }
 
   # Select default palette
@@ -236,12 +243,61 @@ ChoosePalette <- function(pal, n=12L, parent=NULL) {
       assign(vars[j], val, inherits=TRUE)
     }
 
+    AssignAttributesToWidgets()
+    DrawPalette()
+
+    pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2) - 0.5)
+    tkcreate(frame2.cvs, "polygon", pts, fill="", outline="black", tag="browse")
+  }
+
+  # Convert palette to attributes
+
+  ConvertPaletteToAttributes <- function(pal) {
+    if (missing(pal) || is.null(pal)) {
+      tclvalue(nature.var) <- "Sequential (multiple hues)"
+      pal.attributes <- seqm.pals[[4]]
+    } else {
+      arg <- formals(pal)
+      what <- c("numeric", "integer")
+
+      q.args <- c("c", "l", "start", "end")
+      d.args <- c("h", "c",  "l", "power")
+      s.args <- c("h", "c.", "l", "power")
+
+      if (all(sapply(q.args, function(i) inherits(arg[[i]], what)))) {
+        tclvalue(nature.var) <- "Qualitative"
+        pal.attributes <- c(arg$start, arg$end, arg$c, NA, arg$l, NA, NA, NA)
+      } else if (all(sapply(s.args, function(i) inherits(arg[[i]], what)))) {
+        if (length(arg$h) == 1 && length(arg$p) == 1) {
+          tclvalue(nature.var) <- "Sequential (single hue)"
+          pal.attributes <- c(arg$h, NA, arg$c., arg$l, arg$power, NA)
+        } else {
+          tclvalue(nature.var) <- "Sequential (multiple hues)"
+          pal.attributes <- c(arg$h, arg$c., arg$l, arg$power)
+        }
+      } else if (all(sapply(d.args, function(i) inherits(arg[[i]], what)))) {
+        tclvalue(nature.var) <- "Diverging"
+        pal.attributes <- c(arg$h, arg$c, NA, arg$l, arg$power, NA)
+      }
+    }
+    for (i in 1:length(vars)) {
+      if (is.na(pal.attributes[i]))
+        assign(vars[i], 0, inherits=TRUE)
+      else
+        assign(vars[i], pal.attributes[i], inherits=TRUE)
+    }
+    AssignAttributesToWidgets()
+  }
+
+  # Assign attributes to widgets
+
+  AssignAttributesToWidgets <- function() {
     tclvalue(h1.ent.var) <- sprintf("%.0f", h1)
     tclvalue(h2.ent.var) <- sprintf("%.0f", h2)
     tclvalue(c1.ent.var) <- sprintf("%.0f", c1)
     tclvalue(c2.ent.var) <- sprintf("%.0f", c2)
-    tclvalue(h1.ent.var) <- sprintf("%.0f", l1)
-    tclvalue(h2.ent.var) <- sprintf("%.0f", l2)
+    tclvalue(l1.ent.var) <- sprintf("%.0f", l1)
+    tclvalue(l2.ent.var) <- sprintf("%.0f", l2)
     tclvalue(p1.ent.var) <- sprintf("%.1f", p1)
     tclvalue(p2.ent.var) <- sprintf("%.1f", p2)
     tclvalue(h1.scl.var) <- h1
@@ -252,11 +308,6 @@ ChoosePalette <- function(pal, n=12L, parent=NULL) {
     tclvalue(l2.scl.var) <- l2
     tclvalue(p1.scl.var) <- p1
     tclvalue(p2.scl.var) <- p2
-
-    DrawPalette()
-
-    pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2) - 0.5)
-    tkcreate(frame2.cvs, "polygon", pts, fill="", outline="black", tag="browse")
   }
 
 
@@ -296,48 +347,13 @@ ChoosePalette <- function(pal, n=12L, parent=NULL) {
   dive.pals[[3]] <- c(130,   43, 100, NA, 70, 90, 1.0,  NA)
   dive.pals[[4]] <- c(180,  330,  59, NA, 75, 95, 1.5,  NA)
 
-  if (missing(pal) || is.null(pal)) {
-    initial.nat <- "Sequential (multiple hues)"
-    initial.pal <- seqm.pals[[1]]
-  } else {
-    arg <- formals(pal)
-    what <- c("numeric", "integer")
-
-    q.args <- c("c", "l", "start", "end")
-    d.args <- c("h", "c", "l", "power")
-    s.args <- c("h", "c.", "l", "power")
-
-    if (all(sapply(q.args, function(i) inherits(arg[[i]], what)))) {
-      initial.nat <- "Qualitative"
-      initial.pal <- c(arg$start, arg$end, arg$c, NA, arg$l, NA, NA, NA)
-    } else if (all(sapply(s.args, function(i) inherits(arg[[i]], what)))) {
-      if (length(arg$h) == 1 && length(arg$p) == 1) {
-        initial.nat <- "Sequential (single hue)"
-        initial.pal <- c(arg$h, NA, arg$c., arg$l, arg$power, NA)
-      } else {
-        initial.nat <- "Sequential (multiple hues)"
-        initial.pal <- c(arg$h, arg$c., arg$l, arg$power)
-      }
-    } else if (all(sapply(d.args, function(i) inherits(arg[[i]], what)))) {
-      initial.nat <- "Diverging"
-      initial.pal <- c(arg$h, arg$c, NA, arg$l, arg$power, NA)
-    }
-  }
-
-  for (i in 1:length(vars)) {
-    if (is.na(initial.pal[i]))
-      assign(vars[i], 0)
-    else
-      assign(vars[i], initial.pal[i])
-  }
-
   # Set limits for palette attributes
 
-  n.lim <- c(1, 50)
+  n.lim <- c(   1,  50)
   h.lim <- c(-360, 360)
-  c.lim <- c(0, 100)
-  l.lim <- c(0, 100)
-  p.lim <- c(0, 5)
+  c.lim <- c(   0, 100)
+  l.lim <- c(   0, 100)
+  p.lim <- c(   0,   5)
 
   # Set dimensions on palette canvas
 
@@ -346,27 +362,27 @@ ChoosePalette <- function(pal, n=12L, parent=NULL) {
 
   # Assign additional variables linked to Tk widgets
 
-  nature.var <- tclVar(initial.nat)
+  nature.var <- tclVar()
 
   n.scl.var <- tclVar(n)
   n.ent.var <- tclVar(n)
 
-  h1.scl.var <- tclVar(h1)
-  h1.ent.var <- tclVar(h1)
-  h2.scl.var <- tclVar(h2)
-  h2.ent.var <- tclVar(h2)
-  c1.scl.var <- tclVar(c1)
-  c1.ent.var <- tclVar(c1)
-  c2.scl.var <- tclVar(c2)
-  c2.ent.var <- tclVar(c2)
-  l1.scl.var <- tclVar(l1)
-  l1.ent.var <- tclVar(l1)
-  l2.scl.var <- tclVar(l2)
-  l2.ent.var <- tclVar(l2)
-  p1.scl.var <- tclVar(p1)
-  p1.ent.var <- tclVar(p1)
-  p2.scl.var <- tclVar(p2)
-  p2.ent.var <- tclVar(p2)
+  h1.scl.var <- tclVar()
+  h1.ent.var <- tclVar()
+  h2.scl.var <- tclVar()
+  h2.ent.var <- tclVar()
+  c1.scl.var <- tclVar()
+  c1.ent.var <- tclVar()
+  c2.scl.var <- tclVar()
+  c2.ent.var <- tclVar()
+  l1.scl.var <- tclVar()
+  l1.ent.var <- tclVar()
+  l2.scl.var <- tclVar()
+  l2.ent.var <- tclVar()
+  p1.scl.var <- tclVar()
+  p1.ent.var <- tclVar()
+  p2.scl.var <- tclVar()
+  p2.ent.var <- tclVar()
 
   tt.done.var <- tclVar(0)
 
@@ -434,7 +450,8 @@ ChoosePalette <- function(pal, n=12L, parent=NULL) {
   frame1.lab.1 <- ttklabel(frame1, text="The nature of your data")
   frame1.box.2 <- ttkcombobox(frame1, state="readonly", textvariable=nature.var,
                               values=c("Qualitative", "Sequential (single hue)",
-                                       "Sequential (multiple hues)", "Diverging"))
+                                       "Sequential (multiple hues)",
+                                       "Diverging"))
 
   tkgrid(frame1.lab.1, frame1.box.2, pady=10)
   tkgrid.configure(frame1.lab.1, padx=c(10, 2))
@@ -577,7 +594,7 @@ ChoosePalette <- function(pal, n=12L, parent=NULL) {
 
   # Initial commands
 
-  DrawPalette()
+  ConvertPaletteToAttributes(pal)
   UpdateDataType()
 
   # Bind events
