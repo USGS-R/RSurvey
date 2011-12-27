@@ -73,7 +73,7 @@ The length of \code{x} and \code{y} should be equal to the \code{nrow(z)}
 and \code{ncol(z)}, respectively.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{filled.contour}}, \code{\link{image}}, \code{\link{arrows}},

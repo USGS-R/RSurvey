@@ -29,7 +29,7 @@ this string must be parseable and result in a vector length equal to the
 number of rows in the \code{data.raw} data frame, see \code{\link{ReadData}}.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{EvalFunction}}, \code{\link{parse}}

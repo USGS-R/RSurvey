@@ -35,7 +35,7 @@ input parameters.
 Returns a polygon object of \code{\link{gpc.poly-class}}.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{tri.mesh}

@@ -28,7 +28,7 @@ An updated \R session compiled from \file{.R} source code files located in
 Restoring \code{\link{Data}} clears its components.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{list.files}}, \code{\link{source}}

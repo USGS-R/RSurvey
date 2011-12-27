@@ -54,7 +54,7 @@ The \code{vars} component of \code{\link{Data}} is updated to reflect
 the removal and (or) reordering of variables.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{
 \donttest{data(project)

@@ -26,7 +26,7 @@ The entry types include: \var{real}, \var{integer},
 A character string with strict adherence to the specified data format.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{tkentry}}

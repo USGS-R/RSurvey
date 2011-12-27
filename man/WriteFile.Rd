@@ -38,7 +38,7 @@ WriteFile(file.type = "text", file.name = NULL, col.ids = NULL,
   input.}
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{write.table}}, \code{writeOGR}

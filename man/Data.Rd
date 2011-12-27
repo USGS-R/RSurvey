@@ -46,7 +46,7 @@ no default value is available. Default values are specified internally within
 this function.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{
 # To set a parameter

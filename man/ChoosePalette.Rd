@@ -27,7 +27,7 @@ Returns a function that takes an integer argument and returns that number of
 of colors interpolating the given sequence.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \references{
 Zeileis A., Hornik K., and Murrell P., 2009, \emph{Escaping RGBland: Selecting

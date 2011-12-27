@@ -18,7 +18,7 @@ Windows operating system (\acronym{OS}) within the package source directory.
 The user is tasked with executing the batch file (\file{.bat}).
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{
 \dontrun{BuildPackage()}

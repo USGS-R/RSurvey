@@ -45,7 +45,7 @@ Queries and sets the \code{ply}, \code{poly.data}, and \code{poly.crop}
 components of \code{\link{Data}}, see \code{\link{SetPolygonLimits}}.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{polyfile}}, \code{\link{union}}, \code{\link{setdiff}},

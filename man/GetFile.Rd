@@ -44,7 +44,7 @@ components:
 Otherwise, a list is returned containing list components for each file.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{
 \donttest{GetFile()}

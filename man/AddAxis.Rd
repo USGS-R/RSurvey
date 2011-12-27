@@ -29,7 +29,7 @@ AddAxis(side, lim, ticks.inside = FALSE, minor.ticks = FALSE, ...)
 The plot sides are designated as: 1 = below, 2 = left, 3 = above, and 4 = right.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{axis}}, \code{\link{axis.POSIXct}},

@@ -63,7 +63,7 @@ Queries and sets the following components of \code{\link{Data}}:
 Re-importing data does not affect values specified in this \acronym{GUI}.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{
 \donttest{SetConfiguration()}

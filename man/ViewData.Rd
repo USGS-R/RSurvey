@@ -37,7 +37,7 @@ Requires the Tcl package
 \href{http://tktable.sourceforge.net/}{Tktable}.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{tclArray}}, \code{\link{row.names}}

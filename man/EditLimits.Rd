@@ -40,7 +40,7 @@ Returns a list containing the following components:
     default is \code{(NA,NA)}.}
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{
 \donttest{EditLimits()}

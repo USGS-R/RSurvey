@@ -44,7 +44,7 @@ following components:
 \code{\link{quantile}}, \code{\link{hist}}
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{
 summary(attenu$dist, digits = 4)

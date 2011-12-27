@@ -28,7 +28,7 @@ SetPolygonLimits(poly.names = NULL, poly.data = NULL,
 Returns a list with components \code{poly.data} and \code{poly.crop}.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{AutocropPolygon}}, \code{tri.mesh}

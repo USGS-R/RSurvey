@@ -57,7 +57,7 @@ the left, right, and center mouse buttons rotate the scene, rotate the scene
 around the x-axis, and zooms the display, respectively.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{surface3d}}, \code{\link{points3d}}

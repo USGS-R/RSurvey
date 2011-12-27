@@ -45,7 +45,7 @@ directly using default argument values.
 \code{\link{ReadData}}, \code{\link{read.table}}, \code{\link{connections}}
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{
 \donttest{tclRequire("Tktable", warn = TRUE)

@@ -60,7 +60,7 @@ If \code{type = "g"} returns a list with components:
 \item{vf}{numeric; volumetric flux (optional).}
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{point.in.polygon}}, \code{\link{CutoutPolygon}},

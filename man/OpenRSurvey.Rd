@@ -23,7 +23,7 @@ Quaries and sets the \code{vars} component of \code{\link{Data}}. The
   state variable in \code{cols}, see \code{\link{ManageData}}.}
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{
 \donttest{OpenRSurvey()}

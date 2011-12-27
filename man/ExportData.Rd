@@ -25,7 +25,7 @@ ExportData(col.ids, file.type = "text", parent = NULL)
 \code{\link{WriteFile}}
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{
 \donttest{ExportData(col.ids = c("V1", "V2", "V3"), file.type = "text")}

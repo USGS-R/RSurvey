@@ -21,7 +21,7 @@ ChoosePch(pch = NA, parent = NULL)
 Returns a numeric or integer value based on a user selection.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{points}}

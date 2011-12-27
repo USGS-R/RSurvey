@@ -37,7 +37,7 @@ numeric vectors.
 \code{\link{is.nan}}
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{data(tritest)
 Data("data.raw", as.data.frame(tritest))

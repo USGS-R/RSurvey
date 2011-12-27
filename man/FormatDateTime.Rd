@@ -28,7 +28,7 @@ Returns a character string representing the formatted date-time value.
 \code{\link{strptime}}, \code{\link{format}}
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{
 \donttest{FormatDateTime(fmt = "\%d/\%m/\%Y")}

@@ -32,7 +32,7 @@ If data is re-imported, parameters in this \acronym{GUI} are set to default
 values.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{mba.points}}

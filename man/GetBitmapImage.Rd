@@ -30,7 +30,7 @@ A recommended editor for bitmap design is Paul Obermeier's
 An image of class \code{\link{tclObj}}.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{tkimage.create}}

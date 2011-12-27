@@ -30,7 +30,7 @@ Returns a list containing the following components:
   \item{z}{matrix; the state variable corresponding to coordinates in the grid.}
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{point.in.polygon}}

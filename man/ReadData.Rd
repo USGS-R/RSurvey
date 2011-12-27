@@ -78,7 +78,7 @@ Returns a list with the following components:
   \code{cols} that correspond to the respective state variable.}
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{read.table}}

@@ -25,7 +25,7 @@ Rename(names = NULL, cur.name = NULL, win.title = NULL,
 Returns a character vector with updated values of \code{names}.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{
 \donttest{Rename(names = c("Name1", "Name2", "Name3"), cur.name = "Name2")}

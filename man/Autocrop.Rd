@@ -33,7 +33,7 @@ Returns a polygon object of \code{\link{gpc.poly-class}}.
 \code{\link{AutocropPolygon}}, \code{tri.mesh}
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{
 data(tritest)

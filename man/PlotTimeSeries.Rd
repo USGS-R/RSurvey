@@ -44,7 +44,7 @@ Line segments will not be drawn where time differences between consecutive
 points are greater than \code{tgap}.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{points}}, \code{\link{lines}}, \code{\link{AddAxis}}

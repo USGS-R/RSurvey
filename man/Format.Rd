@@ -28,7 +28,7 @@ Returns a character string.
 \code{\link{sprintf}}, \code{\link{format}}
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \examples{
 \donttest{Format(sample = pi, fmt = "\%3.8f")

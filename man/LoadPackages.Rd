@@ -21,7 +21,7 @@ LoadPackages(repo = "http://cran.r-project.org")
   package installation.}
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{install.packages}}, \code{\link{require}}

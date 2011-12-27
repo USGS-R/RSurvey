@@ -24,7 +24,7 @@ a string of the form \code{"#RRGGBB"} where each of the pairs
 giving a value in the range \code{00} to \code{FF}.
 }
 
-\author{Fisher, J.C.}
+\author{J.C. Fisher}
 
 \seealso{
 \code{\link{col2rgb}}
