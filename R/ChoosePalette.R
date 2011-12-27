@@ -1,19 +1,19 @@
-ChoosePalette <- function(pal, n=7L, parent=NULL) {
+ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
 # A GUI for selecting a color palette.
 
   # Additional functions (subroutines)
 
-  # Open file and save
+  # Open palette from file
 
-
-
-
-
-
-
-
-
-
+  OpenPaletteFromFile <- function() {
+    f <- GetFile(cmd="Open", exts="R", win.title="Open Palette File", parent=tt)
+    if (is.null(f))
+      return()
+    pal <- dget(file=f$path)
+    ConvertPaletteToAttributes(pal)
+    AssignAttributesToWidgets()
+    UpdateDataType()
+  }
 
   # Save palette to file
 
@@ -253,13 +253,13 @@ ChoosePalette <- function(pal, n=7L, parent=NULL) {
   # Convert palette to attributes
 
   ConvertPaletteToAttributes <- function(pal) {
-    if (missing(pal) || is.null(pal)) {
+    if (!inherits(pal, "function")) {
       tclvalue(nature.var) <- "Sequential (multiple hues)"
       pal.attributes <- seqm.pals[[4]]
     } else {
-      arg <- formals(pal)
-      what <- c("numeric", "integer")
+      arg <- sapply(formals(pal), function(i) {if (is.call(i)) eval(i) else i})
 
+      what <- c("numeric", "integer")
       q.args <- c("c", "l", "start", "end")
       d.args <- c("h", "c",  "l", "power")
       s.args <- c("h", "c.", "l", "power")
@@ -324,8 +324,7 @@ ChoosePalette <- function(pal, n=7L, parent=NULL) {
   # Set default and initial palettes
 
   vars <- c("h1", "h2", "c1", "c2", "l1", "l2", "p1", "p2")
-  for (i in vars)
-    assign(i, 0)
+  h1 <- h2 <- c1 <- c2 <- l1 <- l2 <- p1 <- p2 <- 0
 
   qual.pals <- list()
   qual.pals[[1]] <- c( 30,  300,  50, NA, 70, NA,  NA,  NA)
@@ -407,7 +406,7 @@ ChoosePalette <- function(pal, n=7L, parent=NULL) {
   tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
 
   tkadd(menu.file, "command", label="Open palette", accelerator="Ctrl+O",
-        command=function() print("notyet"))
+        command=OpenPaletteFromFile)
   tkadd(menu.file, "command", label="Save palette as",
         accelerator="Shift+Ctrl+S", command=SavePaletteToFile)
 

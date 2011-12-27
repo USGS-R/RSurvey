@@ -9,7 +9,7 @@ A \acronym{GUI} for viewing or manipulating color palettes.
 }
 
 \usage{
-ChoosePalette(pal, n = 7L, parent = NULL)
+ChoosePalette(pal = terrain_hcl, n = 7L, parent = NULL)
 }
 
 \arguments{
@@ -40,7 +40,7 @@ Colors for Statistical Graphics}, Computational Statistics & Data Analysis,
 }
 
 \examples{
-\donttest{pal <- ChoosePalette()}
+\donttest{pal <- ChoosePalette(rainbow_hcl)}
 }
 
 \keyword{misc}
