@@ -40,7 +40,8 @@ Colors for Statistical Graphics}, Computational Statistics & Data Analysis,
 }
 
 \examples{
-\donttest{pal <- ChoosePalette(rainbow_hcl)}
+\donttest{pal <- ChoosePalette(terrain_hcl)
+filled.contour(volcano, color.palette = pal, asp = 1)}
 }
 
 \keyword{misc}
