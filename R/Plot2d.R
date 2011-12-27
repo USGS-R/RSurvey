@@ -296,8 +296,7 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
   if (add.contour.lines && type %in% c("l", "g")) {
       lwd <- 0.5 * (96 / (6 * 12))
       contour(x=x, y=y, z=z, col="#999999", lty="solid",
-              add=TRUE, nlevels=nlevels, vfont = c("sans serif", "plain"),
-              lwd=lwd)
+              add=TRUE, nlevels=nlevels, lwd=lwd)
   }
 
   # Plot vector arrows
