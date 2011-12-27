@@ -230,22 +230,18 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
     max.x <- length(default.pals) * 30 + 10
     if (x < 5 | x > max.x)
       return()
-
     x.seq <- seq(5, max.x, by=30)
     i <- findInterval(x, x.seq, rightmost.closed=TRUE)
     x1 <- x.seq[i]
     x2 <- x.seq[i + 1]
-
     for (j in 1:length(vars)) {
       val <- default.pals[[i]][j]
       if (is.na(val))
         val <- 0
       assign(vars[j], val, inherits=TRUE)
     }
-
     AssignAttributesToWidgets()
     DrawPalette()
-
     pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2) - 0.5)
     tkcreate(frame2.cvs, "polygon", pts, fill="", outline="black", tag="browse")
   }
@@ -253,17 +249,13 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
   # Convert palette to attributes
 
   ConvertPaletteToAttributes <- function(pal) {
-    if (!inherits(pal, "function")) {
-      tclvalue(nature.var) <- "Sequential (multiple hues)"
-      pal.attributes <- seqm.pals[[4]]
-    } else {
-      arg <- sapply(formals(pal), function(i) {if (is.call(i)) eval(i) else i})
-
+    pal.attributes <- NULL
+    if (inherits(pal, "function")) {
       what <- c("numeric", "integer")
       q.args <- c("c", "l", "start", "end")
       d.args <- c("h", "c",  "l", "power")
       s.args <- c("h", "c.", "l", "power")
-
+      arg <- sapply(formals(pal), function(i) {if (is.call(i)) eval(i) else i})
       if (all(sapply(q.args, function(i) inherits(arg[[i]], what)))) {
         tclvalue(nature.var) <- "Qualitative"
         pal.attributes <- c(arg$start, arg$end, arg$c, NA, arg$l, NA, NA, NA)
@@ -279,6 +271,10 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
         tclvalue(nature.var) <- "Diverging"
         pal.attributes <- c(arg$h, arg$c, NA, arg$l, arg$power, NA)
       }
+    }
+    if (is.null(pal.attributes)) {
+      tclvalue(nature.var) <- "Sequential (multiple hues)"
+      pal.attributes <- seqm.pals[[4]]
     }
     for (i in 1:length(vars)) {
       if (is.na(pal.attributes[i]))
@@ -599,6 +595,9 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
   # Bind events
 
   tclServiceMode(TRUE)
+
+  tkbind(tt, "<Control-o>", OpenPaletteFromFile)
+  tkbind(tt, "<Shift-Control-S>", SavePaletteToFile)
 
   tkbind(frame1.box.2, "<<ComboboxSelected>>", UpdateDataType)
 

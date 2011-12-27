@@ -516,6 +516,7 @@ OpenRSurvey <- function() {
            xlab=xlab, ylab=ylab, zlab=zlab, asp=Data("asp.yx"),
            csi=Data("csi"), width=Data("width"), nlevels=nlevels,
            cex.pts=Data("cex.pts"), rkey=Data("rkey"),
+           color.palette=Data("color.palette"),
            vuni=Data("vuni"), vmax=Data("vmax"),
            vxby=Data("vxby"), vyby=Data("vyby"),
            axis.side=axis.side, minor.ticks=Data("minor.ticks"),
@@ -572,15 +573,6 @@ OpenRSurvey <- function() {
         } else if (type == "l") {
           cutout <- CutoutPolygon(dat, ply.new)
           if (!is.null(cutout)) {
-            x <- cutout$x
-            y <- cutout$y
-            z <- cutout$z
-            levels <- pretty(range(z, na.rm=TRUE), nlevels)
-            col <- colorRampPalette(c("blue", "white", "red"))(length(levels) - 1)
-            if (!is.double(z))
-              storage.mode(z) <- "double"
-            .Internal(filledcontour(as.double(x), as.double(y), z,
-                                    as.double(levels), col=col))
             Data("poly", ply.list)
             Data("poly.crop", ply.name)
             Data("data.grd", NULL)
@@ -610,7 +602,7 @@ OpenRSurvey <- function() {
     Plot3d(x=dat, px=pts, xlim=lim$x, ylim=lim$y, zlim=lim$z,
            vasp=Data("asp.zx"), hasp=Data("asp.yx"),
            width=Data("width"), cex.pts=Data("cex.pts"),
-           nlevels=Data("nlevels"))
+           nlevels=Data("nlevels"), color.palette=Data("color.palette"))
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }
@@ -919,6 +911,12 @@ OpenRSurvey <- function() {
         command=function() {
           lim <- EditLimits(Data("lim.axes"), "Axes Limits", tt)
           Data("lim.axes", lim)
+        })
+  tkadd(menu.plot, "command", label="Set color palette",
+        command=function() {
+          pal <- ChoosePalette(Data("color.palette"), Data("nlevels"), tt)
+          if (!is.null(pal))
+            Data("color.palette", pal)
         })
 
   tkadd(menu.plot, "separator")

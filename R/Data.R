@@ -5,24 +5,25 @@ Data <- local({
 
   dat <- list()
 
-  default <- list("nlevels"      = 20,
-                  "width"        = 7,
-                  "cex.pts"      = 1,
-                  "default.dir"  = getwd(),
-                  "sep"          = "\t",
-                  "rkey"         = 0,
-                  "show.poly"    = 0,
-                  "img.contour"  = 0,
-                  "show.lines"   = 0,
-                  "show.points"  = 0,
-                  "vuni"         = 0,
-                  "show.2.axes"  = 0,
-                  "minor.ticks"  = 0,
-                  "ticks.inside" = 0,
-                  "rm.pnt.line"  = 0,
-                  "grid.res"     = list(x=NA, y=NA),
-                  "grid.mba"     = list(n=NA, m=NA, h=11),
-                  "encoding"     = getOption("encoding")
+  default <- list("nlevels"       = 20,
+                  "width"         = 7,
+                  "cex.pts"       = 1,
+                  "default.dir"   = getwd(),
+                  "sep"           = "\t",
+                  "rkey"          = 0,
+                  "show.poly"     = 0,
+                  "img.contour"   = 0,
+                  "show.lines"    = 0,
+                  "show.points"   = 0,
+                  "vuni"          = 0,
+                  "show.2.axes"   = 0,
+                  "minor.ticks"   = 0,
+                  "ticks.inside"  = 0,
+                  "rm.pnt.line"   = 0,
+                  "grid.res"      = list(x=NA, y=NA),
+                  "grid.mba"      = list(n=NA, m=NA, h=11),
+                  "encoding"      = getOption("encoding"),
+                  "color.palette" = colorspace::terrain_hcl
               )
 
   # Main program
@@ -46,7 +47,8 @@ Data <- local({
                          "vmax", "vxby", "vyby", "rkey", "show.poly",
                          "img.contour", "show.lines", "show.points",
                          "vuni", "date.fmt", "poly", "proj.file",
-                         "show.2.axes", "minor.ticks", "ticks.inside")
+                         "show.2.axes", "minor.ticks", "ticks.inside",
+                         "color.palette")
       save.params <- save.params[save.params %in% names(dat)]
       dat <<- sapply(save.params, function(i) list(dat[[i]]))
       return(invisible())
