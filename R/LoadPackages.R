@@ -17,14 +17,11 @@ LoadPackages <- function(repo="http://cran.r-project.org") {
     suppressPackageStartupMessages(require("tcltk"))
 
   if (any(is.missing)) {
-    contriburl <- contrib.url(repos=repo, type=getOption("pkgType"))
     missing.pkgs <- pkgs[is.missing]
-
     msg <- paste("The following packages used by RSurvey are missing:",
                  paste(" ", paste(missing.pkgs, collapse=", ")),
                  "Without these packages, some features will not be available.",
                  "Install these packages from CRAN?", sep="\n")
-
     if (is.tcl)
       ans <- as.character(tkmessageBox(icon="error", message=msg,
                                        title="Missing Packages", type="yesno"))
@@ -33,6 +30,7 @@ LoadPackages <- function(repo="http://cran.r-project.org") {
     is.install <- tolower(substr(ans, 1, 1)) == "y"
 
     if (is.install) {
+      contriburl <- contrib.url(repos=repo, type=getOption("pkgType"))
       cran.pkgs <- available.packages(contriburl)
       if (!all(missing.pkgs %in% cran.pkgs))
         repo <- NULL
