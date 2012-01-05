@@ -27,12 +27,11 @@ RestoreSession <- function(path, save.objs, fun.call) {
   all.objs <- ls(all.names=FALSE, envir=as.environment(1))
   cur.objs <- all.objs[!all.objs %in% save.objs]
 
-  graphics.off()
-
-  rm(list=cur.objs, envir=as.environment(1))
-
   r.files <- list.files(path, pattern="[.][R]$", full.names=TRUE,
                         recursive=TRUE, ignore.case=TRUE)
+
+  graphics.off()
+  rm(list=cur.objs, envir=as.environment(1))
 
   err.msg <- "\n"
 
