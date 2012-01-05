@@ -7,24 +7,38 @@ LoadPackages <- function(repo="http://cran.r-project.org") {
                     "colorspace")
   suggest.pkgs <- c("rgdal")
 
-  # Packages that may be useful for future work:
-  # "udunits", "mgcv", "classInt", "maptools"
-
-  available.pkgs <- .packages(all.available=TRUE)
-
-  if (any(!suggest.pkgs %in% available.pkgs)) {
-    contriburl <- contrib.url(repos=repo, type=getOption("pkgType"))
-    cran.pkgs <- available.packages(contriburl)
-    is.available <- suggest.pkgs %in% available.pkgs |
-                    suggest.pkgs %in% cran.pkgs
-    suggest.pkgs <- suggest.pkgs[is.available]
-  }
-
   pkgs <- c(require.pkgs, suggest.pkgs)
 
-  install.pkgs <- pkgs[!pkgs %in% available.pkgs]
-  if (length(install.pkgs) > 0)
-    install.packages(install.pkgs, repos=repo)
+  available.pkgs <- .packages(all.available=TRUE)
+  is.missing <- !pkgs %in% available.pkgs
+
+  is.tcl <- "tcltk" %in% available.pkgs
+  if (is.tcl)
+    suppressPackageStartupMessages(require("tcltk"))
+
+  if (any(is.missing)) {
+    contriburl <- contrib.url(repos=repo, type=getOption("pkgType"))
+    missing.pkgs <- pkgs[is.missing]
+
+    msg <- paste("The following packages used by RSurvey are missing:",
+                 paste(" ", paste(missing.pkgs, collapse=", ")),
+                 "Without these packages, some features will not be available.",
+                 "Install these packages from CRAN?", sep="\n")
+
+    if (is.tcl)
+      ans <- as.character(tkmessageBox(icon="error", message=msg,
+                                       title="Missing Packages", type="yesno"))
+    else
+      ans <- readline(paste(msg, " (yes/no)  "))
+    is.install <- tolower(substr(ans, 1, 1)) == "y"
+
+    if (is.install) {
+      cran.pkgs <- available.packages(contriburl)
+      if (!all(missing.pkgs %in% cran.pkgs))
+        repo <- NULL
+      install.packages(missing.pkgs, repos=repo)
+    }
+  }
 
   for (pkg in pkgs) {
     is.pkg <- suppressPackageStartupMessages(require(pkg, character.only=TRUE))
@@ -36,8 +50,12 @@ LoadPackages <- function(repo="http://cran.r-project.org") {
 
   tcl.pkg <- tryCatch(tcl("package", "require", "Tktable"), error=identity)
   if (inherits(tcl.pkg, "error")) {
-    txt <- paste("Tcl package Tktable not found and is strongly recommended",
-                 "for full functionality (http://tktable.sourceforge.net/).")
-    warning(txt, domain=NA)
+    msg <- paste("Tcl package Tktable is missing and is strongly recommended",
+                 "for full functionality of RSurvey.\n ",
+                 "http://tktable.sourceforge.net")
+    if (is.tcl)
+      tkmessageBox(icon="warning", message=msg, title="Missing Tktable", type="ok")
+    else
+      warning(msg, domain=NA)
   }
 }
