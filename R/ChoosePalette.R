@@ -109,31 +109,31 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
 
   # Get color palette as function of n
 
-  GetPalette <- function(h1, h2, c1, c2, l1, l2, p1, p2) {
+  GetPalette <- function(h1, h2, c1, c2, l1, l2, p1, p2, fixup=TRUE) {
     type <- as.character(tclvalue(nature.var))
     if (type == "Qualitative") {
       f <- rainbow_hcl
       formals(f) <- eval(substitute(alist(n=, c=d1, l=d2, start=d3, end=d4,
-                                          gamma=NULL, fixup=TRUE, ...=),
+                                          fixup=d5, gamma=NULL, ...=),
                                     list(d1=c1, d2=l1, d3=h1, d4=h2)))
     } else if (type == "Sequential (single hue)") {
       f <- sequential_hcl
       formals(f) <- eval(substitute(alist(n=, h=d1, c.=d2, l=d3, power=d4,
-                                          gamma=NULL, fixup=TRUE, ...=),
+                                          fixup=d5, gamma=NULL, ...=),
                                     list(d1=h1, d2=c(c1, c2), d3=c(l1, l2),
-                                         d4=p1)))
+                                         d4=p1, d5=fixup)))
     } else if (type == "Sequential (multiple hues)") {
       f <- heat_hcl
       formals(f) <- eval(substitute(alist(n=, h=d1, c.=d2, l=d3, power=d4,
-                                          gamma=NULL, fixup=TRUE, ...=),
+                                          fixup=d5, gamma=NULL, ...=),
                                     list(d1=c(h1, h2), d2=c(c1, c2),
-                                         d3=c(l1, l2), d4=c(p1, p2))))
+                                         d3=c(l1, l2), d4=c(p1, p2), d5=fixup)))
     } else if (type == "Diverging") {
       f <- diverge_hcl
       formals(f) <- eval(substitute(alist(n=, h=d1, c=d2, l=d3, power=d4,
-                                          gamma=NULL, fixup=TRUE, ...=),
+                                          fixup=d5, gamma=NULL, ...=),
                                     list(d1=c(h1, h2), d2=c1, d3=c(l1, l2),
-                                         d4=p1)))
+                                         d4=p1, d5=fixup)))
     }
     f
   }
@@ -146,8 +146,9 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
       tcl(frame2.cvs, "delete", "browse")
     tcl(frame5.cvs, "delete", "pal")
     pal.cols <- pal(n)
-    if (any(is.na(pal.cols)))
-      return()
+    pal.cols[is.na(pal.cols)] <- "#FFFFFF"
+    if (as.logical(as.integer(tclvalue(rm.chroma.var))))
+      pal.cols <- desaturate(pal.cols)
     dx <- (cvs.width - 1) / n
     x2 <- 1
     y1 <- 1
@@ -184,8 +185,10 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
     x1 <- 10
     for (i in 1:length(default.pals)) {
       pal <- do.call(GetPalette, args=as.list(default.pals[[i]]))
+      pal.cols <- pal(5)
+      pal.cols[is.na(pal.cols)] <- "#FFFFFF"
       y2 <- 10
-      for (j in pal(5)) {
+      for (j in pal.cols) {
         x2 <- x1 + 20
         y1 <- y2
         y2 <- y1 + 10
@@ -379,6 +382,8 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
   p2.scl.var <- tclVar()
   p2.ent.var <- tclVar()
 
+  rm.chroma.var <- tclVar(FALSE)
+
   tt.done.var <- tclVar(0)
 
   # Open GUI
@@ -421,23 +426,28 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
 
   tkconfigure(tt, menu=top.menu)
 
-  # Frame 0, ok and cancel buttons
+  # Frame 0, example, ok, and cancel buttons
 
   frame0 <- ttkframe(tt, relief="flat")
 
-  frame0.but.1 <- ttkbutton(frame0, width=12, text="OK", command=SavePalette)
-  frame0.but.2 <- ttkbutton(frame0, width=12, text="Cancel",
+  frame0.but.1 <- ttkbutton(frame0, width=12, text="Example",
+                            command=function() print("notyet"))
+
+  frame0.but.3 <- ttkbutton(frame0, width=12, text="OK", command=SavePalette)
+  frame0.but.4 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() {
                               pal.rtn <<- NULL
                               tclvalue(tt.done.var) <- 1
                             })
 
-  tkgrid(frame0.but.1, frame0.but.2, pady=c(10, 10))
+  tkgrid(frame0.but.1, "x", frame0.but.3, frame0.but.4, pady=c(10, 10))
 
-  tkgrid.configure(frame0.but.1, sticky="e")
-  tkgrid.configure(frame0.but.2, sticky="w", padx=c(4, 10))
+  tkgrid.configure(frame0.but.1, sticky="w", padx=c(10, 0))
+  tkgrid.configure(frame0.but.3, sticky="e")
+  tkgrid.configure(frame0.but.4, sticky="w", padx=c(4, 10))
+  tkgrid.columnconfigure(frame0, 1, weight=1)
 
-  tkpack(frame0, side="bottom", anchor="e")
+  tkpack(frame0, fill="x", side="bottom", anchor="e")
 
   # Frame 1, choose nature of data
 
@@ -469,7 +479,7 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
 
   # Frame 3, color description
 
-  txt <- "Color description: Hue, Croma, Luminance, Power"
+  txt <- "Color description: Hue, Chroma, Luminance, Power"
   frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text=txt)
 
   frame3.lab.1.1 <- ttklabel(frame3, text="H1", width=2)
@@ -577,14 +587,18 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
 
   tkpack(frame4, fill="x", padx=10)
 
- # Frame 5, color palette
+ # Frame 5, color palette and desaturation
 
   frame5 <- ttkframe(tt, relief="flat")
   frame5.cvs <- tkcanvas(frame5, relief="flat",
                          width=cvs.width + 1, height=cvs.height + 1,
                          background="black", confine=TRUE, closeenough=0,
                          borderwidth=0, highlightthickness=0)
+  txt <- "View palette with chroma removed"
+  frame5.chk <- ttkcheckbutton(frame5, text=txt, variable=rm.chroma.var,
+                               command=function() DrawPalette())
   tkgrid(frame5.cvs, padx=10, pady=c(10, 0))
+  tkgrid(frame5.chk, padx=10, pady=c(2, 0), sticky="w")
   tkpack(frame5)
 
   # Initial commands
