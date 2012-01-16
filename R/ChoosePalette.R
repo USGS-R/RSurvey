@@ -115,7 +115,7 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
       f <- rainbow_hcl
       formals(f) <- eval(substitute(alist(n=, c=d1, l=d2, start=d3, end=d4,
                                           fixup=d5, gamma=NULL, ...=),
-                                    list(d1=c1, d2=l1, d3=h1, d4=h2)))
+                                    list(d1=c1, d2=l1, d3=h1, d4=h2, d5=fixup)))
     } else if (type == "Sequential (single hue)") {
       f <- sequential_hcl
       formals(f) <- eval(substitute(alist(n=, h=d1, c.=d2, l=d3, power=d4,
@@ -159,6 +159,7 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
       pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2))
       tkcreate(frame5.cvs, "polygon", pts, fill=i, tag="pal")
     }
+    RegenExample(pal.cols)
   }
 
   # Update data type
@@ -309,6 +310,45 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
     tclvalue(p2.scl.var) <- p2
   }
 
+  # Show example plot
+
+  ShowExample <- function() {
+    if (!dev.example %in% dev.list()) {
+      windows(width=7, height=7, pointsize=10)
+      dev.example <<- dev.cur()
+    }
+    par(mfrow=c(2, 2), oma=c(0.1, 0.1, 0.1, 0.1), mar=c(1, 1, 1, 1))
+    DrawPalette()
+  }
+
+  # Regenerate example plot
+
+  RegenExample <- function(pal.cols) {
+    if (dev.example %in% dev.list())
+      dev.set(which=dev.example)
+    else
+      return()
+    n <- length(pal.cols)
+
+    # Pie chart
+    pie(rep(1, n), col=pal.cols, labels=NA, border=NA, radius=1)
+
+    # Point plot
+    p <- plot(point.data, type="n", xaxt="n", yaxt="n", xlab="", ylab="",
+              main="", frame.plot=FALSE)
+    pnt.cols <- sample(pal.cols, size=500, replace=TRUE)
+    points(point.data, pch=21, bg=pnt.cols, cex=1.5)
+
+    # Histogram plot
+    h <- hist(volcano, breaks=hist.breaks, plot=FALSE)
+    bar.cols <- c(pal.cols, sample(pal.cols, size=50 - n, replace=TRUE))
+    plot(h, col=bar.cols, xaxt="n", yaxt="n", xlab="", ylab="", main="")
+
+    # Filled-contour plot
+    image(volcano, col=pal.cols, xaxt="n", yaxt="n", useRaster=TRUE)
+    box()
+  }
+
 
   # Main program
 
@@ -319,6 +359,12 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
   # Initialize default palettes
 
   default.pals <- NULL
+
+  # Initialize graphics device and objects for example plots
+
+  dev.example <- 1
+  hist.breaks <- seq(min(volcano), max(volcano), length.out=50)
+  point.data <- cbind(rnorm(500), rnorm(500))
 
   # Set default and initial palettes
 
@@ -351,7 +397,7 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
   h.lim <- c(-360, 360)
   c.lim <- c(   0, 100)
   l.lim <- c(   0, 100)
-  p.lim <- c(   0,   5)
+  p.lim <- c(   0,   2)
 
   # Set dimensions on palette canvas
 
@@ -431,8 +477,7 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
   frame0 <- ttkframe(tt, relief="flat")
 
   frame0.but.1 <- ttkbutton(frame0, width=12, text="Example",
-                            command=function() print("notyet"))
-
+                            command=ShowExample)
   frame0.but.3 <- ttkbutton(frame0, width=12, text="OK", command=SavePalette)
   frame0.but.4 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() {
@@ -650,6 +695,9 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
   tkgrab.release(tt)
   tkdestroy(tt)
   tclServiceMode(TRUE)
+
+  if (dev.example %in% dev.list())
+    dev.off(which=dev.example)
 
   invisible(pal.rtn)
 }
