@@ -314,7 +314,7 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
 
   ShowExample <- function() {
     if (!dev.example %in% dev.list()) {
-      windows(width=7, height=7, pointsize=10)
+      x11()
       dev.example <<- dev.cur()
     }
     par(mfrow=c(2, 2), oma=c(0.1, 0.1, 0.1, 0.1), mar=c(1, 1, 1, 1))
