@@ -912,7 +912,7 @@ OpenRSurvey <- function() {
           lim <- EditLimits(Data("lim.axes"), "Axes Limits", tt)
           Data("lim.axes", lim)
         })
-  tkadd(menu.plot, "command", label="Set color palette",
+  tkadd(menu.plot, "command", label="Choose color palette",
         command=function() {
           pal <- ChoosePalette(Data("color.palette"), Data("nlevels"), tt)
           if (!is.null(pal))
