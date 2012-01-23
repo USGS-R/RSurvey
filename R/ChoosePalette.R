@@ -657,7 +657,7 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
   tkgrid.configure(frame4.scl.2, sticky="we", padx=c(4, 10))
   tkgrid.columnconfigure(frame4, 1, weight=1)
 
-  tkpack(frame4, fill="x", padx=10)
+  tkpack(frame4, fill="x", padx=10, pady=10)
 
  # Frame 5, color palette and robustness checks
 
@@ -666,7 +666,7 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
                          width=cvs.width + 1, height=cvs.height + 1,
                          background="black", confine=TRUE, closeenough=0,
                          borderwidth=0, highlightthickness=0)
-  tkgrid(frame5.cvs, padx=10, pady=c(10, 0))
+  tkgrid(frame5.cvs, padx=10, pady=0)
 
   frame5.chk.1 <- ttkcheckbutton(frame5, text="Desaturation",
                                  variable=desaturation.var,
