@@ -672,9 +672,9 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
                                  variable=desaturation.var,
                                  command=function() DrawPalette(is.n=TRUE))
 
-  is.pkg <- "dichromat" %in% .packages(all.available=TRUE)
+  is.pkg <- "dichromat" %in% .packages(all.available=TRUE) &&
+            require(dichromat, quietly=FALSE)
   if (is.pkg) {
-    require("dichromat", character.only=TRUE, quietly=TRUE)
     frame5.chk.2 <- ttkcheckbutton(frame5, text="Color blindness:",
                                    variable=colorblind.var,
                                    command=function() DrawPalette(is.n=TRUE))
