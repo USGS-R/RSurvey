@@ -5,7 +5,7 @@ LoadPackages <- function(repo="http://cran.r-project.org") {
 
   require.pkgs <- c("tcltk", "sp", "gpclib", "rgl", "MBA", "tripack",
                     "colorspace")
-  suggest.pkgs <- c("rgdal")
+  suggest.pkgs <- c("rgdal", "dichromat")
 
   pkgs <- c(require.pkgs, suggest.pkgs)
 
