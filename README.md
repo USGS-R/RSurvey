@@ -40,11 +40,13 @@ Install required R packages from CRAN using a simple call to
 
     > install.packages('RSurvey')
 
-Install an optional R package
+Install optional R packages
 [rgdal](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal")
-for shapefile support:
+for shapefile support and
+[dichromat](http://cran.r-project.org/web/packages/dichromat/index.html "dichromat")
+for color-blind safe palettes:
 
-    > install.packages('rgdal')
+    > install.packages(c('rgdal', 'dichromat'))
 
 Support for displaying table data is provided by
 [tktable](http://tktable.sourceforge.net/ "tktable"),
