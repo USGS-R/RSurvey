@@ -48,7 +48,7 @@ Data <- local({
                          "img.contour", "show.lines", "show.points",
                          "vuni", "date.fmt", "poly", "proj.file",
                          "show.2.axes", "minor.ticks", "ticks.inside",
-                         "color.palette")
+                         "color.palette", "rm.pnt.line")
       save.params <- save.params[save.params %in% names(dat)]
       dat <<- sapply(save.params, function(i) list(dat[[i]]))
       return(invisible())

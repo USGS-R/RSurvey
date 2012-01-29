@@ -7,11 +7,10 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
   # Check for necessary information
 
   if (file.type == "shape") {
-    is.pkg <- suppressPackageStartupMessages(require("rgdal",
-                                                     character.only=TRUE,
-                                                     quietly=TRUE))
+    is.pkg <- "rgdal" %in% .packages(all.available=TRUE) &&
+              require(rgdal, quietly=FALSE)
     if (!is.pkg)
-      stop()
+      stop("package rgdal required for shapefile support")
   }
 
   if (is.null(Data("data.raw")))
@@ -157,7 +156,7 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
       file.layer <- sub(paste(".", file.ext, "$", sep=""), "", file.base)
 
     writeOGR(obj=d, dsn=file.dir, layer=file.layer, driver="ESRI Shapefile",
-             verbose=TRUE)
+             verbose=TRUE, overwrite_layer=TRUE)
   } else {
 
     # Construct header
