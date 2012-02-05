@@ -321,7 +321,7 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
       x11()
       dev.example <<- dev.cur()
     }
-    par(mfrow=c(2, 2), oma=c(0.1, 0.1, 0.1, 0.1), mar=c(1, 1, 1, 1))
+    par(mfrow=c(2, 2), oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0))
     DrawPalette(is.n=TRUE)
   }
 
@@ -334,23 +334,55 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
       return()
     n <- length(pal.cols)
 
-    # Pie chart
-    pie(rep(1, n), col=pal.cols, labels=NA, border=NA, radius=1)
-
-    # Point plot
-    p <- plot(point.data, type="n", xaxt="n", yaxt="n", xlab="", ylab="",
-              main="", frame.plot=FALSE)
-    pnt.cols <- sample(pal.cols, size=500, replace=TRUE)
-    points(point.data, pch=21, bg=pnt.cols, cex=1.2)
-
-    # Histogram plot
-    h <- hist(volcano, breaks=hist.breaks, plot=FALSE)
-    bar.cols <- c(pal.cols, sample(pal.cols, size=50 - n, replace=TRUE))
-    plot(h, col=bar.cols, xaxt="n", yaxt="n", xlab="", ylab="", main="")
-
-    # Filled-contour plot
-    image(volcano, col=pal.cols, xaxt="n", yaxt="n", useRaster=TRUE)
+    # Map
+    plot(0, 0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n",
+         xlim=c(-88.5, -78.6), ylim=c(30.2, 35.2))
+    polygon(agsc, col=pal.cols[cut(na.omit(agsc$z), breaks=0:n / n)])
     box()
+
+    # Filled-contour
+    image(volcano, col=rev(pal.cols), xaxt="n", yaxt="n", useRaster=TRUE)
+    box()
+
+    # Mosaic
+    random.matrix <- matrix(runif(n * 10, min=-1, max=1), nrow=10, ncol=n)
+    image(random.matrix, col=pal.cols, xaxt="n", yaxt="n", useRaster=TRUE)
+    box()
+
+    # Points
+
+
+    p <- plot(x=NULL, xlim=c(-1, 1), ylim=c(-1, 1),
+              type="n", xaxt="n", yaxt="n", xlab="", ylab="",
+              main="", frame.plot=FALSE)
+
+
+
+    sd.pts <- (1 - (n / 50)) * 0.3 + 0.1
+    npts <- floor(500 / n)
+
+    for (i in 1:n) {
+      xy.pts <- cbind(rnorm(npts, mean=mean.pts[i, 1], sd=sd.pts),
+                      rnorm(npts, mean=mean.pts[i, 2], sd=sd.pts))
+      points(xy.pts, pch=21, bg=pal.cols[i], cex=1.0)
+    }
+
+    box()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   }
 
 
@@ -368,7 +400,19 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
 
   dev.example <- 1
   hist.breaks <- seq(min(volcano), max(volcano), length.out=50)
-  point.data <- cbind(rnorm(500), rnorm(500))
+
+  suppressWarnings(try(data("agsc", package="RSurvey", verbose=FALSE),
+                       silent=TRUE))
+  if (!exists("agsc"))
+    data("agsc", package=character(0), verbose=FALSE)
+  if (!exists("agsc"))
+    agsc <- NULL
+
+
+
+   mean.pts <- cbind(runif(50, min=-1, max=1), runif(50, min=-1, max=1))
+
+
 
   # Set default and initial palettes
 
@@ -404,7 +448,7 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
   seqm.pals[[6]]  <- c(  0,   90,  80, 30, 30, 90, 0.2, 2.0)
   seqm.pals[[7]]  <- c(  0,   90, 100, 30, 50, 90, 0.2, 1.0)
   seqm.pals[[8]]  <- c(130,   30,  65,  0, 45, 90, 0.5, 1.5)
-  seqm.pals[[9]]  <- c(130,   30,  80,  0, 60, 95, 0.0, 1.0)
+  seqm.pals[[9]]  <- c(130,   30,  80,  0, 60, 95, 0.1, 1.0)
   seqm.pals[[10]] <- c(  0, -100,  40, 80, 75, 40, 1.0, 0.0)
 
   dive.pals <- list()
