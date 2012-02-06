@@ -1,4 +1,5 @@
-ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
+ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL,
+                          example.plot=NULL) {
 # A GUI for selecting a color palette.
 
   # Additional functions (subroutines)
@@ -321,7 +322,8 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
       x11()
       dev.example <<- dev.cur()
     }
-    par(mfrow=c(2, 2), oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0))
+    if (is.null(example.plot))
+      par(mfrow=c(2, 2), oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0))
     DrawPalette(is.n=TRUE)
   }
 
@@ -334,55 +336,32 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
       return()
     n <- length(pal.cols)
 
-    # Map
-    plot(0, 0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n",
-         xlim=c(-88.5, -78.6), ylim=c(30.2, 35.2))
-    polygon(agsc, col=pal.cols[cut(na.omit(agsc$z), breaks=0:n / n)])
-    box()
+    if (is.null(example.plot)) {
+      # Map
+      plot(0, 0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n",
+           xlim=c(-88.5, -78.6), ylim=c(30.2, 35.2))
+      polygon(agsc, col=pal.cols[map.cuts[[n]]])
+      box()
 
-    # Filled-contour
-    image(volcano, col=rev(pal.cols), xaxt="n", yaxt="n", useRaster=TRUE)
-    box()
+      # Filled-contour
+      image(volcano, col=rev(pal.cols), xaxt="n", yaxt="n", useRaster=TRUE)
+      box()
 
-    # Mosaic
-    random.matrix <- matrix(runif(n * 10, min=-1, max=1), nrow=10, ncol=n)
-    image(random.matrix, col=pal.cols, xaxt="n", yaxt="n", useRaster=TRUE)
-    box()
+      # Mosaic
+      image(random.matrix[[n]], col=pal.cols, xaxt="n", yaxt="n", useRaster=TRUE)
+      box()
 
-    # Points
-
-
-    p <- plot(x=NULL, xlim=c(-1, 1), ylim=c(-1, 1),
-              type="n", xaxt="n", yaxt="n", xlab="", ylab="",
-              main="", frame.plot=FALSE)
-
-
-
-    sd.pts <- (1 - (n / 50)) * 0.3 + 0.1
-    npts <- floor(500 / n)
-
-    for (i in 1:n) {
-      xy.pts <- cbind(rnorm(npts, mean=mean.pts[i, 1], sd=sd.pts),
-                      rnorm(npts, mean=mean.pts[i, 2], sd=sd.pts))
-      points(xy.pts, pch=21, bg=pal.cols[i], cex=1.0)
+      # Points
+      p <- plot(x=NULL, xlim=c(-1, 1), ylim=c(-1, 1), type="n", xaxt="n",
+                yaxt="n", xlab="", ylab="", main="", frame.plot=FALSE)
+      for (i in 1:n) {
+        points(pts[[n]][[i]], pch=21, bg=pal.cols[i], cex=1.0)
+      }
+      box()
+    } else {
+      col <- pal.cols
+      eval(parse(text=example.plot))
     }
-
-    box()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   }
 
 
@@ -396,23 +375,38 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
 
   default.pals <- NULL
 
-  # Initialize graphics device and objects for example plots
-
+  # Flag graphics device and initialize objects for example plot(s)
   dev.example <- 1
-  hist.breaks <- seq(min(volcano), max(volcano), length.out=50)
 
-  suppressWarnings(try(data("agsc", package="RSurvey", verbose=FALSE),
-                       silent=TRUE))
-  if (!exists("agsc"))
-    data("agsc", package=character(0), verbose=FALSE)
-  if (!exists("agsc"))
-    agsc <- NULL
+  if (is.null(example.plot)) {
+    suppressWarnings(try(data("agsc", package="RSurvey", verbose=FALSE),
+                         silent=TRUE))
+    if (!exists("agsc"))
+      data("agsc", package=character(0), verbose=FALSE)
+    if (!exists("agsc"))
+      agsc <- NULL
 
+    map.cuts <- list()
+    random.matrix <- list()
+    for (i in 1:50) {
+      map.cuts[[i]] <- cut(na.omit(agsc$z), breaks=0:i / i)
+      random.matrix[[i]] <- matrix(runif(i * 10, min=-1, max=1),
+                                   nrow=10, ncol=i)
+    }
 
-
-   mean.pts <- cbind(runif(50, min=-1, max=1), runif(50, min=-1, max=1))
-
-
+    mean.pts <- cbind(runif(50, min=-0.9, max=0.9),
+                      runif(50, min=-0.9, max=0.9))
+    pts <- list()
+    for (i in 1:50) {
+      sd.pts <- (1 - (i / 50)) * 0.2 + 0.1
+      npts <- floor(500 / i)
+      pts[[i]] <- list()
+      for (j in 1:i) {
+        pts[[i]][[j]] <- cbind(rnorm(npts, mean=mean.pts[j, 1], sd=sd.pts),
+                               rnorm(npts, mean=mean.pts[j, 2], sd=sd.pts))
+      }
+    }
+  }
 
   # Set default and initial palettes
 
@@ -428,6 +422,7 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
   qual.pals[[6]]  <- c(270,  150,  50, NA, 70, NA,  NA,  NA)
   qual.pals[[7]]  <- c( 60,  240,  50, NA, 70, NA,  NA,  NA)
   qual.pals[[8]]  <- c( 30,  300,  50, NA, 70, NA,  NA,  NA)
+  qual.pals[[9]]  <- c(  0,  300,  80, NA, 60, NA,  NA,  NA)
 
   seqs.pals <- list()
   seqs.pals[[1]]  <- c(  0,   NA,   0,  0, 15, 95, 1.3,  NA) # Greys
