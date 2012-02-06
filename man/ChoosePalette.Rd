@@ -9,13 +9,17 @@ A \acronym{GUI} for viewing or manipulating color palettes.
 }
 
 \usage{
-ChoosePalette(pal = terrain_hcl, n = 7L, parent = NULL)
+ChoosePalette(pal = terrain_hcl, n = 7L, parent = NULL, example.plot = NULL)
 }
 
 \arguments{
 \item{pal}{function; the initial palette, see \sQuote{Value} below.}
 \item{n}{integer; the number of colors in the palette.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
+\item{example.plot}{character; a custom example plot function that is
+  parsed and evaluated.
+  The set of colors available to this function is stored in \code{col},
+  a character vector of length \code{n}.}
 }
 
 \details{
@@ -27,7 +31,7 @@ Returns a function that takes an integer argument and returns that number of
 of colors interpolating the given sequence.
 }
 
-\author{J.C. Fisher}
+\author{J.C. Fisher and A. Zeileis}
 
 \references{
 Zeileis A., Hornik K., and Murrell P., 2009, \emph{Escaping RGBland: Selecting
@@ -41,7 +45,9 @@ Colors for Statistical Graphics}, Computational Statistics & Data Analysis,
 
 \examples{
 \donttest{pal <- ChoosePalette(terrain_hcl)
-filled.contour(volcano, color.palette = pal, asp = 1)}
+filled.contour(volcano, color.palette = pal, asp = 1)
+
+ChoosePalette(example.plot = "image(volcano, col = col)")}
 }
 
 \keyword{misc}
