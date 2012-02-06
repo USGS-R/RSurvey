@@ -337,6 +337,7 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL,
     n <- length(pal.cols)
 
     if (is.null(example.plot)) {
+
       # Map
       plot(0, 0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n",
            xlim=c(-88.5, -78.6), ylim=c(30.2, 35.2))
@@ -344,11 +345,11 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL,
       box()
 
       # Filled-contour
-      image(volcano, col=rev(pal.cols), xaxt="n", yaxt="n", useRaster=TRUE)
+      image(volcano, col=rev(pal.cols), xaxt="n", yaxt="n")
       box()
 
       # Mosaic
-      image(random.matrix[[n]], col=pal.cols, xaxt="n", yaxt="n", useRaster=TRUE)
+      image(msc.matrix[[n]], col=pal.cols, xaxt="n", yaxt="n")
       box()
 
       # Points
@@ -358,6 +359,7 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL,
         points(pts[[n]][[i]], pch=21, bg=pal.cols[i], cex=1.0)
       }
       box()
+
     } else {
       col <- pal.cols
       eval(parse(text=example.plot))
@@ -375,8 +377,11 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL,
 
   default.pals <- NULL
 
-  # Flag graphics device and initialize objects for example plot(s)
+  # Flag graphics device
+
   dev.example <- 1
+
+  # Initialize objects for example plot(s)
 
   if (is.null(example.plot)) {
     suppressWarnings(try(data("agsc", package="RSurvey", verbose=FALSE),
@@ -385,25 +390,25 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL,
       data("agsc", package=character(0), verbose=FALSE)
     if (!exists("agsc"))
       agsc <- NULL
-
     map.cuts <- list()
-    random.matrix <- list()
+    msc.matrix <- list()
     for (i in 1:50) {
       map.cuts[[i]] <- cut(na.omit(agsc$z), breaks=0:i / i)
-      random.matrix[[i]] <- matrix(runif(i * 10, min=-1, max=1),
-                                   nrow=10, ncol=i)
+      msc.matrix[[i]] <- matrix(runif(i * 10, min=-1, max=1),
+                                nrow=10, ncol=i)
     }
 
-    mean.pts <- cbind(runif(50, min=-0.9, max=0.9),
-                      runif(50, min=-0.9, max=0.9))
+    pts.mean <- cbind(runif(50, min=-0.9, max=0.9),
+                      runif(50, min=-0.9, max=0.9)) # TODO: best coverage
+
     pts <- list()
     for (i in 1:50) {
-      sd.pts <- (1 - (i / 50)) * 0.2 + 0.1
+      pts.sd <- (1 - (i / 50)) * 0.2 + 0.1
       npts <- floor(500 / i)
       pts[[i]] <- list()
       for (j in 1:i) {
-        pts[[i]][[j]] <- cbind(rnorm(npts, mean=mean.pts[j, 1], sd=sd.pts),
-                               rnorm(npts, mean=mean.pts[j, 2], sd=sd.pts))
+        pts[[i]][[j]] <- cbind(rnorm(npts, mean=pts.mean[j, 1], sd=pts.sd),
+                               rnorm(npts, mean=pts.mean[j, 2], sd=pts.sd))
       }
     }
   }
@@ -467,7 +472,7 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL,
 
   # Set dimensions on palette canvas
 
-  cvs.width <- 30 * 10 + 10 + 18
+  cvs.width <- 328 # 30 * 10 + 10 + 18
   cvs.height <- 25
 
   # Assign additional variables linked to Tk widgets
