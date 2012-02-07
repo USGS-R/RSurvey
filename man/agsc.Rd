@@ -15,8 +15,8 @@ agsc
 }
 
 \format{
-A data frame with coordinates of the vertices of the county polgons
-\code{(x, y)} and a fabricated variable \code{z}.
+A data frame with coordinates of the vertices of the county polygons
+\code{(x,y)} and a fabricated variable \code{z}.
 }
 
 \examples{

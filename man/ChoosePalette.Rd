@@ -27,7 +27,7 @@ Computes palettes based on the HCL (\code{\link{polarLUV}}) color space.
 }
 
 \value{
-Returns a function that takes an integer argument and returns that number of
+Returns a function that takes an integer argument and returns that number
 of colors interpolating the given sequence.
 }
 
