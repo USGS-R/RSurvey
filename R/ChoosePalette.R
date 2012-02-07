@@ -398,13 +398,24 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL,
                                 nrow=10, ncol=i)
     }
 
-    pts.mean <- cbind(runif(50, min=-0.9, max=0.9),
-                      runif(50, min=-0.9, max=0.9)) # TODO: best coverage
-
+    mean.loc <- list()
+    mean.loc[[1]] <- rbind(c( 0.0,  0.0))
+    mean.loc[[2]] <- rbind(c(-0.5,  0.0), c( 0.5,  0.0))
+    mean.loc[[3]] <- rbind(c(-0.5, -0.5), c( 0.5, -0.5), c(0.0, 0.5))
+    mean.loc[[4]] <- rbind(c(-0.5, -0.5), c( 0.5, -0.5),
+                           c( 0.5,  0.5), c(-0.5,  0.5))
+    mean.loc[[5]] <- rbind(c(-0.5, -0.5), c( 0.5, -0.5),
+                           c( 0.5,  0.5), c(-0.5,  0.5), c(0.0, 0.0))
+    mean.loc.ran <- cbind(runif(45, min=-0.9, max=0.9),
+                          runif(45, min=-0.9, max=0.9))
     pts <- list()
     for (i in 1:50) {
-      pts.sd <- (1 - (i / 50)) * 0.2 + 0.1
-      npts <- floor(500 / i)
+      if (i > 5)
+        pts.mean <- rbind(mean.loc[[5]], mean.loc.ran[1:(i - 5), ])
+      else
+        pts.mean <- mean.loc[[i]]
+      pts.sd <- (1 - (i / 50)) * 0.15 + 0.1
+      npts <- 500 / i
       pts[[i]] <- list()
       for (j in 1:i) {
         pts[[i]][[j]] <- cbind(rnorm(npts, mean=pts.mean[j, 1], sd=pts.sd),
