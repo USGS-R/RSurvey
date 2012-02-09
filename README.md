@@ -67,4 +67,4 @@ Activate the main GUI:
 
     > OpenRSurvey()
 
-Example data sets are provided in `inst/extdata/`.
+Example data sets are provided in `inst/extdata`.
