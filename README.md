@@ -1,9 +1,6 @@
 RSurvey: A processing program for spatially distributed data
 ============================================================
 
-Description
------------
-
 This [R](http://www.r-project.org/ "R") package is a processing program for
 spatially distributed data.
 [RSurvey](http://cran.r-project.org/web/packages/RSurvey/index.html "RSurvey")
