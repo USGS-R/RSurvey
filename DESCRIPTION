@@ -1,6 +1,6 @@
 Package: RSurvey
 Version: 0.6-9
-Date: 2011-12-27
+Date: 2012-02-09
 Title: Analysis of Spatially Distributed Data
 Author: Jason C. Fisher
 Maintainer: Jason C. Fisher <jfisher@usgs.gov>
@@ -11,6 +11,6 @@ Description: This package is a processing program for spatially
   distributed data. It features graphing tools, query building, and
   polygon clipping. A graphical user interface is provided.
 License: GPL (>= 2)
-URL: https://github.com/stormplot/RSurvey
-BugReports: https://github.com/stormplot/RSurvey/issues
+URL: https://github.com/jfisher-usgs/RSurvey
+BugReports: https://github.com/jfisher-usgs/RSurvey/issues
 ByteCompile: yes

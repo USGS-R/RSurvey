@@ -25,8 +25,8 @@ to the user. Time zones, spatial datum's and projections are not supported.
 The set of standards used for coding RSurvey is documented in
 [Google's R Style Guide](http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html "Google's R Style Guide").
 
-Installation
-------------
+Install
+-------
 
 If R is not already installed on your
 computer, download and install the latest binary distribution from
@@ -36,7 +36,7 @@ by choosing to customize the startup options and specifying the SDI interface
 (not the default).
 
 Install required R packages from CRAN using a simple call to
-`install.packages()`:
+`install.packages`:
 
     > install.packages('RSurvey')
 
@@ -52,12 +52,12 @@ Support for displaying table data is provided by
 [tktable](http://tktable.sourceforge.net/ "tktable"),
 a spreadsheet-like [Tcl/Tk](http://www.tcl.tk/ "Tcl/Tk") widget
 (included with the Windows binary distribution of R).
-A call to `tclRequire()` will indicate whether tktable is available for use:
+A call to `tclRequire` will indicate whether tktable is available for use:
 
     > tclRequire('Tktable')
 
-Running
--------
+Run
+---
 
 Load RSurvey in the current R session:
 
