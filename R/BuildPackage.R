@@ -31,7 +31,8 @@ BuildPackage <- function() {
   cmd <- append(cmd, paste("CP -r", path.pkg, shQuote("C:/"), sep=" "))
   cmd <- append(cmd, paste("RMDIR /S /Q", path.chk, sep=" "))
   cmd <- append(cmd, paste("RMDIR /S /Q", path.git, sep=" "))
-  cmd <- append(cmd, paste(path.cmd, "build", path.tmp, sep=" "))
+  cmd <- append(cmd, paste(path.cmd, "build", path.tmp, "--resave-data",
+                           sep=" "))
   cmd <- append(cmd, paste(path.cmd, "check", path.tar, sep=" "))
   cmd <- append(cmd, paste(path.cmd, "INSTALL --build", path.tmp, sep=" "))
   cmd <- append(cmd, paste("RMDIR /S /Q", path.tmp, sep=" "))
