@@ -1,5 +1,4 @@
-ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL,
-                          example.plot=NULL) {
+ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
 # A GUI for selecting a color palette.
 
   # Additional functions (subroutines)
@@ -319,11 +318,10 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL,
 
   ShowExample <- function() {
     if (!dev.example %in% dev.list()) {
-      x11()
+      x11(width=8, height=4)
       dev.example <<- dev.cur()
     }
-    if (is.null(example.plot))
-      par(mfrow=c(2, 2), oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0))
+    par(mfrow=c(1, 2), oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0))
     DrawPalette(is.n=TRUE)
   }
 
@@ -336,34 +334,13 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL,
       return()
     n <- length(pal.cols)
 
-    if (is.null(example.plot)) {
+    # Mosaic
+    image(msc.matrix[[n]], col=pal.cols, xaxt="n", yaxt="n")
+    box()
 
-      # Map
-      plot(0, 0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n",
-           xlim=c(-88.5, -78.6), ylim=c(30.2, 35.2))
-      polygon(agsc, col=pal.cols[map.cuts[[n]]])
-      box()
-
-      # Filled-contour
-      image(volcano, col=rev(pal.cols), xaxt="n", yaxt="n")
-      box()
-
-      # Mosaic
-      image(msc.matrix[[n]], col=pal.cols, xaxt="n", yaxt="n")
-      box()
-
-      # Points
-      p <- plot(x=NULL, xlim=c(-1, 1), ylim=c(-1, 1), type="n", xaxt="n",
-                yaxt="n", xlab="", ylab="", main="", frame.plot=FALSE)
-      for (i in 1:n) {
-        points(pts[[n]][[i]], pch=21, bg=pal.cols[i], cex=1.0)
-      }
-      box()
-
-    } else {
-      col <- pal.cols
-      eval(parse(text=example.plot))
-    }
+    # Filled-contour
+    image(volcano, col=rev(pal.cols), xaxt="n", yaxt="n")
+    box()
   }
 
 
@@ -381,47 +358,12 @@ ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL,
 
   dev.example <- 1
 
-  # Initialize objects for example plot(s)
+  # Initialize example plot
 
-  if (is.null(example.plot)) {
-    suppressWarnings(try(data("agsc", package="RSurvey", verbose=FALSE),
-                         silent=TRUE))
-    if (!exists("agsc"))
-      data("agsc", package=character(0), verbose=FALSE)
-    if (!exists("agsc"))
-      agsc <- NULL
-    map.cuts <- list()
-    msc.matrix <- list()
-    for (i in 1:50) {
-      map.cuts[[i]] <- cut(na.omit(agsc$z), breaks=0:i / i)
-      msc.matrix[[i]] <- matrix(runif(i * 10, min=-1, max=1),
-                                nrow=10, ncol=i)
-    }
-
-    mean.loc <- list()
-    mean.loc[[1]] <- rbind(c( 0.0,  0.0))
-    mean.loc[[2]] <- rbind(c(-0.5,  0.0), c( 0.5,  0.0))
-    mean.loc[[3]] <- rbind(c(-0.5, -0.5), c( 0.5, -0.5), c(0.0, 0.5))
-    mean.loc[[4]] <- rbind(c(-0.5, -0.5), c( 0.5, -0.5),
-                           c( 0.5,  0.5), c(-0.5,  0.5))
-    mean.loc[[5]] <- rbind(c(-0.5, -0.5), c( 0.5, -0.5),
-                           c( 0.5,  0.5), c(-0.5,  0.5), c(0.0, 0.0))
-    mean.loc.ran <- cbind(runif(45, min=-0.9, max=0.9),
-                          runif(45, min=-0.9, max=0.9))
-    pts <- list()
-    for (i in 1:50) {
-      if (i > 5)
-        pts.mean <- rbind(mean.loc[[5]], mean.loc.ran[1:(i - 5), ])
-      else
-        pts.mean <- mean.loc[[i]]
-      pts.sd <- (1 - (i / 50)) * 0.15 + 0.1
-      npts <- 500 / i
-      pts[[i]] <- list()
-      for (j in 1:i) {
-        pts[[i]][[j]] <- cbind(rnorm(npts, mean=pts.mean[j, 1], sd=pts.sd),
-                               rnorm(npts, mean=pts.mean[j, 2], sd=pts.sd))
-      }
-    }
+  msc.matrix <- list()
+  for (i in 1:50) {
+    msc.matrix[[i]] <- matrix(runif(i * 10, min=-1, max=1),
+                              nrow=10, ncol=i)
   }
 
   # Set default and initial palettes
