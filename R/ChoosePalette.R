@@ -1,4 +1,4 @@
-ChoosePalette <- function(pal=terrain_hcl, n=7L, parent=NULL) {
+ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
 # A GUI for selecting a color palette.
 
   # Additional functions (subroutines)

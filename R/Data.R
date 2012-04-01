@@ -23,7 +23,7 @@ Data <- local({
                   "grid.res"      = list(x=NA, y=NA),
                   "grid.mba"      = list(n=NA, m=NA, h=11),
                   "encoding"      = getOption("encoding"),
-                  "color.palette" = colorspace::terrain_hcl
+                  "color.palette" = colorspace::diverge_hcl
               )
 
   # Main program

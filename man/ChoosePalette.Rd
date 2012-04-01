@@ -9,7 +9,7 @@ A \acronym{GUI} for viewing or manipulating color palettes.
 }
 
 \usage{
-ChoosePalette(pal = terrain_hcl, n = 7L, parent = NULL)
+ChoosePalette(pal = diverge_hcl, n = 7L, parent = NULL)
 }
 
 \arguments{
