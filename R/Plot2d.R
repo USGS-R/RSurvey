@@ -284,9 +284,7 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
   if (type == "l") {
     if (!is.double(z))
       storage.mode(z) <- "double"
-    # TODO(jfisher): replace .Internal with .filled.contour(), available R2.15
-    .Internal(filledcontour(x.boundaries, y.boundaries, z,
-                            as.double(levels), col=col))
+    .filled.contour(x.boundaries, y.boundaries, z, levels, col)
   } else if (type == "g") {
     image(x.boundaries, y.boundaries, z, col=col, add=TRUE,
           breaks=as.double(levels), useRaster=TRUE)
