@@ -10,7 +10,7 @@ SystemRequirements: Tcl/Tk (>= 8.5), Tktable (>= 2.9, optional)
 Description: This package is a processing program for spatially
   distributed data. It features graphing tools, query building, and
   polygon clipping. A graphical user interface is provided.
-License: file LICENSE
+License: Unlimited
 URL: https://github.com/jfisher-usgs/RSurvey
 BugReports: https://github.com/jfisher-usgs/RSurvey/issues
 ByteCompile: yes

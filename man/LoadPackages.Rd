@@ -27,8 +27,6 @@ LoadPackages(repo = "http://cran.r-project.org")
 \code{\link{install.packages}}, \code{\link{require}}
 }
 
-\examples{
-LoadPackages()
-}
+\examples{\donttest{LoadPackages()}}
 
 \keyword{misc}
