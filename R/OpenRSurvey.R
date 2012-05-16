@@ -221,8 +221,12 @@ OpenRSurvey <- function() {
   # Manage data
 
   CallManageData <- function() {
-    ManageData(Data("cols"), Data("vars"), tt)
-    SetVars()
+    ans <- ManageData(Data("cols"), Data("vars"), tt)
+    if (!is.null(ans)) {
+      Data("cols", ans$cols)
+      Data("vars", ans$vars)
+      SetVars()
+    }
     tkfocus(tt)
   }
 

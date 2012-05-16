@@ -28,8 +28,8 @@ This \acronym{GUI} lets you:
 }
 
 \value{
-Queries and sets the \code{cols} component of
-\code{\link{Data}}, a list whose length is equal to
+Returns a list with components \code{cols} and \code{vars}.
+The \code{cols} object is a list whose length is equal to
 the current number of data variables. Each component in \code{cols} is linked
 to a specific variable, and contains the following components:
 \item{name}{character; variable name.}
@@ -49,9 +49,8 @@ to a specific variable, and contains the following components:
 \item{comments}{character; user comments.}
 The \code{vars} object is a list with components:
 \item{x, y, z, t, vx, vy}{integer; the index number of the corresponding
-  state variable in \code{cols}.}
-The \code{vars} component of \code{\link{Data}} is updated to reflect
-the removal and (or) reordering of variables.
+  state variable in \code{cols}. These indexes are updated to reflect
+  the removal and (or) reordering of variables in \code{cols}.}
 }
 
 \author{J.C. Fisher}

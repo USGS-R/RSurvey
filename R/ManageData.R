@@ -7,10 +7,8 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   SaveChanges <- function(type) {
     SaveNb()
-    if (!identical(cols, old.cols)) {
-      Data("cols", cols)
-      Data("vars", vars)
-    }
+    if (!identical(cols, old.cols))
+      rtn <<- list(cols=cols, vars=vars)
     if (type == "ok")
       tclvalue(tt.done.var) <- 1
   }
@@ -448,6 +446,8 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   # Assign variables
 
+  rtn <- NULL
+
   old.cols <- cols
   ids <- sapply(cols, function(i) i$id)
 
@@ -724,4 +724,6 @@ ManageData <- function(cols, vars, parent=NULL) {
   tkgrab.release(tt)
   tkdestroy(tt)
   tclServiceMode(TRUE)
+
+  rtn
 }
