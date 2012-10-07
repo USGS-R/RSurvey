@@ -318,10 +318,10 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
 
   ShowExample <- function() {
     if (!dev.example %in% dev.list()) {
-      x11(width=8, height=4)
+      x11(width=7, height=7)
       dev.example <<- dev.cur()
     }
-    par(mfrow=c(1, 2), oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0))
+#####   par(oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0))
     DrawPalette(is.n=TRUE)
   }
 
@@ -332,39 +332,147 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
       dev.set(which=dev.example)
     else
       return()
+    PlotExample <- get(paste("Plot", tclvalue(example.var), sep=""))
+    PlotExample(pal.cols)
+  }
+  
+  # Plot map example
+  
+  PlotMap <- function(pal.cols) {
     n <- length(pal.cols)
-
-    # Mosaic
-    image(msc.matrix[[n]], col=pal.cols, xaxt="n", yaxt="n")
+    plot(0, 0, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n",
+         xlim=c(-88.5, -78.6), ylim=c(30.2, 35.2), asp=1)
+    polygon(agsc, col=pal.cols[cut(na.omit(agsc$z), breaks=0:n / n)])
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  # Plot heatmap example
+  
+  PlotHeatmap <- function(pal.cols) {
+    image(volcano, col=rev(pal.cols), xaxt="n", yaxt="n", useRaster=TRUE)
     box()
+  }
+  
+  # Plot scatter example
+  
+  PlotScatter <- function(pal.cols) {
+    
+    # Generate artificial data
+    
+    if (is.null(xyhclust)) {
+      set.seed(1071)
+      x0 <- sin(pi * 1:60 / 30) / 5
+      y0 <- cos(pi * 1:60 / 30) / 5
+      xr <- c(0.1, -0.6, -0.7, -0.9,  0.4,  1.3, 1.0)
+      yr <- c(0.3,  1.0,  0.1, -0.9, -0.8, -0.4, 0.6)
+      dat <- data.frame(
+        x=c(x0 + xr[1], x0 + xr[2], x0 + xr[3], x0 + xr[4], x0 + xr[5], 
+            x0 + xr[6], x0 + xr[7]),
+        y=c(y0 + yr[1], y0 + yr[2], y0 + yr[3], y0 + yr[4], y0 + yr[5], 
+            y0 + yr[6], y0 + yr[7])
+      )
+      attr(dat, "hclust") <- hclust(dist(dat), method="ward")
+      dat$xerror <- rnorm(nrow(dat), sd=runif(nrow(dat), 0.05, 0.45))
+      dat$yerror <- rnorm(nrow(dat), sd=runif(nrow(dat), 0.05, 0.45))
+      xyhclust <<- dat
+    }
+    plot(xyhclust$x + xyhclust$xerror, xyhclust$y + xyhclust$yerror,
+         col="black", bg=pal.cols[cutree(attr(xyhclust, "hclust"), length(pal.cols))],
+         xlab="", ylab="", axes=FALSE, pch=21, cex=1.3)
+  }
+  
+  # Plot spine example
+  
+  PlotSpine <- function(pal.cols) {
+    n <- length(pal.cols)
+    
+    # Rectangle dimensions
+    off <- 0.015
+    widths <- c(0.05, 0.1, 0.15, 0.1, 0.2, 0.08, 0.12, 0.16, 0.04)
+    k <- length(widths)
+    heights <- sapply(
+      c(2.5, 1.2, 2.7, 1, 1.3, 0.7, 0.4, 0.2, 1.7),
+      function(p) (0:n / n)^(1 / p)
+    )
+   
+    # Rectangle coordinates
+    xleft0 <- c(0, head(cumsum(widths + off), -1))
+    xleft <- rep(xleft0, each=n)
+    xright <- xleft + rep(widths, each=n)
+    ybottom <- as.vector(heights[-(n + 1), ])
+    ytop <- as.vector(heights[-1, ])
+   
+    # Draw rectangles, borders, and annotation
+    plot(0, 0, xlim=c(0, sum(widths) + off * (k - 1)), ylim=c(0, 1),
+         xaxs="i", yaxs="i", main="", xlab="", ylab="",
+         type="n", axes=FALSE)
+    rect(xleft, ybottom, xright, ytop, col=rep(pal.cols, k),
+         border=if(n < 10) "black" else "transparent")
+    if(n >= 10) rect(xleft0, 0, xleft0 + widths, 1, border="black")
+    axis(1, at=xleft0 + widths/2, labels=LETTERS[1:k], tick=FALSE)
+  }
+  
+  # Plot bar example
+  
+  PlotBar <- function(pal.cols) {
+    barplot(cbind(1.1 + abs(sin(0.5 + seq_along(pal.cols))) / 3,
+            1.9 + abs(cos(1.1 + seq_along(pal.cols))) / 3,
+            0.7 + abs(sin(1.5 + seq_along(pal.cols))) / 3,
+            0.3 + abs(cos(0.8 + seq_along(pal.cols))) / 3),
+            beside=TRUE, col=pal.cols, names=LETTERS[1:4], axes=FALSE)
+  }
 
-    # Filled-contour
-    image(volcano, col=rev(pal.cols), xaxt="n", yaxt="n")
-    box()
+  # Plot pie example
+
+  PlotPie <- function(pal.cols) {
+    pie(0.01 + abs(sin(0.5 + seq_along(pal.cols))), labels="", col=pal.cols, 
+        radius=1)
+  }
+  
+  # Plot perspective example
+
+  PlotPerspective <- function(pal.cols) {
+    
+    # Mixture of bivariate normals
+    n <- 31
+    x1 <- x2 <- seq(-3, 3, length=n)
+    y <- outer(x1, x2, 
+                function(x, y) {
+                  0.5 * dnorm(x, mean=-1, sd=0.80) * dnorm(y, mean=-1, sd=0.80)
+                  +
+                  0.5 * dnorm(x, mean= 1, sd=0.72) * dnorm(y, mean= 1, sd=0.72)
+                })
+  
+    # Compute color based on density
+    facet <- cut(y[-1, -1] + y[-1, -n] + y[-n, -1] + y[-n, -n], 
+                 length(pal.cols))
+  
+    # Perspective plot coding z-axis with color
+    persp(x1, x2, y, col=rev(pal.cols)[facet], phi=28, theta=20, r=5,
+          xlab="", ylab="", zlab="")
   }
 
 
   # Main program
 
   # Initialize return palette
-
   pal.rtn <- NULL
 
   # Initialize default palettes
-
   default.pals <- NULL
+  
+  # Initialize data for scatter plot example
+  xyhclust <- NULL
 
   # Flag graphics device
-
   dev.example <- 1
-
-  # Initialize example plot
-
-  msc.matrix <- list()
-  for (i in 1:50) {
-    msc.matrix[[i]] <- matrix(runif(i * 10, min=-1, max=1),
-                              nrow=10, ncol=i)
-  }
 
   # Set default and initial palettes
 
@@ -429,7 +537,8 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
   cvs.height <- 25
 
   # Assign additional variables linked to Tk widgets
-
+  
+  example.var <- tclVar("Select Example Plot")
   nature.var <- tclVar()
 
   n.scl.var <- tclVar(n)
@@ -498,20 +607,25 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
 
   tkconfigure(tt, menu=top.menu)
 
-  # Frame 0, example, ok, and cancel buttons
+  # Frame 0, example pull-down menu; ok and cancel buttons
 
   frame0 <- ttkframe(tt, relief="flat")
 
-  frame0.but.1 <- ttkbutton(frame0, width=12, text="Example",
-                            command=ShowExample)
+# frame0.but.1 <- ttkbutton(frame0, width=12, text="Example",
+#                           command=ShowExample)
+  
+  frame0.box.1 <- ttkcombobox(frame0, state="readonly", 
+                              textvariable=example.var,
+                              values=c("Map", "Heatmap", "Scatter", "Spine", 
+                                       "Bar", "Pie", "Perspective"))
   frame0.but.3 <- ttkbutton(frame0, width=12, text="OK", command=SavePalette)
   frame0.but.4 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() {
                               pal.rtn <<- NULL
                               tclvalue(tt.done.var) <- 1
                             })
-  tkgrid(frame0.but.1, "x", frame0.but.3, frame0.but.4, pady=c(10, 10))
-  tkgrid.configure(frame0.but.1, sticky="w", padx=c(10, 0))
+  tkgrid(frame0.box.1, "x", frame0.but.3, frame0.but.4, pady=c(10, 10))
+  tkgrid.configure(frame0.box.1, sticky="w", padx=c(10, 0))
   tkgrid.configure(frame0.but.3, sticky="e")
   tkgrid.configure(frame0.but.4, sticky="w", padx=c(4, 10))
   tkgrid.columnconfigure(frame0, 1, weight=1)
@@ -705,7 +819,8 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
 
   tkbind(tt, "<Control-o>", OpenPaletteFromFile)
   tkbind(tt, "<Shift-Control-S>", SavePaletteToFile)
-
+  
+  tkbind(frame0.box.1, "<<ComboboxSelected>>", ShowExample)
   tkbind(frame1.box.2, "<<ComboboxSelected>>", UpdateDataType)
 
   tkbind(frame2.cvs, "<ButtonPress>", function(x, y) SelectDefaultPalette(x, y))
