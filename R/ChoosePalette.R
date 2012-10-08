@@ -321,7 +321,7 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
       x11(width=7, height=7)
       dev.example <<- dev.cur()
     }
-#####   par(oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0))
+    par(oma=c(0, 0, 0, 0), mar=c(0, 0, 0, 0))
     DrawPalette(is.n=TRUE)
   }
 
@@ -345,27 +345,17 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
     polygon(agsc, col=pal.cols[cut(na.omit(agsc$z), breaks=0:n / n)])
   }
   
-  
-  
-  
-  
-  
-  
-  
-  
   # Plot heatmap example
   
   PlotHeatmap <- function(pal.cols) {
     image(volcano, col=rev(pal.cols), xaxt="n", yaxt="n", useRaster=TRUE)
-    box()
   }
   
   # Plot scatter example
   
   PlotScatter <- function(pal.cols) {
     
-    # Generate artificial data
-    
+    # Generate artificial data 
     if (is.null(xyhclust)) {
       set.seed(1071)
       x0 <- sin(pi * 1:60 / 30) / 5
@@ -416,7 +406,6 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
     rect(xleft, ybottom, xright, ytop, col=rep(pal.cols, k),
          border=if(n < 10) "black" else "transparent")
     if(n >= 10) rect(xleft0, 0, xleft0 + widths, 1, border="black")
-    axis(1, at=xleft0 + widths/2, labels=LETTERS[1:k], tick=FALSE)
   }
   
   # Plot bar example
@@ -426,7 +415,7 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
             1.9 + abs(cos(1.1 + seq_along(pal.cols))) / 3,
             0.7 + abs(sin(1.5 + seq_along(pal.cols))) / 3,
             0.3 + abs(cos(0.8 + seq_along(pal.cols))) / 3),
-            beside=TRUE, col=pal.cols, names=LETTERS[1:4], axes=FALSE)
+            beside=TRUE, col=pal.cols, axes=FALSE)
   }
 
   # Plot pie example
@@ -451,12 +440,29 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
                 })
   
     # Compute color based on density
-    facet <- cut(y[-1, -1] + y[-1, -n] + y[-n, -1] + y[-n, -n], 
-                 length(pal.cols))
+    if (length(pal.cols) > 1) {
+      facet <- cut(y[-1, -1] + y[-1, -n] + y[-n, -1] + y[-n, -n], 
+                   length(pal.cols))
+      cols <- rev(pal.cols)[facet]
+    } else {
+      cols <- pal.cols
+    }
   
     # Perspective plot coding z-axis with color
-    persp(x1, x2, y, col=rev(pal.cols)[facet], phi=28, theta=20, r=5,
-          xlab="", ylab="", zlab="")
+    persp(x1, x2, y, col=cols, phi=28, theta=20, r=5, xlab="", ylab="", zlab="")
+  }
+  
+  # Plot mosaic example
+  
+  PlotMosaic <- function(pal.cols) {
+    if (is.null(msc.matrix)) {
+      mat <- list()
+      for (i in 1:50) {
+        mat[[i]] <- matrix(runif(i * 10, min=-1, max=1), nrow=10, ncol=i)
+      }
+      msc.matrix <<- mat
+    }
+    image(msc.matrix[[n]], col=pal.cols, xaxt="n", yaxt="n")
   }
 
 
@@ -470,6 +476,17 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
   
   # Initialize data for scatter plot example
   xyhclust <- NULL
+  
+  # Initialize data for mosaic plot example
+  msc.matrix <- NULL
+  
+  # Read data for map plot example
+  suppressWarnings(try(data("agsc", package="RSurvey", verbose=FALSE),
+                       silent=TRUE))
+  if (!exists("agsc"))
+    data("agsc", package=character(0), verbose=FALSE)
+  if (!exists("agsc"))
+    agsc <- NULL
 
   # Flag graphics device
   dev.example <- 1
@@ -610,14 +627,10 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
   # Frame 0, example pull-down menu; ok and cancel buttons
 
   frame0 <- ttkframe(tt, relief="flat")
-
-# frame0.but.1 <- ttkbutton(frame0, width=12, text="Example",
-#                           command=ShowExample)
-  
   frame0.box.1 <- ttkcombobox(frame0, state="readonly", 
                               textvariable=example.var,
                               values=c("Map", "Heatmap", "Scatter", "Spine", 
-                                       "Bar", "Pie", "Perspective"))
+                                       "Bar", "Pie", "Perspective", "Mosaic"))
   frame0.but.3 <- ttkbutton(frame0, width=12, text="OK", command=SavePalette)
   frame0.but.4 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() {
