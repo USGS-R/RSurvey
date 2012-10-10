@@ -109,7 +109,8 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
 
   # Get color palette as function of n
 
-  GetPalette <- function(h1, h2, c1, c2, l1, l2, p1, p2, fixup=TRUE) {
+  GetPalette <- function(h1, h2, c1, c2, l1, l2, p1, p2) {
+    fixup <- as.logical(as.integer(tclvalue(fixup.var)))
     type <- as.character(tclvalue(nature.var))
     if (type == "Qualitative") {
       f <- rainbow_hcl
@@ -144,7 +145,7 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
     pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)
     if (!is.n)
       tcl(frame2.cvs, "delete", "browse")
-    tcl(frame5.cvs, "delete", "pal")
+    tcl(frame7.cvs, "delete", "pal")
     pal.cols <- pal(n)
     pal.cols[is.na(pal.cols)] <- "#FFFFFF"
     if (as.logical(as.integer(tclvalue(desaturation.var))))
@@ -161,7 +162,7 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
       x1 <- x2
       x2 <- x1 + dx
       pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2))
-      tkcreate(frame5.cvs, "polygon", pts, fill=i, tag="pal")
+      tkcreate(frame7.cvs, "polygon", pts, fill=i, tag="pal")
     }
     RegenExample(pal.cols)
   }
@@ -333,6 +334,8 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
     else
       return()
     PlotExample <- get(paste("Plot", tclvalue(example.var), sep=""))
+    if (as.logical(as.integer(tclvalue(reverse.var))))
+      pal.cols <- rev(pal.cols)
     PlotExample(pal.cols)
   }
   
@@ -555,7 +558,7 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
 
   # Assign additional variables linked to Tk widgets
   
-  example.var <- tclVar("Select Example Plot")
+  example.var <- tclVar()
   nature.var <- tclVar()
 
   n.scl.var <- tclVar(n)
@@ -577,7 +580,9 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
   p1.ent.var <- tclVar()
   p2.scl.var <- tclVar()
   p2.ent.var <- tclVar()
-
+  
+  fixup.var <- tclVar(TRUE)
+  reverse.var <- tclVar(FALSE)
   desaturation.var <- tclVar(FALSE)
   colorblind.var <- tclVar(FALSE)
   colorblind.type.var <- tclVar("deutan")
@@ -624,24 +629,19 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
 
   tkconfigure(tt, menu=top.menu)
 
-  # Frame 0, example pull-down menu; ok and cancel buttons
+  # Frame 0, ok and cancel buttons
 
   frame0 <- ttkframe(tt, relief="flat")
-  frame0.box.1 <- ttkcombobox(frame0, state="readonly", 
-                              textvariable=example.var,
-                              values=c("Map", "Heatmap", "Scatter", "Spine", 
-                                       "Bar", "Pie", "Perspective", "Mosaic"))
   frame0.but.3 <- ttkbutton(frame0, width=12, text="OK", command=SavePalette)
   frame0.but.4 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() {
                               pal.rtn <<- NULL
                               tclvalue(tt.done.var) <- 1
                             })
-  tkgrid(frame0.box.1, "x", frame0.but.3, frame0.but.4, pady=c(10, 10))
-  tkgrid.configure(frame0.box.1, sticky="w", padx=c(10, 0))
+  tkgrid("x", frame0.but.3, frame0.but.4, pady=c(10, 10))
   tkgrid.configure(frame0.but.3, sticky="e")
   tkgrid.configure(frame0.but.4, sticky="w", padx=c(4, 10))
-  tkgrid.columnconfigure(frame0, 1, weight=1)
+  tkgrid.columnconfigure(frame0, 0, weight=1)
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
@@ -762,65 +762,90 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
   tkgrid.columnconfigure(frame3, 1, weight=1)
 
   tkpack(frame3, fill="x", padx=10, pady=0)
-
-  # Frame 4, number of colors in palette
+  
+  # Frame 4, color palette fixup
+  
+  frame4 <- ttkframe(tt, relief="flat")
+  txt <- "Correct colors using valid RGB color model values"
+  frame4.chk.1 <- ttkcheckbutton(frame4, text=txt, variable=fixup.var,
+                                 command=function() DrawPalette(is.n=TRUE))
+  tkgrid.configure(frame4.chk.1, padx=c(12, 0), pady=c(2, 0))
+  tkpack(frame4, fill="x")
+  
+  # Frame 5, number of colors in palette
 
   txt <- "Number of colors in palette"
-  frame4 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text=txt)
+  frame5 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text=txt)
 
-  frame4.lab.1 <- ttklabel(frame4, text="n", width=2)
-  frame4.ent.3 <- ttkentry(frame4, textvariable=n.ent.var, width=4)
-  frame4.scl.2 <- tkwidget(frame4, "ttk::scale", from=n.lim[1], to=n.lim[2],
+  frame5.lab.1 <- ttklabel(frame5, text="n", width=2)
+  frame5.ent.3 <- ttkentry(frame5, textvariable=n.ent.var, width=4)
+  frame5.scl.2 <- tkwidget(frame5, "ttk::scale", from=n.lim[1], to=n.lim[2],
                            orient="horizontal", value=n, variable=n.scl.var,
                            command=function(...) {
                              ScaleChange(x=round(as.numeric(...)), v="n",
                                          x.ent.var=n.ent.var)
                            })
 
-  tkgrid(frame4.lab.1, frame4.scl.2, frame4.ent.3)
-  tkgrid.configure(frame4.scl.2, sticky="we", padx=c(4, 10))
-  tkgrid.columnconfigure(frame4, 1, weight=1)
+  tkgrid(frame5.lab.1, frame5.scl.2, frame5.ent.3)
+  tkgrid.configure(frame5.scl.2, sticky="we", padx=c(4, 10))
+  tkgrid.columnconfigure(frame5, 1, weight=1)
 
-  tkpack(frame4, fill="x", padx=10, pady=10)
+  tkpack(frame5, fill="x", padx=10, pady=10)
 
- # Frame 5, color palette and robustness checks
+  # Frame 6, example plots and reverse colors
+  
+  frame6 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, 
+                          text="Show example")
+  frame6.lab.1 <- ttklabel(frame6, text="Plot type")
+  frame6.box.2 <- ttkcombobox(frame6, state="readonly", 
+                              textvariable=example.var,
+                              values=c("Map", "Heatmap", "Scatter", "Spine", 
+                                       "Bar", "Pie", "Perspective", "Mosaic"))
+  frame6.chk.3 <- ttkcheckbutton(frame6, text="Reverse colors", 
+                                 variable=reverse.var, command=ShowExample)
+  tkgrid(frame6.lab.1, frame6.box.2, frame6.chk.3)
+  tkgrid.configure(frame6.box.2, padx=c(2, 10), sticky="we")
+  tkgrid.columnconfigure(frame6, 1, weight=1)
+  tkpack(frame6, fill="x", padx=10, pady=0)
+  
+ # Frame 7, color palette and robustness checks
 
-  frame5 <- ttkframe(tt, relief="flat")
-  frame5.cvs <- tkcanvas(frame5, relief="flat",
+  frame7 <- ttkframe(tt, relief="flat")
+  frame7.cvs <- tkcanvas(frame7, relief="flat",
                          width=cvs.width + 1, height=cvs.height + 1,
                          background="black", confine=TRUE, closeenough=0,
                          borderwidth=0, highlightthickness=0)
-  tkgrid(frame5.cvs, padx=10, pady=0)
+  tkgrid(frame7.cvs, padx=10, pady=c(12,0))
 
-  frame5.chk.1 <- ttkcheckbutton(frame5, text="Desaturation",
+  frame7.chk.1 <- ttkcheckbutton(frame7, text="Desaturation",
                                  variable=desaturation.var,
                                  command=function() DrawPalette(is.n=TRUE))
 
   is.pkg <- "dichromat" %in% .packages(all.available=TRUE) &&
             require(dichromat, quietly=FALSE)
   if (is.pkg) {
-    frame5.chk.2 <- ttkcheckbutton(frame5, text="Color blindness:",
+    frame7.chk.2 <- ttkcheckbutton(frame7, text="Color blindness:",
                                    variable=colorblind.var,
                                    command=function() DrawPalette(is.n=TRUE))
-    frame5.rb.3 <- ttkradiobutton(frame5, variable=colorblind.type.var,
+    frame7.rb.3 <- ttkradiobutton(frame7, variable=colorblind.type.var,
                                   value="deutan", text="deutan",
                                   command=function() DrawPalette(is.n=TRUE))
-    frame5.rb.4 <- ttkradiobutton(frame5, variable=colorblind.type.var,
+    frame7.rb.4 <- ttkradiobutton(frame7, variable=colorblind.type.var,
                                   value="protan", text="protan",
                                   command=function() DrawPalette(is.n=TRUE))
-    tkgrid(frame5.chk.1, frame5.chk.2, frame5.rb.3, frame5.rb.4, "x",
+    tkgrid(frame7.chk.1, frame7.chk.2, frame7.rb.3, frame7.rb.4, "x",
            pady=c(2, 0), sticky="w")
-    tkgrid.configure(frame5.chk.2, padx=c(7, 0))
-    tkgrid.configure(frame5.cvs, columnspan=5)
-    tkgrid.columnconfigure(frame5, 4, weight=1)
+    tkgrid.configure(frame7.chk.2, padx=c(7, 0))
+    tkgrid.configure(frame7.cvs, columnspan=5)
+    tkgrid.columnconfigure(frame7, 4, weight=1)
   } else {
-    tkgrid(frame5.chk.1, "x", pady=c(2, 0), sticky="w")
-    tkgrid.configure(frame5.cvs, columnspan=2)
-    tkgrid.columnconfigure(frame5, 1, weight=1)
+    tkgrid(frame7.chk.1, "x", pady=c(2, 0), sticky="w")
+    tkgrid.configure(frame7.cvs, columnspan=2)
+    tkgrid.columnconfigure(frame7, 1, weight=1)
   }
-  tkgrid.configure(frame5.chk.1, padx=c(10, 0))
-  tkpack(frame5, fill="x")
-
+  tkgrid.configure(frame7.chk.1, padx=c(10, 0))
+  tkpack(frame7, fill="x")
+  
   # Initial commands
 
   ConvertPaletteToAttributes(pal)
@@ -833,8 +858,8 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
   tkbind(tt, "<Control-o>", OpenPaletteFromFile)
   tkbind(tt, "<Shift-Control-S>", SavePaletteToFile)
   
-  tkbind(frame0.box.1, "<<ComboboxSelected>>", ShowExample)
   tkbind(frame1.box.2, "<<ComboboxSelected>>", UpdateDataType)
+  tkbind(frame6.box.2, "<<ComboboxSelected>>", ShowExample)
 
   tkbind(frame2.cvs, "<ButtonPress>", function(x, y) SelectDefaultPalette(x, y))
 
@@ -855,7 +880,7 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
   tkbind(frame3.ent.8.3, "<KeyRelease>",
          function() EntryChange("p2", p.lim, p2.ent.var, p2.scl.var))
 
-  tkbind(frame4.ent.3, "<KeyRelease>",
+  tkbind(frame5.ent.3, "<KeyRelease>",
          function() EntryChange("n", n.lim, n.ent.var, n.scl.var))
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
