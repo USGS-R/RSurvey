@@ -2,14 +2,42 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
 # A GUI for selecting a color palette.
 
   # Additional functions (subroutines)
+  
+  # Choose a file interactively
+  ChooseFile <- function(cmd, win.title, initialfile=NULL, 
+                         defaultextension=NULL) {
+    filetypes <- "{{R Source Files} {.R}} {{All files} {*}}"
+    if (cmd == "Open") {
+      args <- list("tk_getOpenFile")
+    } else {
+      args <- list("tk_getSaveFile")
+      if (defaultextension == ".txt") 
+        filetypes <- "{{Text Files} {.txt}} {{All files} {*}}"
+    }
+    args[["title"]] <- win.title
+    args[["parent"]] <- tt
+    args[["initialdir"]] <- initialdir
+    args[["filetypes"]] <- filetypes
+    
+    if (!is.null(initialfile))
+      args[["initialfile"]] <- initialfile
+    if (!is.null(defaultextension))
+      args[["defaultextension"]] <- defaultextension
+    
+    f <- tclvalue(do.call(tcl, args))
+    if (!nzchar(f))
+      return()
+    initialdir <<- dirname(f)
+    f
+  }
 
   # Open palette from file
 
   OpenPaletteFromFile <- function() {
-    f <- GetFile(cmd="Open", exts="R", win.title="Open Palette File", parent=tt)
+    f <- ChooseFile(cmd="Open", win.title="Open Palette File")
     if (is.null(f))
       return()
-    pal <- dget(file=f$path)
+    pal <- dget(file=f)
     ConvertPaletteToAttributes(pal)
     AssignAttributesToWidgets()
     UpdateDataType()
@@ -18,26 +46,35 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
   # Save palette to file
 
   SavePaletteToFile <- function() {
-    f <- GetFile(cmd="Save As", exts="R", win.title="Save Palette As",
-                 initialfile="ColorPalette", defaultextension="R", parent=tt)
+    f <- ChooseFile(cmd="Save As", win.title="Save Palette As",
+                    initialfile="color_palette", defaultextension=".R")
     if (is.null(f))
       return()
-    pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)
-    dput(pal, file=f$path)
+    pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2, fixup)
+    dput(pal, file=f)
   }
 
   # Save colors to file
 
   SaveColorsToFile <- function(type) {
-    f <- GetFile(cmd="Save As", exts="txt", win.title="Save Colors As",
-                 initialfile=paste("Colors", type, sep=""),
-                 defaultextension="txt", parent=tt)
+    pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2, fixup)
+    
+    cols <- try(hex2RGB(pal(n)), silent=TRUE)
+    if (inherits(cols, "try-error")) {
+      msg <- "Palette results in invaild hexadecimal colors."
+      tkmessageBox(icon="error", message=msg, title="Color Error",
+                   parent=tt)
+      return()
+    }
+    
+    f <- ChooseFile(cmd="Save As", win.title="Save Colors As",
+                    initialfile=paste("colors_", type, sep=""),
+                    defaultextension=".txt")
     if (is.null(f))
       return()
-    pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)
-    cols <- hex2RGB(pal(n))
+    
     if (type == "HEX") {
-      writehex(cols, file=f$path)
+      writehex(cols, file=f)
     } else {
       if (type == "sRGB") {
         cols <- as(cols, "sRGB")@coords
@@ -58,23 +95,14 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
         cols <- as.matrix(as.data.frame(list(C=cyan, M=black, Y=yellow,
                                              K=black)))
       }
-      write.table(cols, file=f$path, quote=FALSE, row.names=FALSE, sep="\t")
+      write.table(cols, file=f, quote=FALSE, row.names=FALSE, sep="\t")
     }
   }
 
   # Save palette and quit
 
   SavePalette <- function() {
-    pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)
-    pal.cols <- pal(n)
-    if (any(is.na(pal.cols))) {
-      msg <- "Palette can not be converted to valid RGB values, try again."
-      tkmessageBox(icon="error", message=msg, title="Palette Error",
-                   parent=tt)
-      return()
-    } else {
-      pal.rtn <<- pal
-    }
+    pal.rtn <<- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2, fixup)
     tclvalue(tt.done.var) <- 1
   }
 
@@ -109,8 +137,8 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
 
   # Get color palette as function of n
 
-  GetPalette <- function(h1, h2, c1, c2, l1, l2, p1, p2) {
-    fixup <- as.logical(as.integer(tclvalue(fixup.var)))
+  GetPalette <- function(h1, h2, c1, c2, l1, l2, p1, p2, fixup) {
+    fixup <- as.logical(fixup)
     type <- as.character(tclvalue(nature.var))
     if (type == "Qualitative") {
       f <- rainbow_hcl
@@ -142,7 +170,7 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
   # Draw palette
 
   DrawPalette <- function(is.n=FALSE) {
-    pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2)
+    pal <- GetPalette(h1, h2, c1, c2, l1, l2, p1, p2, fixup)
     if (!is.n)
       tcl(frame2.cvs, "delete", "browse")
     tcl(frame7.cvs, "delete", "pal")
@@ -265,20 +293,24 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
       d.args <- c("h", "c",  "l", "power")
       s.args <- c("h", "c.", "l", "power")
       arg <- sapply(formals(pal), function(i) {if (is.call(i)) eval(i) else i})
+      if (!is.null(arg$fixup) && is.logical(arg$fixup))
+        fix.up <- as.integer(arg$fixup)
+      else
+        fix.up <- 1
       if (all(sapply(q.args, function(i) inherits(arg[[i]], what)))) {
         tclvalue(nature.var) <- "Qualitative"
-        pal.attributes <- c(arg$start, arg$end, arg$c, NA, arg$l, NA, NA, NA)
+        pal.attributes <- c(arg$start, arg$end, arg$c, NA, arg$l, NA, NA, NA, fix.up)
       } else if (all(sapply(s.args, function(i) inherits(arg[[i]], what)))) {
         if (length(arg$h) == 1 && length(arg$p) == 1) {
           tclvalue(nature.var) <- "Sequential (single hue)"
-          pal.attributes <- c(arg$h, NA, arg$c., arg$l, arg$power, NA)
+          pal.attributes <- c(arg$h, NA, arg$c., arg$l, arg$power, NA, fix.up)
         } else {
           tclvalue(nature.var) <- "Sequential (multiple hues)"
-          pal.attributes <- c(arg$h, arg$c., arg$l, arg$power)
+          pal.attributes <- c(arg$h, arg$c., arg$l, arg$power, fix.up)
         }
       } else if (all(sapply(d.args, function(i) inherits(arg[[i]], what)))) {
         tclvalue(nature.var) <- "Diverging"
-        pal.attributes <- c(arg$h, arg$c, NA, arg$l, arg$power, NA)
+        pal.attributes <- c(arg$h, arg$c, NA, arg$l, arg$power, NA, fix.up)
       }
     }
     if (is.null(pal.attributes)) {
@@ -313,6 +345,7 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
     tclvalue(l2.scl.var) <- l2
     tclvalue(p1.scl.var) <- p1
     tclvalue(p2.scl.var) <- p2
+    tclvalue(fixup.var)  <- fixup
   }
 
   # Show example plot
@@ -467,10 +500,36 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
     }
     image(msc.matrix[[n]], col=pal.cols, xaxt="n", yaxt="n")
   }
+  
+  # Plot lines example
+  
+  PlotLines <- function(pal.cols) {
+    ## Adapted from example in http://www.biecek.pl/R/R.pdf
+    ## author: Przemyslaw Biecek
+    n <- length(pal.cols)
+    plot(NULL, xlab="", ylab="", xaxt="n", yaxt="n", type="n", 
+         xlim=c(0, 6), ylim=c(1.5, n + 1.5))
+    s <- 2:(n + 1)
+    rev.s <- rev(s)
+    rev.pal.cols <- rev(pal.cols)
+    lwd <- 6
+    if (n > 5)
+     lwd <- lwd -1
+    if (n > 15)
+     lwd <- lwd -1
+    if (n > 25)
+     lwd <- lwd -1
+    segments(1 / s, s, 2 + 1 / rev.s, rev.s, pal.cols, lwd=lwd)
+    segments(2 + 1 / s, s, 4 - 1 / s, s, rev.pal.cols, lwd=lwd)
+    segments(4 - 1 / s, s, 6 - 1 / s, rev.s, rev.pal.cols, lwd=lwd)
+  }
 
 
   # Main program
 
+  # Initialize directory
+  initialdir <- getwd()
+  
   # Initialize return palette
   pal.rtn <- NULL
 
@@ -495,53 +554,54 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
   dev.example <- 1
 
   # Set default and initial palettes
-
+  
   h1 <- h2 <- c1 <- c2 <- l1 <- l2 <- p1 <- p2 <- 0
-  vars <- c("h1", "h2", "c1", "c2", "l1", "l2", "p1", "p2")
+  fixup <- 1
+  vars <- c("h1", "h2", "c1", "c2", "l1", "l2", "p1", "p2", "fixup")
 
   qual.pals <- list()
-  qual.pals[[1]]  <- c(  0,  288,  35, NA, 85, NA,  NA,  NA) # Pastel1
-  qual.pals[[2]]  <- c( 10,  320,  50, NA, 80, NA,  NA,  NA) # Set3
-  qual.pals[[3]]  <- c(  0,  288,  60, NA, 70, NA,  NA,  NA) # Set2
-  qual.pals[[4]]  <- c(  0,  288,  50, NA, 60, NA,  NA,  NA) # Dark2
-  qual.pals[[5]]  <- c( 90,  -30,  50, NA, 70, NA,  NA,  NA)
-  qual.pals[[6]]  <- c(270,  150,  50, NA, 70, NA,  NA,  NA)
-  qual.pals[[7]]  <- c( 60,  240,  50, NA, 70, NA,  NA,  NA)
-  qual.pals[[8]]  <- c( 30,  300,  50, NA, 70, NA,  NA,  NA)
-  qual.pals[[9]]  <- c(  0,  300,  80, NA, 60, NA,  NA,  NA)
+  qual.pals[[1]]  <- c(  0,  288,  35, NA, 85, NA,  NA,  NA, 1) # Pastel1
+  qual.pals[[2]]  <- c( 10,  320,  50, NA, 80, NA,  NA,  NA, 1) # Set3
+  qual.pals[[3]]  <- c(  0,  288,  60, NA, 70, NA,  NA,  NA, 1) # Set2
+  qual.pals[[4]]  <- c(  0,  288,  50, NA, 60, NA,  NA,  NA, 1) # Dark2
+  qual.pals[[5]]  <- c( 90,  -30,  50, NA, 70, NA,  NA,  NA, 1)
+  qual.pals[[6]]  <- c(270,  150,  50, NA, 70, NA,  NA,  NA, 1)
+  qual.pals[[7]]  <- c( 60,  240,  50, NA, 70, NA,  NA,  NA, 1)
+  qual.pals[[8]]  <- c( 30,  300,  50, NA, 70, NA,  NA,  NA, 1)
+  qual.pals[[9]]  <- c(  0,  300,  80, NA, 60, NA,  NA,  NA, 1)
 
   seqs.pals <- list()
-  seqs.pals[[1]]  <- c(  0,   NA,   0,  0, 15, 95, 1.3,  NA) # Greys
-  seqs.pals[[2]]  <- c(280,  260,  60,  5, 20, 95, 0.7, 1.3) # Purples
-  seqs.pals[[3]]  <- c(260,  230,  80, 10, 30, 95, 0.7, 1.3) # Blues
-  seqs.pals[[4]]  <- c(135,  120,  50, 10, 40, 95, 0.4, 1.3) # Greens
-  seqs.pals[[5]]  <- c( 20,   45,  80,  5, 35, 95, 0.6, 1.3) # Oranges
-  seqs.pals[[6]]  <- c( 10,   40,  80, 10, 30, 95, 0.7, 1.3) # Greys
-  seqs.pals[[7]]  <- c(260,   NA,   0,  0, 30, 90, 1.5,  NA)
-  seqs.pals[[8]]  <- c(260,   NA,  80,  0, 30, 90, 1.5,  NA)
+  seqs.pals[[1]]  <- c(  0,   NA,   0,  0, 15, 95, 1.3,  NA, 1) # Greys
+  seqs.pals[[2]]  <- c(280,  260,  60,  5, 20, 95, 0.7, 1.3, 1) # Purples
+  seqs.pals[[3]]  <- c(260,  230,  80, 10, 30, 95, 0.7, 1.3, 1) # Blues
+  seqs.pals[[4]]  <- c(135,  120,  50, 10, 40, 95, 0.4, 1.3, 1) # Greens
+  seqs.pals[[5]]  <- c( 20,   45,  80,  5, 35, 95, 0.6, 1.3, 1) # Oranges
+  seqs.pals[[6]]  <- c( 10,   40,  80, 10, 30, 95, 0.7, 1.3, 1) # Greys
+  seqs.pals[[7]]  <- c(260,   NA,   0,  0, 30, 90, 1.5,  NA, 1)
+  seqs.pals[[8]]  <- c(260,   NA,  80,  0, 30, 90, 1.5,  NA, 1)
 
   seqm.pals <- list()
-  seqm.pals[[1]]  <- c(300,  200,  60,  0, 25, 95, 0.7, 1.3) # BuPu
-  seqm.pals[[2]]  <- c(370,  280,  80,  5, 25, 95, 0.7, 1.3) # PuRd
-  seqm.pals[[3]]  <- c(140,   80,  40, 10, 35, 95, 0.7, 1.7) # YlGn
-  seqm.pals[[4]]  <- c(265,   80,  60, 10, 25, 95, 0.7, 2.0) # YlGnBu
-  seqm.pals[[5]]  <- c( 10,   85,  80, 10, 25, 95, 0.4, 1.3) # YlOrRd
-  seqm.pals[[6]]  <- c(  0,   90,  80, 30, 30, 90, 0.2, 2.0)
-  seqm.pals[[7]]  <- c(  0,   90, 100, 30, 50, 90, 0.2, 1.0)
-  seqm.pals[[8]]  <- c(130,   30,  65,  0, 45, 90, 0.5, 1.5)
-  seqm.pals[[9]]  <- c(130,   30,  80,  0, 60, 95, 0.1, 1.0)
-  seqm.pals[[10]] <- c(  0, -100,  40, 80, 75, 40, 1.0, 0.0)
+  seqm.pals[[1]]  <- c(300,  200,  60,  0, 25, 95, 0.7, 1.3, 1) # BuPu
+  seqm.pals[[2]]  <- c(370,  280,  80,  5, 25, 95, 0.7, 1.3, 1) # PuRd
+  seqm.pals[[3]]  <- c(140,   80,  40, 10, 35, 95, 0.7, 1.7, 1) # YlGn
+  seqm.pals[[4]]  <- c(265,   80,  60, 10, 25, 95, 0.7, 2.0, 1) # YlGnBu
+  seqm.pals[[5]]  <- c( 10,   85,  80, 10, 25, 95, 0.4, 1.3, 1) # YlOrRd
+  seqm.pals[[6]]  <- c(  0,   90,  80, 30, 30, 90, 0.2, 2.0, 1)
+  seqm.pals[[7]]  <- c(  0,   90, 100, 30, 50, 90, 0.2, 1.0, 1)
+  seqm.pals[[8]]  <- c(130,   30,  65,  0, 45, 90, 0.5, 1.5, 1)
+  seqm.pals[[9]]  <- c(130,   30,  80,  0, 60, 95, 0.1, 1.0, 1)
+  seqm.pals[[10]] <- c(  0, -100,  40, 80, 75, 40, 1.0, 0.0, 1)
 
   dive.pals <- list()
-  dive.pals[[1]]  <- c(340,  128,  45, NA, 35, 95, 0.7, 1.3) # PiYG
-  dive.pals[[2]]  <- c(300,  128,  45, NA, 30, 95, 0.7, 1.3) # PRGn
-  dive.pals[[3]]  <- c( 55,  160,  30, NA, 35, 95, 0.7, 1.3) # BrBG
-  dive.pals[[4]]  <- c( 40,  270,  45, NA, 30, 95, 0.7, 1.3) # PuOr
-  dive.pals[[5]]  <- c( 12,  265,  80, NA, 25, 95, 0.7, 1.3) # RdBu
-  dive.pals[[6]]  <- c(260,    0,  80, NA, 30, 90, 1.5,  NA)
-  dive.pals[[7]]  <- c(260,    0, 100, NA, 50, 90, 1.0,  NA)
-  dive.pals[[8]]  <- c(130,   43, 100, NA, 70, 90, 1.0,  NA)
-  dive.pals[[9]]  <- c(180,  330,  59, NA, 75, 95, 1.5,  NA)
+  dive.pals[[1]]  <- c(340,  128,  45, NA, 35, 95, 0.7, 1.3, 1) # PiYG
+  dive.pals[[2]]  <- c(300,  128,  45, NA, 30, 95, 0.7, 1.3, 1) # PRGn
+  dive.pals[[3]]  <- c( 55,  160,  30, NA, 35, 95, 0.7, 1.3, 1) # BrBG
+  dive.pals[[4]]  <- c( 40,  270,  45, NA, 30, 95, 0.7, 1.3, 1) # PuOr
+  dive.pals[[5]]  <- c( 12,  265,  80, NA, 25, 95, 0.7, 1.3, 1) # RdBu
+  dive.pals[[6]]  <- c(260,    0,  80, NA, 30, 90, 1.5,  NA, 1)
+  dive.pals[[7]]  <- c(260,    0, 100, NA, 50, 90, 1.0,  NA, 1)
+  dive.pals[[8]]  <- c(130,   43, 100, NA, 70, 90, 1.0,  NA, 1)
+  dive.pals[[9]]  <- c(180,  330,  59, NA, 75, 95, 1.5,  NA, 1)
 
   # Set limits for palette attributes
 
@@ -581,7 +641,7 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
   p2.scl.var <- tclVar()
   p2.ent.var <- tclVar()
   
-  fixup.var <- tclVar(TRUE)
+  fixup.var <- tclVar(fixup)
   reverse.var <- tclVar(FALSE)
   desaturation.var <- tclVar(FALSE)
   colorblind.var <- tclVar(FALSE)
@@ -675,7 +735,7 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
 
   # Frame 3, color description
 
-  txt <- "Color description: Hue, Chroma, Luminance, Power"
+  txt <- "Palette description: Hue, Chroma, Luminance, Power"
   frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text=txt)
 
   frame3.lab.1.1 <- ttklabel(frame3, text="H1", width=2)
@@ -768,7 +828,10 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
   frame4 <- ttkframe(tt, relief="flat")
   txt <- "Correct colors using valid RGB color model values"
   frame4.chk.1 <- ttkcheckbutton(frame4, text=txt, variable=fixup.var,
-                                 command=function() DrawPalette(is.n=TRUE))
+                                 command=function() {
+                                   fixup <<- as.integer(tclvalue(fixup.var))
+                                   DrawPalette(is.n=TRUE)
+                                 })
   tkgrid.configure(frame4.chk.1, padx=c(12, 0), pady=c(2, 0))
   tkpack(frame4, fill="x")
   
@@ -800,7 +863,8 @@ ChoosePalette <- function(pal=diverge_hcl, n=7L, parent=NULL) {
   frame6.box.2 <- ttkcombobox(frame6, state="readonly", 
                               textvariable=example.var,
                               values=c("Map", "Heatmap", "Scatter", "Spine", 
-                                       "Bar", "Pie", "Perspective", "Mosaic"))
+                                       "Bar", "Pie", "Perspective", "Mosaic", 
+                                       "Lines"))
   frame6.chk.3 <- ttkcheckbutton(frame6, text="Reverse colors", 
                                  variable=reverse.var, command=ShowExample)
   tkgrid(frame6.lab.1, frame6.box.2, frame6.chk.3)
