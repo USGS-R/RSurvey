@@ -1,6 +1,6 @@
-\name{agsc}
+\name{USSouthPolygon}
 
-\alias{agsc}
+\alias{USSouthPolygon}
 
 \docType{data}
 
@@ -11,7 +11,7 @@ County polygons for Alabama, Georgia, and South Carolina.
 }
 
 \usage{
-agsc
+USSouthPolygon
 }
 
 \format{
@@ -20,7 +20,7 @@ A data frame with coordinates of the vertices of the county polygons
 }
 
 \examples{
-\donttest{data(agsc)}
+\donttest{data(USSouthPolygon)}
 }
 
 \keyword{datasets}
