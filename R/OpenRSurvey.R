@@ -918,7 +918,8 @@ OpenRSurvey <- function() {
         })
   tkadd(menu.plot, "command", label="Choose color palette",
         command=function() {
-          pal <- ChoosePalette(Data("color.palette"), Data("nlevels"), tt)
+          pal <- colorspace::choose_palette(pal=Data("color.palette"), 
+                                            n=Data("nlevels"), parent=tt)
           if (!is.null(pal))
             Data("color.palette", pal)
         })

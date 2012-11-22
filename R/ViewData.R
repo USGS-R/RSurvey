@@ -113,15 +113,10 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
     tkyview(frame2.tbl, idx - 1L)
   }
 
-  # Get single cell value for table, a simplified version of
-  # as.tclObj(as.character(x), drop=TRUE) is used.
+  # Get single cell value for table
 
   GetCellValue <- function(r, c) {
-    val <- .External("RTcl_ObjFromCharVector",
-                     d[as.integer(r) + 1L, as.integer(c) + 1L],
-                     drop=TRUE, PACKAGE="tcltk")
-    class(val) <- "tclObj"
-    val
+    as.tclObj(d[as.integer(r) + 1L, as.integer(c) + 1L], drop=TRUE)
   }
 
 
@@ -215,8 +210,22 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
   }
 
   # Construct character matrix from data frame
+  
+  
 
-  d <- rbind(c("", cols), cbind(row.names(d), as.matrix(d)))
+  
+  
+  d <- rbind(c("", cols, ""), cbind(row.names(d), as.matrix(d), rep("", m)), rep("", n + 2))
+  
+  
+# d <- rbind(c("", cols), cbind(row.names(d), as.matrix(d)))
+  
+  
+  
+  
+  
+  
+  
 
   # Assign variables linked to Tk widgets
 
@@ -310,7 +319,7 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
   frame2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
   .Tcl("option add *Table.font {CourierNew 9}")
-  frame2.tbl <- tkwidget(frame2, "table", rows=m + 1, cols=n + 1,
+  frame2.tbl <- tkwidget(frame2, "table", rows=m + 2, cols=n + 2,
                          colwidth=13, rowheight=1, state="disabled",
                          height=height + 1, width=width + 1,
                          ipadx=5, ipady=1, wrap=0,
