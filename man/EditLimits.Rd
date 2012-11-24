@@ -23,15 +23,12 @@ Returns a list containing the following components:
   \item{x1, x2}{numeric; the minimum and maximum \code{x} value.}
   \item{y1, y2}{numeric; the minimum and maximum \code{y} value.}
   \item{z1, z2}{numeric; the minimum and maximum \code{z} value.}
-  \item{t1, t2}{POSIXct; the minimum and maximum \code{t} value.}
   \item{x1.chk, x2.chk}{logical; if \code{TRUE} a default
     value is used for the minimum and maximum \code{x} value.}
   \item{y1.chk, y2.chk}{logical; if \code{TRUE} a default
     value is used for the minimum and maximum \code{y} value.}
   \item{z1.chk, z2.chk}{logical; if \code{TRUE} a default
     value is used for the minimum and maximum \code{z} value.}
-  \item{t1.chk, t2.chk}{logical; if \code{TRUE} a default
-    value is used for the minimum and maximum \code{t} value.}
   \item{x}{numeric; a vector of \code{x} limits \code{(x1,x2)},
     default is \code{(NA,NA)}.}
   \item{y}{numeric; a vector of \code{y} limits \code{(y1,y2)},

@@ -113,12 +113,7 @@ OpenRSurvey <- function() {
     if (is.null(vars$x) | is.null(vars$y) | is.null(vars$z))
       s <- "disabled"
     tkconfigure(frame2.but.1.2, state=s)
-    tkconfigure(frame2.but.2.2, state=s)
-
-    s <- "normal"
-    if (is.null(vars$z) | is.null(vars$t))
-      s <- "disabled"
-    tkconfigure(frame2.but.2.1, state=s)
+    tkconfigure(frame2.but.1.3, state=s)
   }
 
   # Set variables
@@ -129,7 +124,6 @@ OpenRSurvey <- function() {
     tkset(frame1.box.3.2, "")
     tkset(frame1.box.4.2, "")
     tkset(frame1.box.5.2, "")
-    tkset(frame1.box.6.2, "")
 
     cols <- Data("cols")
     vars <- Data("vars")
@@ -140,7 +134,6 @@ OpenRSurvey <- function() {
       tkconfigure(frame1.box.3.2, value="")
       tkconfigure(frame1.box.4.2, value="")
       tkconfigure(frame1.box.5.2, value="")
-      tkconfigure(frame1.box.6.2, value="")
       ButtonState(vars)
       if (is.null(cols))
         return()
@@ -149,18 +142,15 @@ OpenRSurvey <- function() {
     ids <- sapply(cols, function(i) i$id)
     classes <- sapply(cols, function(i) i$class)
 
-    idxs.t <- which(classes %in% c("POSIXct"))
     idxs.n <- which(classes %in% c("numeric", "integer"))
 
-    vals.t <- c("", ids[idxs.t])
     vals.n <- c("", ids[idxs.n])
 
     tkconfigure(frame1.box.1.2, value=vals.n)
     tkconfigure(frame1.box.2.2, value=vals.n)
     tkconfigure(frame1.box.3.2, value=vals.n)
-    tkconfigure(frame1.box.4.2, value=vals.t)
+    tkconfigure(frame1.box.4.2, value=vals.n)
     tkconfigure(frame1.box.5.2, value=vals.n)
-    tkconfigure(frame1.box.6.2, value=vals.n)
 
     if (!is.null(vars$x))
       tcl(frame1.box.1.2, "current", which(vars$x  == idxs.n))
@@ -168,12 +158,10 @@ OpenRSurvey <- function() {
       tcl(frame1.box.2.2, "current", which(vars$y  == idxs.n))
     if (!is.null(vars$z))
       tcl(frame1.box.3.2, "current", which(vars$z  == idxs.n))
-    if (!is.null(vars$t))
-      tcl(frame1.box.4.2, "current", which(vars$t  == idxs.t))
     if (!is.null(vars$vx))
-      tcl(frame1.box.5.2, "current", which(vars$vx == idxs.n))
+      tcl(frame1.box.4.2, "current", which(vars$vx == idxs.n))
     if (!is.null(vars$vy))
-      tcl(frame1.box.6.2, "current", which(vars$vy == idxs.n))
+      tcl(frame1.box.5.2, "current", which(vars$vy == idxs.n))
 
     ButtonState(vars)
   }
@@ -185,15 +173,13 @@ OpenRSurvey <- function() {
 
     col.classes <- sapply(cols, function(i) i$class)
 
-    idxs.t <- which(col.classes %in% c("POSIXct"))
     idxs.n <- which(col.classes %in% c("numeric", "integer"))
 
     idx.x  <- as.integer(tcl(frame1.box.1.2, "current"))
     idx.y  <- as.integer(tcl(frame1.box.2.2, "current"))
     idx.z  <- as.integer(tcl(frame1.box.3.2, "current"))
-    idx.t  <- as.integer(tcl(frame1.box.4.2, "current"))
-    idx.vx <- as.integer(tcl(frame1.box.5.2, "current"))
-    idx.vy <- as.integer(tcl(frame1.box.6.2, "current"))
+    idx.vx <- as.integer(tcl(frame1.box.4.2, "current"))
+    idx.vy <- as.integer(tcl(frame1.box.5.2, "current"))
 
     vars <- list()
 
@@ -203,8 +189,6 @@ OpenRSurvey <- function() {
       vars$y <- idxs.n[idx.y]
     if (idx.z > 0)
       vars$z <- idxs.n[idx.z]
-    if (idx.t > 0)
-      vars$t <- idxs.t[idx.t]
     if (idx.vx > 0)
       vars$vx <- idxs.n[idx.vx]
     if (idx.vy > 0)
@@ -394,35 +378,6 @@ OpenRSurvey <- function() {
       idx <- idx + 1
     }
     chk
-  }
-
-  # Plot temporal data
-
-  CallPlotTimeSeries <- function() {
-    CallProcessData()
-    if (is.null(Data("data.pts")))
-      return()
-
-    dat          <- Data("data.pts")
-    lim          <- Data("lim.axes")
-    cols         <- Data("cols")
-    vars         <- Data("vars")
-
-    ylab <- cols[[vars$z]]$id
-
-    axis.side <- 1:2
-    if (Data("show.2.axes"))
-      axis.side <- 1:4
-
-    tkconfigure(tt, cursor="watch")
-    PlotTimeSeries(x=dat$t, y=dat$z, xlim=lim$t, ylim=lim$z, ylab=ylab,
-                   tgap=Data("tgap"), width=Data("width"),
-                   cex.pts=Data("cex.pts"), axis.side=axis.side,
-                   minor.ticks=Data("minor.ticks"),
-                   ticks.inside=Data("ticks.inside"),
-                   rm.pnt.line=Data("rm.pnt.line"))
-    tkconfigure(tt, cursor="arrow")
-    tkfocus(tt)
   }
 
   # Plot point or 2d surface data
@@ -651,7 +606,7 @@ OpenRSurvey <- function() {
     cols <- Data("cols")
 
     state.vars <- list(x="x-axis", y="y-axis", z="z-axis",
-                       t="t-axis", vx="x-vector", vy="y-vector")
+                       vx="x-vector", vy="y-vector")
     state.vars <- state.vars[names(state.vars) %in% names(vars)]
     state.idxs <- sapply(names(state.vars), function(i) vars[[i]])
 
@@ -1035,32 +990,28 @@ OpenRSurvey <- function() {
   frame1.lab.1.1 <- ttklabel(frame1, text="x-axis")
   frame1.lab.2.1 <- ttklabel(frame1, text="y-axis")
   frame1.lab.3.1 <- ttklabel(frame1, text="z-axis")
-  frame1.lab.4.1 <- ttklabel(frame1, text="t-axis")
-  frame1.lab.5.1 <- ttklabel(frame1, text="x-vector")
-  frame1.lab.6.1 <- ttklabel(frame1, text="y-vector")
+  frame1.lab.4.1 <- ttklabel(frame1, text="x-vector")
+  frame1.lab.5.1 <- ttklabel(frame1, text="y-vector")
 
   frame1.box.1.2 <- ttkcombobox(frame1, state="readonly")
   frame1.box.2.2 <- ttkcombobox(frame1, state="readonly")
   frame1.box.3.2 <- ttkcombobox(frame1, state="readonly")
   frame1.box.4.2 <- ttkcombobox(frame1, state="readonly")
   frame1.box.5.2 <- ttkcombobox(frame1, state="readonly")
-  frame1.box.6.2 <- ttkcombobox(frame1, state="readonly")
 
   tkgrid(frame1.lab.1.1, frame1.box.1.2, pady=c(0, 4))
   tkgrid(frame1.lab.2.1, frame1.box.2.2, pady=c(0, 4))
   tkgrid(frame1.lab.3.1, frame1.box.3.2, pady=c(0, 4))
   tkgrid(frame1.lab.4.1, frame1.box.4.2, pady=c(0, 4))
-  tkgrid(frame1.lab.5.1, frame1.box.5.2, pady=c(0, 4))
-  tkgrid(frame1.lab.6.1, frame1.box.6.2)
+  tkgrid(frame1.lab.5.1, frame1.box.5.2)
 
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, frame1.lab.3.1,
-                   frame1.lab.4.1, frame1.lab.5.1, frame1.lab.6.1,
-                   sticky="e", padx=c(0, 2))
+                   frame1.lab.4.1, frame1.lab.5.1, sticky="e", padx=c(0, 2))
 
   tkgrid.configure(frame1.box.1.2, frame1.box.2.2, frame1.box.3.2,
-                   frame1.box.4.2, frame1.box.5.2, frame1.box.6.2, sticky="we")
+                   frame1.box.4.2, frame1.box.5.2, sticky="we")
   tkgrid.configure(frame1.box.1.2, frame1.box.2.2, frame1.box.3.2,
-                   frame1.box.4.2, frame1.box.5.2)
+                   frame1.box.4.2)
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=25)
 
@@ -1071,24 +1022,20 @@ OpenRSurvey <- function() {
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Plot types")
 
-  frame2.but.1.1 <- ttkbutton(frame2, width=15, text="Scatter",
+  frame2.but.1.1 <- ttkbutton(frame2, width=10, text="Scatter",
                               command=function() {
                                 CallPlot2d(type="p")
                               })
-  frame2.but.1.2 <- ttkbutton(frame2, width=15, text="2D Surface",
+  frame2.but.1.2 <- ttkbutton(frame2, width=10, text="2D Surface",
                               command=function() {
                                 type <- if (Data("img.contour")) "g" else "l"
                                 CallPlot2d(type=type)
                               })
-  frame2.but.2.1 <- ttkbutton(frame2, width=15, text="Time Series",
-                              command=CallPlotTimeSeries)
-  frame2.but.2.2 <- ttkbutton(frame2, width=15, text="3D Surface",
+  frame2.but.1.3 <- ttkbutton(frame2, width=10, text="3D Surface",
                               command=CallPlot3d)
 
-  tkgrid(frame2.but.1.1, frame2.but.1.2, pady=c(0, 4))
-  tkgrid(frame2.but.2.1, frame2.but.2.2, pady=0)
-
-  tkgrid.configure(frame2.but.1.1, frame2.but.2.1, padx=c(0, 4))
+  tkgrid(frame2.but.1.1, frame2.but.1.2, frame2.but.1.3, pady=c(0, 4))
+  tkgrid.configure(frame2.but.1.2, padx=4)
 
   tcl("grid", "anchor", frame2, "center")
 
@@ -1117,7 +1064,6 @@ OpenRSurvey <- function() {
   tkbind(frame1.box.3.2, "<<ComboboxSelected>>", RefreshVars)
   tkbind(frame1.box.4.2, "<<ComboboxSelected>>", RefreshVars)
   tkbind(frame1.box.5.2, "<<ComboboxSelected>>", RefreshVars)
-  tkbind(frame1.box.6.2, "<<ComboboxSelected>>", RefreshVars)
 
   # GUI closure
 

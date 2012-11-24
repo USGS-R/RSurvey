@@ -47,42 +47,6 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
     d$z <- c(if (!is.null(d$z1) && !d$z1.chk) d$z1 else NA,
              if (!is.null(d$z2) && !d$z2.chk) d$z2 else NA)
 
-    t1.str <- paste(tclvalue(t1d.var), " ",
-                    as.integer(tclvalue(t1h.var)), ":",
-                    as.integer(tclvalue(t1m.var)), ":",
-                    as.numeric(tclvalue(t1s.var)), sep="")
-    t2.str <- paste(tclvalue(t2d.var), " ",
-                    as.integer(tclvalue(t2h.var)), ":",
-                    as.integer(tclvalue(t2m.var)), ":",
-                    as.numeric(tclvalue(t2s.var)), sep="")
-
-    t1 <- strptime(t1.str, "%Y-%m-%d %H:%M:%OS")
-    t2 <- strptime(t2.str, "%Y-%m-%d %H:%M:%OS")
-
-    d$t1 <- NA
-    if (inherits(t1, "POSIXt"))
-      d$t1 <- t1
-    d$t2 <- NA
-    if (inherits(t2, "POSIXt"))
-      d$t2 <- t2
-
-    if (is.na(d$t1))
-      d$t1 <- d$t1.chk <- NULL
-    else
-      d$t1.chk <- as.integer(tclvalue(t1.chk.var))
-    if (is.na(d$t2))
-      d$t2 <- d$t2.chk <- NULL
-    else
-      d$t2.chk <- as.integer(tclvalue(t2.chk.var))
-
-    origin <- as.POSIXct("1970-01-01 00:00:00.0")
-
-    if (is.null(d$t1) || d$t1.chk)
-      t1.str <- NA
-    if (is.null(d$t2) || d$t2.chk)
-      t2.str <- NA
-    d$t <- as.POSIXct(c(t1.str, t2.str), origin=origin)
-
     tclvalue(tt.done.var) <- 1
     new <<- d
   }
@@ -124,38 +88,6 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
   y2.sta.var <- if (y2.chk) tclVar("disabled") else tclVar("normal")
   z1.sta.var <- if (z1.chk) tclVar("disabled") else tclVar("normal")
   z2.sta.var <- if (z2.chk) tclVar("disabled") else tclVar("normal")
-
-  if (is.null(lim$t1)) {
-    t1d.var <- tclVar()
-    t1h.var <- tclVar()
-    t1m.var <- tclVar()
-    t1s.var <- tclVar()
-  } else {
-    t1d.var <- tclVar(format(lim$t1, format="%Y-%m-%d"))
-    t1h.var <- tclVar(as.character(as.integer(format(lim$t1, format="%H" ))))
-    t1m.var <- tclVar(as.character(as.integer(format(lim$t1, format="%M" ))))
-    t1s.var <- tclVar(as.character(as.numeric(format(lim$t1, format="%OS"))))
-  }
-  if (is.null(lim$t2)) {
-    t2d.var <- tclVar()
-    t2h.var <- tclVar()
-    t2m.var <- tclVar()
-    t2s.var <- tclVar()
-  } else {
-    t2d.var <- tclVar(format(lim$t2, format="%Y-%m-%d"))
-    t2h.var <- tclVar(as.character(as.integer(format(lim$t2, format="%H" ))))
-    t2m.var <- tclVar(as.character(as.integer(format(lim$t2, format="%M" ))))
-    t2s.var <- tclVar(as.character(as.numeric(format(lim$t2, format="%OS"))))
-  }
-
-  t1.chk <- if (is.null(lim$t1)) 1 else lim$t1.chk
-  t2.chk <- if (is.null(lim$t2)) 1 else lim$t2.chk
-
-  t1.chk.var <- tclVar(t1.chk)
-  t2.chk.var <- tclVar(t2.chk)
-
-  t1.sta.var <- if (t1.chk) tclVar("disabled") else tclVar("normal")
-  t2.sta.var <- if (t2.chk) tclVar("disabled") else tclVar("normal")
 
   tt.done.var <- tclVar(0)
 
@@ -310,85 +242,6 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
 
   tcl("grid", "anchor", frame2, "center")
 
-  # Frame 3 contains t-axis limits
-
-  frame3 <- ttkframe(nb, relief="flat", padding=10, borderwidth=2)
-  tkadd(nb, frame3, text="      t      ")
-
-  fg <- "#414042"
-  frame3.lab.1.1 <- ttklabel(frame3, text="Minimum")
-  frame3.lab.2.1 <- ttklabel(frame3, text="Maximum")
-  frame3.lab.3.1 <- ttklabel(frame3, foreground=fg, text="e.g.")
-  frame3.lab.3.2 <- ttklabel(frame3, foreground=fg, text="2010-06-27")
-  frame3.lab.3.3 <- ttklabel(frame3, foreground=fg, text="13")
-  frame3.lab.3.4 <- ttklabel(frame3, foreground=fg, text="42")
-  frame3.lab.3.5 <- ttklabel(frame3, foreground=fg, text="6.321")
-
-  frame3.ent.1.2 <- ttkentry(frame3, width=11, textvariable=t1d.var,
-                             state=tclvalue(t1.sta.var))
-  frame3.ent.1.3 <- ttkentry(frame3, width= 3, textvariable=t1h.var,
-                             state=tclvalue(t1.sta.var))
-  frame3.ent.1.4 <- ttkentry(frame3, width= 3, textvariable=t1m.var,
-                             state=tclvalue(t1.sta.var))
-  frame3.ent.1.5 <- ttkentry(frame3, width= 5, textvariable=t1s.var,
-                             state=tclvalue(t1.sta.var))
-
-  frame3.ent.2.2 <- ttkentry(frame3, width=11, textvariable=t2d.var,
-                             state=tclvalue(t2.sta.var))
-  frame3.ent.2.3 <- ttkentry(frame3, width= 3, textvariable=t2h.var,
-                             state=tclvalue(t2.sta.var))
-  frame3.ent.2.4 <- ttkentry(frame3, width= 3, textvariable=t2m.var,
-                             state=tclvalue(t2.sta.var))
-  frame3.ent.2.5 <- ttkentry(frame3, width= 5, textvariable=t2s.var,
-                             state=tclvalue(t2.sta.var))
-
-  frame3.chk.1.6 <- ttkcheckbutton(frame3, variable=t1.chk.var, text="Auto",
-                    command=function() {
-                      if (as.integer(tclvalue(t1.chk.var)))
-                        tclvalue(t1.sta.var) <- "disabled"
-                      else
-                        tclvalue(t1.sta.var) <- "normal"
-                      tkconfigure(frame3.ent.1.2, state=tclvalue(t1.sta.var))
-                      tkconfigure(frame3.ent.1.3, state=tclvalue(t1.sta.var))
-                      tkconfigure(frame3.ent.1.4, state=tclvalue(t1.sta.var))
-                      tkconfigure(frame3.ent.1.5, state=tclvalue(t1.sta.var))
-                      tkfocus(frame3.ent.1.2)
-                    })
-  frame3.chk.2.6 <- ttkcheckbutton(frame3, variable=t2.chk.var, text="Auto",
-                    command=function() {
-                      if (as.integer(tclvalue(t2.chk.var)))
-                        tclvalue(t2.sta.var) <- "disabled"
-                      else
-                        tclvalue(t2.sta.var) <- "normal"
-                      tkconfigure(frame3.ent.2.2, state=tclvalue(t2.sta.var))
-                      tkconfigure(frame3.ent.2.3, state=tclvalue(t2.sta.var))
-                      tkconfigure(frame3.ent.2.4, state=tclvalue(t2.sta.var))
-                      tkconfigure(frame3.ent.2.5, state=tclvalue(t2.sta.var))
-                      tkfocus(frame3.ent.2.2)
-                    })
-
-  tkgrid(frame3.lab.1.1, frame3.ent.1.2, frame3.ent.1.3,
-         frame3.ent.1.4, frame3.ent.1.5, frame3.chk.1.6, padx=1, pady=2)
-  tkgrid(frame3.lab.2.1, frame3.ent.2.2, frame3.ent.2.3,
-         frame3.ent.2.4, frame3.ent.2.5, frame3.chk.2.6, padx=1, pady=2)
-  tkgrid(frame3.lab.3.1, frame3.lab.3.2, frame3.lab.3.3,
-         frame3.lab.3.4, frame3.lab.3.5, "x", padx=1, pady=2)
-
-  tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, frame3.lab.3.1, sticky="e")
-  tkgrid.configure(frame3.lab.3.2, frame3.lab.3.3,
-                   frame3.lab.3.4, frame3.lab.3.5, sticky="w")
-
-  tkgrid.configure(frame3.ent.1.2, frame3.ent.1.3, frame3.ent.1.4,
-                   frame3.ent.1.5, frame3.ent.2.2, frame3.ent.2.3,
-                   frame3.ent.2.4, frame3.ent.2.5, sticky="we")
-
-  tkgrid.columnconfigure(frame3, 1, weight=5, minsize=13)
-  tkgrid.columnconfigure(frame3, 2, weight=2, minsize=3)
-  tkgrid.columnconfigure(frame3, 3, weight=2, minsize=3)
-  tkgrid.columnconfigure(frame3, 4, weight=3, minsize=6)
-
-  tcl("grid", "anchor", frame3, "center")
-
   # Insert notebook
 
   tkpack(nb, fill="x", expand=TRUE, padx=5, pady=c(5, 0))
@@ -436,40 +289,6 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
   tkbind(frame2.ent.2.2, "<KeyRelease>",
          function() {
            tclvalue(z2.var) <- CheckEntry("numeric", tclvalue(z2.var))
-         })
-
-  tkbind(frame3.ent.1.2, "<KeyRelease>",
-         function() {
-           tclvalue(t1d.var) <- CheckEntry("date", tclvalue(t1d.var))
-         })
-  tkbind(frame3.ent.1.3, "<KeyRelease>",
-         function() {
-           tclvalue(t1h.var) <- CheckEntry("hour", tclvalue(t1h.var))
-         })
-  tkbind(frame3.ent.1.4, "<KeyRelease>",
-         function() {
-           tclvalue(t1m.var) <- CheckEntry("minute", tclvalue(t1m.var))
-         })
-  tkbind(frame3.ent.1.5, "<KeyRelease>",
-         function() {
-           tclvalue(t1s.var) <- CheckEntry("second", tclvalue(t1s.var))
-         })
-
-  tkbind(frame3.ent.2.2, "<KeyRelease>",
-         function() {
-           tclvalue(t2d.var) <- CheckEntry("date", tclvalue(t2d.var))
-         })
-  tkbind(frame3.ent.2.3, "<KeyRelease>",
-         function() {
-           tclvalue(t2h.var) <- CheckEntry("hour", tclvalue(t2h.var))
-         })
-  tkbind(frame3.ent.2.4, "<KeyRelease>",
-         function() {
-           tclvalue(t2m.var) <- CheckEntry("minute", tclvalue(t2m.var))
-         })
-  tkbind(frame3.ent.2.5, "<KeyRelease>",
-         function() {
-           tclvalue(t2s.var) <- CheckEntry("second", tclvalue(t2s.var))
          })
 
   # GUI control

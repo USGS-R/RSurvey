@@ -139,12 +139,6 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
         } else if (is.null(vars$z)) {
           vars$z <- idx
         }
-
-      # Determine default date-time variable
-
-      } else if (inherits(val, "POSIXct")) {
-        if (is.null(vars$t))
-          vars$t <- idx
       }
 
       # Additional attributes

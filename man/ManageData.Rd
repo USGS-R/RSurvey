@@ -48,7 +48,7 @@ to a specific variable, and contains the following components:
   \code{\link{SummarizeData}}).}
 \item{comments}{character; user comments.}
 The \code{vars} object is a list with components:
-\item{x, y, z, t, vx, vy}{integer; the index number of the corresponding
+\item{x, y, z, vx, vy}{integer; the index number of the corresponding
   state variable in \code{cols}. These indexes are updated to reflect
   the removal and (or) reordering of variables in \code{cols}.}
 }

@@ -311,8 +311,7 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
 
   frame2 <- tkframe(pw, relief="flat", padx=0, pady=0)
 
-  txt <- paste("DATA[[\"", edit.fun.id,
-               "\"]] <- function(DATA) {<define function below>}", sep="")
+  txt <- "Define function"
   frame2.lab.1.1 <- ttklabel(frame2, text=txt, foreground="#414042")
 
   fnt <- tkfont.create(family="Courier New", size=9)
