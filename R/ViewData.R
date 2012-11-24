@@ -211,21 +211,7 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
 
   # Construct character matrix from data frame
   
-  
-
-  
-  
-  d <- rbind(c("", cols, ""), cbind(row.names(d), as.matrix(d), rep("", m)), rep("", n + 2))
-  
-  
-# d <- rbind(c("", cols), cbind(row.names(d), as.matrix(d)))
-  
-  
-  
-  
-  
-  
-  
+  d <- rbind(c("", cols, ""), cbind(row.names(d), as.matrix(d), rep("", m)))
 
   # Assign variables linked to Tk widgets
 
@@ -319,15 +305,15 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
   frame2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
   .Tcl("option add *Table.font {CourierNew 9}")
-  frame2.tbl <- tkwidget(frame2, "table", rows=m + 2, cols=n + 2,
-                         colwidth=13, rowheight=1, state="disabled",
+  frame2.tbl <- tkwidget(frame2, "table", rows=m + 1, cols=n + 2,
+                         colwidth=-2, rowheight=1, state="disabled",
                          height=height + 1, width=width + 1,
                          ipadx=5, ipady=1, wrap=0,
                          highlightcolor="gray75", background="white",
                          foreground="black", titlerows=1, titlecols=1,
                          multiline=0, resizeborders="col", colorigin=0,
                          bordercursor="sb_h_double_arrow", cursor="plus",
-                         colstretchmode="unset", rowstretchmode="none",
+                         colstretchmode="none", rowstretchmode="none",
                          drawmode="single", rowseparator="\n",
                          colseparator="\t", selectmode="extended",
                          insertofftime=0, anchor="nw", justify="left",
