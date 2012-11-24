@@ -211,14 +211,14 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
 
   # Construct character matrix from data frame
   
-  d <- rbind(c("", cols, ""), cbind(row.names(d), as.matrix(d), rep("", m)))
+  d <- rbind(c("", cols), cbind(row.names(d), as.matrix(d)))
 
   # Assign variables linked to Tk widgets
 
   table.var   <- tclArray()
   line.no.var <- tclVar()
   pattern.var <- tclVar()
-  fixed.var   <- tclVar(0)
+  fixed.var   <- tclVar(1)
   perl.var    <- tclVar(0)
   case.var    <- tclVar(0)
   tt.done.var <- tclVar(0)
@@ -305,7 +305,7 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
   frame2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
   .Tcl("option add *Table.font {CourierNew 9}")
-  frame2.tbl <- tkwidget(frame2, "table", rows=m + 1, cols=n + 2,
+  frame2.tbl <- tkwidget(frame2, "table", rows=m + 1, cols=n + 1,
                          colwidth=-2, rowheight=1, state="disabled",
                          height=height + 1, width=width + 1,
                          ipadx=5, ipady=1, wrap=0,
@@ -350,13 +350,6 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
                   justify="center")
   tcl(frame2.tbl, "tag", "col", "rowtitles", 0)
   tktag.configure(frame2.tbl, "rowtitles", anchor="ne", justify="right")
-
-  tag.cols <- which(numeric.columns | posix.columns)
-  if (length(tag.cols) > 0) {
-    for (j in tag.cols)
-      tcl(frame2.tbl, "tag", "col", "numeric", j)
-    tktag.configure(frame2.tbl, "numeric", anchor="ne", justify="right")
-  }
 
   tkgrid.columnconfigure(frame2, 0, weight=1)
   tkgrid.rowconfigure(frame2, 0, weight=1)
