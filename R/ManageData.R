@@ -59,8 +59,8 @@ ManageData <- function(cols, vars, parent=NULL) {
     if (!is.null(old.id)) {
       old.fun <- cols[[idx]]$fun
 
-      str.1 <- paste("DATA[[\"", old.id, "\"]]", sep="")
-      str.2 <- paste("DATA[[\"", new.id, "\"]]", sep="")
+      str.1 <- paste("\"", old.id, "\"", sep="")
+      str.2 <- paste("\"", new.id, "\"", sep="")
       funs <- sapply(cols, function(i) gsub(str.1, str.2, i$fun, fixed=TRUE))
       sapply(1:length(cols), function(i) cols[[i]]$fun <<- funs[[i]])
 
@@ -260,7 +260,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     if (length(idx) == 0)
       return()
 
-    var.str <- paste("DATA[[\"", cols[[idx]]$id, "\"]]", sep="")
+    var.str <- paste("\"", cols[[idx]]$id, "\"", sep="")
     funs.with.var <- grep(var.str, sapply(cols, function(i) i$fun), fixed=TRUE)
     dependent.vars <- funs.with.var[!funs.with.var %in% idx]
 

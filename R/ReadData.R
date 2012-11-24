@@ -162,7 +162,7 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
       cols[[idx]]$format  <- fmt
       cols[[idx]]$class   <- class(val)[1]
       cols[[idx]]$index   <- idx
-      cols[[idx]]$fun     <- paste("DATA[[\"", id, "\"]]", sep="")
+      cols[[idx]]$fun     <- paste("\"", id, "\"", sep="")
       cols[[idx]]$sample  <- na.omit(val)[1]
       cols[[idx]]$summary <- SummarizeData(val, fmt=fmt)
 

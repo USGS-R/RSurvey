@@ -2,7 +2,7 @@ EvalFunction <- function(txt, cols) {
   # Evaluate R expression
 
   d <- list()
-
+  
   ids <- sapply(cols, function(i) i$id)
 
   for (i in seq(along=ids)) {
@@ -17,11 +17,12 @@ EvalFunction <- function(txt, cols) {
   }
 
   fun <- txt
-  ids.quoted <- paste("\"", ids, "\"", sep="")
-  for (i in seq(along=ids.quoted))
-    fun <- gsub(ids.quoted[i], i, fun, fixed=TRUE)
-
-  fun <- eval(parse(text=paste("function(DATA) {", fun, "}", sep="")))
+  pattern <- paste("\"", ids, "\"", sep="")
+  replacement <- paste("DATA[[", 1:length(ids), "]]", sep="")
+  for (i in seq(along=ids))
+    fun <- gsub(pattern[i], replacement[i], fun, fixed=TRUE)
+  fun <- paste("function(DATA) {", fun, "}", sep="")
+  fun <- eval(parse(text=fun))
 
   ans <- try(fun(d), silent=TRUE)
 

@@ -12,7 +12,6 @@ ProcessData <- function(d, type="p", lim=NULL, ply=NULL,
     var.names <- names(d)
     is.x <- "x" %in% var.names
     is.y <- "y" %in% var.names
-    is.t <- "t" %in% var.names
 
     # Remove records with NA's for spatial and temporal data
 
@@ -20,8 +19,6 @@ ProcessData <- function(d, type="p", lim=NULL, ply=NULL,
       d <- d[!is.na(d[, "x"]), ]
     if (is.y)
       d <- d[!is.na(d[, "y"]), ]
-    if (is.t)
-      d <- d[!is.na(d[, "t"]), ]
 
     # Set range limits
 

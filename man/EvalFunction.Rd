@@ -18,16 +18,9 @@ EvalFunction(txt, cols)
 \item{cols}{list; see \code{\link{ManageData}}.}
 }
 
-\details{
-The \dQuote{DATA} identifier is a reserved word within the \code{txt} argument
-and is used to reference the \code{data.raw} data
-frame, a component of \code{\link{Data}} with variable names keyed to
-column index numbers in \code{data.raw} using the \code{vars} argument.
-}
-
 \value{
 The result of evaluating the \code{txt} object after the appropriate
-substitutions for \dQuote{DATA} has been made.
+substitutions have been made.
 \code{Inf}, \code{-Inf}, and \code{NaN} values are converted to \code{NA} in
 numeric vectors.
 }
@@ -42,10 +35,10 @@ numeric vectors.
 \examples{data(tritest)
 Data("data.raw", as.data.frame(tritest))
 cols <- list()
-cols[[1]] <- list(id = "X", index = 1, fun = "DATA[[\"X\"]]")
-cols[[2]] <- list(id = "Y", index = 2, fun = "DATA[[\"Y\"]]")
-EvalFunction("DATA[[\"X\"]]", cols)
-EvalFunction("DATA[[\"X\"]] + DATA[[\"Y\"]]", cols)
+cols[[1]] <- list(id = "X", index = 1, fun = "\"X\"")
+cols[[2]] <- list(id = "Y", index = 2, fun = "\"Y\"")
+EvalFunction("\"X\"", cols)
+EvalFunction("\"X\" + \"Y\"", cols)
 EvalFunction("rnorm(12)", cols)
 }
 

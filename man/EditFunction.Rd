@@ -39,10 +39,10 @@ number of rows in the \code{data.raw} data frame, see \code{\link{ReadData}}.
 \donttest{data(tritest)
 Data("data.raw", as.data.frame(tritest))
 cols <- list()
-cols[[1]] <- list(id = "X", index = 1, fun = "DATA[[\"X\"]]")
-cols[[2]] <- list(id = "Y", index = 2, fun = "DATA[[\"Y\"]]")
+cols[[1]] <- list(id = "X", index = 1, fun = "\"X\"")
+cols[[2]] <- list(id = "Y", index = 2, fun = "\"Y\"")
 cols[[3]] <- list(id = "New Variable",
-                  fun = "DATA[[\"X\"]] + DATA[[\"Y\"]]")
+                  fun = "\"X\" + \"Y\"")
 EditFunction(cols, index = 3)
 }
 }

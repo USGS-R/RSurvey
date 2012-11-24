@@ -64,7 +64,7 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
     id <- as.character(tkget(frame1.lst.2.1, idx, idx))
     tkselection.clear(frame1.lst.2.1, idx, idx)
 
-    txt <- paste("DATA[[\"", id, "\"]]", sep="")
+    txt <- paste("\"", id, "\"", sep="")
     InsertString(txt)
   }
 
@@ -75,8 +75,15 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
     if (txt == "") {
       new.fun <<- "NA"
     } else {
-      fun <- try(parse(text=paste("function(DATA) {", txt, "}", sep="")),
-                 silent=TRUE)
+      
+      fun <- txt
+      pattern <- paste("\"", ids, "\"", sep="")
+      replacement <- paste("DATA[[", pattern, "]]", sep="")
+      for (i in seq(along=ids))
+        fun <- gsub(pattern[i], replacement[i], fun, fixed=TRUE)
+      fun <- paste("function(DATA) {", fun, "}", sep="")
+      
+      fun <- try(parse(text=fun), silent=TRUE)
       if (inherits(fun, "try-error")) {
         msg <- "There's a problem with function syntax, try revising."
         tkmessageBox(icon="error", message=msg, detail=fun, title="Error",
