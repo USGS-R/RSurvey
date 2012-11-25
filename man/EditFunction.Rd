@@ -10,8 +10,7 @@ A \acronym{GUI} for defining functions in the \R language.
 
 \usage{
 EditFunction(cols, index = NULL, fun = NULL, value.length = NULL, 
-             value.class = NULL, value.na.fail = FALSE,
-             win.title = "Edit Function", parent = NULL)
+             value.class = NULL, win.title = "Edit Function", parent = NULL)
 }
 
 \arguments{
@@ -22,8 +21,6 @@ EditFunction(cols, index = NULL, fun = NULL, value.length = NULL,
   evaluated function.}
 \item{value.class}{character; the required \code{\link{class}} for the 
   evaluated function.}
-\item{value.na.fail}{logical; if \code{TRUE} the evaluated function can
-  not contain \code{\link{NA}} values, its default is \code{FALSE}.}
 \item{win.title}{character; a string to display as the title of the dialog box.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }

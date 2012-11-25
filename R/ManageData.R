@@ -304,9 +304,11 @@ ManageData <- function(cols, vars, parent=NULL) {
     if (length(idx) == 0)
       return()
     
-    n <- nrow(Data("data.raw"))
-    if (n == 0)
-      return()
+    if(is.null(Data("data.raw"))) {
+      n <- NULL
+    } else {
+      n <- nrow(Data("data.raw"))
+    }
     
     new.fun <- EditFunction(cols, index=idx, value.length=n, parent=tt)
     if (is.null(new.fun)) {

@@ -1,6 +1,6 @@
 EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL, 
-                         value.class=NULL, value.na.fail=FALSE,
-                         win.title="Edit Function",  parent=NULL) {
+                         value.class=NULL, win.title="Edit Function",  
+                         parent=NULL) {
   # A GUI for defining a function in the R language with a focus on table data.
 
   # Additional functions (subroutines)
@@ -75,7 +75,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   SaveFunction <- function() {
     txt <- as.character(tclvalue(tkget(frame2.txt.2.1, '1.0', 'end-1c')))
     if (txt == "") {
-      new.fun <<- "NA"
+      new.fun <<- NULL
     } else {
       
       fun <- txt
@@ -115,15 +115,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                      "\", try revising.", sep="")
         dtl <- paste("Resulting object is currently of class \"", class(val), 
                      "\".", sep="")
-        tkmessageBox(icon="error", message=msg, detail=dtl, title="Error",
-                     type="ok", parent=tt)
-        return()
-      }
-      
-      if (value.na.fail && any(is.na(val))) {
-        msg <- "Evaluated function can not contain NA values."
-        dtl <- paste("Resulting object contains", sum(is.na(val)), 
-                     "NA values.")
         tkmessageBox(icon="error", message=msg, detail=dtl, title="Error",
                      type="ok", parent=tt)
         return()

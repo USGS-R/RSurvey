@@ -6,10 +6,12 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
   # Process point data
 
   if (type == "p") {
-    
+
     # Coerce rows
-    if (!is.null(coerce.rows) && inherits(coerce.rows, "logical"))
+    if (!is.null(coerce.rows) && inherits(coerce.rows, "logical")) {
+      coerce.rows[is.na(coerce.rows)] <- FALSE
       d <- d[coerce.rows, ]
+    }
 
     # Check for missing variables
 

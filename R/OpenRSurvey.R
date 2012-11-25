@@ -697,7 +697,26 @@ OpenRSurvey <- function() {
 
     tkconfigure(tt, cursor="arrow")
   }
-
+  
+  # Build query
+  
+  BuildQuery <- function() {
+    n <- nrow(Data("data.raw"))
+    if (n == 0)
+      return()
+    cols <- Data("cols")
+    fun.old <- Data("query.fun")
+    fun.new <- EditFunction(cols, fun=fun.old, value.length=n,
+                            value.class="logical", win.title="Query Builder", 
+                            parent=tt)
+    if (is.null(fun.new))
+      return()
+    Data("query.fun", fun.new)
+    Data("data.pts", NULL)
+    Data("data.grd", NULL)
+  }
+  
+  
   # Main program
 
   # Load required R packages
@@ -806,41 +825,7 @@ OpenRSurvey <- function() {
         command=CallManageData)
 
   tkadd(menu.edit, "command", label="Query builder",
-        command=function() {
-          
-          
-          
-          n <- nrow(Data("data.raw"))
-          if (n == 0)
-            return()
-          
-          cols <- Data("cols")
-          fun.old <- Data("query.fun")
-          fun.new <- EditFunction(cols, fun=fun.old, value.length=n,
-                                  value.class="logical", value.na.fail=TRUE,
-                                  win.title="Query Builder", parent=tt)
-          if (is.null(fun.new))
-            return()
-          Data("query.fun", fun.new)
-          Data("data.pts", NULL)
-          Data("data.grd", NULL)
-          
-          
-          
-          
-#         old <- Data("lim.data")
-#         new <- SetAxesLimits(old, tt)
-#         if (!identical(old, new)) {
-#           Data("lim.data", new)
-#           Data("data.pts", NULL)
-#           Data("data.grd", NULL)
-#         }
-          
-          
-          
-          
-          
-        })
+        command=BuildQuery)
 
   tkadd(menu.edit, "command", label="View data",
         command=CallViewData)
