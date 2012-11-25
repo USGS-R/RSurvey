@@ -31,9 +31,6 @@ Queries and sets the following components of \code{\link{Data}}:
 \item{vmax}{numeric; the maximum length of arrows in inches (optional).}
 \item{vxby, vyby}{integer; increment for the sequence of arrows in the
   \code{x} and \code{y} directions, respectively.}
-\item{tgap}{numeric; the time-gap exceedance level in seconds. A break in the
-  linear segments of the time-series plot will occur where differences between
-  sequential temporal records is greater than \code{tgap}.}
 \item{rkey}{logical; if \code{TRUE} the legend key is reversed with \code{z}
   values descending from top to bottom; its default is \code{FALSE}.}
 \item{img.contour}{logical; if \code{TRUE} the \code{\link{image}} function is

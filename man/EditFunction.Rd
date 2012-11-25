@@ -9,24 +9,33 @@ A \acronym{GUI} for defining functions in the \R language.
 }
 
 \usage{
-EditFunction(cols, index = NULL, parent = NULL)
+EditFunction(cols, index = NULL, fun = NULL, value.length = NULL, 
+             value.class = NULL, value.na.fail = FALSE,
+             win.title = "Edit Function", parent = NULL)
 }
 
 \arguments{
 \item{cols}{list; see \code{\link{ManageData}}.}
 \item{index}{integer; an element index number in \code{cols}.}
+\item{fun}{character; existing function, only used if \code{index=NULL}.}
+\item{value.length}{integer; the required \code{\link{length}} for the 
+  evaluated function.}
+\item{value.class}{character; the required \code{\link{class}} for the 
+  evaluated function.}
+\item{value.na.fail}{logical; if \code{TRUE} the evaluated function can
+  not contain \code{\link{NA}} values, its default is \code{FALSE}.}
+\item{win.title}{character; a string to display as the title of the dialog box.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
 \details{
 This \acronym{GUI} is appropriate for defining new variables in a
-pre-existing data frame.
+pre-existing data frame or query building.
 }
 
 \value{
 Results in a character string of the user defined function; when evaluated,
-this string must be parseable and result in a vector length equal to the
-number of rows in the \code{data.raw} data frame, see \code{\link{ReadData}}.
+this string must be parseable.
 }
 
 \author{J.C. Fisher}

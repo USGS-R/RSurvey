@@ -9,7 +9,7 @@ This function performs data processing on the state variables.
 }
 
 \usage{
-ProcessData(d, type = "p", lim = NULL, ply = NULL,
+ProcessData(d, type = "p", coerce.rows = NULL, ply = NULL,
             grid.res = list(x = NA, y = NA),
             grid.mba = list(n = NA, m = NA, h = 11))
 }
@@ -21,8 +21,8 @@ ProcessData(d, type = "p", lim = NULL, ply = NULL,
 \item{type}{character; a 1-character string giving the resulting
   output type. The following values are possible: "p" for points
   and "g" for interpolated grid.}
-\item{lim}{list; contains numeric vector components giving the minimum
-  and maximum values for each variable in \code{d}.}
+\item{coerce.rows}{logical; a vector indicating rows in \code{d} to include
+  in the processed data set.}
 \item{ply}{gpc.poly; if \code{type = "p"} a polygon that defines either the
   data limits, else if \code{type = "g"} a crop region for gridded data.}
 \item{grid.res}{list; numeric components giving the grid spacing along
@@ -33,10 +33,9 @@ ProcessData(d, type = "p", lim = NULL, ply = NULL,
 
 \details{
 Any row in the \code{d} data table with \code{\link{NA}} values for
-either \code{x}, \code{y}, or \code{t} is removed.
-The spatial and temporal domains are constrained using data limits for
-\code{x}, \code{y}, \code{z}, and \code{t}. Additionally, the spatial domain
-may be limited using a polygon defined in the xy-plane.
+either \code{x} or \code{y} is removed. Rows are also removed
+where \code{coerce.rows} is \code{FALSE}. 
+The spatial domain may be limited using a polygon defined in the xy-plane.
 Interpolated grid values corresponding to grid nodes located outside
 the polygon boundary are set to \code{\link{NA}}.
 }
@@ -79,10 +78,6 @@ t <- as.POSIXct(t, format = "\%m/\%d/\%Y \%H:\%M")
 data.raw <- as.data.frame(list(x = x, y = y, z = z, t = t))
 data.pts <- ProcessData(data.raw, type = "p")
 data.grd <- ProcessData(data.pts, type = "g")
-
-lim <- list(x = c(NA, 5), t = c(as.POSIXct("4/24/2009 12",
-                                format = "\%m/\%d/\%Y \%H"), NA))
-data.pts <- ProcessData(data.raw, type = "p", lim = lim)
 
 ply <- as(cbind(c(-4, 2, -6), c(-7, -3, -3)), "gpc.poly")
 grid.res <- list(x = 0.2, y = 0.5)

@@ -1,4 +1,4 @@
-EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
+SetAxesLimits <- function(lim=NULL, parent=NULL) {
   # A GUI for specifying data and axis limits.
 
   # Additional functions (subroutines)
@@ -102,7 +102,7 @@ EditLimits <- function(lim=NULL, win.title="Limits", parent=NULL) {
     tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
-  tktitle(tt) <- win.title
+  tktitle(tt) <- "Axes Limits"
   tkwm.resizable(tt, 1, 0)
 
   # Notebook with tabs

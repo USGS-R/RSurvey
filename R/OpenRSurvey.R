@@ -657,8 +657,13 @@ OpenRSurvey <- function() {
       for (i in seq(along=lst))
         d[[i]] <- c(lst[[i]], rep(NA, max.len - len[i]))
 
-      lim <- Data("lim.data")
-
+      query.fun <- Data("query.fun")
+      if (is.null(query.fun)) {
+        coerce.rows <- NULL
+      } else {
+        coerce.rows <- EvalFunction(query.fun, cols)
+      }
+      
       if (!is.null(vars$x) & !is.null(vars$y)) {
         ply <- Data("poly.data")
         if (!is.null(ply))
@@ -667,7 +672,7 @@ OpenRSurvey <- function() {
         ply <- NULL
       }
 
-      data.pts <- ProcessData(d, type="p", lim=lim, ply=ply)
+      data.pts <- ProcessData(d, type="p", coerce.rows=coerce.rows, ply=ply)
       Data("data.pts", data.pts)
       Data("data.grd", NULL)
     }
@@ -683,10 +688,8 @@ OpenRSurvey <- function() {
       ply <- Data("poly.crop")
       if (!is.null(ply))
         ply <- Data("poly")[[ply]]
-
       grid.res <- Data("grid.res")
       grid.mba <- Data("grid.mba")
-
       data.grd <- ProcessData(Data("data.pts"), type="g", ply=ply,
                               grid.res=grid.res, grid.mba=grid.mba)
       Data("data.grd", data.grd)
@@ -802,18 +805,43 @@ OpenRSurvey <- function() {
   tkadd(menu.edit, "command", label="Manage data",
         command=CallManageData)
 
-  tkadd(menu.edit, "command", label="Set data limits",
+  tkadd(menu.edit, "command", label="Query builder",
         command=function() {
-          old <- Data("lim.data")
-          new <- EditLimits(old, "Data Limits", tt)
-          if (!identical(old, new)) {
-            Data("lim.data", new)
-            Data("data.pts", NULL)
-            Data("data.grd", NULL)
-          }
+          
+          
+          
+          n <- nrow(Data("data.raw"))
+          if (n == 0)
+            return()
+          
+          cols <- Data("cols")
+          fun.old <- Data("query.fun")
+          fun.new <- EditFunction(cols, fun=fun.old, value.length=n,
+                                  value.class="logical", value.na.fail=TRUE,
+                                  win.title="Query Builder", parent=tt)
+          if (is.null(fun.new))
+            return()
+          Data("query.fun", fun.new)
+          Data("data.pts", NULL)
+          Data("data.grd", NULL)
+          
+          
+          
+          
+#         old <- Data("lim.data")
+#         new <- SetAxesLimits(old, tt)
+#         if (!identical(old, new)) {
+#           Data("lim.data", new)
+#           Data("data.pts", NULL)
+#           Data("data.grd", NULL)
+#         }
+          
+          
+          
+          
+          
         })
 
-  tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="View data",
         command=CallViewData)
 
@@ -868,7 +896,7 @@ OpenRSurvey <- function() {
 
   tkadd(menu.plot, "command", label="Set axes limits",
         command=function() {
-          lim <- EditLimits(Data("lim.axes"), "Axes Limits", tt)
+          lim <- SetAxesLimits(Data("lim.axes"), tt)
           Data("lim.axes", lim)
         })
   tkadd(menu.plot, "command", label="Choose color palette",
@@ -965,8 +993,7 @@ OpenRSurvey <- function() {
   frame0.but.7  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=axes.var,
                             command=function() {
-                             lim <- EditLimits(Data("lim.axes"),
-                                               "Axes Limits", tt)
+                             lim <- SetAxesLimits(Data("lim.axes"), tt)
                              Data("lim.axes", lim)
                            })
   frame0.but.8  <- tkbutton(frame0, relief="flat", overrelief="raised",

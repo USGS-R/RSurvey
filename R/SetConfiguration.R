@@ -28,9 +28,6 @@ SetConfiguration <- function(parent=NULL) {
     val <- as.numeric(tclvalue(vyby.var))
     Data("vyby", if (is.na(val)) NULL else val)
 
-    val <- as.integer(tclvalue(tgap.var))
-    Data("tgap", if (is.na(val)) NULL else val)
-
     Data("rkey", as.integer(tclvalue(rkey.var)))
     Data("img.contour", as.integer(tclvalue(img.contour.var)))
     Data("show.lines", as.integer(tclvalue(show.lines.var)))
@@ -57,7 +54,6 @@ SetConfiguration <- function(parent=NULL) {
   vmax.var         <- tclVar()
   vxby.var         <- tclVar()
   vyby.var         <- tclVar()
-  tgap.var         <- tclVar()
   rkey.var         <- tclVar()
   show.poly.var    <- tclVar()
   img.contour.var  <- tclVar()
@@ -85,8 +81,6 @@ SetConfiguration <- function(parent=NULL) {
     tclvalue(vxby.var) <- Data("vxby")
   if (!is.null(Data("vyby")))
     tclvalue(vyby.var) <- Data("vyby")
-  if (!is.null(Data("tgap")))
-    tclvalue(tgap.var) <- Data("tgap")
   if (!is.null(Data("rkey")))
     tclvalue(rkey.var) <- Data("rkey")
   if (!is.null(Data("show.poly")))
@@ -164,8 +158,6 @@ SetConfiguration <- function(parent=NULL) {
   frame1.lab.7.1 <- ttklabel(frame1, text=txt)
   txt <- "Increment for sequence of arrows in y direction"
   frame1.lab.8.1 <- ttklabel(frame1, text=txt)
-  txt <- "Time gap exceedence level in seconds"
-  frame1.lab.9.1 <- ttklabel(frame1, text=txt)
 
   frame1.ent.1.2 <- ttkentry(frame1, width=8, textvariable=nlevels.var)
   frame1.ent.2.2 <- ttkentry(frame1, width=8, textvariable=width.var)
@@ -175,7 +167,6 @@ SetConfiguration <- function(parent=NULL) {
   frame1.ent.6.2 <- ttkentry(frame1, width=8, textvariable=vmax.var)
   frame1.ent.7.2 <- ttkentry(frame1, width=8, textvariable=vxby.var)
   frame1.ent.8.2 <- ttkentry(frame1, width=8, textvariable=vyby.var)
-  frame1.ent.9.2 <- ttkentry(frame1, width=8, textvariable=tgap.var)
 
   tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(0, 4))
   tkgrid(frame1.lab.2.1, frame1.ent.2.2, pady=c(0, 4))
@@ -184,16 +175,15 @@ SetConfiguration <- function(parent=NULL) {
   tkgrid(frame1.lab.5.1, frame1.ent.5.2, pady=c(0, 4))
   tkgrid(frame1.lab.6.1, frame1.ent.6.2, pady=c(0, 4))
   tkgrid(frame1.lab.7.1, frame1.ent.7.2, pady=c(0, 4))
-  tkgrid(frame1.lab.8.1, frame1.ent.8.2, pady=c(0, 4))
-  tkgrid(frame1.lab.9.1, frame1.ent.9.2)
+  tkgrid(frame1.lab.8.1, frame1.ent.8.2)
 
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, frame1.lab.3.1,
                    frame1.lab.4.1, frame1.lab.5.1, frame1.lab.6.1,
-                   frame1.lab.7.1, frame1.lab.8.1, frame1.lab.9.1,
+                   frame1.lab.7.1, frame1.lab.8.1,
                    sticky="e", padx=c(0, 2))
   tkgrid.configure(frame1.ent.1.2, frame1.ent.2.2, frame1.ent.3.2,
                    frame1.ent.4.2, frame1.ent.5.2, frame1.ent.6.2,
-                   frame1.ent.7.2, frame1.ent.8.2, frame1.ent.9.2, sticky="we")
+                   frame1.ent.7.2, frame1.ent.8.2, sticky="we")
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=6)
 
@@ -277,10 +267,6 @@ SetConfiguration <- function(parent=NULL) {
   tkbind(frame1.ent.8.2, "<KeyRelease>",
          function() {
            tclvalue(vyby.var) <- CheckEntry("integer", tclvalue(vyby.var))
-         })
-  tkbind(frame1.ent.9.2, "<KeyRelease>",
-         function() {
-           tclvalue(tgap.var) <- CheckEntry("numeric", tclvalue(tgap.var))
          })
 
   # GUI control

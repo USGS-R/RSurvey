@@ -1,20 +1,19 @@
-\name{EditLimits}
+\name{SetAxesLimits}
 
-\alias{EditLimits}
+\alias{SetAxesLimits}
 
-\title{Set Limits for Data and Axes}
+\title{Set Axes Limits}
 
 \description{
-A \acronym{GUI} for specifying data and axes limits.
+A \acronym{GUI} for specifying axes limits.
 }
 
 \usage{
-EditLimits(lim = NULL, win.title = "Limits", parent = NULL)
+SetAxesLimits(lim = NULL, parent = NULL)
 }
 
 \arguments{
 \item{lim}{list; contains the current plotting limits, see \sQuote{Value}.}
-\item{win.title}{character; a string to display as the title of the dialog box.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
@@ -40,7 +39,7 @@ Returns a list containing the following components:
 \author{J.C. Fisher}
 
 \examples{
-\donttest{EditLimits()}
+\donttest{SetAxesLimits()}
 }
 
 \keyword{misc}

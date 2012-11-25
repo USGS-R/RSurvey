@@ -71,6 +71,12 @@ ManageData <- function(cols, vars, parent=NULL) {
         tkinsert(frame2.txt.5.2, "end", new.fun)
         tkconfigure(frame2.txt.5.2, state="disabled")
       }
+      
+      query.fun <- Data("query.fun")
+      if (!is.null(query.fun)) {
+         query.fun <- gsub(str.1, str.2, query.fun, fixed=TRUE)
+         Data("query.fun", query.fun)
+      }
     }
   }
 
@@ -297,10 +303,16 @@ ManageData <- function(cols, vars, parent=NULL) {
     idx <- as.integer(tkcurselection(frame1.lst)) + 1
     if (length(idx) == 0)
       return()
-
-    new.fun <- EditFunction(cols, idx, tt)
-    if (is.null(new.fun))
+    
+    n <- nrow(Data("data.raw"))
+    if (n == 0)
       return()
+    
+    new.fun <- EditFunction(cols, index=idx, value.length=n, parent=tt)
+    if (is.null(new.fun)) {
+      DeleteVar()
+      return()
+    }
 
     tkconfigure(frame2.txt.5.2, state="normal")
     tcl(frame2.txt.5.2, "delete", '1.0', 'end')

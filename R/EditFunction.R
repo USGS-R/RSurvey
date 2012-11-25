@@ -1,4 +1,6 @@
-EditFunction <- function(cols, index=NULL, parent=NULL) {
+EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL, 
+                         value.class=NULL, value.na.fail=FALSE,
+                         win.title="Edit Function",  parent=NULL) {
   # A GUI for defining a function in the R language with a focus on table data.
 
   # Additional functions (subroutines)
@@ -78,7 +80,7 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
       
       fun <- txt
       pattern <- paste("\"", ids, "\"", sep="")
-      replacement <- paste("DATA[[", pattern, "]]", sep="")
+      replacement <- paste("DATA[[", 1:length(ids), "]]", sep="")
       for (i in seq(along=ids))
         fun <- gsub(pattern[i], replacement[i], fun, fixed=TRUE)
       fun <- paste("function(DATA) {", fun, "}", sep="")
@@ -97,6 +99,36 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
                      type="ok", parent=tt)
         return()
       }
+      
+      if (!is.null(value.length) && length(val) != value.length) {
+        msg <- paste("Evaluated function must be of length ", value.length, 
+                     ", try revising.", sep="")
+        dtl <- paste("Resulting object is currently of length ", length(val), 
+                     ".", sep="")
+        tkmessageBox(icon="error", message=msg, detail=dtl, title="Error",
+                     type="ok", parent=tt)
+        return()
+      }
+      
+      if (!is.null(value.class) && !inherits(val, value.class)) {
+        msg <- paste("Evaluated function must be of class \"", value.class, 
+                     "\", try revising.", sep="")
+        dtl <- paste("Resulting object is currently of class \"", class(val), 
+                     "\".", sep="")
+        tkmessageBox(icon="error", message=msg, detail=dtl, title="Error",
+                     type="ok", parent=tt)
+        return()
+      }
+      
+      if (value.na.fail && any(is.na(val))) {
+        msg <- "Evaluated function can not contain NA values."
+        dtl <- paste("Resulting object contains", sum(is.na(val)), 
+                     "NA values.")
+        tkmessageBox(icon="error", message=msg, detail=dtl, title="Error",
+                     type="ok", parent=tt)
+        return()
+      }
+      
       new.fun <<- txt
     }
     tclvalue(tt.done.var) <- 1
@@ -140,13 +172,16 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
 
 
   # Main program
-
-  old.fun <- if (is.null(index)) NULL else cols[[index]]$fun
+  
+  if (is.null(index)) {
+    old.fun <- fun
+  } else {
+    old.fun <- cols[[as.integer(index)]]$fun
+  }
   new.fun <- NULL
 
   cls <- sapply(cols, function(i) i$class)
   ids <- sapply(cols, function(i) i$id)
-  win.title <- "Edit Function"
   if (!is.null(index)) {
     edit.fun.id <- ids[index]
     ids <- ids[-index]
@@ -174,6 +209,9 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
   cmd$paste <-  "paste(<variable>, <variable>, sep=\" \")"
   cmd$substr <- paste("substr(<variable>, start=<first element>,",
                       "stop=<last element>)")
+  
+  cmd$min <- "min(<variable>, na.rm = TRUE)"
+  cmd$max <- "max(<variable>, na.rm = TRUE)"
 
   # Assign variables linked to Tk widgets
 
@@ -241,8 +279,14 @@ EditFunction <- function(cols, index=NULL, parent=NULL) {
         command=function() InsertString(cmd$paste))
   tkadd(menu.str, "command", label="Extract substring",
         command=function() InsertString(cmd$substr))
-
-
+  
+  menu.ext <- tkmenu(tt, tearoff=0)
+  tkadd(top.menu, "cascade", label="Extremes", menu=menu.ext, underline=0)
+  tkadd(menu.ext, "command", label="Minimum",
+        command=function() InsertString(cmd$min))
+  tkadd(menu.ext, "command", label="Maximum",
+        command=function() InsertString(cmd$max))
+  
   menu.tools <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Tools", menu=menu.tools, underline=0)
   tkadd(menu.tools, "command", label="Date and time format",
