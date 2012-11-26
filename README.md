@@ -10,11 +10,11 @@ requires R operate as an SDI application, using multiple
 top-level windows for the console, graphics, and pager.
 
 Files can be one of four types as indicated by their extension: tables
-( _.txt_, _.csv_, _.dat_, or _.shp_), grids ( _.grd_), polygons ( _.ply_),
-or binary project images ( _.rda_). Tables ( _.txt_, _.csv_, _.dat_)
+(*.txt*, *.csv*, *.dat*, or *.shp*), grids (*.grd*), polygons (*.ply*),
+or binary project images (*.rda*). Tables (*.txt*, *.csv*, *.dat*)
 can be compressed by [gzip](http://www.gzip.org/ "gzip")
-with additional extension _.gz_.
-Shapefles ( _.shp_) and interpolated grid files ( _.grd_) are limited to data
+with additional extension *.gz*.
+Shapefles (*.shp*) and interpolated grid files (*.grd*) are limited to data
 export. Support for programmatic manipulation of measurement units is only
 provided for date-time values; therefore, the bulk of unit consistency is tasked
 to the user. Time zones, spatial datum's and projections are not supported.

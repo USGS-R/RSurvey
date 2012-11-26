@@ -1,7 +1,7 @@
 ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
                            parent=NULL) {
   # A GUI for managing and manipulating polygons;
-  # based on the gpclib package.
+  # based on the rgeos package.
 
   # Additional functions (subroutines)
 

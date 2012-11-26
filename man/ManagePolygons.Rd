@@ -6,7 +6,7 @@
 
 \description{
 A \acronym{GUI} for managing and manipulating polygons that is based on the
-\pkg{gpclib} package.
+\pkg{rgeos} package.
 }
 
 \usage{
@@ -37,7 +37,7 @@ x1 y1\cr
 x2 y2\cr
 ...\cr\cr
 The hole flag is either 1 to indicate a hole, or 0 for a regular contour.
-See \code{read.polyfile} within the \pkg{gpclib} package for details.
+See \code{read.polyfile} within the \pkg{rgeos} package for details.
 }
 
 \value{
