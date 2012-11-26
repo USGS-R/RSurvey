@@ -10,7 +10,7 @@ requires R operate as an SDI application, using multiple
 top-level windows for the console, graphics, and pager.
 
 Files can be one of four types as indicated by their extension; tables:
-*.txt*, *.csv*, *.dat,* or *.shp*; grids: *.grd*, polygons: *.ply*,
+*.txt*, *.csv*, *.dat,* or *.shp*; grids: *.grd*; polygons: *.ply*;
 or binary project images: *.rda*. Tables, *.txt*, *.csv*, *.dat*,
 can be compressed by [gzip](http://www.gzip.org/ "gzip")
 with additional extension *.gz*.
