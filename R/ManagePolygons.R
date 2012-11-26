@@ -8,35 +8,35 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
   # Save polygon
 
   SavePolygon <- function(type) {
-    rtn <<- list()
     if (length(ply) > 0) {
       rtn <<- ply[sapply(ply, function(i) inherits(i, "gpc.poly"))]
+    } else {
+      rtn <<- NULL
+    }
+    if (exists("Data") && !identical(rtn, Data("poly"))) {
+      Data("poly", rtn)
+      Data("poly.data", poly.data)
+      Data("poly.crop", poly.crop)
 
-      if (exists("Data") && !identical(rtn, Data("poly"))) {
-        Data("poly", if (identical(rtn, list())) NULL else Data("poly", rtn))
-
-        Data("poly.data", poly.data)
-        Data("poly.crop", poly.crop)
-
-        if (!is.null(poly.data)) {
-          missing.poly <- !poly.data %in% names(rtn)
-          updated.poly <- !identical(rtn[[poly.data]], old.pdata)
-          if (missing.poly | updated.poly) {
-            Data("poly.data", NULL)
-            Data("data.pts", NULL)
-            Data("data.grd", NULL)
-          }
+      if (!is.null(poly.data)) {
+        missing.poly <- !poly.data %in% names(rtn)
+        updated.poly <- !identical(rtn[[poly.data]], old.pdata)
+        if (missing.poly | updated.poly) {
+          Data("poly.data", NULL)
+          Data("data.pts",  NULL)
+          Data("data.grd",  NULL)
         }
-        if (!is.null(poly.crop)) {
-          missing.poly <- !poly.crop %in% names(rtn)
-          updated.poly <- !identical(rtn[[poly.crop]], old.pcrop)
-           if (missing.poly | updated.poly) {
-            Data("poly.crop", NULL)
-            Data("data.grd", NULL)
-          }
+      }
+      if (!is.null(poly.crop)) {
+        missing.poly <- !poly.crop %in% names(rtn)
+        updated.poly <- !identical(rtn[[poly.crop]], old.pcrop)
+         if (missing.poly | updated.poly) {
+          Data("poly.crop", NULL)
+          Data("data.grd",  NULL)
         }
       }
     }
+      
     if (type == "ok")
       tclvalue(tt.done.var) <- 1
   }
@@ -609,10 +609,11 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
   frame3c.lab.1 <- tklabel(frame3c, text=tclvalue(xy.var))
   tkconfigure(frame3c.lab.1, textvariable=xy.var)
   tkgrid(frame3c.lab.1)
+  tkgrid.columnconfigure(frame3c, 0, weight=1, minsize=13)
 
-  tkpack(frame3a, fill="both", expand=TRUE, padx=0, pady=c(0, 5))
-  tkpack(frame3b, fill="both", expand=TRUE, padx=0, pady=c(5, 5))
-  tkpack(frame3c)
+  tkpack(frame3a, fill="x", padx=0, pady=c(0, 5))
+  tkpack(frame3b, fill="x", padx=0, pady=c(5, 5))
+  tkpack(frame3c, fill="both", expand=TRUE)
 
   # Final layout
 
