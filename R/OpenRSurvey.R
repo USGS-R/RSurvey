@@ -701,9 +701,9 @@ OpenRSurvey <- function() {
     tkconfigure(tt, cursor="arrow")
   }
   
-  # Build query
+  # Define query
   
-  BuildQuery <- function() {
+  DefineQuery <- function() {
     if (is.null(Data("data.raw")))
       return()
     
@@ -714,7 +714,7 @@ OpenRSurvey <- function() {
     cols <- Data("cols")
     old.fun <- Data("query.fun")
     new.fun <- EditFunction(cols, fun=old.fun, value.length=n,
-                            value.class="logical", win.title="Query Builder", 
+                            value.class="logical", win.title="Define Query", 
                             parent=tt)
     if (is.null(new.fun))
       return()
@@ -723,6 +723,16 @@ OpenRSurvey <- function() {
     Data("query.fun", new.fun)
     Data("data.pts", NULL)
     Data("data.grd", NULL)
+  }
+  
+  # Clear query
+  
+  ClearQuery <- function() {
+    if (!is.null(Data("query.fun"))) {
+      Data("query.fun", NULL)
+      Data("data.pts", NULL)
+      Data("data.grd", NULL)
+    }
   }
   
   
@@ -806,7 +816,7 @@ OpenRSurvey <- function() {
   menu.file.export <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.export, "command", label="Text file",
         command=function() CallExportData("text"))
-  tkadd(menu.file.export, "command", label="ESRI shapefile",
+  tkadd(menu.file.export, "command", label="Shapefile",
         command=function() CallExportData("shape"))
   tkadd(menu.file, "cascade", label="Export point data as", menu=menu.file.export)
 
@@ -832,13 +842,15 @@ OpenRSurvey <- function() {
 
   tkadd(menu.edit, "command", label="Manage data",
         command=CallManageData)
-
-  tkadd(menu.edit, "command", label="Query builder",
-        command=BuildQuery)
-
   tkadd(menu.edit, "command", label="View data",
         command=CallViewData)
-
+  
+  tkadd(menu.edit, "separator")
+  tkadd(menu.edit, "command", label="Define query",
+        command=DefineQuery)
+  tkadd(menu.edit, "command", label="Clear query",
+        command=ClearQuery)
+  
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Preferences",
         command=function() {
@@ -933,26 +945,22 @@ OpenRSurvey <- function() {
 
   # Frame 0, toolbar with command buttons
 
-  new.var     <- tclVar()
-  save.var    <- tclVar()
   import.var  <- tclVar()
+  save.var    <- tclVar()
   data.var    <- tclVar()
   polygon.var <- tclVar()
   globe.var   <- tclVar()
   config.var  <- tclVar()
   axes.var    <- tclVar()
-  help.var    <- tclVar()
   close.var   <- tclVar()
 
   frame0 <- ttkframe(tt, relief="flat", borderwidth=2)
   tkpack(frame0, side="top", fill="x")
 
-  tkimage.create("photo", new.var, format="GIF",
-                 file=file.path(image.path, "new.gif"))
-  tkimage.create("photo", save.var, format="GIF",
-                 file=file.path(image.path, "save.gif"))
   tkimage.create("photo", import.var, format="GIF",
                  file=file.path(image.path, "import.gif"))
+  tkimage.create("photo", save.var, format="GIF",
+                 file=file.path(image.path, "save.gif"))
   tkimage.create("photo", data.var, format="GIF",
                  file=file.path(image.path, "data.gif"))
   tkimage.create("photo", polygon.var, format="GIF",
@@ -961,44 +969,36 @@ OpenRSurvey <- function() {
                  file=file.path(image.path, "config.gif"))
   tkimage.create("photo", axes.var, format="GIF",
                  file=file.path(image.path, "axes.gif"))
-  tkimage.create("photo", help.var, format="GIF",
-                 file=file.path(image.path, "help.gif"))
   tkimage.create("photo", close.var, format="GIF",
                  file=file.path(image.path, "close.gif"))
 
   frame0.but.1  <- tkbutton(frame0, relief="flat", overrelief="raised",
-                            borderwidth=1, image=new.var,
-                            command=ClearObjs)
+                            borderwidth=1, image=import.var,
+                            command=CallImportData)
   frame0.but.2  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=save.var,
                             command=SaveProj)
   frame0.but.3  <- tkbutton(frame0, relief="flat", overrelief="raised",
-                            borderwidth=1, image=import.var,
-                            command=CallImportData)
-  frame0.but.4  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=data.var,
                             command=CallManageData)
-  frame0.but.5  <- tkbutton(frame0, relief="flat", overrelief="raised",
+  frame0.but.4  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=polygon.var,
                             command=CallManagePolygons)
-  frame0.but.6  <- tkbutton(frame0, relief="flat", overrelief="raised",
+  frame0.but.5  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=config.var,
                             command=function() SetConfiguration(tt))
-  frame0.but.7  <- tkbutton(frame0, relief="flat", overrelief="raised",
+  frame0.but.6  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=axes.var,
                             command=function() {
                              lim <- SetAxesLimits(Data("lim.axes"), tt)
                              Data("lim.axes", lim)
                            })
-  frame0.but.8  <- tkbutton(frame0, relief="flat", overrelief="raised",
-                            borderwidth=1, image=help.var,
-                            command=OpenHTMLHelp)
-  frame0.but.9  <- tkbutton(frame0, relief="flat", overrelief="raised",
+  frame0.but.7  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=close.var,
                             command=CloseDevices)
 
   tkpack(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4, frame0.but.5,
-         frame0.but.6, frame0.but.7, frame0.but.8, frame0.but.9, side="left")
+         frame0.but.6, frame0.but.7, side="left")
 
   separator <- ttkseparator(tt, orient="horizontal")
   tkpack(separator, fill="x")
