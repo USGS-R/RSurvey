@@ -75,9 +75,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   SaveFunction <- function() {
     txt <- as.character(tclvalue(tkget(frame2.txt.2.1, '1.0', 'end-1c')))
     if (txt == "") {
-      new.fun <<- NULL
+      new.fun <<- ""
     } else {
-      
       fun <- txt
       pattern <- paste("\"", ids, "\"", sep="")
       replacement <- paste("DATA[[", 1:length(ids), "]]", sep="")

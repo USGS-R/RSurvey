@@ -9,7 +9,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   SelectionChange <- function() {
     cur.sel <- tcl(frame1.tre, "selection")
     cur.val <- as.character(tcl(frame1.tre, "item", cur.sel, "-values"))[1]
-    tkfocus(frame2b.ent)
+    tkfocus(frame2a.ent)
     if (!is.na(cur.val))
       AddString(cur.val)
   }
@@ -24,11 +24,11 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   # Add string to format entry
 
   AddString <- function(txt) {
-    if (as.logical(tcl(frame2b.ent, "selection", "present")))
-      tcl(frame2b.ent, "delete", "sel.first", "sel.last")
-    tkinsert(frame2b.ent, "insert", txt)
+    if (as.logical(tcl(frame2a.ent, "selection", "present")))
+      tcl(frame2a.ent, "delete", "sel.first", "sel.last")
+    tkinsert(frame2a.ent, "insert", txt)
     UpdateSample()
-    tkfocus(frame2b.ent)
+    tkfocus(frame2a.ent)
   }
 
   # Expand or collapse nodes in treeview
@@ -63,7 +63,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
       return()
     tclvalue(fmt.var) <- cb
     UpdateSample()
-    tkfocus(frame2b.ent)
+    tkfocus(frame2a.ent)
   }
 
  # Clear format from entry
@@ -71,7 +71,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   ClearFormat <- function() {
     tclvalue(fmt.var) <- ""
     UpdateSample()
-    tkfocus(frame2b.ent)
+    tkfocus(frame2a.ent)
   }
 
   # Save format
@@ -112,7 +112,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
     tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
-  tktitle(tt) <- "Format Calendar Date and Time"
+  tktitle(tt) <- "Format Date and Time"
 
   # Frame 0, load and cancel buttons, and size grip
 
@@ -250,53 +250,53 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   # Frame 2
 
   frame2 <- ttkframe(pw, relief="flat")
-
+  
   frame2a <- ttklabelframe(frame2, relief="flat", borderwidth=5, padding=5,
-                           text="Sample")
-  frame2a.ent <- ttkentry(frame2a, textvariable=sample.var, width=30,
-                          state="readonly", takefocus=FALSE)
-  tkgrid(frame2a.ent, padx=0, pady=5)
-  tkgrid.configure(frame2a.ent, sticky="we")
-  tcl("grid", "anchor", frame2a, "w")
-  tkgrid.columnconfigure(frame2a, 0, weight=1, minsize=13)
-  tkpack(frame2a, fill="both", expand=TRUE, padx=c(5, 0), pady=c(0, 2))
-
-  frame2b <- ttklabelframe(frame2, relief="flat", borderwidth=5, padding=5,
                            text="Conversion specification format")
 
-  frame2b.ent <- ttkentry(frame2b, textvariable=fmt.var, width=30)
-  tkicursor(frame2b.ent, "end")
+  frame2a.ent <- ttkentry(frame2a, textvariable=fmt.var, width=30)
+  tkicursor(frame2a.ent, "end")
 
-  frame2b.but.1 <- ttkbutton(frame2b, width=2, text="/",
+  frame2a.but.1 <- ttkbutton(frame2a, width=2, text="/",
                              command=function() AddString("/"))
-  frame2b.but.2 <- ttkbutton(frame2b, width=2, text="-",
+  frame2a.but.2 <- ttkbutton(frame2a, width=2, text="-",
                              command=function() AddString("-"))
-  frame2b.but.3 <- ttkbutton(frame2b, width=2, text=",",
+  frame2a.but.3 <- ttkbutton(frame2a, width=2, text=",",
                              command=function() AddString(","))
-  frame2b.but.4 <- ttkbutton(frame2b, width=2, text=":",
+  frame2a.but.4 <- ttkbutton(frame2a, width=2, text=":",
                              command=function() AddString(":"))
-  frame2b.but.5 <- ttkbutton(frame2b, width=2, text=" ",
+  frame2a.but.5 <- ttkbutton(frame2a, width=2, text=" ",
                              command=function() AddString(" "))
 
-  frame2b.but.6 <- ttkbutton(frame2b, width=2, image=GetBitmapImage("copy"),
+  frame2a.but.6 <- ttkbutton(frame2a, width=2, image=GetBitmapImage("copy"),
                              command=CopyFormat)
-  frame2b.but.7 <- ttkbutton(frame2b, width=2, image=GetBitmapImage("paste"),
+  frame2a.but.7 <- ttkbutton(frame2a, width=2, image=GetBitmapImage("paste"),
                              command=PasteFormat)
-  frame2b.but.8 <- ttkbutton(frame2b, width=2, image=GetBitmapImage("delete"),
+  frame2a.but.8 <- ttkbutton(frame2a, width=2, image=GetBitmapImage("delete"),
                              command=ClearFormat)
 
-  tkgrid(frame2b.ent, pady=c(5, 0))
-  tkgrid(frame2b.but.1, frame2b.but.2, frame2b.but.3, frame2b.but.4,
-         frame2b.but.5, frame2b.but.6, frame2b.but.7, frame2b.but.8,
-         padx=c(0, 2), pady=c(8, 5), sticky="e")
-  tkgrid.configure(frame2b.ent, sticky="we", columnspan=8)
+  tkgrid(frame2a.ent, pady=c(5, 0))
+  tkgrid(frame2a.but.1, frame2a.but.2, frame2a.but.3, frame2a.but.4,
+         frame2a.but.5, frame2a.but.6, frame2a.but.7, frame2a.but.8, "x",
+         padx=c(0, 2), pady=c(8, 5), sticky="w")
+  tkgrid.configure(frame2a.ent, sticky="we", columnspan=9)
 
-  tkgrid.configure(frame2b.but.6, padx=c(5, 2))
-  tkgrid.configure(frame2b.but.8, padx=0)
+  tkgrid.configure(frame2a.but.6, padx=c(5, 2))
+  tkgrid.configure(frame2a.but.8, padx=0)
 
+  tcl("grid", "anchor", frame2a, "w")
+  tkgrid.columnconfigure(frame2a, 8, weight=1, minsize=13)
+  tkpack(frame2a, fill="x", padx=c(5, 0), pady=c(5, 2))
+
+  frame2b <- ttklabelframe(frame2, relief="flat", borderwidth=5, padding=5,
+                           text="Sample")
+  frame2b.ent <- ttkentry(frame2b, textvariable=sample.var, width=30,
+                          state="readonly", takefocus=FALSE)
+  tkgrid(frame2b.ent, padx=0, pady=5)
+  tkgrid.configure(frame2b.ent, sticky="we")
   tcl("grid", "anchor", frame2b, "w")
   tkgrid.columnconfigure(frame2b, 0, weight=1, minsize=13)
-  tkpack(frame2b, fill="both", expand=TRUE, padx=c(5, 0), pady=c(5, 2))
+  tkpack(frame2b, fill="x", padx=c(5, 0), pady=c(0, 2))
 
   frame2c <- ttklabelframe(frame2, relief="flat", borderwidth=5, padding=5,
                            text="Example")
@@ -309,7 +309,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   tkgrid(frame2c.lab.2, padx=5, pady=c(1, 5))
   tcl("grid", "anchor", frame2c, "w")
   tkgrid.columnconfigure(frame2c, 0, weight=1, minsize=13)
-  tkpack(frame2c, fill="both", expand=TRUE, padx=c(5, 0), pady=c(5, 0))
+  tkpack(frame2c, fill="x", padx=c(5, 0), pady=c(5, 0))
 
   # Layout paned window
 
@@ -334,11 +334,11 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
 
   tkbind(frame1.tre, "<<TreeviewSelect>>", SelectionChange)
 
-  tkbind(frame2b.ent, "<KeyRelease>", UpdateSample)
+  tkbind(frame2a.ent, "<KeyRelease>", UpdateSample)
 
   # GUI control
 
-  tkfocus(frame2b.ent)
+  tkfocus(frame2a.ent)
   tkgrab(tt)
   tkwait.variable(tt.done.var)
 

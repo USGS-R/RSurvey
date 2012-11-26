@@ -408,7 +408,7 @@ ImportData <- function(parent=NULL) {
   # Frame 2, header line information
 
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Identify header lines")
+                          text="Identify header lines (optional)")
 
   txt <- "The variable names for data in each column."
   frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=names.var,

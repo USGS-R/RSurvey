@@ -701,17 +701,23 @@ OpenRSurvey <- function() {
   # Build query
   
   BuildQuery <- function() {
+    if (is.null(Data("data.raw")))
+      return()
+    
     n <- nrow(Data("data.raw"))
     if (n == 0)
       return()
+    
     cols <- Data("cols")
-    fun.old <- Data("query.fun")
-    fun.new <- EditFunction(cols, fun=fun.old, value.length=n,
+    old.fun <- Data("query.fun")
+    new.fun <- EditFunction(cols, fun=old.fun, value.length=n,
                             value.class="logical", win.title="Query Builder", 
                             parent=tt)
-    if (is.null(fun.new))
+    if (is.null(new.fun))
       return()
-    Data("query.fun", fun.new)
+    if (new.fun == "")
+      new.fun <- NULL
+    Data("query.fun", new.fun)
     Data("data.pts", NULL)
     Data("data.grd", NULL)
   }

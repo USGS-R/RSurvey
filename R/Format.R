@@ -96,11 +96,11 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   # Add string to conversion format entry
 
   AddString <- function(txt) {
-    if (as.logical(tcl(frame2.ent.1, "selection", "present")))
-      tcl(frame2.ent.1, "delete", "sel.first", "sel.last")
-    tkinsert(frame2.ent.1, "insert", txt)
+    if (as.logical(tcl(frame2.ent.2, "selection", "present")))
+      tcl(frame2.ent.2, "delete", "sel.first", "sel.last")
+    tkinsert(frame2.ent.2, "insert", txt)
     UpdateSample()
-    tkfocus(frame2.ent.1)
+    tkfocus(frame2.ent.2)
   }
 
   # Toggle GUI state based on custom check box
@@ -110,7 +110,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
     tclServiceMode(FALSE)
     s <- if (is.custom) "normal" else "readonly"
-    tkconfigure(frame2.ent.1, state=s)
+    tkconfigure(frame2.ent.2, state=s)
 
     s <- if (is.custom) "normal" else "disabled"
     tkconfigure(frame2a.but.01, state=s)
@@ -125,24 +125,24 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     tkconfigure(frame2a.but.10, state=s)
 
     s <- if (is.custom) "readonly" else "normal"
-    tkconfigure(frame3.ent.1.2, state=s)
-    tkconfigure(frame3.ent.1.4, state=s)
+    tkconfigure(frame1.ent.1.2, state=s)
+    tkconfigure(frame1.ent.1.4, state=s)
 
     s <- if (is.custom) "disabled" else "normal"
-    tkconfigure(frame3.lab.1.1, state=s)
-    tkconfigure(frame3.lab.1.3, state=s)
-    tkconfigure(frame3.chk.1.5, state=s)
-    tkconfigure(frame3.chk.2.1, state=s)
-    tkconfigure(frame3.chk.3.1, state=s)
-    tkconfigure(frame3.chk.4.1, state=s)
-    tkconfigure(frame3.chk.5.1, state=s)
+    tkconfigure(frame1.lab.1.1, state=s)
+    tkconfigure(frame1.lab.1.3, state=s)
+    tkconfigure(frame1.chk.1.5, state=s)
+    tkconfigure(frame1.chk.2.1, state=s)
+    tkconfigure(frame1.chk.3.1, state=s)
+    tkconfigure(frame1.chk.4.1, state=s)
+    tkconfigure(frame1.chk.5.1, state=s)
     tclServiceMode(TRUE)
 
     if (is.custom ) {
-      tkfocus(frame2.ent.1)
+      tkfocus(frame2.ent.2)
     } else {
       BuildFormat()
-      tkfocus(frame3.ent.1.2)
+      tkfocus(frame1.ent.1.2)
     }
   }
 
@@ -220,7 +220,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     ToggleState()
     tclvalue(fmt.var) <- cb
     UpdateSample()
-    tkfocus(frame2.ent.1)
+    tkfocus(frame2.ent.2)
   }
 
   # Save conversion specification format
@@ -295,27 +295,64 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   tkgrid.configure(frame0.but.3, padx=c(4, 10))
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
-  # Frame 1, sample entry
+# Frame 1
 
-  frame1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Sample")
-  frame1.ent <- ttkentry(frame1, textvariable=sample.var, width=30,
-                         state="readonly", takefocus=FALSE)
-  tkgrid(frame1.ent, padx=0, pady=0)
-  tkgrid.configure(frame1.ent, sticky="we")
-  tcl("grid", "anchor", frame1, "w")
-  tkgrid.columnconfigure(frame1, 0, weight=1, minsize=13)
-  tkpack(frame1, fill="x", expand=TRUE, padx=10, pady=10)
+  frame1 <- ttkframe(tt, relief="flat", borderwidth=0, padding=0)
+
+  frame1.lab.1.1 <- ttklabel(frame1, text="Field width")
+  frame1.lab.1.3 <- ttklabel(frame1, text="Precision")
+
+  frame1.ent.1.2 <- ttkentry(frame1, textvariable=width.var, width=12)
+  frame1.ent.1.4 <- ttkentry(frame1, textvariable=precision.var, width=12)
+
+  txt <- "Scientific"
+  frame1.chk.1.5 <- ttkcheckbutton(frame1, text=txt, variable=scientific.var,
+                                   command=BuildFormat)
+  txt <- "Left adjustment of converted argument in its field."
+  frame1.chk.2.1 <- ttkcheckbutton(frame1, text=txt, variable=left.var,
+                                   command=BuildFormat)
+  txt <- "Always print number with sign (\u002b/\u2212)."
+  frame1.chk.3.1 <- ttkcheckbutton(frame1, text=txt, variable=sign.var,
+                                   command=BuildFormat)
+  txt <- "Prefix a space if the first character is not a sign."
+  frame1.chk.4.1 <- ttkcheckbutton(frame1, text=txt, variable=space.var,
+                                   command=BuildFormat)
+  txt <- "Pad to the field width with leading zeros."
+  frame1.chk.5.1 <- ttkcheckbutton(frame1, text=txt, variable=pad.var,
+                                   command=BuildFormat)
+
+  if (is.numeric(sample) && !is.integer(sample)) {
+    tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.lab.1.3, frame1.ent.1.4,
+           frame1.chk.1.5, pady=c(15, 10))
+
+    tkgrid.configure(frame1.lab.1.3, padx=c(10, 2))
+    tkgrid.configure(frame1.chk.1.5, padx=c(2, 2))
+  } else {
+    tkgrid(frame1.lab.1.1, frame1.ent.1.2, "x", pady=c(15, 10), sticky="w")
+    tkgrid.columnconfigure(frame1, 2, weight=1)
+    tkgrid(frame1.chk.2.1, columnspan=3, sticky="w", padx=c(10, 0))
+  }
+  tkgrid.configure(frame1.lab.1.1, padx=c(10, 2))
+
+  if (is.numeric(sample)) {
+    tkgrid(frame1.chk.2.1, columnspan=5, sticky="w", padx=c(10, 0))
+    tkgrid(frame1.chk.3.1, columnspan=5, sticky="w", padx=c(10, 0))
+    tkgrid(frame1.chk.4.1, columnspan=5, sticky="w", padx=c(10, 0))
+    tkgrid(frame1.chk.5.1, columnspan=5, sticky="w", padx=c(10, 0))
+  }
+
+  tkpack(frame1, padx=10, pady=0, anchor="w")
 
   # Frame 2, conversion specification format
 
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Conversion specification format")
 
-  frame2.ent.1 <- ttkentry(frame2, textvariable=fmt.var, width=30)
-  frame2.chk.2 <- ttkcheckbutton(frame2, text="Custom", variable=custom.var,
+  
+  frame2.chk.1 <- ttkcheckbutton(frame2, text="Custom", variable=custom.var,
                                  command=ToggleState)
-
+  frame2.ent.2 <- ttkentry(frame2, textvariable=fmt.var, width=30)
+  
   frame2a <- ttkframe(frame2, relief="flat", borderwidth=0, padding=0)
 
   frame2a.but.01 <- ttkbutton(frame2a, width=2, text="%",
@@ -368,63 +405,29 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
              frame2a.but.12, pady=c(2, 0), padx=c(0, 2))
   }
 
-  tkgrid(frame2.ent.1, frame2.chk.2)
+  tkgrid(frame2.chk.1)
+  tkgrid(frame2.ent.2)
   tkgrid(frame2a, "x", pady=c(2, 0), sticky="w")
-
-  tkgrid.configure(frame2.ent.1, sticky="we", padx=c(0, 2))
+  
+  tkgrid.configure(frame2.chk.1, sticky="w", pady=c(0, 2))
+  tkgrid.configure(frame2.ent.2, sticky="we", columnspan=2, padx=c(0, 2))
   tkgrid.configure(frame2a.but.10, padx=c(0, 10))
 
-  tkgrid.columnconfigure(frame2, 0, weight=1)
+  tkgrid.columnconfigure(frame2, 1, weight=1)
 
-  tkpack(frame2, fill="x", padx=10, pady=0)
+  tkpack(frame2, fill="x", padx=10, pady=10)
 
-# Frame 3
+  # Frame 3, sample entry
 
-  frame3 <- ttkframe(tt, relief="flat", borderwidth=0, padding=0)
-
-  frame3.lab.1.1 <- ttklabel(frame3, text="Field width")
-  frame3.lab.1.3 <- ttklabel(frame3, text="Precision")
-
-  frame3.ent.1.2 <- ttkentry(frame3, textvariable=width.var, width=12)
-  frame3.ent.1.4 <- ttkentry(frame3, textvariable=precision.var, width=12)
-
-  txt <- "Scientific"
-  frame3.chk.1.5 <- ttkcheckbutton(frame3, text=txt, variable=scientific.var,
-                                   command=BuildFormat)
-  txt <- "Left adjustment of converted argument in its field."
-  frame3.chk.2.1 <- ttkcheckbutton(frame3, text=txt, variable=left.var,
-                                   command=BuildFormat)
-  txt <- "Always print number with sign (\u002b/\u2212)."
-  frame3.chk.3.1 <- ttkcheckbutton(frame3, text=txt, variable=sign.var,
-                                   command=BuildFormat)
-  txt <- "Prefix a space if the first character is not a sign."
-  frame3.chk.4.1 <- ttkcheckbutton(frame3, text=txt, variable=space.var,
-                                   command=BuildFormat)
-  txt <- "Pad to the field width with leading zeros."
-  frame3.chk.5.1 <- ttkcheckbutton(frame3, text=txt, variable=pad.var,
-                                   command=BuildFormat)
-
-  if (is.numeric(sample) && !is.integer(sample)) {
-    tkgrid(frame3.lab.1.1, frame3.ent.1.2, frame3.lab.1.3, frame3.ent.1.4,
-           frame3.chk.1.5, pady=c(15, 10))
-
-    tkgrid.configure(frame3.lab.1.3, padx=c(10, 2))
-    tkgrid.configure(frame3.chk.1.5, padx=c(2, 2))
-  } else {
-    tkgrid(frame3.lab.1.1, frame3.ent.1.2, "x", pady=c(15, 10), sticky="w")
-    tkgrid.columnconfigure(frame3, 2, weight=1)
-    tkgrid(frame3.chk.2.1, columnspan=3, sticky="w", padx=c(10, 0))
-  }
-  tkgrid.configure(frame3.lab.1.1, padx=c(10, 2))
-
-  if (is.numeric(sample)) {
-    tkgrid(frame3.chk.2.1, columnspan=5, sticky="w", padx=c(10, 0))
-    tkgrid(frame3.chk.3.1, columnspan=5, sticky="w", padx=c(10, 0))
-    tkgrid(frame3.chk.4.1, columnspan=5, sticky="w", padx=c(10, 0))
-    tkgrid(frame3.chk.5.1, columnspan=5, sticky="w", padx=c(10, 0))
-  }
-
-  tkpack(frame3, padx=10, pady=0, anchor="w")
+  frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
+                          text="Sample")
+  frame3.ent <- ttkentry(frame3, textvariable=sample.var, width=30,
+                         state="readonly", takefocus=FALSE)
+  tkgrid(frame3.ent, padx=0, pady=0)
+  tkgrid.configure(frame3.ent, sticky="we")
+  tcl("grid", "anchor", frame3, "w")
+  tkgrid.columnconfigure(frame3, 0, weight=1, minsize=13)
+  tkpack(frame3, fill="x", expand=TRUE, padx=10, pady=0)
 
   # Bind events
 
@@ -432,10 +435,10 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tkbind(frame2.ent.1, "<KeyRelease>", UpdateSample)
+  tkbind(frame2.ent.2, "<KeyRelease>", UpdateSample)
 
-  tkbind(frame3.ent.1.2, "<KeyRelease>", BuildFormat)
-  tkbind(frame3.ent.1.4, "<KeyRelease>", BuildFormat)
+  tkbind(frame1.ent.1.2, "<KeyRelease>", BuildFormat)
+  tkbind(frame1.ent.1.4, "<KeyRelease>", BuildFormat)
 
   # GUI control
 

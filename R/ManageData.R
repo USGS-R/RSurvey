@@ -311,8 +311,16 @@ ManageData <- function(cols, vars, parent=NULL) {
     }
     
     new.fun <- EditFunction(cols, index=idx, value.length=n, parent=tt)
-    if (is.null(new.fun)) {
-      DeleteVar()
+    if (is.null(new.fun))
+      return()
+    if (new.fun == "") {
+      msg <- paste("Nothing is defined for the function",
+                   "and the variable will be deleted.")
+      ans <- as.character(tkmessageBox(icon="question", message=msg,
+                                       title="Warning", type="okcancel",
+                                       parent=tt))
+      if (ans == "ok")
+        DeleteVar()
       return()
     }
 
@@ -645,15 +653,12 @@ ManageData <- function(cols, vars, parent=NULL) {
   frame3 <- ttkframe(nb, relief="flat", padding=0, borderwidth=0)
   tkadd(nb, frame3, text="   Summary   ")
 
-  frame3.xsc <- ttkscrollbar(frame3, orient="horizontal")
   frame3.ysc <- ttkscrollbar(frame3, orient="vertical")
 
   frame3.txt <- tktext(frame3, bg="white", padx=2, pady=2, width=25, height=8,
                 undo=1, wrap="none", foreground="black", relief="flat",
-                xscrollcommand=function(...) tkset(frame3.xsc,...),
                 yscrollcommand=function(...) tkset(frame3.ysc,...))
 
-  tkconfigure(frame3.xsc, command=paste(.Tk.ID(frame3.txt), "xview"))
   tkconfigure(frame3.ysc, command=paste(.Tk.ID(frame3.txt), "yview"))
 
   frame3.cvs <- tkcanvas(frame3, relief="flat", width=w, height=h,
@@ -661,17 +666,15 @@ ManageData <- function(cols, vars, parent=NULL) {
                          highlightthickness=0)
 
   tkgrid(frame3.txt, frame3.ysc)
-  tkgrid(frame3.xsc, "x")
   tkgrid(frame3.cvs)
 
   tkgrid.configure(frame3.txt, sticky="news", padx=0, pady=0)
   tkgrid.configure(frame3.ysc, sticky="ns", padx=0, pady=0)
-  tkgrid.configure(frame3.xsc, sticky="we", padx=0, pady=0)
   tkgrid.configure(frame3.cvs, sticky="news", padx=2, pady=2, columnspan=2)
 
   tkgrid.columnconfigure(frame3, 0, weight=1, minsize=25)
   tkgrid.rowconfigure(frame3, 0, weight=1, minsize=25)
-  tkgrid.rowconfigure(frame3, 2, weight=1)
+  tkgrid.rowconfigure(frame3, 1, weight=1)
 
   # Frame 4, comment
 
