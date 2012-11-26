@@ -9,12 +9,12 @@ polygon clipping. A graphical user interface (GUI) is provided and
 requires R operate as an SDI application, using multiple
 top-level windows for the console, graphics, and pager.
 
-Files can be one of four types as indicated by their extension: tables
-(*.txt*, *.csv*, *.dat*, or *.shp*), grids (*.grd*), polygons (*.ply*),
-or binary project images (*.rda*). Tables (*.txt*, *.csv*, *.dat*)
+Files can be one of four types as indicated by their extension; tables:
+*.txt*, *.csv*, *.dat,* or *.shp*); grids: *.grd*, polygons: *.ply*,
+or binary project images: *.rda*. Tables, *.txt*, *.csv*, *.dat*,
 can be compressed by [gzip](http://www.gzip.org/ "gzip")
 with additional extension *.gz*.
-Shapefles (*.shp*) and interpolated grid files (*.grd*) are limited to data
+Shapefles, *.shp*, and interpolated grid files, *.grd*, are limited to data
 export. Support for programmatic manipulation of measurement units is only
 provided for date-time values; therefore, the bulk of unit consistency is tasked
 to the user. Time zones, spatial datum's and projections are not supported.
