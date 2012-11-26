@@ -205,6 +205,9 @@ OpenRSurvey <- function() {
   # Manage data
 
   CallManageData <- function() {
+    if (is.null(Data("data.raw")))
+      return()
+    
     ans <- ManageData(Data("cols"), Data("vars"), tt)
     if (!is.null(ans)) {
       Data("cols", ans$cols)
