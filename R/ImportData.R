@@ -345,7 +345,7 @@ ImportData <- function(parent=NULL) {
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
 
-  tktitle(tt) <- "Import File"
+  tktitle(tt) <- "Import Data"
 
   # Frame 0 contains load and cancel buttons, and size grip
 

@@ -96,11 +96,11 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   # Add string to conversion format entry
 
   AddString <- function(txt) {
-    if (as.logical(tcl(frame2.ent.2, "selection", "present")))
-      tcl(frame2.ent.2, "delete", "sel.first", "sel.last")
-    tkinsert(frame2.ent.2, "insert", txt)
+    if (as.logical(tcl(frame2.ent.1, "selection", "present")))
+      tcl(frame2.ent.1, "delete", "sel.first", "sel.last")
+    tkinsert(frame2.ent.1, "insert", txt)
     UpdateSample()
-    tkfocus(frame2.ent.2)
+    tkfocus(frame2.ent.1)
   }
 
   # Toggle GUI state based on custom check box
@@ -110,7 +110,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
     tclServiceMode(FALSE)
     s <- if (is.custom) "normal" else "readonly"
-    tkconfigure(frame2.ent.2, state=s)
+    tkconfigure(frame2.ent.1, state=s)
 
     s <- if (is.custom) "normal" else "disabled"
     tkconfigure(frame2a.but.01, state=s)
@@ -139,7 +139,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     tclServiceMode(TRUE)
 
     if (is.custom ) {
-      tkfocus(frame2.ent.2)
+      tkfocus(frame2.ent.1)
     } else {
       BuildFormat()
       tkfocus(frame1.ent.1.2)
@@ -220,7 +220,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     ToggleState()
     tclvalue(fmt.var) <- cb
     UpdateSample()
-    tkfocus(frame2.ent.2)
+    tkfocus(frame2.ent.1)
   }
 
   # Save conversion specification format
@@ -348,10 +348,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Conversion specification format")
 
-  
-  frame2.chk.1 <- ttkcheckbutton(frame2, text="Custom", variable=custom.var,
-                                 command=ToggleState)
-  frame2.ent.2 <- ttkentry(frame2, textvariable=fmt.var, width=30)
+  frame2.ent.1 <- ttkentry(frame2, textvariable=fmt.var, width=30)
   
   frame2a <- ttkframe(frame2, relief="flat", borderwidth=0, padding=0)
 
@@ -380,17 +377,20 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
                              command=CopyFormat)
   frame2a.but.12 <- ttkbutton(frame2a, width=2, image=GetBitmapImage("paste"),
                              command=PasteFormat)
+  
+  frame2a.chk.13 <- ttkcheckbutton(frame2a, text="Custom", variable=custom.var,
+                                   command=ToggleState)
 
   if (is.numeric(sample)) {
     if (is.integer(sample))
       tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
              frame2a.but.05, frame2a.but.06, frame2a.but.07, frame2a.but.08,
              frame2a.but.09, frame2a.but.10, frame2a.but.11, frame2a.but.12,
-             pady=c(2, 0), padx=c(0, 2))
+             frame2a.chk.13, pady=c(2, 0), padx=c(0, 2))
     else
       tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
              frame2a.but.05, frame2a.but.06, frame2a.but.07, frame2a.but.08,
-             frame2a.but.10, frame2a.but.11, frame2a.but.12,
+             frame2a.but.10, frame2a.but.11, frame2a.but.12, frame2a.chk.13,
              pady=c(2, 0), padx=c(0, 2))
 
 
@@ -398,20 +398,20 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     if (is.logical(sample))
       tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
              frame2a.but.05, frame2a.but.06, frame2a.but.09, frame2a.but.10,
-             frame2a.but.11, frame2a.but.12, pady=c(2, 0), padx=c(0, 2))
+             frame2a.but.11, frame2a.but.12, frame2a.chk.13, 
+             pady=c(2, 0), padx=c(0, 2))
     else
       tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
              frame2a.but.05, frame2a.but.06, frame2a.but.10, frame2a.but.11,
-             frame2a.but.12, pady=c(2, 0), padx=c(0, 2))
+             frame2a.but.12, frame2a.chk.13, pady=c(2, 0), padx=c(0, 2))
   }
 
-  tkgrid(frame2.chk.1)
-  tkgrid(frame2.ent.2)
+  tkgrid(frame2.ent.1)
   tkgrid(frame2a, "x", pady=c(2, 0), sticky="w")
-  
-  tkgrid.configure(frame2.chk.1, sticky="w", pady=c(0, 2))
-  tkgrid.configure(frame2.ent.2, sticky="we", columnspan=2, padx=c(0, 2))
   tkgrid.configure(frame2a.but.10, padx=c(0, 10))
+  tkgrid.configure(frame2a.chk.13, padx=c(10, 0))
+  
+  tkgrid.configure(frame2.ent.1, sticky="we", columnspan=2, padx=c(0, 2))
 
   tkgrid.columnconfigure(frame2, 1, weight=1)
 
@@ -435,7 +435,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tkbind(frame2.ent.2, "<KeyRelease>", UpdateSample)
+  tkbind(frame2.ent.1, "<KeyRelease>", UpdateSample)
 
   tkbind(frame1.ent.1.2, "<KeyRelease>", BuildFormat)
   tkbind(frame1.ent.1.4, "<KeyRelease>", BuildFormat)
