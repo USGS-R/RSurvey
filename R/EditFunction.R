@@ -176,7 +176,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     edit.fun.id <- ids[index]
     ids <- ids[-index]
     cls <- cls[-index]
-    win.title <- paste(win.title, "-", edit.fun.id, sep=" ")
   }
 
   # Class types
@@ -194,11 +193,11 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   cmd$as.logical <- "as.logical(<variable>)"
   cmd$as.character <- "as.character(<variable>)"
   cmd$as.factor <- "as.factor(<variable>)"
-  cmd$as.POSIXct <- "as.POSIXct(<variable>, format=\"<format>\")"
+  cmd$as.POSIXct <- "as.POSIXct(<variable>, format = \"<format>\")"
 
-  cmd$paste <-  "paste(<variable>, <variable>, sep=\" \")"
-  cmd$substr <- paste("substr(<variable>, start=<first element>,",
-                      "stop=<last element>)")
+  cmd$paste <-  "paste(<variable>, <variable>, sep = \" \")"
+  cmd$substr <- paste("substr(<variable>, start = <first element>,",
+                      "stop = <last element>)")
   
   cmd$min <- "min(<variable>, na.rm = TRUE)"
   cmd$max <- "max(<variable>, na.rm = TRUE)"
@@ -313,7 +312,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   pw <- ttkpanedwindow(tt, orient="horizontal")
 
-  # Frame 0
+  # Frame 1
 
   frame1 <- tkframe(pw, relief="flat", padx=0, pady=0)
 
@@ -353,6 +352,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   frame2 <- tkframe(pw, relief="flat", padx=0, pady=0)
 
   txt <- "Define function"
+  if (!is.null(index))
+    txt <- paste(txt, " for \"", edit.fun.id, "\"", sep="")
   frame2.lab.1.1 <- ttklabel(frame2, text=txt, foreground="#414042")
 
   fnt <- tkfont.create(family="Courier New", size=9)
@@ -370,33 +371,33 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   frame2a <- tkframe(frame2, relief="flat", padx=0, pady=0)
   frame2a.but.01 <- ttkbutton(frame2a, width=3, text="\u002b",
-                              command=function() InsertString("+"))
+                              command=function() InsertString(" + "))
   frame2a.but.02 <- ttkbutton(frame2a, width=3, text="\u2212",
-                              command=function() InsertString("-"))
+                              command=function() InsertString(" - "))
   frame2a.but.03 <- ttkbutton(frame2a, width=3, text="\u00d7",
-                              command=function() InsertString("*"))
+                              command=function() InsertString(" * "))
   frame2a.but.04 <- ttkbutton(frame2a, width=3, text="\u00f7",
-                              command=function() InsertString("/"))
+                              command=function() InsertString(" / "))
   frame2a.but.05 <- ttkbutton(frame2a, width=3, text="x\u207f",
                               command=function() InsertString("^"))
   frame2a.but.06 <- ttkbutton(frame2a, width=4, text="And",
-                              command=function() InsertString("&"))
+                              command=function() InsertString(" & "))
   frame2a.but.07 <- ttkbutton(frame2a, width=4, text="Or",
-                              command=function() InsertString("|"))
+                              command=function() InsertString(" | "))
   frame2a.but.08 <- ttkbutton(frame2a, width=4, text="Not",
                               command=function() InsertString("!"))
   frame2a.but.09 <- ttkbutton(frame2a, width=3, text=">",
-                              command=function() InsertString(">"))
+                              command=function() InsertString(" > "))
   frame2a.but.10 <- ttkbutton(frame2a, width=3, text="<",
-                              command=function() InsertString("<"))
+                              command=function() InsertString(" < "))
   frame2a.but.11 <- ttkbutton(frame2a, width=3, text="\u2265",
-                              command=function() InsertString(">="))
+                              command=function() InsertString(" >= "))
   frame2a.but.12 <- ttkbutton(frame2a, width=3, text="\u2264",
-                              command=function() InsertString("<="))
+                              command=function() InsertString(" <= "))
   frame2a.but.13 <- ttkbutton(frame2a, width=3, text="=",
-                              command=function() InsertString("=="))
+                              command=function() InsertString(" == "))
   frame2a.but.14 <- ttkbutton(frame2a, width=3, text="\u2260",
-                              command=function() InsertString("!="))
+                              command=function() InsertString(" != "))
   frame2a.but.15 <- ttkbutton(frame2a, width=3, text="( )",
                               command=function() InsertString("()"))
   frame2a.but.16 <- ttkbutton(frame2a, width=3, text="[ ]",
@@ -425,7 +426,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkgrid.rowconfigure(frame2, 1, weight=1)
   tkgrid.columnconfigure(frame2, 0, weight=1, minsize=20)
 
-  if (!is.null(old.fun) && old.fun != "NA")
+  if (!is.null(old.fun) && old.fun != "")
     tkinsert(frame2.txt.2.1, "end", old.fun)
 
   tcl(frame2.txt.2.1, "edit", "reset")

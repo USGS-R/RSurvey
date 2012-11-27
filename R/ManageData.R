@@ -107,8 +107,6 @@ ManageData <- function(cols, vars, parent=NULL) {
 
     old.fun <- cols[[idx]]$fun
     new.fun <- as.character(tclvalue(tkget(frame2.txt.5.2, '1.0', 'end-1c')))
-    if (new.fun == "")
-      new.fun <- "NA"
     cols[[idx]]$fun <<- new.fun
 
     # Save summary
@@ -251,7 +249,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     tkselection.clear(frame1.lst, 0, n)
     tkselection.set(frame1.lst, n, n)
     tkyview(frame1.lst, n - 1L)
-    cols[[n + 1]] <<- list(name=id, class="logical", fun="NA")
+    cols[[n + 1]] <<- list(name=id, class="logical", fun="")
     UpdateNb()
     SetVarId()
 
@@ -311,8 +309,13 @@ ManageData <- function(cols, vars, parent=NULL) {
     }
     
     new.fun <- EditFunction(cols, index=idx, value.length=n, parent=tt)
-    if (is.null(new.fun))
+    
+    if (is.null(new.fun)) {
+      if (cols[[idx]]$fun == "")
+        DeleteVar()
       return()
+    }
+    
     if (new.fun == "") {
       msg <- paste("Nothing is defined for the function",
                    "and the variable will be deleted.")

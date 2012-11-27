@@ -701,9 +701,9 @@ OpenRSurvey <- function() {
     tkconfigure(tt, cursor="arrow")
   }
   
-  # Define query
+  # Build query
   
-  DefineQuery <- function() {
+  BuildQuery <- function() {
     if (is.null(Data("data.raw")))
       return()
     
@@ -714,7 +714,7 @@ OpenRSurvey <- function() {
     cols <- Data("cols")
     old.fun <- Data("query.fun")
     new.fun <- EditFunction(cols, fun=old.fun, value.length=n,
-                            value.class="logical", win.title="Define Query", 
+                            value.class="logical", win.title="Build Query", 
                             parent=tt)
     if (is.null(new.fun))
       return()
@@ -846,8 +846,8 @@ OpenRSurvey <- function() {
         command=CallViewData)
   
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Define query",
-        command=DefineQuery)
+  tkadd(menu.edit, "command", label="Build query",
+        command=BuildQuery)
   tkadd(menu.edit, "command", label="Clear query",
         command=ClearQuery)
   
