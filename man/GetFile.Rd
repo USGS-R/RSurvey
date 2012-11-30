@@ -34,14 +34,13 @@ GetFile(cmd = "Open", file = NULL, exts = NULL, initialdir = NULL,
 }
 
 \value{
-If \code{multi} is \code{FALSE} returns a list containing the following
-components:
-  \item{path}{character; the \code{file} path}
-  \item{dir}{character; the directory that contains the \code{file}}
+If \code{multi} is \code{FALSE} returns the file path as a charcter object with
+the following attributes:
+  \item{directory}{character; the directory that contains the \code{file}}
   \item{name}{character; the \code{file} name}
-  \item{ext}{character; the \code{file} extension}
+  \item{extension}{character; the \code{file} extension}
   \item{type}{character; the \code{file} type}
-Otherwise, a list is returned containing list components for each file.
+Otherwise, a list is returned containing an object for each file.
 }
 
 \author{J.C. Fisher}

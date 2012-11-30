@@ -2,9 +2,9 @@ Data <- local({
   # A function used to set or query data and parameters.
 
   # Store data locally
-
   dat <- list()
-
+  
+  # Set default values
   default <- list("nlevels"       = 20,
                   "width"         = 7,
                   "cex.pts"       = 1,
@@ -26,9 +26,9 @@ Data <- local({
                   "color.palette" = colorspace::diverge_hcl
               )
 
-  # Main program
 
-  function(option, value, clear.proj=FALSE, clear.data=FALSE,
+  # Main program
+  function(option, value, which.attr=NULL, clear.proj=FALSE, clear.data=FALSE,
            replace.all=NULL) {
 
     # Replace all values
@@ -39,14 +39,13 @@ Data <- local({
     }
 
     # Save parameters
-
     if (clear.proj | clear.data) {
       save.params <- c("default.dir", "win.loc", "csi", "width", "cex.pts")
       if (clear.data)
         save.params <- c(save.params, "nlevels", "asp.yx", "asp.zx",
                          "vmax", "vxby", "vyby", "rkey", "show.poly",
                          "img.contour", "show.lines", "show.points",
-                         "vuni", "date.fmt", "poly", "proj.file",
+                         "vuni", "date.fmt", "poly", "project.file",
                          "show.2.axes", "minor.ticks", "ticks.inside",
                          "color.palette", "rm.pnt.line")
       save.params <- save.params[save.params %in% names(dat)]
@@ -55,61 +54,65 @@ Data <- local({
     }
 
     # Return all data
-
     if (missing(option))
       return(dat)
 
-    # Numeric indices specifying option elements
-
+    # Check indices for numeric option elements
     if (is.numeric(option)) {
       option <- sapply(option, as.integer)
-
-      opt <- option[1]
-      if (opt > length(dat))
-        opt <- NULL
-
-      if (!is.null(opt) && length(option) > 1) {
+      option.new <- option[1L]
+      if (option.new > length(dat))
+        option.new <- NULL
+      if (!is.null(option.new) && length(option) > 1) {
         for (i in 2:length(option)) {
-          if (option[i] > length(dat[[opt[-i]]]))
+          if (option[i] > length(dat[[option.new[-i]]]))
             break
           else
-            opt <- c(opt, option[i])
+            option.new <- c(option.new, option[i])
         }
       }
+    
+    # Determine numeric indices from character option element
     } else {
       idx <- match(option[1], names(dat))
-      opt <- idx
-      if (is.na(opt))
-        opt <- NULL
-
-      if (!is.null(opt) && length(option) > 1) {
+      option.new <- idx
+      if (is.na(option.new))
+        option.new <- NULL
+      if (!is.null(option.new) && length(option) > 1) {
         for (i in 2:length(option)) {
-          idx <- match(option[i], names(dat[[opt[-i]]]))
+          idx <- match(option[i], names(dat[[option.new[-i]]]))
           if (is.na(idx))
             break
-          opt <- c(opt, idx)
+          option.new <- c(option.new, idx)
         }
       }
     }
 
-    # Return or set value
-
-    nopt <- length(opt)
+    # Determine number of options
     noption <- length(option)
-
+    noption.new <- length(option.new)
+    
+    # Return value
     if (missing(value)) {
-      if (nopt < noption) {
-        if (noption == 1 && option %in% names(default))
+      if (noption.new < noption) {
+        if (noption == 1 && option %in% names(default)) {
           return(default[[option]])
+        }
         return(NULL)
       }
-      return(dat[[opt]])
+      if (is.null(which.attr))
+        return(dat[[option.new]])
+      else
+        return(attr(dat[[option.new]], which.attr, exact=TRUE))
+    # Set value
     } else {
-      if (nopt == noption || (nopt == (noption - 1)
-          && is.list(if (is.null(opt)) dat else dat[[opt]]))) {
-        dat[[option]] <<- value
+      if (noption.new == noption || (noption.new == (noption - 1)
+          && is.list(if (is.null(option.new)) dat else dat[[option.new]]))) {
+        if (is.null(which.attr))
+          dat[[option]] <<- value
+        else
+          attr(dat[[option]], which.attr) <<- value
       }
     }
   }
 })
-

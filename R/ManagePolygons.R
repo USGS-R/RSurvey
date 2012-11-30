@@ -332,15 +332,15 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
                  multi=TRUE, parent=tt)
     if (is.null(f))
       return()
-    if (!is.list(f[[1]]))
+    if (!is.list(f))
       f <- list(f)
     for (i in seq(along=f)) {
-      con <- file(f[[i]]$path, "r", encoding=encoding)
+      con <- file(f[[i]], "r", encoding=encoding)
       new.poly <- read.polyfile(con, nohole=FALSE)
       close(con)
       if (!inherits(new.poly, "gpc.poly"))
         next
-      nam <- NamePolygon(old=names(ply), nam=f[[i]]$name)
+      nam <- NamePolygon(old=names(ply), nam=attr(f[[i]], "name"))
       ply[[nam]] <<- new.poly
       tcl("lappend", list.var, nam)
     }
@@ -363,7 +363,7 @@ ManagePolygons <- function(ply=NULL, encoding=getOption("encoding"),
                    initialfile=names(ply)[i], defaultextension="ply", parent=tt)
       if (is.null(f))
         next
-      write.polyfile(ply[[i]], f$path)
+      write.polyfile(ply[[i]], f)
     }
     tkfocus(tt)
   }

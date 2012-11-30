@@ -31,9 +31,9 @@ OpenRSurvey <- function() {
       return()
 
     project <- NULL
-    load(file=f$path)
+    load(file=f)
     Data(replace.all=project)
-    Data("proj.file", f$path)
+    Data("proj.file", f)
 
     SetCsi()
     SetVars()
@@ -50,9 +50,8 @@ OpenRSurvey <- function() {
       f <- GetFile(cmd="Save As", exts="rda", win.title="Save Project As",
                    defaultextension="rda", parent=tt)
       if (!is.null(f)) {
-        Data("proj.file", f$path)
-        pth <- paste(head(unlist(strsplit(f$path, "/")), -1), collapse="/")
-        Data("default.dir", pth)
+        Data("proj.file", f)
+        Data("default.dir", attr(f, "directory"))
       }
     }
     if (!is.null(Data("proj.file"))) {
@@ -257,7 +256,7 @@ OpenRSurvey <- function() {
                  defaultextension="eps", parent=tt)
     if (is.null(f))
       return()
-    savePlot(filename=f$path, type=f$ext)
+    savePlot(filename=f, type=attr(f, "extension"))
   }
 
   # Save RGL graphic devices
@@ -271,10 +270,10 @@ OpenRSurvey <- function() {
     if (is.null(f))
       return()
 
-    if (f$ext == "png")
-      rgl.snapshot(filename=f$path, fmt=f$ext)
+    if (attr(f, "extension") == "png")
+      rgl.snapshot(filename=f, fmt=attr(f, "extension"))
     else
-      rgl.postscript(filename=f$path, fmt=f$ext)
+      rgl.postscript(filename=f, fmt=attr(f, "extension"))
   }
 
   # About package
@@ -319,7 +318,7 @@ OpenRSurvey <- function() {
   # Construct polygon
 
   ConstructPolygon <- function(type) {
-    if (is.null(Data("data.source")))
+    if (is.null(Data("data.raw")))
       return()
     msg <- paste("After the plot has been created, use the mouse to identify",
                  "the vertices of the polygon. The identification process can",
@@ -335,7 +334,7 @@ OpenRSurvey <- function() {
   # Autocrop polygon
 
   CallAutocropPolygon <- function() {
-    if (is.null(Data("data.source")))
+    if (is.null(Data("data.raw")))
       return()
     CallProcessData()
 

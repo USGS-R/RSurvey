@@ -32,7 +32,7 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
                  win.title="Save Data As", defaultextension=ext)
     if (is.null(f))
       return()
-    file.name <- f$path
+    file.name <- f
   }
 
   if (file.type %in% c("text", "grid")) {

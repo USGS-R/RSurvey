@@ -57,12 +57,13 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
       exts <- "shp"
     }
     f <- GetFile(cmd="Save As", exts=exts, file=NULL, win.title="Save Data As",
-               defaultextension=default.ext)
+                 defaultextension=default.ext)
     if (is.null(f))
       return()
-    if (f$ext == "csv")
+    
+    if (attr(f, "extension") == "csv")
       tclvalue(sep.var) <- ","
-    tclvalue(file.var) <- f$path
+    tclvalue(file.var) <- f
     ToggleExport()
   }
 

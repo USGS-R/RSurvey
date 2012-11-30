@@ -607,7 +607,7 @@ ManageData <- function(cols, vars, parent=NULL) {
   tkadd(nb, frame2, text="   Variable   ")
 
   frame2.lab.1.1 <- ttklabel(frame2, text="Name")
-  frame2.lab.2.1 <- ttklabel(frame2, text="Units")
+  frame2.lab.2.1 <- ttklabel(frame2, text="Unit")
   frame2.lab.3.1 <- ttklabel(frame2, text="Format")
   frame2.lab.4.1 <- ttklabel(frame2, text="Class")
   frame2.lab.5.1 <- ttklabel(frame2, text="Function")

@@ -33,7 +33,7 @@ ImportData <- function(parent=NULL) {
       con <- try(textConnection(cb), silent=TRUE)
     } else if (substr(src, 1, 6) %in% c("http:/", "ftp://", "file:/")) {
       con <- try(url(description=src, open="r", encoding=enc), silent=TRUE)
-    } else if (GetFile(file=src)$ext == "gz") {
+    } else if (attr(GetFile(file=src), "extension") == "gz") {
       con <- try(gzfile(description=src, open="r", encoding=enc,
                         compression=6), silent=TRUE)
     } else {
@@ -110,13 +110,12 @@ ImportData <- function(parent=NULL) {
       }
 
       if (!is.null(ans)) {
-        Data("headers", hds)
-        Data("skip", skp)
-        Data("sep", sep)
-        Data("na.strings", nas)
-        Data("quote", quo)
+        Data("table.headers", hds)
+        Data("table.skip", skp)
+        Data("table.sep", sep)
+        Data("table.na.strings", nas)
+        Data("table.quote", quo)
         Data("comment.char", com)
-        Data("data.source", src)
         tclvalue(tt.done.var) <- 1
       }
     }
@@ -187,10 +186,10 @@ ImportData <- function(parent=NULL) {
     tkfocus(tt)
     if (is.null(f))
       return()
-    tclvalue(source.var) <- f$path
+    tclvalue(source.var) <- f
     tclvalue(nrow.var) <- ""
     cb <<- NULL
-    if (f$ext == "csv")
+    if (attr(f, "extension") == "csv")
       tcl(frame3.box.1.2, "current", match(",", sep0) - 1)
 
     RebuildTable()
@@ -284,7 +283,7 @@ ImportData <- function(parent=NULL) {
     if (!is.null(f)) {
       RaiseWarning(parent)
       if (is.null(Data("cols")))
-        ReadData(f$path)
+        ReadData(f)
     }
     return()
   }
@@ -326,10 +325,10 @@ ImportData <- function(parent=NULL) {
 
   # Set header variables
 
-  if (!is.null(Data("headers"))) {
-    tclvalue(names.var) <- Data("headers")[1]
-    tclvalue(units.var) <- Data("headers")[2]
-    tclvalue(decis.var) <- Data("headers")[3]
+  if (!is.null(Data("table.headers"))) {
+    tclvalue(names.var) <- Data("table.headers")[1]
+    tclvalue(units.var) <- Data("table.headers")[2]
+    tclvalue(decis.var) <- Data("table.headers")[3]
   }
 
   # Open GUI
@@ -408,17 +407,17 @@ ImportData <- function(parent=NULL) {
   # Frame 2, header line information
 
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Identify header lines (optional)")
+                          text="Header lines")
 
-  txt <- "The variable names for data in each column."
+  txt <- "Names of the variables"
   frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=names.var,
                                    command=SetTags, text=txt)
-  txt <- paste("The measurement units for data in each column;",
-               "programmatic manipulation of these units is not supported.")
+  txt <- paste("Measurement units of the variables, programmatic manipulation",
+               "not supported")
   frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=units.var,
                                    command=SetTags, text=txt)
-  txt <- paste("The conversion specification format for data in each column,",
-               "for example '%10.6f' or '%Y-%m-%d %H:%M'.")
+  txt <- paste("Conversion specification formats of the variables,",
+               "for example, '%10.6f' or '%Y-%m-%d %H:%M'")
   frame2.chk.3.1 <- ttkcheckbutton(frame2, variable=decis.var,
                                    command=SetTags, text=txt)
 
@@ -470,17 +469,17 @@ ImportData <- function(parent=NULL) {
   tcl(frame3.box.2.2, "current", 0)
   tcl(frame3.box.2.4, "current", 0)
 
-  if (!is.null(Data("skip")))
-    tclvalue(skip.var) <- Data("skip")
+  if (!is.null(Data("table.skip")))
+    tclvalue(skip.var) <- Data("table.skip")
 
-  if (!is.null(Data("sep")))
-    tcl(frame3.box.1.2, "current", match(Data("sep"), sep0) - 1)
+  if (!is.null(Data("table.sep")))
+    tcl(frame3.box.1.2, "current", match(Data("table.sep"), sep0) - 1)
   if (!is.null(Data("comment.char")))
     tcl(frame3.box.1.4, "current", match(Data("comment.char"), com0) - 1)
-  if (!is.null(Data("na.strings")))
-    tcl(frame3.box.2.2, "current", match(Data("na.strings"), nas0) - 1)
-  if (!is.null(Data("quote")))
-    tcl(frame3.box.2.4, "current", match(Data("quote"), quo0) - 1)
+  if (!is.null(Data("table.na.strings")))
+    tcl(frame3.box.2.2, "current", match(Data("table.na.strings"), nas0) - 1)
+  if (!is.null(Data("table.quote")))
+    tcl(frame3.box.2.4, "current", match(Data("table.quote"), quo0) - 1)
 
   # Frame 4, example data table
 

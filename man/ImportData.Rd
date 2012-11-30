@@ -27,11 +27,9 @@ extension \file{.gz}.
 
 \value{
 Queries and sets \code{\link{Data}} components:
-\code{headers}, \code{skip}, \code{sep}, \code{nrows}, \code{na.strings},
-\code{quote}, \code{comment.char}, see \code{\link{ReadData}}; and
-\code{data.source}, where
-\item{data.source}{character; a description of the connection (i.e.
-  a file pathname).}
+\code{table.headers}, \code{table.skip}, \code{table.sep}, 
+\code{table.na.strings}, \code{table.quote}, and \code{table.comment.char}, 
+see \code{\link{ReadData}}.
 }
 
 \note{
