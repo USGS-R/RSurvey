@@ -120,7 +120,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   # Assign variables linked to Tk widgets
 
   variables.var    <- tclVar()
-  records.var      <- tclVar("all")
+  records.var      <- tclVar("raw")
   head.names.var   <- tclVar(0)
   head.units.var   <- tclVar(0)
   head.fmts.var    <- tclVar(0)
@@ -192,7 +192,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
                               command=function() SelectVariables("none"))
   frame1.lab.2.4 <- ttklabel(frame1, text="Records:")
   frame1.rad.2.5 <- ttkradiobutton(frame1, variable=records.var,
-                                   value="all", text="all")
+                                   value="raw", text="raw")
   frame1.rad.2.6 <- ttkradiobutton(frame1, variable=records.var,
                                    value="processed", text="processed")
 
@@ -221,7 +221,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     frame2.chk.1.2 <- ttkcheckbutton(frame2, variable=head.units.var,
                                      text="Measurement units")
     frame2.chk.1.3 <- ttkcheckbutton(frame2, variable=head.fmts.var,
-                                     text="Data formats")
+                                     text="Conversion formats")
 
     tkgrid(frame2.chk.1.1, frame2.chk.1.2, frame2.chk.1.3)
     tkgrid.configure(frame2.chk.1.2, padx=15)

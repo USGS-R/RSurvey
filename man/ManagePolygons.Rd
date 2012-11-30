@@ -37,12 +37,13 @@ x1 y1\cr
 x2 y2\cr
 ...\cr\cr
 The hole flag is either 1 to indicate a hole, or 0 for a regular contour.
-See \code{read.polyfile} within the \pkg{rgeos} package for details.
+See \code{\link{read.polyfile}} within the \pkg{rgeos} package for details.
 }
 
 \value{
-Queries and sets the \code{ply}, \code{poly.data}, and \code{poly.crop}
-components of \code{\link{Data}}, see \code{\link{SetPolygonLimits}}.
+Queries and sets the \code{poly} component (and its 
+attributes \code{poly.data} and \code{poly.crop}) of \code{\link{Data}}, 
+see \code{\link{SetPolygonLimits}}.
 }
 
 \author{J.C. Fisher}

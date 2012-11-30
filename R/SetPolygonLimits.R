@@ -21,9 +21,9 @@ SetPolygonLimits <- function(poly.names=NULL, poly.data=NULL, poly.crop=NULL,
   # Main program
 
   poly.names <- c("", poly.names)
-  if (!is.null(poly.data) && !(poly.data %in% poly.names))
+  if (!is.null(poly.data) && !poly.data %in% poly.names)
     poly.data <- NULL
-  if (!is.null(poly.crop) && !(poly.crop %in% poly.names))
+  if (!is.null(poly.crop) && !poly.crop %in% poly.names)
     poly.crop <- NULL
 
   rtn <- NULL
