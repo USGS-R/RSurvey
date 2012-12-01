@@ -1,4 +1,4 @@
-SetPolygonLimits <- function(poly.names=NULL, poly.data=NULL, poly.crop=NULL,
+SetPolygonLimits <- function(poly.names=NULL, data.poly=NULL, crop.poly=NULL, 
                              parent=NULL) {
   # A GUI for specifying polygon limits.
 
@@ -13,7 +13,7 @@ SetPolygonLimits <- function(poly.names=NULL, poly.data=NULL, poly.crop=NULL,
     box2 <- as.character(tclvalue(crop.var))
     if(box2 == "")
       box2 <- NULL
-    rtn <<- list(poly.data=box1, poly.crop=box2)
+    rtn <<- list(data.poly=box1, crop.poly=box2)
     tclvalue(tt.done.var) <- 1
   }
 
@@ -21,10 +21,10 @@ SetPolygonLimits <- function(poly.names=NULL, poly.data=NULL, poly.crop=NULL,
   # Main program
 
   poly.names <- c("", poly.names)
-  if (!is.null(poly.data) && !poly.data %in% poly.names)
-    poly.data <- NULL
-  if (!is.null(poly.crop) && !poly.crop %in% poly.names)
-    poly.crop <- NULL
+  if (!is.null(data.poly) && !data.poly %in% poly.names)
+    data.poly <- NULL
+  if (!is.null(crop.poly) && !crop.poly %in% poly.names)
+    crop.poly <- NULL
 
   rtn <- NULL
 
@@ -84,11 +84,11 @@ SetPolygonLimits <- function(poly.names=NULL, poly.data=NULL, poly.crop=NULL,
   frame1.box.2.2 <- ttkcombobox(frame1, state="readonly",
                                 textvariable=crop.var, values=vals)
 
-  if (!is.null(poly.data))
-    tcl(frame1.box.1.2, "current", match(poly.data, poly.names) - 1)
+  if (!is.null(data.poly))
+    tcl(frame1.box.1.2, "current", match(data.poly, poly.names) - 1)
 
-  if (!is.null(poly.crop))
-    tcl(frame1.box.2.2, "current", match(poly.crop, poly.names) - 1)
+  if (!is.null(crop.poly))
+    tcl(frame1.box.2.2, "current", match(crop.poly, poly.names) - 1)
 
   tkgrid(frame1.lab.1.1, frame1.box.1.2, pady=c(10, 4))
   tkgrid(frame1.lab.2.1, frame1.box.2.2)

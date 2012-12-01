@@ -45,7 +45,7 @@ Data <- local({
         save.params <- c(save.params, "nlevels", "asp.yx", "asp.zx",
                          "vmax", "vxby", "vyby", "rkey", "show.poly",
                          "img.contour", "show.lines", "show.points",
-                         "vuni", "date.fmt", "poly", "project.file",
+                         "vuni", "date.fmt", "polys", "project.file",
                          "show.2.axes", "minor.ticks", "ticks.inside",
                          "color.palette", "rm.pnt.line")
       save.params <- save.params[save.params %in% names(dat)]

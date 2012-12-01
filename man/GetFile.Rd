@@ -36,11 +36,11 @@ GetFile(cmd = "Open", file = NULL, exts = NULL, initialdir = NULL,
 \value{
 If \code{multi} is \code{FALSE} returns the file path as a charcter object with
 the following attributes:
-  \item{directory}{character; the directory that contains the \code{file}}
-  \item{name}{character; the \code{file} name}
-  \item{extension}{character; the \code{file} extension}
-  \item{type}{character; the \code{file} type}
-Otherwise, a list is returned containing an object for each file.
+  \item{directory}{character; the directory that contains the file}
+  \item{name}{character; the file name}
+  \item{extension}{character; the file extension}
+  \item{type}{character; the file type}
+Otherwise, a list is returned containing a character object for each file.
 }
 
 \author{J.C. Fisher}

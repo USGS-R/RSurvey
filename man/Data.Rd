@@ -15,14 +15,14 @@ Data(option, value, which.attr = NULL, clear.proj = FALSE, clear.data = FALSE,
 
 \arguments{
 \item{option}{character; the parameter name, see \sQuote{Parameters}.}
-\item{value}{a parameter value specified for \code{option}.}
+\item{value}{a parameter value specified for \code{option} (optional).}
 \item{which.attr}{character, a non-empty character string specifying which 
                   attribute is to be accessed (optional).}
 \item{clear.proj}{logical; if \code{TRUE} basic \acronym{GUI} preferences will
   be saved and all other data removed; its default is \code{FALSE}.}
 \item{clear.data}{logical; if \code{TRUE} only data sets will be removed,
   its default is \code{FALSE}.}
-\item{replace.all}{list; a replacement list of parameter values.}
+\item{replace.all}{list; a replacement list of parameter values (optional).}
 }
 
 \section{Data}{

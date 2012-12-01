@@ -290,52 +290,52 @@ OpenRSurvey <- function() {
   # Manage polygons
 
   CallManagePolygons <- function() {
-    old.polygons <- Data("poly")
-    old.poly.data <- attr(old.polygons, "poly.data")
-    old.poly.crop <- attr(old.polygons, "poly.crop")
-    if (is.null(old.poly.data))
-      old.poly.data <- NA
-    if (is.null(old.poly.crop))
-      old.poly.crop <- NA
-    new.polygons <- ManagePolygons(Data("poly"), parent=tt)
+    old.polygons <- Data("polys")
+    old.data.poly <- attr(old.polygons, "data.poly")
+    old.crop.poly <- attr(old.polygons, "crop.poly")
+    if (is.null(old.data.poly))
+      old.data.poly <- NA
+    if (is.null(old.crop.poly))
+      old.crop.poly <- NA
+    new.polygons <- ManagePolygons(Data("polys"), parent=tt)
     if (is.null(new.polygons) | identical(new.polygons, old.polygons))
       return()
-    new.poly.data <- attr(new.polygons, "poly.data")
-    new.poly.crop <- attr(new.polygons, "poly.crop")
-    if (is.null(new.poly.data))
-      new.poly.data <- NA
-    if (is.null(new.poly.crop))
-      new.poly.crop <- NA
-    if (!identical(new.polygons[[new.poly.data]], 
-                   old.polygons[[old.poly.data]])) {
-      attr(new.polygons, "poly.data") <- NULL
+    new.data.poly <- attr(new.polygons, "data.poly")
+    new.crop.poly <- attr(new.polygons, "crop.poly")
+    if (is.null(new.data.poly))
+      new.data.poly <- NA
+    if (is.null(new.crop.poly))
+      new.crop.poly <- NA
+    if (!identical(new.polygons[[new.data.poly]], 
+                   old.polygons[[old.data.poly]])) {
+      attr(new.polygons, "data.poly") <- NULL
       Data("data.pts",  NULL)
       Data("data.grd",  NULL)
     }
-    if (!identical(new.polygons[[new.poly.crop]], 
-                   old.polygons[[old.poly.crop]])) {
-      attr(new.polygons, "poly.crop") <- NULL
+    if (!identical(new.polygons[[new.crop.poly]], 
+                   old.polygons[[old.crop.poly]])) {
+      attr(new.polygons, "crop.poly") <- NULL
       Data("data.grd",  NULL)
     }
-    Data("poly", new.polygons)
+    Data("polys", new.polygons)
   }
 
   # Set polygon range and limit
 
   CallSetPolygonLimits <- function() {
-    old.poly.data <- attr(Data("poly"), "poly.data")
-    old.poly.crop <- attr(Data("poly"), "poly.crop")
-    ans <- SetPolygonLimits(names(Data("poly")), old.poly.data, old.poly.crop, 
+    old.data.poly <- attr(Data("polys"), "data.poly")
+    old.crop.poly <- attr(Data("polys"), "crop.poly")
+    ans <- SetPolygonLimits(names(Data("polys")), old.data.poly, old.crop.poly, 
                             tt)
     if (is.null(ans))
       return()
-    if (!identical(ans$poly.data, old.poly.data)) {
-      Data("poly", ans$poly.data, which.attr="poly.data")
+    if (!identical(ans$data.poly, old.data.poly)) {
+      Data("polys", ans$data.poly, which.attr="data.poly")
       Data("data.pts", NULL)
       Data("data.grd", NULL)
     }
-    if (!identical(ans$poly.crop, old.poly.crop)) {
-      Data("poly", ans$poly.crop, which.attr="poly.crop")
+    if (!identical(ans$crop.poly, old.crop.poly)) {
+      Data("polys", ans$crop.poly, which.attr="crop.poly")
       Data("data.grd", NULL)
     }
   }
@@ -382,12 +382,12 @@ OpenRSurvey <- function() {
 
     if (inherits(ply.new, "gpc.poly")) {
       ply <- list()
-      if (!is.null(Data("poly")))
-        ply <- Data("poly")
+      if (!is.null(Data("polys")))
+        ply <- Data("polys")
       ply.name <- NamePolygon(old=names(ply))
       ply[[ply.name]] <- ply.new
-      Data("poly", ply)
-      Data("poly", ply.name, which.attr="poly.crop")
+      Data("polys", ply)
+      Data("polys", ply.name, which.attr="crop.poly")
       Data("data.grd", NULL)
     }
     tkfocus(tt)
@@ -422,12 +422,12 @@ OpenRSurvey <- function() {
     }
     
     if (type == "p") 
-      ply <- Data("poly", which.attr="poly.data")
+      ply <- Data("polys", which.attr="data.poly")
     else
-      ply <- Data("poly", which.attr="poly.crop")
+      ply <- Data("polys", which.attr="crop.poly")
     
     if (!is.null(ply) && !is.na(ply))
-      ply <- Data("poly")[[ply]]
+      ply <- Data("polys")[[ply]]
 
     show.poly   <- Data("show.poly") && inherits(ply, "gpc.poly")
     show.lines  <- type %in% c("l", "g") && Data("show.lines")
@@ -535,7 +535,7 @@ OpenRSurvey <- function() {
       }
 
       if (inherits(ply.new, "gpc.poly")) {
-        ply.list <- if (is.null(Data("poly"))) list() else Data("poly")
+        ply.list <- if (is.null(Data("polys"))) list() else Data("polys")
         ply.name <- NamePolygon(old=names(ply.list))
         ply.list[[ply.name]] <- ply.new
 
@@ -551,8 +551,8 @@ OpenRSurvey <- function() {
           if (any(logic)) {
             points(dat$x[logic], dat$y[logic], col="red",
                    cex=Data("cex.pts"), pch=20)
-            Data("poly", ply.list)
-            Data("poly", ply.name, which.attr="poly.data")
+            Data("polys", ply.list)
+            Data("polys", ply.name, which.attr="data.poly")
             Data("data.pts", NULL)
             Data("data.grd", NULL)
           } else {
@@ -563,8 +563,8 @@ OpenRSurvey <- function() {
         } else if (type == "l") {
           cutout <- CutoutPolygon(dat, ply.new)
           if (!is.null(cutout)) {
-            Data("poly", ply.list)
-            Data("poly", ply.name, which.attr="poly.crop")
+            Data("polys", ply.list)
+            Data("polys", ply.name, which.attr="crop.poly")
             Data("data.grd", NULL)
           }
         }
@@ -696,9 +696,9 @@ OpenRSurvey <- function() {
       }
       
       if (!is.null(vars$x)) {
-        ply <- Data("poly", which.attr="poly.data")
+        ply <- Data("polys", which.attr="data.poly")
         if (!is.null(ply))
-          ply <- Data(c("poly", ply))
+          ply <- Data(c("polys", ply))
       } else {
         ply <- NULL
       }
@@ -716,9 +716,9 @@ OpenRSurvey <- function() {
     # Process grid
 
     if (is.null(Data("data.grd")) && interpolate) {
-      ply <- Data("poly", which.attr="poly.crop")
+      ply <- Data("polys", which.attr="crop.poly")
       if (!is.null(ply))
-        ply <- Data("poly")[[ply]]
+        ply <- Data("polys")[[ply]]
       grid.res <- Data("grid.res")
       grid.mba <- Data("grid.mba")
       data.grd <- ProcessData(Data("data.pts"), type="g", ply=ply,
@@ -898,8 +898,8 @@ OpenRSurvey <- function() {
         command=CallSetPolygonLimits)
   tkadd(menu.poly, "command", label="Clear polygon limits",
         command=function() {
-          Data("poly", NULL, which.attr="poly.data")
-          Data("poly", NULL, which.attr="poly.crop")
+          Data("polys", NULL, which.attr="data.poly")
+          Data("polys", NULL, which.attr="crop.poly")
           Data("data.pts", NULL)
           Data("data.grd", NULL)
         })

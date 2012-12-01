@@ -10,12 +10,11 @@ A \acronym{GUI} for managing and manipulating polygons that is based on the
 }
 
 \usage{
-ManagePolygons(ply = NULL, encoding = getOption("encoding"),
-               parent = NULL)
+ManagePolygons(polys = NULL, encoding = getOption("encoding"), parent = NULL)
 }
 
 \arguments{
-\item{ply}{list; its components are objects of \code{\link{gpc.poly-class}}.}
+\item{polys}{list; its components are objects of \code{\link{gpc.poly-class}}.}
 \item{encoding}{character; encoding to be assumed for input strings. If the
   value is \code{"latin1"} or \code{"UTF-8"} it is used to mark character
   strings as known to be in Latin-1 or UTF-8: it is not used to re-encode
@@ -41,8 +40,8 @@ See \code{\link{read.polyfile}} within the \pkg{rgeos} package for details.
 }
 
 \value{
-Queries and sets the \code{poly} component (and its 
-attributes \code{poly.data} and \code{poly.crop}) of \code{\link{Data}}, 
+Queries and sets the \code{polys} component of \code{\link{Data}}; 
+includes attributes of \code{polys} (\code{data.poly} and \code{crop.poly}), 
 see \code{\link{SetPolygonLimits}}.
 }
 
