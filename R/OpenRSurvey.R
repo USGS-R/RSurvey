@@ -640,19 +640,15 @@ OpenRSurvey <- function() {
                        vx="x-vector", vy="y-vector")
     state.vars <- state.vars[names(state.vars) %in% names(vars)]
     state.idxs <- sapply(names(state.vars), function(i) vars[[i]])
-
+    
     d <- Data("data.pts")[, names(state.vars)]
-
-    fun <- function(i, type) {
-      val <- cols[[i]][[type]]
-      if (is.null(val)) NA else val
-    }
-    col.names <- sapply(state.idxs, function(i) fun(i, "name"))
-    col.units <- sapply(state.idxs, function(i) fun(i, "unit"))
-    col.formats <- sapply(state.idxs, function(i) fun(i, "format"))
-
-    ViewData(d, col.names, col.units, col.formats, parent=tt)
-
+    
+    cols <- cols[state.idxs]
+    nams <- sapply(cols, function(i) ifelse(is.null(i$name),   NA, i$name))
+    unts <- sapply(cols, function(i) ifelse(is.null(i$unit),   NA, i$unit))
+    fmts <- sapply(cols, function(i) ifelse(is.null(i$format), NA, i$format))
+    ViewData(d, nams, unts, fmts, parent=tt)
+    
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }

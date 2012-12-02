@@ -99,7 +99,7 @@ ManageData <- function(cols, vars, parent=NULL) {
 
     old.fmt <- cols[[idx]]$format
     new.fmt <- as.character(tclvalue(fmt.var))
-    if (is.na(new.fmt))
+    if (new.fmt == "")
       new.fmt <- NULL
     cols[[idx]]$format <<- new.fmt
 
