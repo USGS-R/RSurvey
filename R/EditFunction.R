@@ -157,7 +157,14 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   }
   EditSelectAll <- function() {
     tkfocus(frame2.txt.2.1)
-    tktag.add(frame2.txt.2.1, 'sel', '1.0', 'end')
+    tktag.add(frame2.txt.2.1, "sel", "1.0", "end")
+  }
+  
+  # Clear function
+  
+  ClearFunction <- function() {
+    tcl(frame2.txt.2.1, "delete", "1.0", "end")
+    tkfocus(frame2.txt.2.1)
   }
 
 
@@ -347,7 +354,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkgrid.rowconfigure(frame1, 1, weight=1)
   tkgrid.columnconfigure(frame1, 0, weight=1, minsize=20)
 
-  # Frame 1
+  # Frame 2
 
   frame2 <- tkframe(pw, relief="flat", padx=0, pady=0)
 
@@ -355,11 +362,12 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   if (!is.null(index))
     txt <- paste(txt, " for \"", edit.fun.id, "\"", sep="")
   frame2.lab.1.1 <- ttklabel(frame2, text=txt, foreground="#414042")
-
+  frame2.but.1.2 <- ttkbutton(frame2, width=2, image=GetBitmapImage("delete"),
+                              command=ClearFunction)
+  
   fnt <- tkfont.create(family="Courier New", size=9)
-
   frame2.txt.2.1 <- tktext(frame2, bg="white", font=fnt, padx=2, pady=2,
-                       width=75, height=12, undo=1, wrap="none",
+                       width=50, height=12, undo=1, wrap="none",
                        foreground="black", relief="flat",
                        xscrollcommand=function(...) tkset(frame2.xsc.3.1,...),
                        yscrollcommand=function(...) tkset(frame2.ysc.2.2,...))
@@ -402,7 +410,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                               command=function() InsertString("()"))
   frame2a.but.16 <- ttkbutton(frame2a, width=3, text="[ ]",
                               command=function() InsertString("[]"))
-
+  
   tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
          frame2a.but.05, frame2a.but.06, frame2a.but.07, frame2a.but.08,
          frame2a.but.09, frame2a.but.10, frame2a.but.11, frame2a.but.12,
@@ -411,20 +419,24 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   tkgrid.configure(frame2a.but.01, padx=c(2, 2))
   tkgrid.configure(frame2a.but.06, frame2a.but.09, frame2a.but.15, padx=c(8, 2))
+  tkgrid.configure(frame2a.but.16, padx=0)
 
-  tkgrid(frame2.lab.1.1, "x")
-  tkgrid(frame2.txt.2.1, frame2.ysc.2.2)
-  tkgrid(frame2.xsc.3.1, "x")
-  tkgrid(frame2a, "x")
-
+  tkgrid(frame2.lab.1.1, frame2.but.1.2, "x")
+  tkgrid(frame2.txt.2.1, "x", frame2.ysc.2.2)
+  tkgrid(frame2.xsc.3.1, "x", "x")
+  tkgrid(frame2a, "x", "x")
+  
+  tkgrid.configure(frame2.txt.2.1, frame2.xsc.3.1, frame2a, columnspan=2)
   tkgrid.configure(frame2.lab.1.1, padx=c(2, 0), pady=c(10, 0), sticky="w")
+  tkgrid.configure(frame2.but.1.2, sticky="se")
+  
   tkgrid.configure(frame2.txt.2.1, padx=c(2, 0), pady=c(2, 0), sticky="nsew")
   tkgrid.configure(frame2.ysc.2.2, padx=c(0, 10), pady=c(2, 0), sticky="ns")
   tkgrid.configure(frame2.xsc.3.1, padx=c(2, 0), pady=c(0, 0), sticky="we")
   tkgrid.configure(frame2a, pady=c(0, 0), sticky="we")
 
   tkgrid.rowconfigure(frame2, 1, weight=1)
-  tkgrid.columnconfigure(frame2, 0, weight=1, minsize=20)
+  tkgrid.columnconfigure(frame2, 1, weight=1, minsize=20)
 
   if (!is.null(old.fun) && old.fun != "")
     tkinsert(frame2.txt.2.1, "end", old.fun)
