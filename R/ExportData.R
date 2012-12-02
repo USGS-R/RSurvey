@@ -172,7 +172,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   # Frame 1, sample entry
 
   if (file.type == "text")
-    txt <- "Select variables and data records to export"
+    txt <- "Select variables and data records"
   else
     txt <- "Select variables to export"
   frame1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text=txt)
