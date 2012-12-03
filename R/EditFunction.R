@@ -167,17 +167,31 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   # Show unique values
   
   ShowUniqueValues <- function() {
-    tkconfigure(tt, cursor="watch")
     idx <- as.integer(tkcurselection(frame1.lst.2.1))
     if (length(idx) == 0)
       return()
     else
       idx <- idx + 1L
-    
     var.fmt <- cols[[idx]]$format
     var.class <- cols[[idx]]$class
     
-    var.vals <- sort(unique(EvalFunction(cols[[idx]]$fun, cols)), na.last=TRUE)
+    tkconfigure(tt, cursor="watch")
+    var.vals <- unique(EvalFunction(cols[[idx]]$fun, cols))
+    
+    n <- length(var.vals)
+    if (n > 10000) {
+      msg <- paste("There are", n, "unique values; this operation can be",
+                   "computationally expensive.")
+      ans <- as.character(tkmessageBox(icon="question", message=msg,
+                                       title="Warning", type="okcancel",
+                                       parent=tt))
+      if (ans == "cancel") {
+        tkconfigure(tt, cursor="arrow")
+        return()
+      }
+    }
+    
+    var.vals <- sort(var.vals, na.last=TRUE)
     if (is.null(var.fmt)) {
       var.vals.txt <- format(var.vals)
     } else if (var.class == "POSIXct") {
@@ -192,6 +206,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     for (i in seq(along=var.vals.txt))
       tcl("lappend", value.var, var.vals.txt[i])
     tkselection.clear(frame3.lst.2.1, 0, "end")
+    tkconfigure(frame3.but.3.1, state="disabled")
     tkfocus(frame2.txt.2.1)
     tkconfigure(tt, cursor="arrow")
   }
@@ -224,7 +239,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                    sep="")
     } else {
       val <- gsub("^\\s+|\\s+$", "", val)
-      if (var.class == "charcter" && val != "NA") 
+      if (var.class == "character" && val != "NA") 
         txt <- paste("\"", val, "\"", sep="")
       else
         txt <- val
