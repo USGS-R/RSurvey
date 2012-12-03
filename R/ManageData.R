@@ -682,7 +682,7 @@ ManageData <- function(cols, vars, parent=NULL) {
   # Frame 4, comment
 
   frame4 <- ttkframe(nb, relief="flat", padding=0, borderwidth=0)
-  tkadd(nb, frame4, text="   Comments   ")
+  tkadd(nb, frame4, text="   Comment   ")
 
   frame4.xsc <- ttkscrollbar(frame4, orient="horizontal")
   frame4.ysc <- ttkscrollbar(frame4, orient="vertical")

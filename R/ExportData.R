@@ -215,7 +215,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     # Frame 2, header lines
 
     frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                            text="Select header lines")
+                            text="Include header lines")
     frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=head.names.var,
                                      text="Variable names")
     frame2.chk.1.2 <- ttkcheckbutton(frame2, variable=head.units.var,

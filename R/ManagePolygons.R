@@ -180,7 +180,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
     if (length(idxs) != 0)
       cur.name <- old.names[idxs[1]]
 
-    new.names <- Rename(old.names, cur.name, "Rename Polygons", tt)
+    new.names <- Rename(old.names, cur.name, "Rename Polygon", tt)
 
     if (!is.null(new.names) && length(new.names) == length(old.names)) {
       if (identical(new.names, old.names))
