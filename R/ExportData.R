@@ -174,7 +174,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   if (file.type == "text")
     txt <- "Select variables and data records"
   else
-    txt <- "Select variables to export"
+    txt <- "Select variables"
   frame1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text=txt)
 
   frame1.lst.1.1 <- tklistbox(frame1, selectmode="extended", activestyle="none",
@@ -215,7 +215,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     # Frame 2, header lines
 
     frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                            text="Select header lines to include")
+                            text="Select header lines")
     frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=head.names.var,
                                      text="Variable names")
     frame2.chk.1.2 <- ttkcheckbutton(frame2, variable=head.units.var,
@@ -233,7 +233,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     # Frame 3, field seperator
 
     frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                            text="Select a field seperator")
+                            text="Select field seperator")
 
     frame3.ent.2.4 <- ttkentry(frame3, width=7, textvariable=sep.other.var,
                                state="readonly")
@@ -276,7 +276,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   frame4.but.1.3 <- ttkbutton(frame4, width=8, text="Browse",
                               command=GetDataFile)
 
-  txt <- "Compress file using gzip; extension 'gz' added to file name."
+  txt <- "Compress file using gzip; extension 'gz' added to file name"
   frame4.chk.2.2 <- ttkcheckbutton(frame4, variable=compress.var, text=txt,
                                    command=ToggleExtension)
 

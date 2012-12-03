@@ -324,20 +324,20 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   if (is.numeric(sample) && !is.integer(sample)) {
     tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.lab.1.3, frame1.ent.1.4, 
            pady=c(15, 10))
-    tkgrid(frame1.chk.2.1, columnspan=5, sticky="w", padx=c(10, 0))
+    tkgrid(frame1.chk.2.1, columnspan=4, sticky="w", padx=c(10, 0))
     tkgrid.configure(frame1.lab.1.3, padx=c(10, 2))
   } else {
-    tkgrid(frame1.lab.1.1, frame1.ent.1.2, "x", pady=c(15, 10), sticky="w")
+    tkgrid(frame1.lab.1.1, frame1.ent.1.2, "x", "x", pady=c(15, 10), sticky="w")
     tkgrid.columnconfigure(frame1, 2, weight=1)
     tkgrid(frame1.chk.3.1, columnspan=3, sticky="w", padx=c(10, 0))
   }
   tkgrid.configure(frame1.lab.1.1, padx=c(10, 2))
 
   if (is.numeric(sample)) {
-    tkgrid(frame1.chk.3.1, columnspan=5, sticky="w", padx=c(10, 0))
-    tkgrid(frame1.chk.4.1, columnspan=5, sticky="w", padx=c(10, 0))
-    tkgrid(frame1.chk.5.1, columnspan=5, sticky="w", padx=c(10, 0))
-    tkgrid(frame1.chk.6.1, columnspan=5, sticky="w", padx=c(10, 0))
+    tkgrid(frame1.chk.3.1, columnspan=4, sticky="w", padx=c(10, 0))
+    tkgrid(frame1.chk.4.1, columnspan=4, sticky="w", padx=c(10, 0))
+    tkgrid(frame1.chk.5.1, columnspan=4, sticky="w", padx=c(10, 0))
+    tkgrid(frame1.chk.6.1, columnspan=4, sticky="w", padx=c(10, 0))
   }
 
   tkpack(frame1, padx=10, pady=0, anchor="w")

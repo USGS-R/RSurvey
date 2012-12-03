@@ -347,9 +347,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkgrid(frame1.box.3.1, "x")
 
   tkgrid.configure(frame1.lab.1.1, padx=c(10, 0), pady=c(10, 0), sticky="w")
-  tkgrid.configure(frame1.lst.2.1, padx=c(10, 0), pady=c(2, 0), sticky="nsew")
-  tkgrid.configure(frame1.ysc.2.2, padx=c(0, 0), pady=c(2, 0), sticky="ns")
-  tkgrid.configure(frame1.box.3.1, padx=c(10, 0), pady=c(4, 0), sticky="we")
+  tkgrid.configure(frame1.lst.2.1, padx=c(10, 0), pady=c(2, 0),  sticky="nsew")
+  tkgrid.configure(frame1.ysc.2.2, padx=c(0, 0),  pady=c(2, 0),  sticky="ns")
+  tkgrid.configure(frame1.box.3.1, padx=c(10, 0), pady=c(6, 0),  sticky="we")
 
   tkgrid.rowconfigure(frame1, 1, weight=1)
   tkgrid.columnconfigure(frame1, 0, weight=1, minsize=20)
