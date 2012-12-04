@@ -181,7 +181,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     n <- length(var.vals)
     if (n > 10000) {
       msg <- paste("There are", n, "unique values; this operation can be",
-                   "computationally expensive.")
+                   "computationally expensive. Would you like to continue?")
       ans <- as.character(tkmessageBox(icon="question", message=msg,
                                        title="Warning", type="okcancel",
                                        parent=tt))
