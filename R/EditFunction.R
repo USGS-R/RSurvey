@@ -173,11 +173,11 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     else
       idx <- idx + 1L
     var.fmt <- cols[[idx]]$format
-    var.class <- cols[[idx]]$class
     
     tkconfigure(tt, cursor="watch")
     var.vals <- unique(EvalFunction(cols[[idx]]$fun, cols))
-    
+    var.class <- cols[[idx]]$class
+
     n <- length(var.vals)
     if (n > 10000) {
       msg <- paste("There are", n, "unique values; this operation can be",
@@ -220,7 +220,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   
   # Insert value into text box
   
-  InsertVal <- function() {
+  InsertValue <- function() {
     idx <- as.integer(tkcurselection(frame1.lst.2.1))
     if (length(idx) == 0)
       return()
@@ -233,6 +233,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     if (length(idx) == 0)
       return()
     val <- as.character(tkget(frame3.lst.2.1, idx, idx))
+    
+    if (var.class == "factor" && is.na(suppressWarnings(as.numeric(val))))
+      var.class <- "character"
     
     if (var.class == "POSIXct") {
       txt <- paste("as.POSIXct(\"", val, "\", format = \"", var.fmt, "\")", 
@@ -580,7 +583,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   
   tkbind(frame1.lst.2.1, "<<ListboxSelect>>", ChangeVar)
   tkbind(frame1.lst.2.1, "<Double-ButtonRelease-1>", InsertVar)
-  tkbind(frame3.lst.2.1, "<Double-ButtonRelease-1>", InsertVal)
+  tkbind(frame3.lst.2.1, "<Double-ButtonRelease-1>", InsertValue)
   tkbind(frame1.box.3.1, "<<ComboboxSelected>>", RebuildList)
 
   tkbind("Text", "<Control-z>", EditUndo)
