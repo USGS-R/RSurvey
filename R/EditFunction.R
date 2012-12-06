@@ -179,7 +179,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     var.class <- cols[[idx]]$class
 
     n <- length(var.vals)
-    if (n > 10000) {
+    if (n > 50000) {
       msg <- paste("There are", n, "unique values; this operation can be",
                    "computationally expensive. Would you like to continue?")
       ans <- as.character(tkmessageBox(icon="question", message=msg,
@@ -205,8 +205,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     tclvalue(value.var) <- ""
     for (i in seq(along=var.vals.txt))
       tcl("lappend", value.var, var.vals.txt[i])
-    tkselection.clear(frame3.lst.2.1, 0, "end")
-    tkconfigure(frame3.but.3.1, state="disabled")
+    tkselection.clear(frame1.lst.4.1, 0, "end")
+    tkconfigure(frame1.but.5.1, state="disabled")
     tkfocus(frame2.txt.2.1)
     tkconfigure(tt, cursor="arrow")
   }
@@ -215,7 +215,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   
   ChangeVar <- function() {
     tclvalue(value.var) <- ""
-    tkconfigure(frame3.but.3.1, state="normal")
+    tkconfigure(frame1.but.5.1, state="normal")
   }
   
   # Insert value into text box
@@ -229,10 +229,10 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     var.fmt <- cols[[idx]]$format
     var.class <- cols[[idx]]$class
     
-    idx <- as.integer(tkcurselection(frame3.lst.2.1))
+    idx <- as.integer(tkcurselection(frame1.lst.4.1))
     if (length(idx) == 0)
       return()
-    val <- as.character(tkget(frame3.lst.2.1, idx, idx))
+    val <- as.character(tkget(frame1.lst.4.1, idx, idx))
     
     if (var.class == "factor" && is.na(suppressWarnings(as.numeric(val))))
       var.class <- "character"
@@ -388,7 +388,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   
   menu.tool <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Tool", menu=menu.tool, underline=0)
-  tkadd(menu.tool, "command", label="Date and time format",
+  tkadd(menu.tool, "command", label="Build date and time format",
         command=CallFormatDateTime)
 
   # Finalize top menu
@@ -433,28 +433,43 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                               exportselection=FALSE, listvariable=variable.var,
                               highlightthickness=0)
   frame1.ysc.2.2 <- ttkscrollbar(frame1, orient="vertical")
-
   box.vals <- "{Show all classes}"
   if (length(classes) > 1)
     box.vals <- c("Show all classes", classes)
   frame1.box.3.1 <- ttkcombobox(frame1, state="readonly", value=box.vals)
-
-  tcl(frame1.box.3.1, "current", 0)
-
   tkconfigure(frame1.lst.2.1, background="white",
               yscrollcommand=paste(.Tk.ID(frame1.ysc.2.2), "set"))
   tkconfigure(frame1.ysc.2.2, command=paste(.Tk.ID(frame1.lst.2.1), "yview"))
-
+  tcl(frame1.box.3.1, "current", 0)
+  
+  frame1.lst.4.1 <- tklistbox(frame1, selectmode="browse", activestyle="none",
+                              relief="flat", borderwidth=5, width=25, height=5,
+                              exportselection=FALSE, listvariable=value.var,
+                              highlightthickness=0)
+  frame1.ysc.4.2 <- ttkscrollbar(frame1, orient="vertical")
+  frame1.but.5.1 <- ttkbutton(frame1, width=15, text="Unique Values",
+                              command=ShowUniqueValues)
+  tkconfigure(frame1.lst.4.1, background="white",
+              yscrollcommand=paste(.Tk.ID(frame1.ysc.4.2), "set"))
+  tkconfigure(frame1.ysc.4.2, command=paste(.Tk.ID(frame1.lst.4.1), "yview"))
+  tkconfigure(frame1.but.5.1, state="disabled")
+  
   tkgrid(frame1.lab.1.1, "x")
   tkgrid(frame1.lst.2.1, frame1.ysc.2.2)
   tkgrid(frame1.box.3.1, "x")
+  tkgrid(frame1.lst.4.1, frame1.ysc.4.2)
+  tkgrid(frame1.but.5.1, "x")
 
   tkgrid.configure(frame1.lab.1.1, padx=c(10, 0), pady=c(10, 0), sticky="w")
   tkgrid.configure(frame1.lst.2.1, padx=c(10, 0), pady=c(2, 0),  sticky="nsew")
   tkgrid.configure(frame1.ysc.2.2, padx=c(0, 0),  pady=c(2, 0),  sticky="ns")
-  tkgrid.configure(frame1.box.3.1, padx=c(10, 0), pady=c(6, 0),  sticky="we")
+  tkgrid.configure(frame1.box.3.1, padx=c(10, 0), pady=c(4, 0),  sticky="we")
+  tkgrid.configure(frame1.lst.4.1, padx=c(10, 0), pady=c(15, 0), sticky="nsew")
+  tkgrid.configure(frame1.ysc.4.2, padx=c(0, 0),  pady=c(15, 0), sticky="ns")
+  tkgrid.configure(frame1.but.5.1, padx=c(10, 0), pady=c(2, 0))
 
   tkgrid.rowconfigure(frame1, 1, weight=1)
+  tkgrid.rowconfigure(frame1, 3, weight=1)
   tkgrid.columnconfigure(frame1, 0, weight=1, minsize=20)
 
   # Frame 2
@@ -487,24 +502,24 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                               command=function() InsertString(" * "))
   frame2a.but.04 <- ttkbutton(frame2a, width=3, text="\u00f7",
                               command=function() InsertString(" / "))
-  frame2a.but.05 <- ttkbutton(frame2a, width=3, text="x\u207f",
-                              command=function() InsertString("^"))
-  frame2a.but.06 <- ttkbutton(frame2a, width=3, text=">",
+  frame2a.but.05 <- ttkbutton(frame2a, width=3, text=">",
                               command=function() InsertString(" > "))
-  frame2a.but.07 <- ttkbutton(frame2a, width=3, text="<",
+  frame2a.but.06 <- ttkbutton(frame2a, width=3, text="<",
                               command=function() InsertString(" < "))
-  frame2a.but.08 <- ttkbutton(frame2a, width=3, text="\u2265",
+  frame2a.but.07 <- ttkbutton(frame2a, width=3, text="\u2265",
                               command=function() InsertString(" >= "))
-  frame2a.but.09 <- ttkbutton(frame2a, width=3, text="\u2264",
+  frame2a.but.08 <- ttkbutton(frame2a, width=3, text="\u2264",
                               command=function() InsertString(" <= "))
-  frame2a.but.10 <- ttkbutton(frame2a, width=3, text="=",
+  frame2a.but.09 <- ttkbutton(frame2a, width=3, text="=",
                               command=function() InsertString(" == "))
-  frame2a.but.11 <- ttkbutton(frame2a, width=3, text="\u2260",
+  frame2a.but.10 <- ttkbutton(frame2a, width=3, text="\u2260",
                               command=function() InsertString(" != "))
-  frame2a.but.12 <- ttkbutton(frame2a, width=3, text="( )",
+  frame2a.but.11 <- ttkbutton(frame2a, width=3, text="( )",
                               command=function() InsertString("()"))
-  frame2a.but.13 <- ttkbutton(frame2a, width=3, text="[ ]",
+  frame2a.but.12 <- ttkbutton(frame2a, width=3, text="[ ]",
                               command=function() InsertString("[]"))
+  frame2a.but.13 <- ttkbutton(frame2a, width=2, image=GetBitmapImage("delete"),
+                              command=ClearAll)
   
   tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
          frame2a.but.05, frame2a.but.06, frame2a.but.07, frame2a.but.08, 
@@ -512,18 +527,19 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
          frame2a.but.13, padx=c(0, 2), pady=c(2, 0))
 
   tkgrid.configure(frame2a.but.01, padx=c(2, 2))
-  tkgrid.configure(frame2a.but.06, frame2a.but.12, padx=c(8, 2))
-  tkgrid.configure(frame2a.but.13, padx=0)
+  tkgrid.configure(frame2a.but.05, frame2a.but.09, frame2a.but.11, 
+                   padx=c(12, 2))
+  tkgrid.configure(frame2a.but.13, padx=c(52, 0))
 
   tkgrid(frame2.lab.1.1, "x")
   tkgrid(frame2.txt.2.1, frame2.ysc.2.2)
   tkgrid(frame2.xsc.3.1, "x")
   tkgrid(frame2a, "x")
   
-  tkgrid.configure(frame2.lab.1.1, padx=c(2, 0), pady=c(10, 0), sticky="w")
-  tkgrid.configure(frame2.txt.2.1, padx=c(2, 0), pady=c(2, 0), sticky="nsew")
-  tkgrid.configure(frame2.ysc.2.2, padx=c(0, 0), pady=c(2, 0), sticky="ns")
-  tkgrid.configure(frame2.xsc.3.1, padx=c(2, 0), pady=c(0, 0), sticky="we")
+  tkgrid.configure(frame2.lab.1.1, padx=c(2, 0),  pady=c(10, 0), sticky="w")
+  tkgrid.configure(frame2.txt.2.1, padx=c(2, 0),  pady=c(2, 0),  sticky="nsew")
+  tkgrid.configure(frame2.ysc.2.2, padx=c(0, 10), pady=c(2, 0),  sticky="ns")
+  tkgrid.configure(frame2.xsc.3.1, padx=c(2, 0),  pady=c(0, 0),  sticky="we")
   tkgrid.configure(frame2a, pady=c(0, 0), sticky="we")
 
   tkgrid.rowconfigure(frame2, 1, weight=1)
@@ -536,43 +552,10 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   tkmark.set(frame2.txt.2.1, "insert", "end")
   
-  # Frame 3
-
-  frame3 <- tkframe(pw, relief="flat", padx=0, pady=0)
-
-  frame3.lab.1.1 <- ttklabel(frame3, text="Double click to insert value", 
-                             foreground="#414042")
-  frame3.lst.2.1 <- tklistbox(frame3, selectmode="browse", activestyle="none",
-                              relief="flat", borderwidth=5, width=25, height=8,
-                              exportselection=FALSE, listvariable=value.var,
-                              highlightthickness=0)
-  frame3.ysc.2.2 <- ttkscrollbar(frame3, orient="vertical")
-  frame3.but.3.1 <- ttkbutton(frame3, width=15, text="Unique Values",
-                              command=ShowUniqueValues)
-  
-  tkconfigure(frame3.lst.2.1, background="white",
-              yscrollcommand=paste(.Tk.ID(frame3.ysc.2.2), "set"))
-  tkconfigure(frame3.ysc.2.2, command=paste(.Tk.ID(frame3.lst.2.1), "yview"))
-
-  tkgrid(frame3.lab.1.1, "x")
-  tkgrid(frame3.lst.2.1, frame3.ysc.2.2)
-  tkgrid(frame3.but.3.1, "x")
-
-  tkgrid.configure(frame3.lab.1.1, padx=c(2, 0),  pady=c(10, 0), sticky="w")
-  tkgrid.configure(frame3.lst.2.1, padx=c(2, 0),  pady=c(2, 0),  sticky="nsew")
-  tkgrid.configure(frame3.ysc.2.2, padx=c(0, 10), pady=c(2, 0),  sticky="ns")
-  tkgrid.configure(frame3.but.3.1, padx=c(0, 0),  pady=c(3, 0))
-
-  tkgrid.rowconfigure(frame3, 1, weight=1)
-  tkgrid.columnconfigure(frame3, 0, weight=1, minsize=20)
-  
-  tkconfigure(frame3.but.3.1, state="disabled")
-  
   # Pack frames into paned window
 
   tkadd(pw, frame1, weight=0)
   tkadd(pw, frame2, weight=1)
-  tkadd(pw, frame3, weight=0)
   tkpack(pw, fill="both", expand="yes")
 
   # Bind events
@@ -583,7 +566,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   
   tkbind(frame1.lst.2.1, "<<ListboxSelect>>", ChangeVar)
   tkbind(frame1.lst.2.1, "<Double-ButtonRelease-1>", InsertVar)
-  tkbind(frame3.lst.2.1, "<Double-ButtonRelease-1>", InsertValue)
+  tkbind(frame1.lst.4.1, "<Double-ButtonRelease-1>", InsertValue)
   tkbind(frame1.box.3.1, "<<ComboboxSelected>>", RebuildList)
 
   tkbind("Text", "<Control-z>", EditUndo)
