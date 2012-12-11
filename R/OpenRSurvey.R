@@ -350,8 +350,10 @@ OpenRSurvey <- function() {
                  "be terminated by clicking the second button and selecting",
                  "[Stop] from the menu, or from the [Stop] menu on the",
                  "graphics window.", sep="\n")
-    tkmessageBox(icon="info", message=msg, title="Build Polygon", type="ok",
-                 parent=tt)
+    if (shown.construct.polygon.msgbox)
+      tkmessageBox(icon="info", message=msg, title="Build Polygon", type="ok",
+                   parent=tt)
+    shown.construct.polygon.msgbox <<- FALSE
     CallPlot2d(type=type, build.poly=TRUE)
     tkfocus(tt)
   }
@@ -794,6 +796,7 @@ OpenRSurvey <- function() {
 
   SetCsi()
   options(digits.secs=3)
+  shown.construct.polygon.msgbox <- TRUE
 
   # Assign variables linked to Tk entry widgets
 
