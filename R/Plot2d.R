@@ -374,8 +374,7 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
                bg=col[i], lwd=lwd)
       }
       logic <- is.na(z)
-      points(x[logic], y[logic], pch=21, cex=cex.pts, col=col.pts,
-             bg="black", lwd=lwd)
+      points(x[logic], y[logic], pch=1, cex=cex.pts, lwd=lwd)
     }
   }
 
