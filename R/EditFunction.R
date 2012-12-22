@@ -107,12 +107,11 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       }
       
       if (!is.null(value.class) && !inherits(val, value.class)) {
-        msg <- paste("Evaluated function must be of class \"", value.class, 
-                     "\", try revising.", sep="")
-        dtl <- paste("Resulting object is currently of class \"", class(val), 
-                     "\".", sep="")
-        tkmessageBox(icon="error", message=msg, detail=dtl, title="Error",
-                     type="ok", parent=tt)
+        msg <- paste("A query must result in an object of class \"", value.class, 
+                     "\". The evaluated function is an object of class \"", 
+                     class(val), "\", please revise.", sep="")
+        tkmessageBox(icon="error", message=msg, title="Error", type="ok", 
+                     parent=tt)
         return()
       }
       

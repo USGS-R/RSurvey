@@ -740,8 +740,8 @@ OpenRSurvey <- function() {
     cols <- Data("cols")
     old.fun <- Data("query.fun")
     new.fun <- EditFunction(cols, fun=old.fun, value.length=n,
-                            value.class="logical", win.title="Build Query", 
-                            parent=tt)
+                            value.class="logical", 
+                            win.title="Edit Query", parent=tt)
     if (is.null(new.fun))
       return()
     if (new.fun == "")
@@ -873,7 +873,7 @@ OpenRSurvey <- function() {
         command=CallViewData)
   
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Build query",
+  tkadd(menu.edit, "command", label="Edit query",
         command=BuildQuery)
   tkadd(menu.edit, "command", label="Clear query",
         command=ClearQuery)
