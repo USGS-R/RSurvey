@@ -1,6 +1,7 @@
 GetBitmapImage <- function(type) {
   # Create small bitmap icon images
   # Bitmap editor: http://www.posoft.de/html/poBitmapMain.html
+  # Size: width 11, height 11
 
   bits <- list()
 
@@ -88,6 +89,10 @@ GetBitmapImage <- function(type) {
                            '0xff', '0x07', '0xff', '0x07', '0xff', '0x07',
                            '0xff', '0x07', '0x07', '0x07', '0x07', '0x07',
                            '0x04', '0x01', '0xfc', '0x01')
+  bits[["hist"]]      <- c('0x00', '0x07', '0x00', '0x07', '0x00', '0x07',
+                           '0x70', '0x07', '0x77', '0x07', '0x77', '0x07',
+                           '0x77', '0x07', '0x77', '0x07', '0x00', '0x00',
+                           '0xff', '0x07', '0xff', '0x07')
 
   if (!is.character(type) || !type %in% names(bits))
     stop("Requested bitmap image does not exist")
