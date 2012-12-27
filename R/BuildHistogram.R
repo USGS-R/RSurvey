@@ -10,13 +10,13 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     x <- d[, idx]
     xlab <- var.names[idx]
     
-    breaks.type <- as.integer(tclvalue(breaks.var))
-    if (breaks.type == 1L) {
+    type <- as.integer(tclvalue(breaks.var))
+    if (type == 1L) {
       idx <- as.integer(tcl(frame2.box.2.1, "current")) + 1L
       breaks <- fun.names[idx]
-    } else if (breaks.type == 2L) {
+    } else if (type == 2L) {
       breaks <- as.integer(tclvalue(single.var))
-    } else if (breaks.type == 3L) {
+    } else if (type == 3L) {
       s <- as.character(tclvalue(vector.var))
       str.split <- unlist(strsplit(s, '[[:space:]]'))
       num.split <- suppressWarnings(as.numeric(str.split))
@@ -27,7 +27,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
                      type="ok", parent=tt)
         return()
       }
-    } else if (breaks.type == 4L) {
+    } else if (type == 4L) {
       seq.from <- as.numeric(tclvalue(from.var))
       seq.to   <- as.numeric(tclvalue(to.var))
       seq.by   <- as.numeric(tclvalue(by.var))
@@ -44,17 +44,21 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     right <- as.logical(as.integer(tclvalue(right.var)))
     freq <- as.logical(as.integer(tclvalue(freq.var)))
     
-    hist(x, breaks=breaks, freq=freq, right=right, col="light grey", 
-         plot=draw.plot, main=NULL, xlab=xlab)
+    if (draw.plot) {
+      op <- par(mar=c(5, 5, 2, 2) + 0.1)
+      hist(x, breaks=breaks, freq=freq, right=right, col="light grey", 
+           plot=TRUE, main=NULL, xlab=xlab)
+      par(op)
+    }
+    
+    
   }
   
   # Adjust scale
   
   AdjustScale <- function(x) {
-    
     idx <- as.integer(tcl(frame1.box.1.2, "current")) + 1L
     breaks <- as.integer(x * (maxs[idx] - 1) + 1)
-    
     if (breaks != as.integer(tclvalue(single.var))) {
       tclvalue(single.var) <- breaks
       PlotHist()
@@ -71,9 +75,9 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   # Toggle state on break options
   
   ToggleState <- function() {
-    breaks.type <- as.integer(tclvalue(breaks.var))
+    type <- as.integer(tclvalue(breaks.var))
     states <- rep(FALSE, 4)
-    states[breaks.type] <- TRUE
+    states[type] <- TRUE
     
     tclServiceMode(FALSE)
     s <- if (states[1]) "readonly" else "disabled"
@@ -102,6 +106,8 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     } else if (states[4]) {
       tkfocus(frame2.ent.8.2)
     }
+    
+    PlotHist()
   }
 
 
@@ -128,9 +134,11 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   if (!is.integer(var.default) || !var.default %in% 1:ncol(d))
     stop()
   
-  # Limits and default value
+  # Set limits and default value
   
   maxs <- as.vector(apply(d, 2, function(i) length(unique(i))))
+  maxs[maxs > 100] <- 100
+  maxs[maxs <  10] <-  10
   defs <- as.vector(apply(d, 2, function(i) length(hist(i, plot=FALSE)$breaks)))
   xdef <- (defs[var.default] - 1) / (maxs[var.default] - 1)
   
