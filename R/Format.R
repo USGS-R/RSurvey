@@ -138,7 +138,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     tkconfigure(frame1.chk.6.1, state=s)
     tclServiceMode(TRUE)
 
-    if (is.custom ) {
+    if (is.custom) {
       tkfocus(frame2.ent.1)
     } else {
       BuildFormat()
