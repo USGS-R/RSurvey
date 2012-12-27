@@ -463,6 +463,40 @@ ManageData <- function(cols, vars, parent=NULL) {
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }
+  
+  # Build historgram
+  
+  CallBuildHistogram <- function(check.variable=FALSE) {
+    SaveNb()
+    idx <- as.integer(tkcurselection(frame1.lst)) + 1L
+    if (length(idx) == 0)
+      return()
+    
+    cont.classes <- c("integer", "numeric")
+    idxs <- which(sapply(cols, function(i) i$class) %in% cont.classes)
+    
+    if (length(idxs) == 0 | (check.variable & !idx %in% idxs)) {
+      msg <- paste("Histograms may only be built for continous variables;",
+                   "that is, variables of class \"numeric\" or \"integer\".")
+      tkmessageBox(icon="info", message=msg, title="Histogram", type="ok", 
+                   parent=tt)
+      return()
+    }
+    
+    ids <- sapply(cols, function(i) ifelse(is.null(i$id), NA, i$id))
+    funs <- sapply(cols, function(i) ifelse(is.null(i$fun), NA, i$fun))
+    d <- sapply(idxs, function(i) EvalFunction(funs[i], cols))
+    
+    var.names <- ids[idxs]
+    if (idx %in% idxs)
+      var.default <- ids[idx]
+    else
+      var.default <- var.names[1]
+    
+    BuildHistogram(as.data.frame(d), var.names=var.names, 
+                   var.default=var.default, parent=tt)
+    tkfocus(tt)
+  }
 
 
   # Main program
@@ -513,7 +547,10 @@ ManageData <- function(cols, vars, parent=NULL) {
         command=SaveNewVar)
   tkadd(menu.edit, "command", label="Delete", command=DeleteVar)
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="View data", command=CallViewData)
+  tkadd(menu.edit, "command", label="Histograms", 
+        command=function() CallBuildHistogram(FALSE))
+  tkadd(menu.edit, "separator")
+  tkadd(menu.edit, "command", label="View data table", command=CallViewData)
 
   menu.arrange <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Arrange", menu=menu.arrange, underline=0)
@@ -540,37 +577,40 @@ ManageData <- function(cols, vars, parent=NULL) {
                             command=function() Arrange("front"))
   frame0.but.4 <- ttkbutton(frame0, width=2, image=GetBitmapImage("down"),
                             command=function() Arrange("forward"))
-  frame0.but.5 <- ttkbutton(frame0, width=2, image=GetBitmapImage("plus"),
+  
+  frame0.but.5 <- ttkbutton(frame0, width=2, image=GetBitmapImage("histogram"),
+                            command=function() CallBuildHistogram(TRUE))
+  frame0.but.6 <- ttkbutton(frame0, width=2, image=GetBitmapImage("plus"),
                             command=SaveNewVar)
-  frame0.but.6 <- ttkbutton(frame0, width=2, image=GetBitmapImage("delete"),
+  
+  frame0.but.7 <- ttkbutton(frame0, width=2, image=GetBitmapImage("delete"),
                             command=DeleteVar)
   
-  frame0.but.8  <- ttkbutton(frame0, width=12, text="OK",
-                            command=function() SaveChanges("ok"))
-  frame0.but.9 <- ttkbutton(frame0, width=12, text="Apply",
-                            command=function() SaveChanges("apply"))
-  frame0.but.10 <- ttkbutton(frame0, width=12, text="Cancel",
+  frame0.but.9  <- ttkbutton(frame0, width=12, text="OK",
+                             command=function() SaveChanges("ok"))
+  frame0.but.10 <- ttkbutton(frame0, width=12, text="Apply",
+                             command=function() SaveChanges("apply"))
+  frame0.but.11 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() tclvalue(tt.done.var) <- 1)
 
-  frame0.grp.11 <- ttksizegrip(frame0)
+  frame0.grp.12 <- ttksizegrip(frame0)
 
   tkgrid(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4, frame0.but.5,
-         frame0.but.6, "x", frame0.but.8, frame0.but.9, frame0.but.10, 
-         frame0.grp.11)
+         frame0.but.6, frame0.but.7, "x", frame0.but.9, frame0.but.10, 
+         frame0.but.11, frame0.grp.12)
 
-  tkgrid.columnconfigure(frame0, 6, weight=1)
+  tkgrid.columnconfigure(frame0, 7, weight=1)
 
   tkgrid.configure(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4,
-                   frame0.but.5, frame0.but.6, sticky="n", 
+                   frame0.but.5, frame0.but.6, frame0.but.7, sticky="n", 
                    padx=c(0, 2), pady=c(0, 0))
   tkgrid.configure(frame0.but.1, padx=c(10, 2))
-  tkgrid.configure(frame0.but.5, padx=c(25, 2))
-  tkgrid.configure(frame0.but.8, frame0.but.9, frame0.but.10,
+  tkgrid.configure(frame0.but.9, frame0.but.10, frame0.but.11,
                    padx=c(0, 4), pady=c(15, 10))
-  tkgrid.configure(frame0.but.10, columnspan=2, padx=c(0, 10))
-  tkgrid.configure(frame0.grp.11, sticky="se")
+  tkgrid.configure(frame0.but.11, columnspan=2, padx=c(0, 10))
+  tkgrid.configure(frame0.grp.12, sticky="se")
 
-  tkraise(frame0.but.10, frame0.grp.11)
+  tkraise(frame0.but.11, frame0.grp.12)
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
