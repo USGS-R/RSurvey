@@ -21,37 +21,23 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
       str.split <- unlist(strsplit(s, '[[:space:]]'))
       num.split <- suppressWarnings(as.numeric(str.split))
       breaks <- num.split[!is.na(num.split)]
-      if (length(breaks) == 0) {
-        msg <- "Numeric values are specified with a space separtor, try again."
-        tkmessageBox(icon="error", message=msg, title="Vector Breaks", 
-                     type="ok", parent=tt)
-        return()
-      }
     } else if (type == 4L) {
       seq.from <- as.numeric(tclvalue(from.var))
       seq.to   <- as.numeric(tclvalue(to.var))
       seq.by   <- as.numeric(tclvalue(by.var))
-      if (any(is.na(c(seq.from, seq.to, seq.by)))) {
-        msg <- "There is a problem with the sequence arguments, try again."
-        tkmessageBox(icon="error", message=msg, title="Sequence Breaks", 
-                     type="ok", parent=tt)
-        return()
-      } else {
-        breaks <- seq(seq.from, seq.to, seq.by)
-      }
+      breaks   <- seq(seq.from, seq.to, seq.by)
     }
     
     right <- as.logical(as.integer(tclvalue(right.var)))
     freq <- as.logical(as.integer(tclvalue(freq.var)))
     
+    obj <- hist(x, breaks=breaks, plot=FALSE)
+    
     if (draw.plot) {
       op <- par(mar=c(5, 5, 2, 2) + 0.1)
-      hist(x, breaks=breaks, freq=freq, right=right, col="light grey", 
-           plot=TRUE, main=NULL, xlab=xlab)
+      plot(obj, col="light grey", freq=freq, right=right, main=NULL, xlab=xlab)
       par(op)
     }
-    
-    
   }
   
   # Adjust scale
@@ -300,7 +286,13 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   
   tclServiceMode(TRUE)
   
-  tkbind(frame1.box.1.2, "<<ComboboxSelected>>", PlotHist)
+  tkbind(frame1.box.1.2, "<<ComboboxSelected>>", 
+         function() {
+           idx <- as.integer(tcl(frame1.box.1.2, "current")) + 1L
+           x <- as.numeric(tclvalue(scale.var))
+           tclvalue(single.var) <- as.integer(x * (maxs[idx] - 1) + 1)
+           PlotHist()
+         })
   tkbind(frame2.box.2.1, "<<ComboboxSelected>>", PlotHist)
   
   tkbind(frame2.ent.4.3, "<KeyRelease>",
