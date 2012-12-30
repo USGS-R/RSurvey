@@ -21,23 +21,23 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
       str.split <- unlist(strsplit(s, '[[:space:]]'))
       num.split <- suppressWarnings(as.numeric(str.split))
       breaks <- num.split[!is.na(num.split)]
+      if (length(breaks) == 0) 
+        return()
     } else if (type == 4L) {
       seq.from <- as.numeric(tclvalue(from.var))
       seq.to   <- as.numeric(tclvalue(to.var))
       seq.by   <- as.numeric(tclvalue(by.var))
+      if (any(is.na(c(seq.from, seq.to, seq.by))))
+        return()
       breaks   <- seq(seq.from, seq.to, seq.by)
     }
     
     right <- as.logical(as.integer(tclvalue(right.var)))
     freq <- as.logical(as.integer(tclvalue(freq.var)))
     
-    obj <- hist(x, breaks=breaks, plot=FALSE)
-    
-    if (draw.plot) {
-      op <- par(mar=c(5, 5, 2, 2) + 0.1)
-      plot(obj, col="light grey", freq=freq, right=right, main=NULL, xlab=xlab)
-      par(op)
-    }
+    obj <- hist(x, breaks=breaks, right=right, plot=FALSE)
+    if (draw.plot) 
+      plot(obj, col="light grey", freq=freq, main=NULL, xlab=xlab)
   }
   
   # Adjust scale
@@ -54,6 +54,10 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   # Plot Histogram
   
   PlotHist <- function() {
+    if (dev.cur() == dev) {
+      x11()
+      par(mar=c(5, 5, 2, 2) + 0.1)
+    }
     if (dev.cur() > dev)
       CalcHist()
   }
