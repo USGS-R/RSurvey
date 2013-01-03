@@ -23,7 +23,7 @@ BuildHistogram(d, var.names = NULL, var.default = 1L, parent = NULL)
 }
 
 \details{
-Histogram is interactively plotted or viewed in table format.
+Plot histogram and view results.
 }
 
 \value{

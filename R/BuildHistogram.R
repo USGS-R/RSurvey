@@ -36,6 +36,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     freq <- as.logical(as.integer(tclvalue(freq.var)))
     
     obj <- hist(x, breaks=breaks, right=right, plot=FALSE)
+    
     if (draw.plot) {
       if (dev.cur() == dev) {
         x11()
@@ -43,6 +44,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
       }
       plot(obj, col="light grey", freq=freq, main=NULL, xlab=xlab)
     } else {
+      obj$xname <- xlab
       n <- max(sapply(obj, length))
       for (i in names(obj)) {
         obj[[i]] <- format(obj[[i]])
@@ -181,7 +183,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   
   frame0 <- ttkframe(tt, relief="flat")
   
-  frame0.but.1 <- ttkbutton(frame0, width=12, text="Calculate", 
+  frame0.but.1 <- ttkbutton(frame0, width=12, text="View", 
                             command=function() CalcHist(draw.plot=FALSE))
   frame0.but.2 <- ttkbutton(frame0, width=12, text="Plot", 
                             command=function() CalcHist())
