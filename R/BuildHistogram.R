@@ -42,6 +42,15 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
         par(mar=c(5, 5, 2, 2) + 0.1)
       }
       plot(obj, col="light grey", freq=freq, main=NULL, xlab=xlab)
+    } else {
+      n <- max(sapply(obj, length))
+      for (i in names(obj)) {
+        obj[[i]] <- format(obj[[i]])
+        length(obj[[i]]) <- n
+        obj[[i]][is.na(obj[[i]])] <- ""
+      }
+      obj <- as.data.frame(do.call(cbind, obj))
+      ViewData(obj, column.names=names(obj))
     }
   }
   
@@ -344,4 +353,5 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     tkfocus(parent)
 
   tclServiceMode(TRUE)
+  invisible()
 }

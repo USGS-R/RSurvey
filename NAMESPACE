@@ -9,6 +9,7 @@ importFrom(colorspace, rainbow_hcl, polarLUV, choose_palette)
 export(AddAxis,
        Autocrop,
        AutocropPolygon,
+       BuildHistogram,
        BuildPackage,
        CheckEntry,
        ChooseColor,
