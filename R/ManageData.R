@@ -127,13 +127,6 @@ ManageData <- function(cols, vars, parent=NULL) {
     if (!is.null(cols[[idx]]$summary))
       cols[[idx]]$class <<- cols[[idx]]$summary$Class
 
-    # Save comments
-
-    new.comments <- sub("\n$", "", tclvalue(tkget(frame4.txt, '1.0', 'end')))
-    if (new.comments == "")
-      new.comments <- NULL
-    cols[[idx]]$comments <<- new.comments
-
     # Save name
 
     SetVarId(idx)
@@ -199,15 +192,6 @@ ManageData <- function(cols, vars, parent=NULL) {
       tkinsert(frame3.txt, "end", sum.str)
 
     tkconfigure(frame3.txt, state="disabled")
-
-    DrawHistogram(cols[[idx]]$summary$Hist)
-
-    # Update comments
-
-    tcl(frame4.txt, "delete", '1.0', 'end')
-    comments <- cols[[idx]]$comments
-    if (!is.null(comments))
-      tkinsert(frame4.txt, "end", comments, sep="")
   }
 
   # Account for change in notebook tab
@@ -226,11 +210,6 @@ ManageData <- function(cols, vars, parent=NULL) {
 
     if (tabid == frame2$ID) {
       tkfocus(frame2)
-
-    # Arrive at comments tab
-
-    } else if (tabid == frame4$ID) {
-      tkfocus(frame4.txt)
 
     # Arrive at summary tab
 
@@ -403,50 +382,6 @@ ManageData <- function(cols, vars, parent=NULL) {
     tkyview(frame1.lst, new.idx - 1L)
   }
 
-  # Draw histogram in canvas
-
-  DrawHistogram <- function(h) {
-    tclServiceMode(FALSE)
-    tcl(frame3.cvs, "delete", "all")
-    if (is.null(h))
-      return()
-
-    bars <- lapply(1:length(h$counts),
-                   function(i) list(x=c(h$breaks[i], h$breaks[i + 1]),
-                                    y=c(0, h$counts[i])))
-    xran <- range(h$breaks, na.rm=TRUE)
-    yran <- c(0, max(h$counts, na.rm=TRUE))
-
-    for (bar in bars) {
-      pts <- Xy2mn(bar$x, bar$y, xran, yran)
-      mn <- rep(NA, length(pts$m) * 2)
-      is.odd <- !array(0:1, length(mn))
-      mn[ is.odd] <- pts$m
-      mn[!is.odd] <- pts$n
-      tkcreate(frame3.cvs, "rectangle", .Tcl.args(mn), fill="gray",
-               outline="dark gray", width=1, tag="")
-    }
-    tclServiceMode(TRUE)
-  }
-
-  # Transform coordinates from real to canvas
-
-  Xy2mn <- function(x, y, xran, yran) {
-    m <- w * ((x - xran[1]) / diff(xran))
-    n <- h - (h * ((y - yran[1]) / diff(yran)))
-    list(m=m, n=n)
-  }
-
-  # Scale objects in canvas based on canvas size
-
-  ScaleCanvas <- function() {
-    w0 <- w
-    h0 <- h
-    w <<- as.numeric(tkwinfo("width",  frame3.cvs))
-    h <<- as.numeric(tkwinfo("height", frame3.cvs))
-    tcl(frame3.cvs, "scale", "all", 0, 0, w / w0, h / h0)
-  }
-
   # View data for selected variable
 
   CallViewData <- function() {
@@ -476,7 +411,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     idxs <- which(sapply(cols, function(i) i$class) %in% cont.classes)
     
     if (length(idxs) == 0 | (check.variable & !idx %in% idxs)) {
-      msg <- paste("Histograms may only be built for continous variables;",
+      msg <- paste("Histogram may only be built for continous variables;",
                    "that is, variables of class \"numeric\" or \"integer\".")
       tkmessageBox(icon="info", message=msg, title="Histogram", type="ok", 
                    parent=tt)
@@ -547,7 +482,7 @@ ManageData <- function(cols, vars, parent=NULL) {
         command=SaveNewVar)
   tkadd(menu.edit, "command", label="Delete", command=DeleteVar)
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Histograms", 
+  tkadd(menu.edit, "command", label="Histogram", 
         command=function() CallBuildHistogram(FALSE))
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="View data table", command=CallViewData)
@@ -704,40 +639,13 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   tkconfigure(frame3.ysc, command=paste(.Tk.ID(frame3.txt), "yview"))
 
-  frame3.cvs <- tkcanvas(frame3, relief="flat", width=w, height=h,
-                         background="white", confine=TRUE, borderwidth=0,
-                         highlightthickness=0)
-
   tkgrid(frame3.txt, frame3.ysc)
-  tkgrid(frame3.cvs)
 
   tkgrid.configure(frame3.txt, sticky="news", padx=0, pady=0)
   tkgrid.configure(frame3.ysc, sticky="ns", padx=0, pady=0)
-  tkgrid.configure(frame3.cvs, sticky="news", padx=2, pady=2, columnspan=2)
 
   tkgrid.columnconfigure(frame3, 0, weight=1, minsize=25)
   tkgrid.rowconfigure(frame3, 0, weight=1, minsize=25)
-  tkgrid.rowconfigure(frame3, 1, weight=1)
-
-  # Frame 4, comment
-
-  frame4 <- ttkframe(nb, relief="flat", padding=0, borderwidth=0)
-  tkadd(nb, frame4, text="   Comment   ")
-
-  frame4.xsc <- ttkscrollbar(frame4, orient="horizontal")
-  frame4.ysc <- ttkscrollbar(frame4, orient="vertical")
-
-  frame4.txt <- tktext(frame4, bg="white", padx=2, pady=2, width=25, height=8,
-                undo=1, wrap="none", foreground="black", relief="flat",
-                xscrollcommand=function(...) tkset(frame4.xsc,...),
-                yscrollcommand=function(...) tkset(frame4.ysc,...))
-
-  tkconfigure(frame4.xsc, command=paste(.Tk.ID(frame4.txt), "xview"))
-  tkconfigure(frame4.ysc, command=paste(.Tk.ID(frame4.txt), "yview"))
-
-  tkpack(frame4.xsc, side="bottom", fill="x", anchor="w", padx=c(0, 15), pady=0)
-  tkpack(frame4.ysc, side="right",  fill="y", anchor="w", padx=0, pady=0)
-  tkpack(frame4.txt, fill="both", expand=TRUE, pady=0)
 
   # Insert notebook and paned window
 
@@ -753,7 +661,6 @@ ManageData <- function(cols, vars, parent=NULL) {
   tkbind(tt, "<Shift-Control-}>", function() Arrange("front"))
   tkbind(tt, "<Control-[>", function() Arrange("backward"))
   tkbind(tt, "<Shift-Control-{>", function() Arrange("back"))
-  tkbind(tt, "<Configure>", ScaleCanvas)
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
   tkbind(nb, "<<NotebookTabChanged>>", ChangeTab)

@@ -30,8 +30,6 @@ following components:
   \item{Mean}{numeric; arithmetic mean with \code{NA} values ignored.}
   \item{St.Dev.}{numeric; standard deviation with \code{NA} values ignored.}
   \item{Sum}{numeric; sum with \code{NA} values ignored.}
-  \item{Hist}{histogram; an object of class histogram, see \code{hist}
-    documentation for details.}
   \item{Unique}{integer; number of unique factors.}
   \item{TRUE, FALSE}{integer; number of \code{TRUE} and \code{FALSE} values,
     respectively.}
@@ -41,7 +39,7 @@ following components:
 }
 
 \seealso{
-\code{\link{quantile}}, \code{\link{hist}}
+\code{\link{quantile}}
 }
 
 \author{J.C. Fisher}

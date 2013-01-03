@@ -57,7 +57,7 @@ SummarizeData <- function(obj, fmt=NULL) {
   if (is.summary.list) {
     s <- obj
     s.names <- names(s)
-    s.names <- s.names[!s.names %in% c("Hist", "String")]
+    s.names <- s.names[!s.names %in% "String"]
     summary.strings <- sapply(s.names, BuildString)
     s$String <- paste(paste(summary.strings, collapse="\n"), "\n", sep="")
     return(s)
@@ -97,29 +97,22 @@ SummarizeData <- function(obj, fmt=NULL) {
         if (inherits(obj, "numeric"))
           s$"St. Dev." <- sd(obj, na.rm=TRUE)
         s$"Sum" <- sum(as.numeric(obj), na.rm=TRUE)
-        s$"Hist" <- hist(obj, plot=FALSE)
-
       } else {
         s$"Time Per." <- format(s$"Max." - s$"Min.", units="auto")
-        s$"Hist" <- hist(obj, breaks=25, plot=FALSE)
       }
 
     } else if (inherits(obj, "logical")) {
       s$"FALSE" <- length(which(!obj))
       s$"TRUE" <- length(which(obj))
-      if(!all(is.na(obj)))
-        s$"Hist" <- hist(as.integer(na.omit(obj)) + 1, seq(0, 2), plot=FALSE)
-
+      
     } else if (inherits(obj, c("character", "factor"))) {
       if (inherits(obj, "character"))
         obj <- as.factor(obj)
       s$"Unique" <- length(levels(obj))
-      s$"Hist" <- hist(na.omit(as.integer(obj)), plot=FALSE)
     }
   }
 
   s.names <- names(s)
-  s.names <- s.names[!s.names %in% "Hist"]
   summary.strings <- sapply(s.names, BuildString)
   s$String <- paste(paste(summary.strings, collapse="\n"), "\n", sep="")
   s
