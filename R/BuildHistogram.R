@@ -36,8 +36,13 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     freq <- as.logical(as.integer(tclvalue(freq.var)))
     
     obj <- hist(x, breaks=breaks, right=right, plot=FALSE)
-    if (draw.plot) 
+    if (draw.plot) {
+      if (dev.cur() == dev) {
+        x11()
+        par(mar=c(5, 5, 2, 2) + 0.1)
+      }
       plot(obj, col="light grey", freq=freq, main=NULL, xlab=xlab)
+    }
   }
   
   # Adjust scale
@@ -54,10 +59,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   # Plot Histogram
   
   PlotHist <- function() {
-    if (dev.cur() == dev) {
-      x11()
-      par(mar=c(5, 5, 2, 2) + 0.1)
-    }
     if (dev.cur() > dev)
       CalcHist()
   }
