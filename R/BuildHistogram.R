@@ -187,7 +187,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
                             command=function() CalcHist(draw.plot=FALSE))
   frame0.but.2 <- ttkbutton(frame0, width=12, text="Plot", 
                             command=function() CalcHist())
-  frame0.but.3 <- ttkbutton(frame0, width=12, text="Cancel",
+  frame0.but.3 <- ttkbutton(frame0, width=12, text="Close",
                             command=function() tclvalue(tt.done.var) <- 1)
   tkgrid(frame0.but.1, frame0.but.2, frame0.but.3, pady=10)
   tkgrid.configure(frame0.but.1, padx=c(0, 4))
