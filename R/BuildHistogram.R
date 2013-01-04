@@ -29,13 +29,17 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
       seq.by   <- as.numeric(tclvalue(by.var))
       if (any(is.na(c(seq.from, seq.to, seq.by))))
         return()
-      breaks   <- seq(seq.from, seq.to, seq.by)
+      breaks <- try(seq(seq.from, seq.to, seq.by), silent=TRUE)
+      if (inherits(breaks, "try-error"))
+        return()
     }
     
     right <- as.logical(as.integer(tclvalue(right.var)))
     freq <- as.logical(as.integer(tclvalue(freq.var)))
     
-    obj <- hist(x, breaks=breaks, right=right, plot=FALSE)
+    obj <- try(hist(x, breaks=breaks, right=right, plot=FALSE))
+    if (inherits(obj, "try-error"))
+      return()
     
     if (draw.plot) {
       if (dev.cur() == dev) {
@@ -43,6 +47,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
         par(mar=c(5, 5, 2, 2) + 0.1)
       }
       plot(obj, col="light grey", freq=freq, main=NULL, xlab=xlab)
+      
     } else {
       obj$xname <- xlab
       n <- max(sapply(obj, length))
@@ -224,7 +229,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   tkconfigure(frame2.box.2.1, value=fun.names)
   tcl(frame2.box.2.1, "current", 0)
   
-  txt <- "A single number giving the number of histogram cells"
+  txt <- "A single number giving the suggested number of histogram cells"
   frame2.rbt.3.1 <- ttkradiobutton(frame2, variable=breaks.var, value=2L, 
                                   text=txt, command=ToggleState)
   frame2.scl.4.1 <- tkwidget(frame2, "ttk::scale", from=0, to=1, 
@@ -258,13 +263,11 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   tkgrid(frame2.rbt.5.1, sticky="w", columnspan=3)
   tkgrid(frame2.ent.6.1, padx=c(20, 0), pady=c(0, 5), sticky="we", columnspan=3)
   tkgrid(frame2.rbt.7.1, sticky="w", columnspan=3)
-  
-  tkgrid.configure(frame2.scl.4.1, columnspan=2, padx=c(20, 4))
-  
   tkgrid(frame2.lab.8.1,  frame2.ent.8.2)
   tkgrid(frame2.lab.9.1,  frame2.ent.9.2)
   tkgrid(frame2.lab.10.1, frame2.ent.10.2)
   
+  tkgrid.configure(frame2.scl.4.1, columnspan=2, padx=c(20, 4))
   tkgrid.configure(frame2.lab.8.1, frame2.lab.9.1, frame2.lab.10.1, 
                    padx=c(40, 4), sticky="w")
   tkgrid.configure(frame2.ent.8.2, frame2.ent.9.2, frame2.ent.10.2, 
