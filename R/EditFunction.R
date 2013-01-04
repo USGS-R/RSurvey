@@ -284,13 +284,20 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   cmd$as.character <- "as.character(<variable>)"
   cmd$as.factor <- "as.factor(<variable>)"
   cmd$as.POSIXct <- "as.POSIXct(<variable>, format = \"<format>\")"
+  
+  cmd$abs  <- "abs(<variable>)"
+  cmd$sqrt <- "sqrt(<variable>)"
+  cmd$exp  <- "exp(<variable>)"
+  cmd$log  <- "log(<variable>, base = exp(1))"
 
   cmd$paste <-  "paste(<variable>, <variable>, sep = \" \")"
   cmd$substr <- paste("substr(<variable>, start = <first element>,",
                       "stop = <last element>)")
   
-  cmd$min <- "min(<variable>, na.rm = TRUE)"
-  cmd$max <- "max(<variable>, na.rm = TRUE)"
+  cmd$sum  <- "sum(<variable>, na.rm = TRUE)"
+  cmd$prod <- "prod(<variable>, na.rm = TRUE)"
+  cmd$min  <- "min(<variable>, na.rm = TRUE)"
+  cmd$max  <- "max(<variable>, na.rm = TRUE)"
 
   # Assign variables linked to Tk widgets
 
@@ -352,19 +359,34 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertString(cmd$as.character))
   tkadd(menu.class, "command", label="As factor",
         command=function() InsertString(cmd$as.factor))
-
-  menu.str <- tkmenu(tt, tearoff=0)
-  tkadd(top.menu, "cascade", label="String", menu=menu.str, underline=0)
-  tkadd(menu.str, "command", label="Concatenate",
+  
+  menu.math <- tkmenu(tt, tearoff=0)
+  tkadd(top.menu, "cascade", label="Math", menu=menu.math, underline=0)
+  tkadd(menu.math, "command", label="Absolute value",
+        command=function() InsertString(cmd$abs))
+  tkadd(menu.math, "command", label="Square root",
+        command=function() InsertString(cmd$sqrt))
+  tkadd(menu.math, "command", label="Exponential",
+        command=function() InsertString(cmd$exp))
+  tkadd(menu.math, "command", label="Logarithm",
+        command=function() InsertString(cmd$log))
+  
+  menu.string <- tkmenu(tt, tearoff=0)
+  tkadd(top.menu, "cascade", label="String", menu=menu.string, underline=0)
+  tkadd(menu.string, "command", label="Concatenate",
         command=function() InsertString(cmd$paste))
-  tkadd(menu.str, "command", label="Extract substring",
+  tkadd(menu.string, "command", label="Extract substring",
         command=function() InsertString(cmd$substr))
   
-  menu.ext <- tkmenu(tt, tearoff=0)
-  tkadd(top.menu, "cascade", label="Extreme", menu=menu.ext, underline=0)
-  tkadd(menu.ext, "command", label="Minimum",
+  menu.summary <- tkmenu(tt, tearoff=0)
+  tkadd(top.menu, "cascade", label="Summary", menu=menu.summary, underline=0)
+  tkadd(menu.summary, "command", label="Sum",
+        command=function() InsertString(cmd$sum))
+  tkadd(menu.summary, "command", label="Product",
+        command=function() InsertString(cmd$prod))
+  tkadd(menu.summary, "command", label="Minimum",
         command=function() InsertString(cmd$min))
-  tkadd(menu.ext, "command", label="Maximum",
+  tkadd(menu.summary, "command", label="Maximum",
         command=function() InsertString(cmd$max))
   
   menu.const <- tkmenu(tt, tearoff=0)
@@ -375,6 +397,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertString("FALSE"))
   tkadd(menu.const, "command", label="Not available",
         command=function() InsertString("NA"))
+  tkadd(menu.const, "command", label="Pi",
+        command=function() InsertString("pi"))
   
   menu.operator <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Operator", menu=menu.operator, underline=0)
@@ -526,8 +550,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
          frame2a.but.13, padx=c(0, 2), pady=c(2, 0))
 
   tkgrid.configure(frame2a.but.01, padx=c(2, 2))
-  tkgrid.configure(frame2a.but.05, frame2a.but.09, frame2a.but.11, 
-                   padx=c(12, 2))
+  tkgrid.configure(frame2a.but.05, frame2a.but.11, padx=c(12, 2))
   tkgrid.configure(frame2a.but.13, padx=c(52, 0))
 
   tkgrid(frame2.lab.1.1, "x")
