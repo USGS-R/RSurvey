@@ -127,7 +127,7 @@ SetConfiguration <- function(parent=NULL) {
   frame0.but.2 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() tclvalue(tt.done.var) <- 1)
 
-  tkgrid(frame0.but.1, frame0.but.2, pady=c(0, 10))
+  tkgrid(frame0.but.1, frame0.but.2, pady=c(5, 10))
 
   tkgrid.configure(frame0.but.1, sticky="e", padx=c(0, 4))
   tkgrid.configure(frame0.but.2, sticky="w", padx=c(0, 10), rowspan=2)
@@ -180,10 +180,11 @@ SetConfiguration <- function(parent=NULL) {
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, frame1.lab.3.1,
                    frame1.lab.4.1, frame1.lab.5.1, frame1.lab.6.1,
                    frame1.lab.7.1, frame1.lab.8.1,
-                   sticky="e", padx=c(0, 2))
+                   sticky="w")
   tkgrid.configure(frame1.ent.1.2, frame1.ent.2.2, frame1.ent.3.2,
                    frame1.ent.4.2, frame1.ent.5.2, frame1.ent.6.2,
-                   frame1.ent.7.2, frame1.ent.8.2, sticky="we")
+                   frame1.ent.7.2, frame1.ent.8.2, padx=c(2, 15), 
+                   sticky="we")
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=6)
 
@@ -191,26 +192,26 @@ SetConfiguration <- function(parent=NULL) {
 
   frame2 <- ttkframe(pw, relief="flat", borderwidth=0, padding=10)
 
-  txt <- "reverse legend"
+  txt <- "Reverse legend"
   frame2.chk.01.1 <- ttkcheckbutton(frame2, text=txt, variable=rkey.var)
-  txt <- "show polygons"
+  txt <- "Show polygons"
   frame2.chk.02.1 <- ttkcheckbutton(frame2, text=txt, variable=show.poly.var)
-  txt <- "use image contour"
+  txt <- "Use image contour"
   frame2.chk.03.1 <- ttkcheckbutton(frame2, text=txt, variable=img.contour.var)
-  txt <- "show contour lines"
+  txt <- "Show contour lines"
   frame2.chk.04.1 <- ttkcheckbutton(frame2, text=txt, variable=show.lines.var)
-  txt <- "show points on surface"
+  txt <- "Show points on surface"
   frame2.chk.05.1 <- ttkcheckbutton(frame2, text=txt, variable=show.points.var)
-  txt <- "use uniform arrow lengths"
+  txt <- "Use uniform arrow lengths"
   frame2.chk.06.1 <- ttkcheckbutton(frame2, text=txt, variable=vuni.var)
 
-  txt <- "show tickmarks on second axes"
+  txt <- "Show tickmarks on second axes"
   frame2.chk.07.1 <- ttkcheckbutton(frame2, text=txt, variable=show.2.axes.var)
-  txt <- "add minor tickmarks"
+  txt <- "Add minor tickmarks"
   frame2.chk.08.1 <- ttkcheckbutton(frame2, text=txt, variable=minor.ticks.var)
-  txt <- "place tickmarks inside plot region"
+  txt <- "Place tickmarks inside plot region"
   frame2.chk.09.1 <- ttkcheckbutton(frame2, text=txt, variable=ticks.inside.var)
-  txt <- "remove point symbol line boundary"
+  txt <- "Remove point symbol line boundary"
   frame2.chk.10.1 <- ttkcheckbutton(frame2, text=txt, variable=rm.pnt.line.var)
 
   tkgrid(frame2.chk.01.1, sticky="w", pady=c(0, 2))

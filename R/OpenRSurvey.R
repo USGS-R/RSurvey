@@ -1054,7 +1054,7 @@ OpenRSurvey <- function() {
   tkgrid(frame1.lab.5.1, frame1.box.5.2)
 
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, frame1.lab.3.1,
-                   frame1.lab.4.1, frame1.lab.5.1, sticky="e", padx=c(0, 2))
+                   frame1.lab.4.1, frame1.lab.5.1, sticky="w", padx=c(0, 2))
 
   tkgrid.configure(frame1.box.1.2, frame1.box.2.2, frame1.box.3.2,
                    frame1.box.4.2, frame1.box.5.2, sticky="we")

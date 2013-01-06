@@ -291,11 +291,12 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
 
   tkgrid.configure(frame1.ent.1.2, frame1.ent.2.2, padx=c(0, 2))
 
-  tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, padx=c(0, 2), sticky="e")
+  tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, padx=c(0, 2), sticky="w")
   tkgrid.configure(frame1.but.1.3, padx=c(0, 2))
 
   tkgrid.configure(frame1.but.2.3, columnspan=2, sticky="we")
-  tkgrid.configure(frame1.chk.1.5, frame1.chk.1.6, padx=c(4, 0))
+  tkgrid.configure(frame1.chk.1.5, padx=c(12, 0))
+  tkgrid.configure(frame1.chk.1.6, padx=c(4, 0))
   tkgrid.configure(frame1.chk.1.7, padx=c(4, 10))
 
   tkpack(frame1, side="bottom", anchor="nw", padx=c(10, 0))

@@ -457,7 +457,7 @@ ImportData <- function(parent=NULL) {
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.1.3, frame3.lab.1.5,
                    frame3.lab.2.1, frame3.lab.2.3, frame3.lab.2.5,
-                   padx=c(10, 2), sticky="e")
+                   padx=c(10, 2), sticky="w")
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, padx=c(0, 2))
   tkgrid.configure(frame3.but.2.7, padx=c(2, 0))

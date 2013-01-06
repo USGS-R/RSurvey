@@ -559,20 +559,20 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   frame3b <- ttklabelframe(frame3, relief="flat", borderwidth=5, padding=5,
                            text="Attributes")
 
-  frame3b.lab.1.1 <- tklabel(frame3b, text="Area")
-  frame3b.lab.2.1 <- tklabel(frame3b, text="Polygons")
-  frame3b.lab.3.1 <- tklabel(frame3b, text="Holes")
-  frame3b.lab.4.1 <- tklabel(frame3b, text="Vertices")
+  frame3b.lab.1.1 <- tklabel(frame3b, text="Polygons")
+  frame3b.lab.2.1 <- tklabel(frame3b, text="Holes")
+  frame3b.lab.3.1 <- tklabel(frame3b, text="Vertices")
+  frame3b.lab.4.1 <- tklabel(frame3b, text="Area")
 
-  frame3b.lab.1.2 <- tklabel(frame3b, text=tclvalue(area.var))
-  frame3b.lab.2.2 <- tklabel(frame3b, text=tclvalue(poly.var))
-  frame3b.lab.3.2 <- tklabel(frame3b, text=tclvalue(hole.var))
-  frame3b.lab.4.2 <- tklabel(frame3b, text=tclvalue(vert.var))
+  frame3b.lab.1.2 <- tklabel(frame3b, text=tclvalue(poly.var))
+  frame3b.lab.2.2 <- tklabel(frame3b, text=tclvalue(hole.var))
+  frame3b.lab.3.2 <- tklabel(frame3b, text=tclvalue(vert.var))
+  frame3b.lab.4.2 <- tklabel(frame3b, text=tclvalue(area.var))
 
-  tkconfigure(frame3b.lab.1.2, textvariable=area.var)
-  tkconfigure(frame3b.lab.2.2, textvariable=poly.var)
-  tkconfigure(frame3b.lab.3.2, textvariable=hole.var)
-  tkconfigure(frame3b.lab.4.2, textvariable=vert.var)
+  tkconfigure(frame3b.lab.1.2, textvariable=poly.var)
+  tkconfigure(frame3b.lab.2.2, textvariable=hole.var)
+  tkconfigure(frame3b.lab.3.2, textvariable=vert.var)
+  tkconfigure(frame3b.lab.4.2, textvariable=area.var)
 
   tkgrid(frame3b.lab.1.1, frame3b.lab.1.2)
   tkgrid(frame3b.lab.2.1, frame3b.lab.2.2)
@@ -580,10 +580,10 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   tkgrid(frame3b.lab.4.1, frame3b.lab.4.2)
 
   tkgrid.configure(frame3b.lab.1.1, frame3b.lab.2.1,
-                   frame3b.lab.3.1, frame3b.lab.4.1, sticky="e")
+                   frame3b.lab.3.1, frame3b.lab.4.1, sticky="w")
 
   tkgrid.configure(frame3b.lab.1.2, frame3b.lab.2.2,
-                   frame3b.lab.3.2, frame3b.lab.4.2, sticky="w", padx=c(5, 0))
+                   frame3b.lab.3.2, frame3b.lab.4.2, sticky="e", padx=c(5, 0))
 
   tcl("grid", "anchor", frame3b, "w")
 

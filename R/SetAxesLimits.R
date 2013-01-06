@@ -232,11 +232,8 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
   tkgrid(frame2.lab.1.1, frame2.ent.1.2, frame2.chk.1.3, padx=1, pady=2)
   tkgrid(frame2.lab.2.1, frame2.ent.2.2, frame2.chk.2.3, padx=1, pady=2)
 
-  tkgrid.configure(frame2.lab.1.1, sticky="e")
-  tkgrid.configure(frame2.lab.2.1, sticky="e")
-
-  tkgrid.configure(frame2.ent.1.2, sticky="we")
-  tkgrid.configure(frame2.ent.2.2, sticky="we")
+  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, sticky="w")
+  tkgrid.configure(frame2.ent.1.2, frame2.ent.2.2, sticky="we")
 
   tkgrid.columnconfigure(frame2, 1, weight=1, minsize=25)
 

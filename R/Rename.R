@@ -76,7 +76,7 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
   tkgrid(frame0.lab.1, frame0.box.1, pady=0)
   tkgrid(frame0.lab.2, frame0.ent.1, pady=c(4, 0))
 
-  tkgrid.configure(frame0.lab.1, frame0.lab.2, sticky="e", padx=c(0, 2))
+  tkgrid.configure(frame0.lab.1, frame0.lab.2, sticky="w", padx=c(0, 2))
   tkgrid.configure(frame0.box.1, frame0.ent.1, sticky="we")
 
   tkgrid.columnconfigure(frame0, 1, weight=1, minsize=25)

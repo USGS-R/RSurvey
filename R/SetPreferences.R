@@ -105,7 +105,7 @@ SetPreferences <- function(parent=NULL) {
   tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(10, 4))
   tkgrid(frame1.lab.2.1, frame1.ent.2.2, pady=c(0, 10))
 
-  tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, sticky="e", padx=c(0, 2))
+  tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, sticky="w", padx=c(0, 2))
   tkgrid.configure(frame1.ent.1.2, frame1.ent.2.2, sticky="we")
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=20)
@@ -132,7 +132,8 @@ SetPreferences <- function(parent=NULL) {
   tkgrid(frame2.lab.2.1, frame2.ent.2.2, pady=c(0, 4))
   tkgrid(frame2.lab.3.1, frame2.ent.3.2)
 
-  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, frame2.lab.3.1, sticky="e", padx=c(0, 2))
+  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, frame2.lab.3.1, sticky="w", 
+                   padx=c(0, 2))
   tkgrid.configure(frame2.ent.1.2, frame2.ent.2.2, frame2.ent.3.2, sticky="we")
 
   tkgrid.columnconfigure(frame2, 1, weight=1, minsize=20)

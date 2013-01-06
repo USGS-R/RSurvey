@@ -609,7 +609,7 @@ ManageData <- function(cols, vars, parent=NULL) {
   tkgrid(frame2.lab.5.1, frame2.txt.5.2, frame2.but.5.3)
 
   tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1,
-                   frame2.lab.3.1, frame2.lab.4.1, sticky="e")
+                   frame2.lab.3.1, frame2.lab.4.1, sticky="w")
 
   tkgrid.configure(frame2.lab.5.1, sticky="ne")
 
