@@ -638,7 +638,7 @@ OpenRSurvey <- function() {
     vars <- Data("vars")
     cols <- Data("cols")
 
-    state.vars <- list(x="x-axis", y="y-axis", z="z-axis",
+    state.vars <- list(x="x-coordinate", y="y-coordinate", z="state",
                        vx="x-vector", vy="y-vector")
     state.vars <- state.vars[names(state.vars) %in% names(vars)]
     state.idxs <- sapply(names(state.vars), function(i) vars[[i]])
@@ -1032,11 +1032,11 @@ OpenRSurvey <- function() {
   # Frame 1, variables
 
   frame1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="State variables")
+                          text="Set variables")
 
-  frame1.lab.1.1 <- ttklabel(frame1, text="x-axis")
-  frame1.lab.2.1 <- ttklabel(frame1, text="y-axis")
-  frame1.lab.3.1 <- ttklabel(frame1, text="z-axis")
+  frame1.lab.1.1 <- ttklabel(frame1, text="x-coordinate")
+  frame1.lab.2.1 <- ttklabel(frame1, text="y-coordinate")
+  frame1.lab.3.1 <- ttklabel(frame1, text="state")
   frame1.lab.4.1 <- ttklabel(frame1, text="x-vector")
   frame1.lab.5.1 <- ttklabel(frame1, text="y-vector")
 
@@ -1067,7 +1067,7 @@ OpenRSurvey <- function() {
   # Frame 2, plotting buttons
 
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Plot types")
+                          text="Plot variables")
 
   frame2.but.1.1 <- ttkbutton(frame2, width=10, text="Scatter",
                               command=function() {
