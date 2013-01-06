@@ -445,7 +445,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                               highlightthickness=0)
   frame1.ysc.2.2 <- ttkscrollbar(frame1, orient="vertical")
   box.vals <- "{Show all classes}"
-  if (length(classes) > 1)
+  if (length(classes) > 0)
     box.vals <- c("Show all classes", classes)
   frame1.box.3.1 <- ttkcombobox(frame1, state="readonly", value=box.vals)
   tkconfigure(frame1.lst.2.1, background="white",

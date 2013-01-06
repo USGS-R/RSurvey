@@ -646,10 +646,10 @@ OpenRSurvey <- function() {
     d <- Data("data.pts")[, names(state.vars)]
     
     cols <- cols[state.idxs]
-    nams <- sapply(cols, function(i) ifelse(is.null(i$name),   NA, i$name))
-    unts <- sapply(cols, function(i) ifelse(is.null(i$unit),   NA, i$unit))
+    
+    nams <- sapply(state.vars, function(i) i)
     fmts <- sapply(cols, function(i) ifelse(is.null(i$format), NA, i$format))
-    ViewData(d, nams, unts, fmts, parent=tt)
+    ViewData(d, column.names=nams, column.formats=fmts, parent=tt)
     
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
@@ -658,7 +658,9 @@ OpenRSurvey <- function() {
   # Call process data
 
   CallProcessData <- function(interpolate=FALSE) {
-    if (is.null(Data("data.raw"))) {
+    vars <- Data("vars")
+    var.names <- names(vars)
+    if (!all(c("x", "y") %in% var.names) || is.null(Data("data.raw"))) {
       Data("data.pts", NULL)
       Data("data.grd", NULL)
       return()
@@ -670,9 +672,6 @@ OpenRSurvey <- function() {
 
     if (is.null(Data("data.pts"))) {
       cols <- Data("cols")
-      vars <- Data("vars")
-
-      var.names <- names(vars)
 
       Eval <- function(v) {
         if (is.null(v)) NULL else EvalFunction(cols[[v]]$fun, cols)
