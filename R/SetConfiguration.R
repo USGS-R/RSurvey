@@ -144,15 +144,15 @@ SetConfiguration <- function(parent=NULL) {
 
   txt <- "Approximate number of contour levels"
   frame1.lab.1.1 <- ttklabel(frame1, text=txt)
-  txt <- "Width of plotting window canvas in inches"
+  txt <- "Width of plotting window canvas, in inches"
   frame1.lab.2.1 <- ttklabel(frame1, text=txt)
   txt <- "Scaling for point symbols"
   frame1.lab.3.1 <- ttklabel(frame1, text=txt)
-  txt <- "Aspect ratio, y / x"
+  txt <- "Horizontal aspect ratio"
   frame1.lab.4.1 <- ttklabel(frame1, text=txt)
-  txt <- "Aspect ratio, z / x"
+  txt <- "Vertical aspect ratio"
   frame1.lab.5.1 <- ttklabel(frame1, text=txt)
-  txt <- "Maximum arrow length in inches"
+  txt <- "Maximum arrow length, in inches"
   frame1.lab.6.1 <- ttklabel(frame1, text=txt)
   txt <- "Increment for sequence of arrows in x direction"
   frame1.lab.7.1 <- ttklabel(frame1, text=txt)
@@ -211,7 +211,7 @@ SetConfiguration <- function(parent=NULL) {
   frame2.chk.08.1 <- ttkcheckbutton(frame2, text=txt, variable=minor.ticks.var)
   txt <- "Place tickmarks inside plot region"
   frame2.chk.09.1 <- ttkcheckbutton(frame2, text=txt, variable=ticks.inside.var)
-  txt <- "Remove point symbol line boundary"
+  txt <- "Remove point symbol boundary line"
   frame2.chk.10.1 <- ttkcheckbutton(frame2, text=txt, variable=rm.pnt.line.var)
 
   tkgrid(frame2.chk.01.1, sticky="w", pady=c(0, 2))

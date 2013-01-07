@@ -638,7 +638,7 @@ OpenRSurvey <- function() {
     vars <- Data("vars")
     cols <- Data("cols")
 
-    state.vars <- list(x="x-coordinate", y="y-coordinate", z="state",
+    state.vars <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate",
                        vx="x-vector", vy="y-vector")
     state.vars <- state.vars[names(state.vars) %in% names(vars)]
     state.idxs <- sapply(names(state.vars), function(i) vars[[i]])
@@ -1036,7 +1036,7 @@ OpenRSurvey <- function() {
 
   frame1.lab.1.1 <- ttklabel(frame1, text="x-coordinate")
   frame1.lab.2.1 <- ttklabel(frame1, text="y-coordinate")
-  frame1.lab.3.1 <- ttklabel(frame1, text="state")
+  frame1.lab.3.1 <- ttklabel(frame1, text="z-coordinate")
   frame1.lab.4.1 <- ttklabel(frame1, text="x-vector")
   frame1.lab.5.1 <- ttklabel(frame1, text="y-vector")
 
