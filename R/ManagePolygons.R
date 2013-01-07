@@ -42,7 +42,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
       }
     }
 
-    idxs <- as.integer(tkcurselection(frame1.lst)) + 1
+    idxs <- as.integer(tkcurselection(frame1.lst)) + 1L
 
     tcl(frame2.cvs, "delete", "all")
     xran <<- NULL
@@ -67,30 +67,43 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
     yran <<- extendrange(yran, f=0.02)
 
     cmd <- tclvalue(rb.var)
-    polys.base <<- polys[[idxs[1]]]
-    for (idx in idxs[-1]) {
-      if (cmd == "add") {
-        polys.base <<- union(polys.base, polys[[idx]])
-      } else if (cmd == "sub") {
-        polys.base <<- setdiff(polys.base, polys[[idx]])
-      } else if (cmd == "int") {
-        polys.base <<- intersect(polys.base, polys[[idx]])
+    
+    polys.base <<- NULL
+    if (cmd == "exc") {
+      if (length(idxs) > 1L) {
+        union.polys <- polys[[idxs[1]]]
+        inter.polys <- polys[[idxs[1]]]
+        for (idx in idxs[-1]) {
+          union.polys <- try(union(union.polys, polys[[idx]]), silent=TRUE)
+          inter.polys <- try(intersect(inter.polys, polys[[idx]]), silent=TRUE)
+        }
+        if (!inherits(union.polys, "try-error") && 
+            !inherits(inter.polys, "try-error"))
+          polys.base <<- setdiff(union.polys, inter.polys)
       }
-    }
-    if (cmd == "exc" && length(idxs) > 1) {
-      union.polys <- polys.base
-      inter.polys <- polys.base
-      for (idx in idxs[-1]) {
-        union.polys <- union(union.polys, polys[[idx]])
-        inter.polys <- intersect(inter.polys, polys[[idx]])
-      }
-      polys.base <<- setdiff(union.polys, inter.polys)
-    }
-
-    base.pts <- get.pts(polys.base)
-    if (length(base.pts) == 0) {
-      polys.base <<- NULL
     } else {
+      if (cmd == "add") {
+        fun <- "union"
+      } else if (cmd == "sub") {
+        fun <- "setdiff"
+      } else if (cmd == "int") {
+        fun <- "intersect"
+      }
+      build.polys <- polys[[idxs[1]]]
+      for (idx in idxs[-1]) {
+        build.polys <- try(do.call(fun, list(build.polys, polys[[idx]])), 
+                           silent=TRUE)
+      }
+      if (!inherits(build.polys, "try-error"))
+        polys.base <<- build.polys
+    }
+    
+    if (!is.null(polys.base)) {
+      base.pts <- get.pts(polys.base)
+      if (length(base.pts) == 0) 
+        polys.base <<- NULL
+    }
+    if (!is.null(polys.base)) {
       hole <- NULL
       vert <- 0
       for (ctr in base.pts) {
@@ -107,7 +120,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
       tclvalue(hole.var) <- sum(hole)
       tclvalue(vert.var) <- vert
     }
-
+    
     for (i in idxs)
       DrawPolygon(get.pts(polys[[i]]), tag=names(polys)[i], col.line=col.pal[i])
   }
