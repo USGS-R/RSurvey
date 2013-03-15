@@ -41,16 +41,15 @@ this string must be parseable.
 \code{\link{EvalFunction}}, \code{\link{parse}}
 }
 
-\examples{
-\donttest{data(tritest)
-Data("data.raw", as.data.frame(tritest))
+\examples{\donttest{
+d <- data.frame(cbind(x = 1, y = 1:10))
+Data("data.raw", d)
 cols <- list()
 cols[[1]] <- list(id = "X", index = 1, fun = "\"X\"")
 cols[[2]] <- list(id = "Y", index = 2, fun = "\"Y\"")
 cols[[3]] <- list(id = "New Variable",
                   fun = "\"X\" + \"Y\"")
 EditFunction(cols, index = 3)
-}
-}
+}}
 
 \keyword{misc}

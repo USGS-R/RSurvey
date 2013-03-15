@@ -32,12 +32,13 @@ numeric vectors.
 
 \author{J.C. Fisher}
 
-\examples{data(tritest)
-Data("data.raw", as.data.frame(tritest))
+\examples{
+d <- data.frame(cbind(x = 1, y = 1:10))
+Data("data.raw", d)
 cols <- list()
 cols[[1]] <- list(id = "X", index = 1, fun = "\"X\"")
 cols[[2]] <- list(id = "Y", index = 2, fun = "\"Y\"")
-EvalFunction("\"X\"", cols)
+EvalFunction("\"Y\"", cols)
 EvalFunction("\"X\" + \"Y\"", cols)
 EvalFunction("rnorm(12)", cols)
 }

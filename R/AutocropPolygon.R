@@ -66,6 +66,11 @@ AutocropPolygon <- function(d, parent=NULL, ...) {
 
 
   # Main program
+  
+  is.pkg <- "tripack" %in% .packages(all.available=TRUE) &&
+            require(tripack, quietly=FALSE)
+  if (!is.pkg)
+    stop("package tripack required for AutocropPolygon function")
 
   # Initialize parameters
 
@@ -79,7 +84,7 @@ AutocropPolygon <- function(d, parent=NULL, ...) {
 
   # Construct mesh
 
-  mesh <- tri.mesh(d$x, d$y, duplicate="remove")
+  mesh <- tripack::tri.mesh(d$x, d$y, duplicate="remove")
 
   # Convex hull and maximum outer arc length
 

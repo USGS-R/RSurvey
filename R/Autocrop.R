@@ -51,12 +51,14 @@ Autocrop <- function(mesh, max.len, max.itr=10000) {
 
 
   # Main program
+  
+  require(tripack, quietly=FALSE)
 
   elem.build <- matrix(c(2, 3, 3, 1, 1, 2), nrow=3, ncol=2, byrow=TRUE,
                        dimnames=list(c("arc1", "arc2", "arc3"),
                                      c("pt1", "pt2")))
 
-  tri <- triangles(mesh)
+  tri <- tripack::triangles(mesh)
   tri <- cbind(elem=1:nrow(tri), tri)
 
   itr <- 0

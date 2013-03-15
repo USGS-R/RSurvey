@@ -30,17 +30,17 @@ Returns a polygon object of \code{\link{gpc.poly-class}}.
 }
 
 \seealso{
-\code{\link{AutocropPolygon}}, \code{tri.mesh}
+\code{\link{AutocropPolygon}}
 }
 
 \author{J.C. Fisher}
 
-\examples{
-data(tritest)
-mesh <- tri.mesh(tritest$x, tritest$y)
+\examples{\donttest{
+data(tritest, package = "tripack")
+mesh <- tripack::tri.mesh(tritest$x, tritest$y)
 plot(mesh)
 ply <- Autocrop(mesh, max.len = 0.5, max.itr = 100)
 plot(ply, add = TRUE, poly.args = list(col = 2))
-}
+}}
 
 \keyword{symbolmath}

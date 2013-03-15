@@ -1,0 +1,5 @@
+Changes in Version 0.7-3
+  
+  o  Removed dependency on the 'tripack' package because of its restricted 
+     license which explicitly forbids commercial use.
+  

@@ -3,9 +3,8 @@ LoadPackages <- function(repo="http://cran.r-project.org") {
   # package is unavailable on the local computer an attempt is made to
   # acquire the package from CRAN using an existing network connection.
 
-  require.pkgs <- c("tcltk", "sp", "rgl", "MBA", "tripack", "colorspace", 
-                    "rgeos")
-  suggest.pkgs <- c("rgdal", "dichromat")
+  require.pkgs <- c("tcltk", "sp", "rgl", "MBA", "colorspace", "rgeos")
+  suggest.pkgs <- c("rgdal", "dichromat", "tripack")
 
   pkgs <- c(require.pkgs, suggest.pkgs)
 

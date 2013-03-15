@@ -1,11 +1,11 @@
 Package: RSurvey
 Version: 0.7-3
-Date: 2013-01-03
+Date: 2013-03-15
 Title: Analysis of Spatially Distributed Data
 Author: Jason C. Fisher
 Maintainer: Jason C. Fisher <jfisher@usgs.gov>
-Depends: R (>= 2.15.0), tcltk, sp, rgl, MBA, tripack, colorspace, rgeos
-Suggests: rgdal, dichromat
+Depends: R (>= 2.15.0), tcltk, sp, rgl, MBA, colorspace, rgeos
+Suggests: rgdal, dichromat, tripack
 SystemRequirements: Tcl/Tk (>= 8.5), Tktable (>= 2.9, optional)
 Description: This package is a processing program for spatially
   distributed data. It features graphing tools, query building, and

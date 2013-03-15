@@ -38,14 +38,12 @@ Returns a polygon object of \code{\link{gpc.poly-class}}.
 \author{J.C. Fisher}
 
 \seealso{
-\code{tri.mesh}
+\code{Autocrop}
 }
 
-\examples{
-\donttest{
-data(tritest)
+\examples{\donttest{
+data(tritest, package = "tripack")
 AutocropPolygon(as.data.frame(tritest), asp = 1)
-}
-}
+}}
 
 \keyword{misc}

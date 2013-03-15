@@ -38,11 +38,16 @@ Open an R session and install the required packages from CRAN:
 
 Install optional R packages
 [rgdal](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal")
-for shapefile support and
+for shapefile support, 
 [dichromat](http://cran.r-project.org/web/packages/dichromat/index.html "dichromat")
-for color-blind safe palettes:
+for color-blind safe palettes, and
+[tripack](http://cran.r-project.org/web/packages/tripack/index.html "tripack")
+for auto-cropping:
 
-    > install.packages(c('rgdal', 'dichromat'))
+    > install.packages(c('rgdal', 'dichromat', 'tripack'))
+
+Note that 'tripack' has a restricted licence which explicitly forbids 
+commercial use.
 
 Support for displaying table data is provided by
 [tktable](http://tktable.sourceforge.net/ "tktable"),
