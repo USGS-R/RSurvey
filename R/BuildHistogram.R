@@ -290,13 +290,13 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   # Frame 4
   
   frame4 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Graphical representation")
+                          text="Axis scaling")
   frame4.rbt.1.1 <- ttkradiobutton(frame4, variable=freq.var, value=TRUE, 
-                                  text="Frequences (counts component)",
-                                  command=PlotHist)
+                                   text="Frequences (counts component)", 
+                                   command=PlotHist)
   frame4.rbt.1.2 <- ttkradiobutton(frame4, variable=freq.var, value=FALSE, 
-                                  text="Density (total area of one)", 
-                                  command=PlotHist)
+                                   text="Density (total area of one)", 
+                                   command=PlotHist)
   tkgrid(frame4.rbt.1.1, frame4.rbt.1.2)
   tkgrid.configure(frame4.rbt.1.1, padx=c(0, 10))
   tkpack(frame4, fill="x", expand=TRUE, ipadx=0, ipady=0, padx=10, pady=5)

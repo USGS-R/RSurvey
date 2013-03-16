@@ -855,7 +855,7 @@ OpenRSurvey <- function() {
         command=SaveRDevice)
   tkadd(menu.file.save, "command", label="RGL graphic",
         command=SaveRGLDevice)
-  tkadd(menu.file, "cascade", label="Save plot from", menu=menu.file.save)
+  tkadd(menu.file, "cascade", label="Save graph from", menu=menu.file.save)
 
   tkadd(menu.file, "separator")
   tkadd(menu.file, "command", label="Exit",
@@ -918,20 +918,20 @@ OpenRSurvey <- function() {
 
   # Plot menu
 
-  menu.plot <- tkmenu(tt, tearoff=0)
-  tkadd(top.menu, "cascade", label="Plot", menu=menu.plot, underline=0)
+  menu.graph <- tkmenu(tt, tearoff=0)
+  tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
 
-  tkadd(menu.plot, "command", label="Configuration",
+  tkadd(menu.graph, "command", label="Configuration",
         command=function() {
           SetConfiguration(tt)
         })
 
-  tkadd(menu.plot, "command", label="Set axes limits",
+  tkadd(menu.graph, "command", label="Set axes limits",
         command=function() {
           lim <- SetAxesLimits(Data("lim.axes"), tt)
           Data("lim.axes", lim)
         })
-  tkadd(menu.plot, "command", label="Choose color palette",
+  tkadd(menu.graph, "command", label="Choose color palette",
         command=function() {
           pal <- colorspace::choose_palette(pal=Data("color.palette"), 
                                             n=Data("nlevels"), parent=tt)
@@ -939,8 +939,8 @@ OpenRSurvey <- function() {
             Data("color.palette", pal)
         })
 
-  tkadd(menu.plot, "separator")
-  tkadd(menu.plot, "command", label="Close all plots", accelerator="Ctrl+F4",
+  tkadd(menu.graph, "separator")
+  tkadd(menu.graph, "command", label="Close all plots", accelerator="Ctrl+F4",
         command=CloseDevices)
 
   # Help menu
@@ -1067,7 +1067,7 @@ OpenRSurvey <- function() {
   # Frame 2, plotting buttons
 
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Plot variables")
+                          text="Graph variables")
 
   frame2.but.1.1 <- ttkbutton(frame2, width=10, text="Scatter",
                               command=function() {

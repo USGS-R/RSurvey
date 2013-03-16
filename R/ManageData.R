@@ -482,10 +482,7 @@ ManageData <- function(cols, vars, parent=NULL) {
         command=SaveNewVar)
   tkadd(menu.edit, "command", label="Delete", command=DeleteVar)
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Histogram", 
-        command=function() CallBuildHistogram(FALSE))
-  tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="View data table", command=CallViewData)
+  tkadd(menu.edit, "command", label="View data", command=CallViewData)
 
   menu.arrange <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Arrange", menu=menu.arrange, underline=0)
@@ -497,7 +494,12 @@ ManageData <- function(cols, vars, parent=NULL) {
         accelerator="Ctrl+]", command=function() {Arrange("forward")})
   tkadd(menu.arrange, "command", label="Bring to bottom",
         accelerator="Shift+Ctrl+]", command=function() {Arrange("front")})
-
+  
+  menu.graph <- tkmenu(tt, tearoff=0)
+  tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
+  tkadd(menu.graph, "command", label="Histogram", 
+        command=function() CallBuildHistogram(FALSE))
+  
   tkconfigure(tt, menu=top.menu)
 
   # Frame 0, ok and cancel buttons, and size grip
