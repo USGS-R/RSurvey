@@ -95,7 +95,7 @@ SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
 
   frame1 <- ttkframe(tt, relief="flat")
   
-  frame1.lab.1.1 <- tklabel(frame1, text="Variable to sort on:")
+  frame1.lab.1.1 <- tklabel(frame1, text="Variable to sort on")
   
   vals <- c("", col.ids)
   if (length(vals) == 1)

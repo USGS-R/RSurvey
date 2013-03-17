@@ -183,15 +183,15 @@ OpenRSurvey <- function() {
     vars <- list()
 
     if (idx.x > 0)
-      vars$x <- idxs.n[idx.x]
+      vars$x[1] <- idxs.n[idx.x]
     if (idx.y > 0)
-      vars$y <- idxs.n[idx.y]
+      vars$y[1] <- idxs.n[idx.y]
     if (idx.z > 0)
-      vars$z <- idxs.n[idx.z]
+      vars$z[1] <- idxs.n[idx.z]
     if (idx.vx > 0)
-      vars$vx <- idxs.n[idx.vx]
+      vars$vx[1] <- idxs.n[idx.vx]
     if (idx.vy > 0)
-      vars$vy <- idxs.n[idx.vy]
+      vars$vy[1] <- idxs.n[idx.vy]
 
     if (!identical(vars, Data("vars"))) {
       Data("vars", vars)
@@ -881,13 +881,13 @@ OpenRSurvey <- function() {
   tkadd(menu.edit, "command", label="Set sort order",
         command=function() {
           col.ids <- sapply(Data("cols"), function(i) i$id)
-          sort.on <- Data("sort.on")
+          sort.on <- Data(c("vars", "sort.on"))
           sort.on <- SetSortOrder(col.ids, sort.on, parent=tt)
-          Data("sort.on", sort.on)
+          Data(c("vars", "sort.on"), sort.on)
         })
   tkadd(menu.edit, "command", label="Clear sort order",
         command=function() {
-          Data("sort.on", NULL)
+          Data(c("vars", "sort.on"), NULL)
         })
 
   tkadd(menu.edit, "separator")

@@ -263,7 +263,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     vars <<- vars[!vars %in% idx]
     for (i in seq(along=vars)) {
       if (vars[[i]] > idx)
-        vars[[i]] <<- vars[[i]] - 1
+        vars[[i]][1] <<- vars[[i]] - 1
     }
 
     tkselection.clear(frame1.lst, 0, "end")
@@ -370,8 +370,11 @@ ManageData <- function(cols, vars, parent=NULL) {
     }
 
     cols <<- cols[new.idxs]
-    vars <<- lapply(vars, function(i) idxs[new.idxs %in% i[1]])
-
+    
+    for (i in seq(along=vars)) {
+      vars[[i]][1] <<- idxs[new.idxs %in% vars[[i]][1]]
+    }
+    
     ids <- sapply(cols, function(i) i$id)
 
     for (i in 1:n)
