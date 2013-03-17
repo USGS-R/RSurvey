@@ -876,7 +876,20 @@ OpenRSurvey <- function() {
         command=BuildQuery)
   tkadd(menu.edit, "command", label="Clear query",
         command=ClearQuery)
-  
+
+  tkadd(menu.edit, "separator")
+  tkadd(menu.edit, "command", label="Set sort order",
+        command=function() {
+          col.ids <- sapply(Data("cols"), function(i) i$id)
+          sort.on <- Data("sort.on")
+          sort.on <- SetSortOrder(col.ids, sort.on, parent=tt)
+          Data("sort.on", sort.on)
+        })
+  tkadd(menu.edit, "command", label="Clear sort order",
+        command=function() {
+          Data("sort.on", NULL)
+        })
+
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Preferences",
         command=function() {
