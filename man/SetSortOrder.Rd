@@ -30,6 +30,10 @@ they are removed.
 
 \author{J.C. Fisher}
 
+\seealso{
+\code{\link{order}}
+}
+
 \examples{\donttest{
 col.ids <- c("Variable1", "Variable2", "Variable3")
 sort.on <- 2

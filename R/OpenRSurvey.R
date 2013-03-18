@@ -638,9 +638,9 @@ OpenRSurvey <- function() {
     vars <- Data("vars")
     cols <- Data("cols")
 
-    state.vars <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate",
-                       vx="x-vector", vy="y-vector")
-    state.vars <- state.vars[names(state.vars) %in% names(vars)]
+    lst <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate",
+                vx="x-vector", vy="y-vector")
+    state.vars <- lst[names(lst) %in% names(vars)]
     state.idxs <- sapply(names(state.vars), function(i) vars[[i]])
     
     d <- Data("data.pts")[, names(state.vars)]
@@ -940,6 +940,16 @@ OpenRSurvey <- function() {
   menu.graph <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
   
+  tkadd(menu.graph, "command", label="Histogram", 
+        command=function() {
+          CallProcessData()
+          d <- Data("data.pts")
+          d <- d[, names(d) != "sort.on"]
+          lst <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate", 
+                      vx="x-vector", vy="y-vector")
+          var.names <- vapply(names(d), function(i) lst[[i]], "")
+          BuildHistogram(d, var.names=var.names, parent=tt)
+        })
   tkadd(menu.graph, "command", label="Scatterplot",
         command=function() {
           CallPlot2d(type="p")
@@ -953,15 +963,22 @@ OpenRSurvey <- function() {
         command=CallPlot3d)
   
   tkadd(menu.graph, "separator")
-  tkadd(menu.graph, "command", label="Configuration",
-        command=function() {
-          SetConfiguration(tt)
-        })
   tkadd(menu.graph, "command", label="Set axes limits",
         command=function() {
           lim <- SetAxesLimits(Data("lim.axes"), tt)
           Data("lim.axes", lim)
         })
+  tkadd(menu.graph, "command", label="Clear axes limits",
+        command=function() {
+          Data("lim.axes", NULL)
+        })
+  
+  tkadd(menu.graph, "separator")
+  tkadd(menu.graph, "command", label="Configuration",
+        command=function() {
+          SetConfiguration(tt)
+        })
+
   tkadd(menu.graph, "command", label="Choose color palette",
         command=function() {
           pal <- colorspace::choose_palette(pal=Data("color.palette"), 
