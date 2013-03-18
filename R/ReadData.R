@@ -5,22 +5,18 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
   # data frame from it.
 
   # Clear previous data
-
   Data(clear.data=TRUE)
+  
+  # Connection
+  if (!inherits(con, "connection")) {
+    con <- file(description=con, open="r", encoding=encoding)
+    on.exit(close(con))
+  }
 
   # Track computational time
-
   elapsed.time <- system.time({
 
-    # Connection
-
-    if (!inherits(con, "connection")) {
-      con <- file(description=con, open="r", encoding=encoding)
-      on.exit(close(con))
-    }
-
     # Establish arguments to pass to read.table
-
     args <- list(file=con, header=FALSE, sep=sep, quote=quote, row.names=NULL,
                  na.strings=na.strings, check.names=TRUE, fill=TRUE,
                  strip.white=TRUE, blank.lines.skip=TRUE,
@@ -30,14 +26,13 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
     # Load headers
 
     col.classes <- "character"
-
     nheaders <- sum(headers)
     if (nheaders > 0L) {
       h <- try(do.call(read.table, c(args, skip=skip, nrows=nheaders,
                                      colClasses=col.classes)), silent=TRUE)
       if (inherits(h, "try-error"))
         return(h)
-
+      
       i <- 1L
       if (headers[i]) {
         nams <- as.character(h[i, ])
@@ -52,7 +47,6 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
         fmts <- as.character(h[i, ])
 
         # Use formats to determine column classes
-
         n <- ncol(h)
         col.classes <- rep("character", n)
         for (i in 1:n) {
@@ -81,14 +75,12 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
     }
 
     # Load data
-
     d <- try(do.call(read.table, c(args, skip=skip, nrows=nrows,
                                    list(colClasses=col.classes))), silent=TRUE)
     if (inherits(d, "try-error"))
       return(d)
-
+    
     # Initialize missing headers
-
     n <- ncol(d)
     if (!headers[1])
       nams <- rep("Unknown", n)
@@ -98,24 +90,20 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
       fmts <- rep(NA, n)
 
     # Reset row names
-
     rownames(d) <- 1:nrow(d)
 
     # Initialize variables
-
     cols <- list()
     vars <- list()
     ids <- NULL
 
     # Establish column types
-
     for (idx in 1:n) {
       val <- d[, idx]
       unt <- if (is.na(unts[idx])) NULL else unts[idx]
       fmt <- if (is.na(fmts[idx])) NULL else fmts[idx]
 
       # Try to determine class of character variables
-
       if (inherits(val, "character")) {
         is.date <- FALSE
         if (!is.null(fmt) && !all(is.na(val))) {
@@ -129,7 +117,6 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
       }
 
       # Determine default x-, y-, z-axis variables
-
       if (inherits(val, c("numeric", "integer"))) {
         val[!is.finite(val)] <- NA
         if (is.null(vars$x)) {
@@ -170,13 +157,12 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
     }
 
     # Store data
-
     Data("data.raw", d)
     Data("cols", cols)
     Data("vars", vars)
   })
 
-  msg <- paste("\nTime required to import data:",
+  ans <- paste("\nTime required to import data:",
                format(elapsed.time['elapsed']), "seconds\n", "\n")
-  msg
+  invisible(ans)
 }

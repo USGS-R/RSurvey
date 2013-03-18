@@ -35,8 +35,9 @@ see \code{\link{ReadData}}.
 \note{
 Requires the Tcl package
 \href{http://tktable.sourceforge.net/}{Tktable}.
-If Tktable is not available the \code{\link{ReadData}} function is called
-directly using default argument values.
+If Tktable is unavailable, an open-file dialog box is activated,  
+followed by a call to the \code{\link{ReadData}} function using default 
+argument values.
 }
 
 \seealso{
