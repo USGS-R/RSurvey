@@ -104,27 +104,31 @@ SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
                                 textvariable=col.id.var, values=vals)
   tcl(frame1.box.1.2, "current", idx)
   
-  frame1.rad.2.2 <- ttkradiobutton(frame1, variable=decreasing.var, value=FALSE,
-                                   text="Increasing", width=10)
-  frame1.rad.2.3 <- ttkradiobutton(frame1, variable=decreasing.var, value=TRUE,
-                                   text="Decreasing", width=10)
+  frame1.lab.2.2 <- ttklabel(frame1, text="Order")
+  frame1.rad.2.3 <- ttkradiobutton(frame1, variable=decreasing.var, value=FALSE,
+                                   text="increasing", width=10)
+  frame1.rad.3.3 <- ttkradiobutton(frame1, variable=decreasing.var, value=TRUE,
+                                   text="decreasing", width=10)
   
-  frame1.lab.2.4 <- ttklabel(frame1, text="NAs:")
+  frame1.lab.2.4 <- ttklabel(frame1, text="NAs")
   frame1.rad.2.5 <- ttkradiobutton(frame1, variable=na.last.var, value=1,
-                                   text="last", width=4)
-  frame1.rad.2.6 <- ttkradiobutton(frame1, variable=na.last.var, value=0,
-                                   text="first", width=4)
-  frame1.rad.2.7 <- ttkradiobutton(frame1, variable=na.last.var, value=2,
+                                   text="last")
+  frame1.rad.3.5 <- ttkradiobutton(frame1, variable=na.last.var, value=0,
+                                   text="first")
+  frame1.rad.4.5 <- ttkradiobutton(frame1, variable=na.last.var, value=2,
                                    text="remove")
   
-  tkgrid(frame1.lab.1.1, frame1.box.1.2, pady=c(10,0)) 
-  tkgrid("x", frame1.rad.2.2, frame1.rad.2.3, frame1.lab.2.4, 
-         frame1.rad.2.5, frame1.rad.2.6, frame1.rad.2.7, "x")
+  tkgrid(frame1.lab.1.1, frame1.box.1.2, pady=c(10, 0)) 
+  tkgrid("x", frame1.lab.2.2, frame1.rad.2.3, frame1.lab.2.4, frame1.rad.2.5, "x")
+  tkgrid("x", "x", frame1.rad.3.3, "x", frame1.rad.3.5, "x")
+  tkgrid("x", "x", "x", "x", frame1.rad.4.5, "x")
   
-  tkgrid.configure(frame1.box.1.2, sticky="ew", columnspan=7)
+  tkgrid.configure(frame1.box.1.2, sticky="ew", columnspan=6)
+  tkgrid.configure(frame1.lab.2.2, padx=c(0, 4))
   tkgrid.configure(frame1.lab.2.4, padx=c(20, 4))
+  tkgrid.configure(frame1.rad.2.5, frame1.rad.3.5, frame1.rad.4.5, sticky="w")
   
-  tkgrid.columnconfigure(frame1, 7, weight=1, minsize=0)
+  tkgrid.columnconfigure(frame1, 6, weight=1, minsize=0)
   
   tkpack(frame1, fill="x", padx=10)
 
