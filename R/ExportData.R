@@ -21,19 +21,8 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
       if (sep == "other")
         sep <- as.character(tclvalue(sep.other.var))
       is.compressed <- as.logical(as.integer(tclvalue(compress.var)))
-      
-      sort.on <- as.character(tclvalue(sort.on.var))
-      if (sort.on == "")
-        sort.on <- NULL
-      decreasing <- as.logical(as.integer(tclvalue(decreasing.var)))
-      na.last <- as.integer(tclvalue(na.last.var))
-      if (na.last %in% 0:1)
-        na.last <- as.logical(na.last)
-      else
-        na.last <- NA
-      
       WriteFile(file.type, file.name, col.ids, is.processed, headers, sep,
-                sort.on, na.last, decreasing, is.compressed)
+                is.compressed)
     } else {
       WriteFile(file.type, file.name, col.ids)
     }
@@ -280,71 +269,34 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     tcl("grid", "anchor", frame3, "center")
 
     tkpack(frame3, fill="x", padx=10, pady=c(0, 10))
-    
-    # Frame 4, sort on variable
-    
-    frame4 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                            text="Sort on variable")
-    vals <- c("", col.ids)
-    if (length(vals) == 1)
-      vals <- paste("{", vals, "}", sep="")
-    frame4.box.1.1 <- ttkcombobox(frame4, state="readonly",
-                                  textvariable=sort.on.var, values=vals)
-    
-    frame4.rad.2.1 <- ttkradiobutton(frame4, variable=decreasing.var, value=FALSE,
-                                     text="Increasing", width=10)
-    frame4.rad.2.2 <- ttkradiobutton(frame4, variable=decreasing.var, value=TRUE,
-                                     text="Decreasing", width=10)
-    
-    frame4.lab.2.3 <- ttklabel(frame4, text="NA values:")
-    frame4.rad.2.4 <- ttkradiobutton(frame4, variable=na.last.var, value=0,
-                                     text="first")
-    frame4.rad.2.5 <- ttkradiobutton(frame4, variable=na.last.var, value=1,
-                                     text="last")
-    frame4.rad.2.6 <- ttkradiobutton(frame4, variable=na.last.var, value=2,
-                                     text="remove")
-    
-    tkgrid(frame4.box.1.1) 
-    tkgrid(frame4.rad.2.1, frame4.rad.2.2, frame4.lab.2.3, frame4.rad.2.4, 
-           frame4.rad.2.5, frame4.rad.2.6, "x")
-    
-    tkgrid.configure(frame4.box.1.1, sticky="ew", columnspan=7)
-    tkgrid.configure(frame4.lab.2.3, padx=c(20, 4))
-    
-    tkgrid.columnconfigure(frame4, 6, weight=1, minsize=15)
-    
-    tkpack(frame4, fill="x", padx=10, pady=c(0, 10))
   }
 
-  # Frame 5, output file and compression
+  # Frame 4, output file and compression
 
-  frame5 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
+  frame4 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Specify output file")
-  frame5.ent.1.1 <- ttkentry(frame5, width=12, textvariable=file.var)
-  frame5.but.1.3 <- ttkbutton(frame5, width=8, text="Browse",
+  frame4.ent.1.1 <- ttkentry(frame4, width=12, textvariable=file.var)
+  frame4.but.1.3 <- ttkbutton(frame4, width=8, text="Browse",
                               command=GetDataFile)
 
   txt <- "Compress file using gzip; extension 'gz' added to file name"
-  frame5.chk.2.2 <- ttkcheckbutton(frame5, variable=compress.var, text=txt,
+  frame4.chk.2.2 <- ttkcheckbutton(frame4, variable=compress.var, text=txt,
                                    command=ToggleExtension)
 
-  tkgrid(frame5.ent.1.1, frame5.but.1.3)
+  tkgrid(frame4.ent.1.1, frame4.but.1.3)
   if (file.type == "text")
-    tkgrid(frame5.chk.2.2, "x", pady=c(4, 0), sticky="w")
+    tkgrid(frame4.chk.2.2, "x", pady=c(4, 0), sticky="w")
 
-  tkgrid.configure(frame5.ent.1.1, sticky="we", padx=c(0, 2))
-  tkgrid.columnconfigure(frame5, 0, weight=1)
-  tkpack(frame5, fill="x", padx=10, pady=c(0, 15))
+  tkgrid.configure(frame4.ent.1.1, sticky="we", padx=c(0, 2))
+  tkgrid.columnconfigure(frame4, 0, weight=1)
+  tkpack(frame4, fill="x", padx=10, pady=c(0, 15))
 
   # Bind events
 
   tclServiceMode(TRUE)
-
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
-
   tkbind(frame1.lst.1.1, "<<ListboxSelect>>", ToggleExport)
-
-  tkbind(frame5.ent.1.1, "<KeyRelease>", ToggleExport)
+  tkbind(frame4.ent.1.1, "<KeyRelease>", ToggleExport)
 
   # GUI control
 

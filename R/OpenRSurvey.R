@@ -868,8 +868,6 @@ OpenRSurvey <- function() {
 
   tkadd(menu.edit, "command", label="Manage data",
         command=CallManageData)
-  tkadd(menu.edit, "command", label="View data",
-        command=CallViewData)
   
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Edit query",
@@ -881,9 +879,13 @@ OpenRSurvey <- function() {
   tkadd(menu.edit, "command", label="Set sort order",
         command=function() {
           col.ids <- sapply(Data("cols"), function(i) i$id)
-          sort.on <- Data(c("vars", "sort.on"))
-          sort.on <- SetSortOrder(col.ids, sort.on, parent=tt)
-          Data(c("vars", "sort.on"), sort.on)
+          sort.on.old <- Data(c("vars", "sort.on"))
+          sort.on.new <- SetSortOrder(col.ids, sort.on.old, parent=tt)
+          if (!identical(sort.on.old, sort.on.new)) {
+            Data(c("vars", "sort.on"), sort.on.new)
+            Data("data.pts", NULL)
+            Data("data.grd", NULL)
+          }
         })
   tkadd(menu.edit, "command", label="Clear sort order",
         command=function() {
@@ -895,6 +897,10 @@ OpenRSurvey <- function() {
         command=function() {
           SetPreferences(tt)
         })
+  
+  tkadd(menu.edit, "separator")
+  tkadd(menu.edit, "command", label="View processed data",
+        command=CallViewData)
 
   # Polygon menu
 
@@ -929,16 +935,28 @@ OpenRSurvey <- function() {
   tkadd(menu.poly, "command", label="Autocrop region",
         command=CallAutocropPolygon)
 
-  # Plot menu
+  # Graph menu
 
   menu.graph <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
-
+  
+  tkadd(menu.graph, "command", label="Scatterplot",
+        command=function() {
+          CallPlot2d(type="p")
+        })
+  tkadd(menu.graph, "command", label="2D interpolated map",
+        command=function() {
+          type <- if (Data("img.contour")) "g" else "l"
+          CallPlot2d(type=type)
+        })
+  tkadd(menu.graph, "command", label="3D interpolated map",
+        command=CallPlot3d)
+  
+  tkadd(menu.graph, "separator")
   tkadd(menu.graph, "command", label="Configuration",
         command=function() {
           SetConfiguration(tt)
         })
-
   tkadd(menu.graph, "command", label="Set axes limits",
         command=function() {
           lim <- SetAxesLimits(Data("lim.axes"), tt)
@@ -1086,12 +1104,12 @@ OpenRSurvey <- function() {
                               command=function() {
                                 CallPlot2d(type="p")
                               })
-  frame2.but.1.2 <- ttkbutton(frame2, width=10, text="2D Surface",
+  frame2.but.1.2 <- ttkbutton(frame2, width=10, text="2D Map",
                               command=function() {
                                 type <- if (Data("img.contour")) "g" else "l"
                                 CallPlot2d(type=type)
                               })
-  frame2.but.1.3 <- ttkbutton(frame2, width=10, text="3D Surface",
+  frame2.but.1.3 <- ttkbutton(frame2, width=10, text="3D Map",
                               command=CallPlot3d)
 
   tkgrid(frame2.but.1.1, frame2.but.1.2, frame2.but.1.3, pady=c(0, 4))

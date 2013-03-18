@@ -19,7 +19,13 @@ SetSortOrder(col.ids, sort.on = NULL, parent = NULL)
 }
 
 \value{
-Returns an updated \code{sort.on} object.
+Returns an integer object that specifies the index of the variable used 
+to sort the data set. Attributes for this object include: 
+\code{decreasing}, a logical value indicating if the sort order is increasing 
+or decreasing; and \code{na.last}, a logical value for controlling the 
+treatment of \code{NA}s during sorting. If \code{TRUE}, missing values in the 
+data are put last; if \code{FALSE}, they are put first; if \code{NA}, 
+they are removed.
 }
 
 \author{J.C. Fisher}

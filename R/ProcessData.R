@@ -13,21 +13,25 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
       d <- d[coerce.rows, ]
     }
 
-    # Check for missing variables
+    # Sort data based on variable values
+    sort.on <- Data(c("vars", "sort.on"))
+    if (!is.null(sort.on)) {
+      decreasing <- attr(sort.on, "decreasing")
+      na.last <- attr(sort.on, "na.last")
+      o <- order(d[, "sort.on"], na.last=na.last, decreasing=decreasing)
+      d <- d[o, names(d) != "sort.on"]
+    }
 
+    # Remove missing coordinate values
     var.names <- names(d)
     is.x <- "x" %in% var.names
     is.y <- "y" %in% var.names
-
-    # Remove records with NA's for spatial data
-
     if (is.x)
       d <- d[!is.na(d[, "x"]), ]
     if (is.y)
       d <- d[!is.na(d[, "y"]), ]
 
     # Incorporate polygon spatial domain
-
     is.ply <- !is.null(ply) && inherits(ply, "gpc.poly")
     if (is.ply && is.x && is.y) {
       all.pts <- get.pts(ply)
@@ -52,17 +56,14 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
       return()
 
     # Store and simplify unprocessed data
-
     x <- d$x
     y <- d$y
     z <- d$z
-
     vx <- d$vx
     vy <- d$vy
     vz <- d$vz
 
     # Define interpolation grid
-
     if (is.null(ply)) {
       xlim <- range(x, na.rm=TRUE)
       ylim <- range(y, na.rm=TRUE)
@@ -71,13 +72,11 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
       xlim <- bb$x
       ylim <- bb$y
     }
-
     xnum <- ynum <- 100
     if (!is.na(grid.res$x))
       xnum <- as.integer(diff(xlim) / grid.res$x) + 1
     if (!is.na(grid.res$y))
       ynum <- as.integer(diff(ylim) / grid.res$y) + 1
-
     if (xnum < 1 | ynum < 1)
       stop("Grid resolution equal to zero")
 
@@ -134,7 +133,6 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
       d$vz <- GetSurface(x, y, vz, pts, n, m)$z
 
       # Calculate volumetric flux
-
       GetArcLength <- function(x) {
         diff(c(x[1], x[-1] - (diff(x) / 2), x[length(x)]))
       }

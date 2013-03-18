@@ -1,7 +1,6 @@
 WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
                       is.processed=TRUE, headers=c(FALSE, FALSE, FALSE), 
-                      sep="\t", sort.on=NULL, na.last=TRUE, 
-                      decreasing=FALSE, is.compressed=FALSE, 
+                      sep="\t", is.compressed=FALSE, 
                       encoding=getOption("encoding")) {
   # Exports post-processed data to a file.
 
@@ -98,15 +97,6 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
       row.idxs <- as.integer(row.names(Data("data.pts")))
     else
       row.idxs <- as.integer(row.names(Data("data.raw")))
-
-
-    if (!is.null(sort.on)) {
-      idx <- which(all.col.ids == sort.on)
-      vals <- EvalFunction(cols[[idx]]$fun, cols)[row.idxs]
-      ord <- order(vals, na.last=na.last, decreasing=decreasing)
-      row.idxs <- row.idxs[ord]
-    }
-
 
     n <- length(col.idxs)
     m <- length(row.idxs)

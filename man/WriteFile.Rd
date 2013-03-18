@@ -11,8 +11,7 @@ Writes data to a file.
 \usage{
 WriteFile(file.type = "text", file.name = NULL, col.ids = NULL,
           is.processed = TRUE, headers = c(FALSE, FALSE, FALSE), 
-          sep = "\t", sort.on = NULL, na.last = TRUE, decreasing = FALSE,
-          is.compressed = FALSE, encoding = getOption("encoding"))
+          sep = "\t", is.compressed = FALSE, encoding = getOption("encoding"))
 }
 
 \arguments{
@@ -30,12 +29,6 @@ WriteFile(file.type = "text", file.name = NULL, col.ids = NULL,
 \item{headers}{logical; a vector of length 3 that indicates whether the
   data table contains header lines.}
 \item{sep}{character; the field separator string.}
-\item{sort.on}{character; a string identifying the variable used to sort 
-  the data table.}
-\item{na.last}{logical; for controlling the treatment of \code{NA}s during 
-  sorting. If \code{TRUE}, missing values in the data are put last; 
-  if \code{FALSE}, they are put first; if \code{NA}, they are removed.}
-\item{decreasing}{logical; should the sort order be increasing or decreasing?}
 \item{is.compressed}{logical; if \code{TRUE}, the file will be compressed by
   \href{http://www.gzip.org/}{gzip}; its default is \code{FALSE}.}
 \item{encoding}{character; encoding to be assumed for input strings. If the
