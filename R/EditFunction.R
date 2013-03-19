@@ -18,6 +18,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       tcl("lappend", variable.var, show.ids[i])
 
     tkselection.clear(frame1.lst.2.1, 0, "end")
+    tkconfigure(frame1.but.5.1, state="disabled")
     tkfocus(frame2.txt.2.1)
   }
 
