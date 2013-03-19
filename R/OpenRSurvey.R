@@ -840,7 +840,7 @@ OpenRSurvey <- function() {
   menu.file.import <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.import, "command", label="Text file",
         command=CallImportData)
-  tkadd(menu.file.import, "command", label="R object",
+  tkadd(menu.file.import, "command", label="R data frame",
         command=function() print("notyet"))
   tkadd(menu.file, "cascade", label="Import data from", menu=menu.file.import)
   
@@ -851,9 +851,6 @@ OpenRSurvey <- function() {
         command=function() CallExportData("shape"))
   tkadd(menu.file, "cascade", label="Export point data as", 
         menu=menu.file.export)
-  
-  tkadd(menu.file.export, "command", label="R object",
-        command=function() print("notyet"))
   tkadd(menu.file, "command", label="Export grid data as",
         command=function() CallExportData("grid"))
 

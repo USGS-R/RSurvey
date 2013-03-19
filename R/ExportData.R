@@ -13,7 +13,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
     tkconfigure(tt, cursor="watch")
     if (file.type == "text") {
-      is.processed <- as.character(tclvalue(records.var)) == "processed"
+      is.processed <- as.logical(as.integer(tclvalue(records.var)))
       headers <- c(as.logical(as.integer(tclvalue(head.names.var))),
                    as.logical(as.integer(tclvalue(head.units.var))),
                    as.logical(as.integer(tclvalue(head.fmts.var))))
@@ -120,7 +120,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   # Assign variables linked to Tk widgets
 
   variables.var    <- tclVar()
-  records.var      <- tclVar("raw")
+  records.var      <- tclVar(0)
   head.names.var   <- tclVar(0)
   head.units.var   <- tclVar(0)
   head.fmts.var    <- tclVar(0)
@@ -184,29 +184,25 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
                               relief="flat", borderwidth=5, width=50, height=4,
                               exportselection=FALSE, listvariable=variables.var,
                               highlightthickness=0)
-  frame1.ysc.1.7 <- ttkscrollbar(frame1, orient="vertical")
+  frame1.ysc.1.6 <- ttkscrollbar(frame1, orient="vertical")
   tkconfigure(frame1.lst.1.1, background="white",
-              yscrollcommand=paste(.Tk.ID(frame1.ysc.1.7), "set"))
-  tkconfigure(frame1.ysc.1.7, command=paste(.Tk.ID(frame1.lst.1.1), "yview"))
+              yscrollcommand=paste(.Tk.ID(frame1.ysc.1.6), "set"))
+  tkconfigure(frame1.ysc.1.6, command=paste(.Tk.ID(frame1.lst.1.1), "yview"))
 
   frame1.but.2.1 <- ttkbutton(frame1, width=12, text="Select All",
                               command=function() SelectVariables("all"))
   frame1.but.2.2 <- ttkbutton(frame1, width=12, text="Select None",
                               command=function() SelectVariables("none"))
-  frame1.lab.2.4 <- ttklabel(frame1, text="Records:")
-  frame1.rad.2.5 <- ttkradiobutton(frame1, variable=records.var,
-                                   value="raw", text="raw")
-  frame1.rad.2.6 <- ttkradiobutton(frame1, variable=records.var,
-                                   value="processed", text="processed")
+  frame1.chk.2.4 <- ttkcheckbutton(frame1, variable=records.var,
+                                   text="Processed records only")
 
-  tkgrid(frame1.lst.1.1, "x", "x", "x", "x", "x", frame1.ysc.1.7)
-  tkgrid(frame1.but.2.1, frame1.but.2.2, "x", frame1.lab.2.4,
-         frame1.rad.2.5, frame1.rad.2.6, "x", pady=c(4, 0))
+  tkgrid(frame1.lst.1.1, "x", "x", "x", "x", frame1.ysc.1.6)
+  tkgrid(frame1.but.2.1, frame1.but.2.2, "x", frame1.chk.2.4, "x", pady=c(4, 0))
 
-  tkgrid.configure(frame1.lst.1.1, sticky="nsew", columnspan=6)
-  tkgrid.configure(frame1.ysc.1.7, sticky="ns")
+  tkgrid.configure(frame1.lst.1.1, sticky="nsew", columnspan=5)
+  tkgrid.configure(frame1.ysc.1.6, sticky="ns")
   tkgrid.configure(frame1.but.2.1, padx=c(0, 4))
-  tkgrid.configure(frame1.rad.2.5, frame1.rad.2.6, padx=c(6, 0))
+  tkgrid.configure(frame1.chk.2.4, padx=c(6, 0))
 
   tkgrid.columnconfigure(frame1, 2, weight=1, minsize=15)
   tkgrid.rowconfigure(frame1, 0, weight=1)
