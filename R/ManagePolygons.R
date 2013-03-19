@@ -498,7 +498,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   tkgrid.configure(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4,
                    frame0.but.5, sticky="n", padx=c(0, 2), pady=c(4, 0))
   tkgrid.configure(frame0.but.1, padx=c(10, 2))
-  tkgrid.configure(frame0.but.5, padx=c(5, 0))
+  tkgrid.configure(frame0.but.5, padx=c(15, 0))
   tkgrid.configure(frame0.but.7, frame0.but.8, frame0.but.9,
                    padx=c(0, 4), pady=c(15, 10))
   tkgrid.configure(frame0.but.9, columnspan=2, padx=c(0, 10))
@@ -517,7 +517,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   frame1 <- ttkframe(pw, relief="flat")
 
   frame1.lst <- tklistbox(frame1, selectmode="extended", activestyle="none",
-                          relief="flat", borderwidth=5, width=20,
+                          relief="flat", borderwidth=5, width=25,
                           exportselection=FALSE, listvariable=list.var,
                           highlightthickness=0)
   frame1.ysc <- ttkscrollbar(frame1, orient="vertical")

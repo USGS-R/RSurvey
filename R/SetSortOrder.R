@@ -104,13 +104,13 @@ SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
                                 textvariable=col.id.var, values=vals)
   tcl(frame1.box.1.2, "current", idx)
   
-  frame1.lab.2.2 <- ttklabel(frame1, text="Order")
+  frame1.lab.2.2 <- ttklabel(frame1, text="Order:")
   frame1.rad.2.3 <- ttkradiobutton(frame1, variable=decreasing.var, value=FALSE,
                                    text="increasing", width=10)
   frame1.rad.3.3 <- ttkradiobutton(frame1, variable=decreasing.var, value=TRUE,
                                    text="decreasing", width=10)
   
-  frame1.lab.2.4 <- ttklabel(frame1, text="NAs")
+  frame1.lab.2.4 <- ttklabel(frame1, text="NAs:")
   frame1.rad.2.5 <- ttkradiobutton(frame1, variable=na.last.var, value=1,
                                    text="last")
   frame1.rad.3.5 <- ttkradiobutton(frame1, variable=na.last.var, value=0,
