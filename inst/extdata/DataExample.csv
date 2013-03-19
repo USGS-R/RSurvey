@@ -1,5 +1,4 @@
-T POSIXct,X Numeric,Y Numeric,Z Numeric,Z Numeric,Z Numeric,,Logical,Integer,,,Date Character,Time Character,Character
-,meters,meters,feet,feet,meters,,,psia,,psi
+T POSIXct,X numeric m,Y numeric m,Z numeric ft,Z numeric ft,Z numeric m,,Logical,Integer psia,,Logical,Date character,Time character,Character
 %m/%d/%Y %H:%M:%OS,%5.1f,%5.1f,%.3f,%.2f,,%.2e,,%d,,,,,%s
 04/24/2009 10:43:38.275,7.8,-2.3,-0.870,998.28,-0.265,-2.62E-01,TRUE,1,,,8/20/2008,11:55:00 AM,
 04/24/2009 11:20:43.757,5.0,-4.7,-1.243,998.12,-0.379,-3.70E-01,TRUE,14,,,8/20/2008,11:55:00 AM,A1
@@ -52,4 +51,3 @@ T POSIXct,X Numeric,Y Numeric,Z Numeric,Z Numeric,Z Numeric,,Logical,Integer,,,D
 04/25/2009 11:41:31.422,5.8,-6.6,0.233,998.76,0.071,7.09E-02,TRUE,4,,,8/20/2008,12:03:57 PM,
 04/25/2009 12:25:57.345,1.5,-5.0,-2.979,997.38,-0.908,-7.88E-01,FALSE,3,,,8/20/2008,12:03:57 PM,
 04/25/2009 12:47:29.430,-6.4,-7.3,-2.336,997.66,-0.712,-6.53E-01,TRUE,-13,,,8/20/2008,1:00:01 PM,
-

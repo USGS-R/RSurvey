@@ -15,9 +15,8 @@ or binary project images: *.rda*. Tables, *.txt*, *.csv*, *.dat*,
 can be compressed by [gzip](http://www.gzip.org/ "gzip")
 with additional extension *.gz*.
 Shapefles, *.shp*, and interpolated grid files, *.grd*, are limited to data
-export. Support for programmatic manipulation of measurement units is only
-provided for date-time values; therefore, the bulk of unit consistency is tasked
-to the user. Time zones, spatial datum's and projections are not supported.
+export. Measurement unit consistency is tasked to the user. 
+Time zones, spatial datum's and projections are not supported.
 
 The set of standards used for coding RSurvey is documented in
 [Google's R Style Guide](http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html "Google's R Style Guide").

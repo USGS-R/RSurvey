@@ -1,4 +1,4 @@
-ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
+ReadData <- function(con, headers=c(FALSE, FALSE), sep="\t",
                      quote="\"'", nrows=-1, na.strings=c("", "NA"), skip=0,
                      comment.char="#", encoding=getOption("encoding")) {
   # Reads table formatted data from a connection and creates a
@@ -34,16 +34,12 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
         return(h)
       
       i <- 1L
-      if (headers[i]) {
+      if (headers[1]) {
         nams <- as.character(h[i, ])
         nams[is.na(nams)] <- "Unknown"
         i <- i + 1L
       }
       if (headers[2]) {
-        unts <- as.character(h[i, ])
-        i <- i + 1L
-      }
-      if (headers[3]) {
         fmts <- as.character(h[i, ])
 
         # Use formats to determine column classes
@@ -85,8 +81,6 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
     if (!headers[1])
       nams <- rep("Unknown", n)
     if (!headers[2])
-      unts <- rep(NA, n)
-    if (!headers[3])
       fmts <- rep(NA, n)
 
     # Reset row names
@@ -100,7 +94,6 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
     # Establish column types
     for (idx in 1:n) {
       val <- d[, idx]
-      unt <- if (is.na(unts[idx])) NULL else unts[idx]
       fmt <- if (is.na(fmts[idx])) NULL else fmts[idx]
 
       # Try to determine class of character variables
@@ -131,7 +124,7 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
       # Additional attributes
 
       nam <- nams[idx]
-      id <- paste(c(nam, unt), collapse=", ")
+      id <- nam
 
       i <- 1L
       hold.id <- id
@@ -145,7 +138,6 @@ ReadData <- function(con, headers=c(FALSE, FALSE, FALSE), sep="\t",
 
       cols[[idx]]$id      <- id
       cols[[idx]]$name    <- nam
-      cols[[idx]]$unit    <- unt
       cols[[idx]]$format  <- fmt
       cols[[idx]]$class   <- class(val)[1]
       cols[[idx]]$index   <- idx

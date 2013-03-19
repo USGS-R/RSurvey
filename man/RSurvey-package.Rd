@@ -23,10 +23,8 @@ grids (\file{.grd}), polygons (\file{.ply}), or binary project images
 (\file{.rda}).Tables (\file{.txt}, \file{.csv}, \file{.dat})
 can be compressed by \href{http://www.gzip.org/}{gzip}
 with additional extension \file{.gz}. Shapefiles (\file{.shp}) and interpolated
-grid files (\file{.grd}) are limited to data export. Support for programmatic
-manipulation of measurement units is only provided for date and time values;
-therefore, the bulk of unit consistency is tasked to the user.
-Time zones, spatial datum's and projections are not supported.
+grid files (\file{.grd}) are limited to data export. Measurement unit consistency 
+is tasked to the user. Time zones, spatial datum's and projections are not supported.
 
 The set of standards used for coding \pkg{RSurvey} is documented in
 \href{http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html}{Google's R Style Guide}.

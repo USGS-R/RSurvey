@@ -1,5 +1,5 @@
 WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
-                      is.processed=TRUE, headers=c(FALSE, FALSE, FALSE), 
+                      is.processed=TRUE, headers=c(FALSE, FALSE), 
                       sep="\t", is.compressed=FALSE, 
                       encoding=getOption("encoding")) {
   # Exports post-processed data to a file.
@@ -73,13 +73,6 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
   col.ids  <- sapply(col.idxs, function(i) cols[[i]]$id)
   col.funs <- sapply(col.idxs, function(i) cols[[i]]$fun)
   col.nams <- sapply(col.idxs, function(i) cols[[i]]$name)
-  col.unts <- sapply(col.idxs,
-                     function(i) {
-                       rtn <- cols[[i]]$unit
-                       if (is.null(rtn))
-                         rtn <- NA
-                       rtn
-                     })
   col.fmts <- sapply(col.idxs,
                      function(i) {
                        rtn <- cols[[i]]$format
@@ -171,11 +164,7 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
         h[i, ] <- col.nams
         i <- i + 1L
       }
-      if (headers[2]) {
-        h[i, ] <- col.unts
-        i <- i + 1L
-      }
-      if (headers[3])
+      if (headers[2])
         h[i, ] <- col.fmts
 
       write.table(h, file=con, append=FALSE, quote=FALSE, row.names=FALSE,

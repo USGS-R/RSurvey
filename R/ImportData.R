@@ -89,7 +89,6 @@ ImportData <- function(parent=NULL) {
 
     } else {
       hds <- as.logical(c(as.integer(tclvalue(names.var)),
-                          as.integer(tclvalue(units.var)),
                           as.integer(tclvalue(decis.var))))
 
       RaiseWarning(tt)
@@ -251,17 +250,14 @@ ImportData <- function(parent=NULL) {
     tcl(frame4.tbl, "clear", "tags")
     tcl(frame4.tbl, "tag", "row", "h1", 0)
     tcl(frame4.tbl, "tag", "row", "h2", 1)
-    tcl(frame4.tbl, "tag", "row", "h3", 2)
 
-    logic <- as.logical(as.integer(c(tclvalue(names.var), tclvalue(units.var),
-                                     tclvalue(decis.var))))
-    headCol <- c("#FFD0D4", "#FFFEDE", "#EBFFC6")[logic]
-    if (length(headCol) < 3)
-      headCol[(length(headCol) + 1):3] <- "white"
+    logic <- as.logical(as.integer(c(tclvalue(names.var), tclvalue(decis.var))))
+    headCol <- c("#FFD0D4", "#EBFFC6")[logic]
+    if (length(headCol) < 2)
+      headCol[(length(headCol) + 1):2] <- "white"
 
     tktag.configure(frame4.tbl, "h1", background=headCol[1])
     tktag.configure(frame4.tbl, "h2", background=headCol[2])
-    tktag.configure(frame4.tbl, "h3", background=headCol[3])
   }
 
   # Determine the tables maximum row and column
@@ -315,7 +311,6 @@ ImportData <- function(parent=NULL) {
   table.var <- tclArray()
 
   names.var  <- tclVar(0)
-  units.var  <- tclVar(0)
   decis.var  <- tclVar(0)
   skip.var   <- tclVar(0)
   nrow.var   <- tclVar()
@@ -327,8 +322,7 @@ ImportData <- function(parent=NULL) {
 
   if (!is.null(Data("table.headers"))) {
     tclvalue(names.var) <- Data("table.headers")[1]
-    tclvalue(units.var) <- Data("table.headers")[2]
-    tclvalue(decis.var) <- Data("table.headers")[3]
+    tclvalue(decis.var) <- Data("table.headers")[2]
   }
 
   # Open GUI
@@ -409,21 +403,16 @@ ImportData <- function(parent=NULL) {
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Header lines")
 
-  txt <- "Names of the variables"
+  txt <- "Names of the variables, that is, column names in the data table"
   frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=names.var,
-                                   command=SetTags, text=txt)
-  txt <- paste("Measurement units of the variables, programmatic manipulation",
-               "not supported")
-  frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=units.var,
                                    command=SetTags, text=txt)
   txt <- paste("Conversion specification formats of the variables,",
                "for example, '%10.6f' or '%Y-%m-%d %H:%M'")
-  frame2.chk.3.1 <- ttkcheckbutton(frame2, variable=decis.var,
+  frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=decis.var,
                                    command=SetTags, text=txt)
 
   tkgrid(frame2.chk.1.1, pady=1, sticky="w")
   tkgrid(frame2.chk.2.1, pady=1, sticky="w")
-  tkgrid(frame2.chk.3.1, pady=1, sticky="w")
 
   tkpack(frame2, anchor="w", fill="x", padx=10, pady=10)
 

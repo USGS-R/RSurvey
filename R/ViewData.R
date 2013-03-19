@@ -1,5 +1,4 @@
-ViewData <- function(d, column.names=NULL, column.units=NULL,
-                     column.formats=NULL, parent=NULL) {
+ViewData <- function(d, column.names=NULL, column.formats=NULL, parent=NULL) {
   # A GUI for viewing table formatted data.
 
   # Additional functions (subroutines)
@@ -158,26 +157,15 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
     column.names[is.na(column.names)] <- ""
   }
 
-  if (is.null(column.units))
-    column.units <- rep(NA, n)
-  else
-    column.units <- as.character(column.units[1:n])
-
   if (is.null(column.formats))
     column.formats <- rep(NA, n)
   else
     column.formats <- as.character(column.formats[1:n])
 
-  # Build table titles
-
-  cols <- column.names
-  is.not.na <- !is.na(column.units)
-  cols[is.not.na] <- paste(cols[is.not.na], column.units[is.not.na], sep="\n")
-
   # Determine width and height of column 0 and row 0, respectively
 
   col.0.width <- nchar(max(as.integer(row.names(d)))) + 1
-  row.0.height <- max(sapply(strsplit(cols, "\n"), length))
+  row.0.height <- max(sapply(strsplit(column.names, "\n"), length))
 
   # Column classes
 
@@ -198,10 +186,11 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
         d[, j] <- format(d[, j])
     }
 
-    if (cols[j] == "")
+    if (column.names[j] == "")
       nchar.title <- 0
     else
-      nchar.title <- max(sapply(strsplit(cols[j], "\n"), function(i) nchar(i)))
+      nchar.title <- max(sapply(strsplit(column.names[j], "\n"), 
+                                function(i) nchar(i)))
     nchar.data <- nchar(sample(d[,j], height))
     len <- max(c(nchar.title, nchar.data)) + 3
     if (len < 10)
@@ -211,7 +200,7 @@ ViewData <- function(d, column.names=NULL, column.units=NULL,
 
   # Construct character matrix from data frame
   
-  d <- rbind(c("", cols), cbind(row.names(d), as.matrix(d)))
+  d <- rbind(c("", column.names), cbind(row.names(d), as.matrix(d)))
   d <- cbind(d, rep("", nrow(d)))
 
   # Assign variables linked to Tk widgets

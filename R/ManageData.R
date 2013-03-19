@@ -26,21 +26,14 @@ ManageData <- function(cols, vars, parent=NULL) {
       nam <- NULL
     cols[[idx]]$name <<- nam
 
-    # Save units
-
-    unt <- tclvalue(unit.var)
-    if (unt == "")
-      unt <- NULL
-    cols[[idx]]$unit <<- unt
-
     # Insure content for id
 
-    if (is.null(nam) & is.null(unt))
+    if (is.null(nam))
       cols[[idx]]$name <<- "Unknown"
 
     # Account for duplicate ids
 
-    new.id <- paste(c(nam, unt), collapse=", ")
+    new.id <- nam
     old.id <- cols[[idx]]$id
     old.ids <- sapply(cols, function(i) i$id)
 
@@ -66,10 +59,10 @@ ManageData <- function(cols, vars, parent=NULL) {
 
       new.fun <- cols[[idx]]$fun
       if (!identical(old.fun, new.fun)) {
-        tkconfigure(frame2.txt.5.2, state="normal")
-        tcl(frame2.txt.5.2, "delete", '1.0', 'end')
-        tkinsert(frame2.txt.5.2, "end", new.fun)
-        tkconfigure(frame2.txt.5.2, state="disabled")
+        tkconfigure(frame2.txt.4.2, state="normal")
+        tcl(frame2.txt.4.2, "delete", '1.0', 'end')
+        tkinsert(frame2.txt.4.2, "end", new.fun)
+        tkconfigure(frame2.txt.4.2, state="disabled")
       }
       
       query.fun <- Data("query.fun")
@@ -87,14 +80,6 @@ ManageData <- function(cols, vars, parent=NULL) {
     if (length(idx) == 0)
       return()
 
-    # Save units
-
-    old.unt <- cols[[idx]]$unit
-    new.unt <- as.character(tclvalue(unit.var))
-    if (new.unt == "")
-      new.unt <- NULL
-    cols[[idx]]$unit <<- new.unt
-
     # Save format
 
     old.fmt <- cols[[idx]]$format
@@ -106,7 +91,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     # Save function
 
     old.fun <- cols[[idx]]$fun
-    new.fun <- as.character(tclvalue(tkget(frame2.txt.5.2, '1.0', 'end-1c')))
+    new.fun <- as.character(tclvalue(tkget(frame2.txt.4.2, '1.0', 'end-1c')))
     cols[[idx]]$fun <<- new.fun
 
     # Save summary
@@ -148,39 +133,32 @@ ManageData <- function(cols, vars, parent=NULL) {
       saved.name <- ""
     tclvalue(name.var) <- saved.name
 
-    # Update units
-
-    saved.unit <- cols[[idx]]$unit
-    if (is.null(saved.unit))
-      saved.unit <- ""
-    tclvalue(unit.var) <- saved.unit
-
     # Update format
 
-    tkconfigure(frame2.ent.3.2, state="normal")
+    tkconfigure(frame2.ent.2.2, state="normal")
     saved.fmt <- cols[[idx]]$format
     if (is.null(saved.fmt))
       saved.fmt <- ""
     tclvalue(fmt.var) <- saved.fmt
-    tkconfigure(frame2.ent.3.2, state="readonly")
+    tkconfigure(frame2.ent.2.2, state="readonly")
 
     # Update class
 
-    tkconfigure(frame2.ent.4.2, state="normal")
+    tkconfigure(frame2.ent.3.2, state="normal")
     tclvalue(class.var) <- cols[[idx]]$class
-    tkconfigure(frame2.ent.4.2, state="readonly")
+    tkconfigure(frame2.ent.3.2, state="readonly")
 
     # Update function
 
-    tkconfigure(frame2.txt.5.2, state="normal")
-    tcl(frame2.txt.5.2, "delete", '1.0', 'end')
-    tkinsert(frame2.txt.5.2, "end", cols[[idx]]$fun)
-    tkconfigure(frame2.txt.5.2, state="disabled")
+    tkconfigure(frame2.txt.4.2, state="normal")
+    tcl(frame2.txt.4.2, "delete", '1.0', 'end')
+    tkinsert(frame2.txt.4.2, "end", cols[[idx]]$fun)
+    tkconfigure(frame2.txt.4.2, state="disabled")
 
     s <- "disabled"
     if (is.null(cols[[idx]]$index))
       s <- "normal"
-    tkconfigure(frame2.but.5.3, state=s)
+    tkconfigure(frame2.but.4.3, state=s)
 
     # Update summary
 
@@ -306,10 +284,10 @@ ManageData <- function(cols, vars, parent=NULL) {
       return()
     }
 
-    tkconfigure(frame2.txt.5.2, state="normal")
-    tcl(frame2.txt.5.2, "delete", '1.0', 'end')
-    tkinsert(frame2.txt.5.2, "end", new.fun)
-    tkconfigure(frame2.txt.5.2, state="disabled")
+    tkconfigure(frame2.txt.4.2, state="normal")
+    tcl(frame2.txt.4.2, "delete", '1.0', 'end')
+    tkinsert(frame2.txt.4.2, "end", new.fun)
+    tkconfigure(frame2.txt.4.2, state="disabled")
 
     SaveNb()
     UpdateNb()
@@ -392,12 +370,11 @@ ManageData <- function(cols, vars, parent=NULL) {
     SaveNb()
     
     nams <- sapply(cols, function(i) ifelse(is.null(i$name), NA, i$name))
-    unts <- sapply(cols, function(i) ifelse(is.null(i$unit), NA, i$unit))
     fmts <- sapply(cols, function(i) ifelse(is.null(i$format), NA, i$format))
     funs <- sapply(cols, function(i) ifelse(is.null(i$fun), NA, i$fun))
     d <- lapply(1:length(cols), function(i) EvalFunction(funs[i], cols))
     
-    ViewData(as.data.frame(d), nams, unts, fmts, parent=tt)
+    ViewData(as.data.frame(d), nams, fmts, parent=tt)
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }
@@ -456,7 +433,6 @@ ManageData <- function(cols, vars, parent=NULL) {
     tcl("lappend", list.var, i)
 
   name.var <- tclVar()
-  unit.var <- tclVar()
   fmt.var  <- tclVar()
   class.var <- tclVar()
 
@@ -585,49 +561,44 @@ ManageData <- function(cols, vars, parent=NULL) {
   tkadd(nb, frame2, text="   Variable   ")
 
   frame2.lab.1.1 <- ttklabel(frame2, text="Name")
-  frame2.lab.2.1 <- ttklabel(frame2, text="Unit")
-  frame2.lab.3.1 <- ttklabel(frame2, text="Format")
-  frame2.lab.4.1 <- ttklabel(frame2, text="Class")
-  frame2.lab.5.1 <- ttklabel(frame2, text="Function")
+  frame2.lab.2.1 <- ttklabel(frame2, text="Format")
+  frame2.lab.3.1 <- ttklabel(frame2, text="Class")
+  frame2.lab.4.1 <- ttklabel(frame2, text="Function")
 
   frame2.ent.1.2 <- ttkentry(frame2, textvariable=name.var)
-  frame2.ent.2.2 <- ttkentry(frame2, textvariable=unit.var)
-  frame2.ent.3.2 <- ttkentry(frame2, textvariable=fmt.var)
-  frame2.ent.4.2 <- ttkentry(frame2, textvariable=class.var)
+  frame2.ent.2.2 <- ttkentry(frame2, textvariable=fmt.var)
+  frame2.ent.3.2 <- ttkentry(frame2, textvariable=class.var)
 
   fnt <- tkfont.create(family="Courier New", size=9)
-  frame2.txt.5.2 <- tktext(frame2, padx=2, pady=2, width=45, height=3,
+  frame2.txt.4.2 <- tktext(frame2, padx=2, pady=2, width=45, height=3,
                            undo=1, wrap="none", foreground="black",
                            background="#ebebe4", borderwidth=1, font=fnt)
 
-  frame2.but.3.3 <- ttkbutton(frame2, text="Edit", width=5,
+  frame2.but.2.3 <- ttkbutton(frame2, text="Edit", width=5,
                               command=CallFormat)
-  frame2.but.5.3 <- ttkbutton(frame2, text="Edit", width=5,
+  frame2.but.4.3 <- ttkbutton(frame2, text="Edit", width=5,
                               command=CallEditFunction)
 
   tkgrid(frame2.lab.1.1, frame2.ent.1.2, "x")
-  tkgrid(frame2.lab.2.1, frame2.ent.2.2, "x")
-  tkgrid(frame2.lab.3.1, frame2.ent.3.2, frame2.but.3.3)
-  tkgrid(frame2.lab.4.1, frame2.ent.4.2, "x")
-  tkgrid(frame2.lab.5.1, frame2.txt.5.2, frame2.but.5.3)
+  tkgrid(frame2.lab.2.1, frame2.ent.2.2, frame2.but.2.3)
+  tkgrid(frame2.lab.3.1, frame2.ent.3.2, "x")
+  tkgrid(frame2.lab.4.1, frame2.txt.4.2, frame2.but.4.3)
 
-  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1,
-                   frame2.lab.3.1, frame2.lab.4.1, sticky="w")
+  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, frame2.lab.3.1, sticky="w")
 
-  tkgrid.configure(frame2.lab.5.1, sticky="ne")
+  tkgrid.configure(frame2.lab.4.1, sticky="ne")
 
-  tkgrid.configure(frame2.ent.1.2, frame2.ent.2.2,
-                   frame2.ent.3.2, frame2.ent.4.2,
+  tkgrid.configure(frame2.ent.1.2, frame2.ent.2.2, frame2.ent.3.2,
                    sticky="we", padx=2, pady=2)
 
-  tkgrid.configure(frame2.txt.5.2, padx=2, pady=2, sticky="nswe")
+  tkgrid.configure(frame2.txt.4.2, padx=2, pady=2, sticky="nswe")
 
-  tkgrid.configure(frame2.but.3.3, sticky="w")
-  tkgrid.configure(frame2.lab.5.1, pady=c(4, 0))
-  tkgrid.configure(frame2.but.5.3, sticky="nw", pady=c(1, 0))
+  tkgrid.configure(frame2.but.2.3, sticky="w")
+  tkgrid.configure(frame2.lab.4.1, pady=c(4, 0))
+  tkgrid.configure(frame2.but.4.3, sticky="nw", pady=c(1, 0))
 
   tkgrid.columnconfigure(frame2, 1, weight=1, minsize=25)
-  tkgrid.rowconfigure(frame2, 4, weight=1, minsize=25)
+  tkgrid.rowconfigure(frame2, 3, weight=1, minsize=25)
 
   # Frame 3, summary
 
@@ -674,7 +645,6 @@ ManageData <- function(cols, vars, parent=NULL) {
   tkbind(frame1.lst, "<<ListboxSelect>>", UpdateNb)
 
   tkbind(frame2.ent.1.2, "<Return>", function() SetVarId())
-  tkbind(frame2.ent.2.2, "<Return>", function() SetVarId())
 
   # GUI control
 
