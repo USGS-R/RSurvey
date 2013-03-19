@@ -836,16 +836,24 @@ OpenRSurvey <- function() {
         accelerator="Shift+Ctrl+S", command=SaveProjAs)
 
   tkadd(menu.file, "separator")
-  tkadd(menu.file, "command", label="Import data",
+  
+  menu.file.import <- tkmenu(tt, tearoff=0)
+  tkadd(menu.file.import, "command", label="Text file",
         command=CallImportData)
-
+  tkadd(menu.file.import, "command", label="R object",
+        command=function() print("notyet"))
+  tkadd(menu.file, "cascade", label="Import data from", menu=menu.file.import)
+  
   menu.file.export <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.export, "command", label="Text file",
         command=function() CallExportData("text"))
   tkadd(menu.file.export, "command", label="Shapefile",
         command=function() CallExportData("shape"))
-  tkadd(menu.file, "cascade", label="Export point data as", menu=menu.file.export)
-
+  tkadd(menu.file, "cascade", label="Export point data as", 
+        menu=menu.file.export)
+  
+  tkadd(menu.file.export, "command", label="R object",
+        command=function() print("notyet"))
   tkadd(menu.file, "command", label="Export grid data as",
         command=function() CallExportData("grid"))
 
@@ -943,6 +951,8 @@ OpenRSurvey <- function() {
   tkadd(menu.graph, "command", label="Histogram", 
         command=function() {
           CallProcessData()
+          if (is.null(Data("data.pts")))
+            return()
           d <- Data("data.pts")
           d <- d[, names(d) != "sort.on"]
           lst <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate", 
