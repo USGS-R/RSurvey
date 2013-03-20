@@ -121,7 +121,7 @@ SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
   frame1.rad.4.5 <- ttkradiobutton(frame1, variable=na.last.var, value=2,
                                    text="remove")
   
-  tkgrid(frame1.lab.1.1, frame1.box.1.2, pady=c(10, 0)) 
+  tkgrid(frame1.lab.1.1, frame1.box.1.2, pady=c(15, 5)) 
   tkgrid("x", frame1.lab.2.2, frame1.rad.2.3, frame1.lab.2.4, frame1.rad.2.5, "x")
   tkgrid("x", "x", frame1.rad.3.3, "x", frame1.rad.3.5, "x")
   tkgrid("x", "x", "x", "x", frame1.rad.4.5, "x")

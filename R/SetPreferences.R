@@ -105,7 +105,7 @@ SetPreferences <- function(parent=NULL) {
   frame1.ent.1.2 <- ttkentry(frame1, width=15, textvariable=grid.dx.var)
   frame1.ent.2.2 <- ttkentry(frame1, width=15, textvariable=grid.dy.var)
 
-  tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(10, 4))
+  tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(20, 4))
   tkgrid(frame1.lab.2.1, frame1.ent.2.2, pady=c(0, 10))
 
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, sticky="w", padx=c(0, 2))

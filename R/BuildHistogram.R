@@ -261,11 +261,11 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   frame2.ent.10.2 <- ttkentry(frame2, width=15, textvariable=by.var)
   
   tkgrid(frame2.rbt.1.1, sticky="w", columnspan=3)
-  tkgrid(frame2.box.2.1, padx=c(20, 0), pady=c(0, 5), sticky="we", columnspan=3)
+  tkgrid(frame2.box.2.1, padx=c(20, 0), pady=c(0, 10), sticky="we", columnspan=3)
   tkgrid(frame2.rbt.3.1, sticky="w", columnspan=3)
   tkgrid(frame2.scl.4.1, "x", frame2.ent.4.3, pady=c(0, 5), sticky="we")
   tkgrid(frame2.rbt.5.1, sticky="w", columnspan=3)
-  tkgrid(frame2.ent.6.1, padx=c(20, 0), pady=c(0, 5), sticky="we", columnspan=3)
+  tkgrid(frame2.ent.6.1, padx=c(20, 0), pady=c(0, 10), sticky="we", columnspan=3)
   tkgrid(frame2.rbt.7.1, sticky="w", columnspan=3)
   tkgrid(frame2.lab.8.1,  frame2.ent.8.2)
   tkgrid(frame2.lab.9.1,  frame2.ent.9.2)
