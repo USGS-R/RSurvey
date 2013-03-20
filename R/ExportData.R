@@ -33,11 +33,30 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
   SelectVariables <- function(sel) {
     n <- length(col.ids) - 1L
-    if (sel == "all")
+    if (sel == "all") {
       tkselection.set(frame1.lst.1.1, 0, n)
-    else
+      button.txt <- "Deselect"
+      button.cmd <- function() SelectVariables("none")
+    } else if (sel == "none") {
       tkselection.clear(frame1.lst.1.1, 0, n)
+      button.txt <- "Select All"
+      button.cmd <- function() SelectVariables("all")
+    } else {
+      idxs <- 0:n
+      sel <- as.integer(tkcurselection(frame1.lst.1.1))
+      tkselection.clear(frame1.lst.1.1, 0, n)
+      for (i in idxs[!(idxs %in% sel)])
+        tkselection.set(frame1.lst.1.1, i)
+      if (length(sel) > 0) {
+        button.txt <- "Select All"
+        button.cmd <- function() SelectVariables("all")
+      } else {
+        button.txt <- "Deselect"
+        button.cmd <- function() SelectVariables("none")
+      }
+    }
     ToggleExport()
+    tkconfigure(frame1.but.2.1, text=button.txt, command=button.cmd)
   }
 
   # Get file
@@ -189,8 +208,8 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
   frame1.but.2.1 <- ttkbutton(frame1, width=12, text="Select All",
                               command=function() SelectVariables("all"))
-  frame1.but.2.2 <- ttkbutton(frame1, width=12, text="Select None",
-                              command=function() SelectVariables("none"))
+  frame1.but.2.2 <- ttkbutton(frame1, width=12, text="Inverse",
+                              command=function() SelectVariables("inverse"))
   frame1.chk.2.4 <- ttkcheckbutton(frame1, variable=records.var,
                                    text="Processed records only")
 

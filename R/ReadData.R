@@ -92,9 +92,9 @@ ReadData <- function(con, headers=c(FALSE, FALSE), sep="\t",
     ids <- NULL
 
     # Establish column types
-    for (idx in 1:n) {
-      val <- d[, idx]
-      fmt <- if (is.na(fmts[idx])) NULL else fmts[idx]
+    for (j in 1:n) {
+      val <- d[, j]
+      fmt <- if (is.na(fmts[j])) NULL else fmts[j]
 
       # Try to determine class of character variables
       if (inherits(val, "character")) {
@@ -106,26 +106,39 @@ ReadData <- function(con, headers=c(FALSE, FALSE), sep="\t",
         if (is.date)
           val <- date.time
         else
-          val <- type.convert(d[, idx], as.is=TRUE)
+          val <- type.convert(d[, j], as.is=TRUE)
       }
-
+      
       # Determine default x-, y-, z-axis variables
       if (inherits(val, c("numeric", "integer"))) {
         val[!is.finite(val)] <- NA
         if (is.null(vars$x)) {
-          vars$x <- idx
+          vars$x <- j
         } else if (is.null(vars$y)) {
-          vars$y <- idx
+          vars$y <- j
         } else if (is.null(vars$z)) {
-          vars$z <- idx
+          vars$z <- j
+        }
+      }
+      
+      # Set variable class
+      cls <- class(val)[1]
+         
+      # Set missing formats
+      if (is.null(fmt)) {
+        if (cls %in% c("character", "logical")) {
+          fmt <- "%s"
+        } else if (cls == "numeric") {
+          fmt <- "%f"
+        } else if (cls == "integer") {
+          fmt <- "%d"
         }
       }
 
       # Additional attributes
 
-      nam <- nams[idx]
+      nam <- nams[j]
       id <- nam
-
       i <- 1L
       hold.id <- id
       while (id %in% ids) {
@@ -134,18 +147,18 @@ ReadData <- function(con, headers=c(FALSE, FALSE), sep="\t",
       }
       ids <- c(ids, id)
 
-      cols[[idx]] <- list()
+      cols[[j]] <- list()
 
-      cols[[idx]]$id      <- id
-      cols[[idx]]$name    <- nam
-      cols[[idx]]$format  <- fmt
-      cols[[idx]]$class   <- class(val)[1]
-      cols[[idx]]$index   <- idx
-      cols[[idx]]$fun     <- paste("\"", id, "\"", sep="")
-      cols[[idx]]$sample  <- na.omit(val)[1]
-      cols[[idx]]$summary <- SummarizeData(val, fmt=fmt)
+      cols[[j]]$id      <- id
+      cols[[j]]$name    <- nam
+      cols[[j]]$format  <- fmt
+      cols[[j]]$class   <- cls
+      cols[[j]]$index   <- j
+      cols[[j]]$fun     <- paste("\"", id, "\"", sep="")
+      cols[[j]]$sample  <- na.omit(val)[1]
+      cols[[j]]$summary <- SummarizeData(val, fmt=fmt)
 
-      d[, idx] <- val
+      d[, j] <- val
     }
 
     # Store data
