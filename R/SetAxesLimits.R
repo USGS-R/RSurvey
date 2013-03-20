@@ -94,7 +94,7 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
   # Open GUI
 
   tclServiceMode(FALSE)
-  tt <- tktoplevel(padx=5, pady=5)
+  tt <- tktoplevel()
 
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
@@ -105,85 +105,58 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
   tktitle(tt) <- "Axes Limits"
   tkwm.resizable(tt, 1, 0)
 
+  # Frame 0 contains ok and cancel buttons
+
+  frame0 <- tkframe(tt, relief="flat")
+  frame0.but.2 <- ttkbutton(frame0, width=12, text="OK",
+                            command=UpdateLimits)
+  frame0.but.3 <- ttkbutton(frame0, width=12, text="Cancel",
+                            command=function() tclvalue(tt.done.var) <- 1)
+  frame0.but.4 <- ttkbutton(frame0, width=12, text="Help",
+                            command=function() {
+                              print(help("SetAxesLimits", package="RSurvey"))
+                            })
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, 
+         sticky="se", pady=10, padx=c(4, 0))
+  tkgrid.columnconfigure(frame0, 0, weight=1)
+  tkgrid.configure(frame0.but.4, padx=c(4, 10))
+  tkpack(frame0, fill="x", side="bottom", anchor="e")
+
   # Notebook with tabs
 
   nb <- ttknotebook(tt)
 
-  # Frame 0 contains x-axis limits
+  # Frame 1 contains x-axis limits
 
-  frame0 <- ttkframe(nb, relief="flat", padding=10, borderwidth=2)
-  tkadd(nb, frame0, text="      x      ")
+  frame1 <- ttkframe(nb, relief="flat", padding=10, borderwidth=2)
+  tkadd(nb, frame1, text="      x      ")
 
-  frame0.lab.1.1 <- ttklabel(frame0, text="Minimum")
-  frame0.lab.2.1 <- ttklabel(frame0, text="Maximum")
+  frame1.lab.1.1 <- ttklabel(frame1, text="Minimum")
+  frame1.lab.2.1 <- ttklabel(frame1, text="Maximum")
 
-  frame0.ent.1.2 <- ttkentry(frame0, textvariable=x1.var,
+  frame1.ent.1.2 <- ttkentry(frame1, textvariable=x1.var,
                              state=tclvalue(x1.sta.var))
-  frame0.ent.2.2 <- ttkentry(frame0, textvariable=x2.var,
+  frame1.ent.2.2 <- ttkentry(frame1, textvariable=x2.var,
                              state=tclvalue(x2.sta.var))
 
-  frame0.chk.1.3 <- ttkcheckbutton(frame0, variable=x1.chk.var, text="Auto",
+  frame1.chk.1.3 <- ttkcheckbutton(frame1, variable=x1.chk.var, text="Auto",
                     command=function() {
                       if (as.integer(tclvalue(x1.chk.var))) {
                         tclvalue(x1.sta.var) <- "disabled"
                       } else {
                         tclvalue(x1.sta.var) <- "normal"
                       }
-                      tkconfigure(frame0.ent.1.2, state=tclvalue(x1.sta.var))
-                      tkfocus(frame0.ent.1.2)
+                      tkconfigure(frame1.ent.1.2, state=tclvalue(x1.sta.var))
+                      tkfocus(frame1.ent.1.2)
                     })
-  frame0.chk.2.3 <- ttkcheckbutton(frame0, variable=x2.chk.var, text="Auto",
+  frame1.chk.2.3 <- ttkcheckbutton(frame1, variable=x2.chk.var, text="Auto",
                     command=function() {
                       if (as.integer(tclvalue(x2.chk.var))) {
                         tclvalue(x2.sta.var) <- "disabled"
                       } else {
                         tclvalue(x2.sta.var) <- "normal"
                       }
-                      tkconfigure(frame0.ent.2.2, state=tclvalue(x2.sta.var))
-                      tkfocus(frame0.ent.2.2)
-                    })
-
-  tkgrid(frame0.lab.1.1, frame0.ent.1.2, frame0.chk.1.3, padx=1, pady=2)
-  tkgrid(frame0.lab.2.1, frame0.ent.2.2, frame0.chk.2.3, padx=1, pady=2)
-
-  tkgrid.configure(frame0.lab.1.1, frame0.lab.2.1, sticky="e")
-
-  tkgrid.configure(frame0.ent.1.2, frame0.ent.2.2, sticky="we")
-
-  tkgrid.columnconfigure(frame0, 1, weight=1, minsize=25)
-
-  tcl("grid", "anchor", frame0, "center")
-
-  # Frame 1 contains y-axis limits
-
-  frame1 <- ttkframe(nb, relief="flat", padding=10, borderwidth=2)
-  tkadd(nb, frame1, text="      y      ")
-
-  frame1.lab.1.1 <- ttklabel(frame1, text="Minimum")
-  frame1.lab.2.1 <- ttklabel(frame1, text="Maximum")
-
-  frame1.ent.1.2 <- ttkentry(frame1, textvariable=y1.var,
-                             state=tclvalue(y1.sta.var))
-  frame1.ent.2.2 <- ttkentry(frame1, textvariable=y2.var,
-                             state=tclvalue(y2.sta.var))
-
-  frame1.chk.1.3 <- ttkcheckbutton(frame1, variable=y1.chk.var, text="Auto",
-                    command=function() {
-                      if (as.integer(tclvalue(y1.chk.var))) {
-                        tclvalue(y1.sta.var) <- "disabled"
-                      } else {
-                        tclvalue(y1.sta.var) <- "normal"
-                      }
-                      tkconfigure(frame1.ent.1.2, state=tclvalue(y1.sta.var))
-                      tkfocus(frame1.ent.1.2)
-                    })
-  frame1.chk.2.3 <- ttkcheckbutton(frame1, variable=y2.chk.var, text="Auto",
-                    command=function() {
-                      if (as.integer(tclvalue(y2.chk.var)))
-                        tclvalue(y2.sta.var) <- "disabled"
-                      else
-                        tclvalue(y2.sta.var) <- "normal"
-                      tkconfigure(frame1.ent.2.2, state=tclvalue(y2.sta.var))
+                      tkconfigure(frame1.ent.2.2, state=tclvalue(x2.sta.var))
                       tkfocus(frame1.ent.2.2)
                     })
 
@@ -191,69 +164,101 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
   tkgrid(frame1.lab.2.1, frame1.ent.2.2, frame1.chk.2.3, padx=1, pady=2)
 
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, sticky="e")
+
   tkgrid.configure(frame1.ent.1.2, frame1.ent.2.2, sticky="we")
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=25)
 
   tcl("grid", "anchor", frame1, "center")
 
-  # Frame 2 contains z-axis limits
+  # Frame 2 contains y-axis limits
 
   frame2 <- ttkframe(nb, relief="flat", padding=10, borderwidth=2)
-  tkadd(nb, frame2, text="      z      ")
+  tkadd(nb, frame2, text="      y      ")
 
   frame2.lab.1.1 <- ttklabel(frame2, text="Minimum")
   frame2.lab.2.1 <- ttklabel(frame2, text="Maximum")
 
-  frame2.ent.1.2 <- ttkentry(frame2, textvariable=z1.var,
-                             state=tclvalue(z1.sta.var))
-  frame2.ent.2.2 <- ttkentry(frame2, textvariable=z2.var,
-                             state=tclvalue(z2.sta.var))
+  frame2.ent.1.2 <- ttkentry(frame2, textvariable=y1.var,
+                             state=tclvalue(y1.sta.var))
+  frame2.ent.2.2 <- ttkentry(frame2, textvariable=y2.var,
+                             state=tclvalue(y2.sta.var))
 
-  frame2.chk.1.3 <- ttkcheckbutton(frame2, variable=z1.chk.var, text="Auto",
+  frame2.chk.1.3 <- ttkcheckbutton(frame2, variable=y1.chk.var, text="Auto",
                     command=function() {
-                      if (as.integer(tclvalue(z1.chk.var)))
-                        tclvalue(z1.sta.var) <- "disabled"
-                      else
-                        tclvalue(z1.sta.var) <- "normal"
-                      tkconfigure(frame2.ent.1.2, state=tclvalue(z1.sta.var))
+                      if (as.integer(tclvalue(y1.chk.var))) {
+                        tclvalue(y1.sta.var) <- "disabled"
+                      } else {
+                        tclvalue(y1.sta.var) <- "normal"
+                      }
+                      tkconfigure(frame2.ent.1.2, state=tclvalue(y1.sta.var))
                       tkfocus(frame2.ent.1.2)
                     })
-  frame2.chk.2.3 <- ttkcheckbutton(frame2, variable=z2.chk.var, text="Auto",
+  frame2.chk.2.3 <- ttkcheckbutton(frame2, variable=y2.chk.var, text="Auto",
                     command=function() {
-                      if (as.integer(tclvalue(z2.chk.var)))
-                        tclvalue(z2.sta.var) <- "disabled"
+                      if (as.integer(tclvalue(y2.chk.var)))
+                        tclvalue(y2.sta.var) <- "disabled"
                       else
-                        tclvalue(z2.sta.var) <- "normal"
-                      tkconfigure(frame2.ent.2.2, state=tclvalue(z2.sta.var))
+                        tclvalue(y2.sta.var) <- "normal"
+                      tkconfigure(frame2.ent.2.2, state=tclvalue(y2.sta.var))
                       tkfocus(frame2.ent.2.2)
                     })
 
   tkgrid(frame2.lab.1.1, frame2.ent.1.2, frame2.chk.1.3, padx=1, pady=2)
   tkgrid(frame2.lab.2.1, frame2.ent.2.2, frame2.chk.2.3, padx=1, pady=2)
 
-  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, sticky="w")
+  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, sticky="e")
   tkgrid.configure(frame2.ent.1.2, frame2.ent.2.2, sticky="we")
 
   tkgrid.columnconfigure(frame2, 1, weight=1, minsize=25)
 
   tcl("grid", "anchor", frame2, "center")
 
+  # Frame 3 contains z-axis limits
+
+  frame3 <- ttkframe(nb, relief="flat", padding=10, borderwidth=2)
+  tkadd(nb, frame3, text="      z      ")
+
+  frame3.lab.1.1 <- ttklabel(frame3, text="Minimum")
+  frame3.lab.2.1 <- ttklabel(frame3, text="Maximum")
+
+  frame3.ent.1.2 <- ttkentry(frame3, textvariable=z1.var,
+                             state=tclvalue(z1.sta.var))
+  frame3.ent.2.2 <- ttkentry(frame3, textvariable=z2.var,
+                             state=tclvalue(z2.sta.var))
+
+  frame3.chk.1.3 <- ttkcheckbutton(frame3, variable=z1.chk.var, text="Auto",
+                    command=function() {
+                      if (as.integer(tclvalue(z1.chk.var)))
+                        tclvalue(z1.sta.var) <- "disabled"
+                      else
+                        tclvalue(z1.sta.var) <- "normal"
+                      tkconfigure(frame3.ent.1.2, state=tclvalue(z1.sta.var))
+                      tkfocus(frame3.ent.1.2)
+                    })
+  frame3.chk.2.3 <- ttkcheckbutton(frame3, variable=z2.chk.var, text="Auto",
+                    command=function() {
+                      if (as.integer(tclvalue(z2.chk.var)))
+                        tclvalue(z2.sta.var) <- "disabled"
+                      else
+                        tclvalue(z2.sta.var) <- "normal"
+                      tkconfigure(frame3.ent.2.2, state=tclvalue(z2.sta.var))
+                      tkfocus(frame3.ent.2.2)
+                    })
+
+  tkgrid(frame3.lab.1.1, frame3.ent.1.2, frame3.chk.1.3, padx=1, pady=2)
+  tkgrid(frame3.lab.2.1, frame3.ent.2.2, frame3.chk.2.3, padx=1, pady=2)
+
+  tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, sticky="w")
+  tkgrid.configure(frame3.ent.1.2, frame3.ent.2.2, sticky="we")
+
+  tkgrid.columnconfigure(frame3, 1, weight=1, minsize=25)
+
+  tcl("grid", "anchor", frame3, "center")
+
   # Insert notebook
 
-  tkpack(nb, fill="x", expand=TRUE, padx=5, pady=c(5, 0))
-
-  # Frame 4 contains ok and cancel buttons
-
-  frame4 <- tkframe(tt, relief="flat", padx=0, pady=0)
-
-  frame4.but.1 <- ttkbutton(frame4, width=12, text="OK",
-                            command=UpdateLimits)
-  frame4.but.2 <- ttkbutton(frame4, width=12, text="Cancel",
-                            command=function() tclvalue(tt.done.var) <- 1)
-
-  tkgrid(frame4.but.1, frame4.but.2, padx=2, pady=c(10, 5))
-  tkpack(frame4, anchor="e", padx=5)
+  tkpack(nb, fill="x", expand=TRUE, padx=10, pady=10)
 
   # Bind events
 
@@ -261,29 +266,29 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tkbind(frame0.ent.1.2, "<KeyRelease>",
+  tkbind(frame1.ent.1.2, "<KeyRelease>",
          function() {
            tclvalue(x1.var) <- CheckEntry("numeric", tclvalue(x1.var))
          })
-  tkbind(frame0.ent.2.2, "<KeyRelease>",
+  tkbind(frame1.ent.2.2, "<KeyRelease>",
          function() {
            tclvalue(x2.var) <- CheckEntry("numeric", tclvalue(x2.var))
          })
 
-  tkbind(frame1.ent.1.2, "<KeyRelease>",
+  tkbind(frame2.ent.1.2, "<KeyRelease>",
          function() {
            tclvalue(y1.var) <- CheckEntry("numeric", tclvalue(y1.var))
          })
-  tkbind(frame1.ent.2.2, "<KeyRelease>",
+  tkbind(frame2.ent.2.2, "<KeyRelease>",
          function() {
            tclvalue(y2.var) <- CheckEntry("numeric", tclvalue(y2.var))
          })
 
-  tkbind(frame2.ent.1.2, "<KeyRelease>",
+  tkbind(frame3.ent.1.2, "<KeyRelease>",
          function() {
            tclvalue(z1.var) <- CheckEntry("numeric", tclvalue(z1.var))
          })
-  tkbind(frame2.ent.2.2, "<KeyRelease>",
+  tkbind(frame3.ent.2.2, "<KeyRelease>",
          function() {
            tclvalue(z2.var) <- CheckEntry("numeric", tclvalue(z2.var))
          })

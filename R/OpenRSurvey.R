@@ -360,7 +360,7 @@ OpenRSurvey <- function() {
 
   # Autocrop polygon
 
-  CallAutocropPolygon <- function() {
+  CallAutocropRegion <- function() {
     if (is.null(Data("data.raw")))
       return()
     CallProcessData()
@@ -378,9 +378,9 @@ OpenRSurvey <- function() {
     cex.pts <- Data("cex.pts")
     rkey    <- Data("rkey")
 
-    ply.new <- AutocropPolygon(d, tt, xlab=xlab, ylab=ylab, zlab=zlab,
-                               asp=asp, csi=csi, width=width, nlevels=nlevels,
-                               cex.pts=cex.pts, rkey=rkey)
+    ply.new <- AutocropRegion(d, tt, xlab=xlab, ylab=ylab, zlab=zlab,
+                              asp=asp, csi=csi, width=width, nlevels=nlevels,
+                              cex.pts=cex.pts, rkey=rkey)
 
     if (inherits(ply.new, "gpc.poly")) {
       ply <- list()
@@ -599,23 +599,6 @@ OpenRSurvey <- function() {
     tkfocus(tt)
   }
 
-  # Open HTML help for R functions
-
-  OpenHTMLHelp <- function() {
-    if (!("RSurvey" %in% .packages(all.available=TRUE)))
-      stop("requires installed RSurvey package", call.=FALSE)
-    if (tools:::httpdPort == 0L)
-      tools::startDynamicHelp()
-    if (tools:::httpdPort > 0L) {
-      url <- paste("http://127.0.0.1:", tools:::httpdPort,
-                   "/library/RSurvey/html/00Index.html", sep="")
-      browseURL(url, browser=getOption("browser"))
-    } else {
-      stop("requires the HTTP server to be running", call.=FALSE)
-    }
-    invisible()
-  }
-
   # Set the height of (default-sized) characters in inches.
 
   SetCsi <- function() {
@@ -764,11 +747,9 @@ OpenRSurvey <- function() {
   # Main program
 
   # Load required R packages
-
   LoadPackages()
 
   # Warn if using Windows OS and running in MDI mode
-
   if (.Platform$OS.type == "windows" && getIdentification() == "RGui")
     message("\n\n    You are running R in MDI mode which *may* interfere\n",
             "    with the functionality of the graphical user interface.\n",
@@ -776,13 +757,11 @@ OpenRSurvey <- function() {
             "    set in the command line or by clicking in the Menu:\n",
             "    Edit - GUI Preferences: SDI, then Save and restart R.\n\n")
 
-  # Establish working directory
-
+  # Establish default directories
   if ("package:RSurvey" %in% search())
     path <- system.file("RSurvey-ex", package="RSurvey")
   else
     path <- getwd()
-
   if (is.null(Data("default.dir")))
     Data("default.dir", path)
 
@@ -792,17 +771,15 @@ OpenRSurvey <- function() {
     image.path <- file.path(path, "inst", "images")
 
   # Set options
-
   SetCsi()
   options(digits.secs=3)
+  options(help_type="html")
   shown.construct.polygon.msgbox <- TRUE
 
   # Assign variables linked to Tk entry widgets
-
   tt.done.var <- tclVar(0)
 
   # Package version number
-
   f <- "DESCRIPTION"
   if ("package:RSurvey" %in% search())
     f <- system.file("DESCRIPTION", package="RSurvey")
@@ -810,7 +787,6 @@ OpenRSurvey <- function() {
   Data("ver", paste("RSurvey", ver))
 
   # Open GUI
-
   tclServiceMode(FALSE)
   tt <- tktoplevel()
   tkwm.geometry(tt, Data("win.loc"))
@@ -818,7 +794,6 @@ OpenRSurvey <- function() {
   tkwm.resizable(tt, 1, 0)
 
   # Top menu
-
   top.menu <- tkmenu(tt, tearoff=0)
 
   # File menu
@@ -938,7 +913,7 @@ OpenRSurvey <- function() {
         })
   tkadd(menu.poly, "cascade", label="Build", menu=menu.poly.con)
   tkadd(menu.poly, "command", label="Autocrop region",
-        command=CallAutocropPolygon)
+        command=CallAutocropRegion)
 
   # Graph menu
 
@@ -1003,7 +978,9 @@ OpenRSurvey <- function() {
   menu.help <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Help", menu=menu.help, underline=0)
   tkadd(menu.help, "command", label="R functions (html)",
-        command=OpenHTMLHelp)
+        command=function() {
+          help(package="RSurvey")
+        })
   tkadd(menu.help, "separator")
   tkadd(menu.help, "command", label="About",
         command=AboutPackage)

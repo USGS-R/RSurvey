@@ -56,17 +56,19 @@ SetPolygonLimits <- function(poly.names=NULL, data.poly=NULL, crop.poly=NULL,
 
   frame0 <- tkframe(tt, relief="flat")
 
-  frame0.but.1 <- ttkbutton(frame0, width=12, text="OK",
+  frame0.but.2 <- ttkbutton(frame0, width=12, text="OK",
                             command=SaveNames)
-  frame0.but.2 <- ttkbutton(frame0, width=12, text="Cancel",
+  frame0.but.3 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() tclvalue(tt.done.var) <- 1)
-
-  tkgrid(frame0.but.1, frame0.but.2, pady=c(15, 10))
-
-  tkgrid.configure(frame0.but.1, sticky="e", padx=c(0, 4))
-  tkgrid.configure(frame0.but.2, sticky="w", padx=c(0, 10), rowspan=2)
-
-  tkpack(frame0, side="bottom", anchor="e")
+  frame0.but.4 <- ttkbutton(frame0, width=12, text="Help",
+                            command=function() {
+                              print(help("SetPolygonLimits", package="RSurvey"))
+                            })
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, 
+         sticky="se", pady=10, padx=c(4, 0))
+  tkgrid.columnconfigure(frame0, 0, weight=1)
+  tkgrid.configure(frame0.but.4, padx=c(4, 10))
+  tkpack(frame0, fill="x", side="bottom", anchor="e")
 
   # Frame 1
 
@@ -90,8 +92,8 @@ SetPolygonLimits <- function(poly.names=NULL, data.poly=NULL, crop.poly=NULL,
   if (!is.null(crop.poly))
     tcl(frame1.box.2.2, "current", match(crop.poly, poly.names) - 1)
 
-  tkgrid(frame1.lab.1.1, frame1.box.1.2, pady=c(10, 4))
-  tkgrid(frame1.lab.2.1, frame1.box.2.2)
+  tkgrid(frame1.lab.1.1, frame1.box.1.2, pady=c(20, 4))
+  tkgrid(frame1.lab.2.1, frame1.box.2.2, pady=c(0, 10))
 
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, sticky="w")
   tkgrid.configure(frame1.box.1.2, frame1.box.2.2, sticky="we")

@@ -30,7 +30,7 @@ Returns a polygon object of \code{\link{gpc.poly-class}}.
 }
 
 \seealso{
-\code{\link{AutocropPolygon}}
+\code{\link{AutocropRegion}}
 }
 
 \author{J.C. Fisher}

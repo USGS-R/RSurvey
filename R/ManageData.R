@@ -501,16 +501,20 @@ ManageData <- function(cols, vars, parent=NULL) {
                             
   frame0.but.8 <- ttkbutton(frame0, width=12, text="OK",
                             command=function() SaveChanges("ok"))
-  frame0.but.9 <- ttkbutton(frame0, width=12, text="Apply",
-                            command=function() SaveChanges("apply"))
-  frame0.but.10 <- ttkbutton(frame0, width=12, text="Cancel",
-                             command=function() tclvalue(tt.done.var) <- 1)
-
-  frame0.grp.11 <- ttksizegrip(frame0)
+  frame0.but.9 <- ttkbutton(frame0, width=12, text="Cancel",
+                            command=function() tclvalue(tt.done.var) <- 1)
+  frame0.but.10 <- ttkbutton(frame0, width=12, text="Apply",
+                             command=function() SaveChanges("apply"))
+  frame0.but.11 <- ttkbutton(frame0, width=12, text="Help",
+                             command=function() {
+                               print(help("ManageData", package="RSurvey", 
+                                          verbose=FALSE))
+                             })
+  frame0.grp.12 <- ttksizegrip(frame0)
 
   tkgrid(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4, 
          frame0.but.5, frame0.but.6, "x", frame0.but.8, frame0.but.9, 
-         frame0.but.10, frame0.grp.11)
+         frame0.but.10, frame0.but.11, frame0.grp.12)
 
   tkgrid.columnconfigure(frame0, 6, weight=1)
 
@@ -519,12 +523,12 @@ ManageData <- function(cols, vars, parent=NULL) {
                    padx=c(0, 2), pady=c(0, 0))
   tkgrid.configure(frame0.but.1, padx=c(10, 2))
   tkgrid.configure(frame0.but.4, padx=c(0, 15))
-  tkgrid.configure(frame0.but.8, frame0.but.9, frame0.but.10,
+  tkgrid.configure(frame0.but.8, frame0.but.9, frame0.but.10, frame0.but.11,
                    padx=c(0, 4), pady=c(15, 10))
-  tkgrid.configure(frame0.but.10, columnspan=2, padx=c(0, 10))
-  tkgrid.configure(frame0.grp.11, sticky="se")
+  tkgrid.configure(frame0.but.11, columnspan=2, padx=c(0, 10))
+  tkgrid.configure(frame0.grp.12, sticky="se")
 
-  tkraise(frame0.but.10, frame0.grp.11)
+  tkraise(frame0.but.11, frame0.grp.12)
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 

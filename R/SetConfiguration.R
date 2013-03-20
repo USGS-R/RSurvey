@@ -121,18 +121,18 @@ SetConfiguration <- function(parent=NULL) {
   # Frame 0 contains ok and cancel buttons
 
   frame0 <- ttkframe(tt, relief="flat")
-
-  frame0.but.1 <- ttkbutton(frame0, width=12, text="OK",
-                            command=UpdatePar)
-  frame0.but.2 <- ttkbutton(frame0, width=12, text="Cancel",
+  frame0.but.2 <- ttkbutton(frame0, width=12, text="OK", command=UpdatePar)
+  frame0.but.3 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() tclvalue(tt.done.var) <- 1)
-
-  tkgrid(frame0.but.1, frame0.but.2, pady=c(5, 10))
-
-  tkgrid.configure(frame0.but.1, sticky="e", padx=c(0, 4))
-  tkgrid.configure(frame0.but.2, sticky="w", padx=c(0, 10), rowspan=2)
-
-  tkpack(frame0, side="bottom", anchor="e")
+  frame0.but.4 <- ttkbutton(frame0, width=12, text="Help",
+                            command=function() {
+                              print(help("SetConfiguration", package="RSurvey"))
+                            })
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, 
+         sticky="se", pady=10, padx=c(4, 0))
+  tkgrid.columnconfigure(frame0, 0, weight=1)
+  tkgrid.configure(frame0.but.4, padx=c(4, 10))
+  tkpack(frame0, fill="x", side="bottom", anchor="e")
 
   # Paned window
 

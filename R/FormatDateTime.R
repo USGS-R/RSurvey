@@ -131,19 +131,24 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   frame0.but.3 <- ttkbutton(frame0, width=12, text="OK", command=SaveFormat)
   frame0.but.4 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() tclvalue(tt.done.var) <- 1)
+  frame0.but.5 <- ttkbutton(frame0, width=12, text="Help",
+                            command=function() {
+                              print(help("FormatDateTime", package="RSurvey"))
+                            })
+  frame0.grp.6 <- ttksizegrip(frame0)
 
-  frame0.grp.5 <- ttksizegrip(frame0)
-
-  tkgrid(frame0.but.1, "x", frame0.but.3, frame0.but.4, frame0.grp.5)
+  tkgrid(frame0.but.1, "x", frame0.but.3, frame0.but.4, frame0.but.5, 
+         frame0.grp.6)
 
   tkgrid.columnconfigure(frame0, 1, weight=1)
 
   tkgrid.configure(frame0.but.1, padx=c(10, 0), pady=4, sticky="n")
-  tkgrid.configure(frame0.but.3, frame0.but.4, padx=c(0, 4), pady=c(15, 10))
-  tkgrid.configure(frame0.but.4, columnspan=2, padx=c(0, 10))
-  tkgrid.configure(frame0.grp.5, sticky="se")
+  tkgrid.configure(frame0.but.3, frame0.but.4, frame0.but.5, 
+                   padx=c(0, 4), pady=c(15, 10))
+  tkgrid.configure(frame0.but.5, columnspan=2, padx=c(0, 10))
+  tkgrid.configure(frame0.grp.6, sticky="se")
 
-  tkraise(frame0.but.4, frame0.grp.5)
+  tkraise(frame0.but.5, frame0.grp.6)
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 

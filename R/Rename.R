@@ -57,45 +57,51 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
 
   frame0 <- ttkframe(tt, relief="flat")
 
-  frame0.lab.1 <- ttklabel(frame0, text="Old name")
-  frame0.lab.2 <- ttklabel(frame0, text="New name")
+  frame0.but.2 <- ttkbutton(frame0, width=12, text="OK",
+                            command=SaveNames)
+  frame0.but.3 <- ttkbutton(frame0, width=12, text="Cancel",
+                            command=function() tclvalue(tt.done.var) <- 1)
+  frame0.but.4 <- ttkbutton(frame0, width=12, text="Help",
+                            command=function() {
+                              print(help("Rename", package="RSurvey"))
+                            })
+  
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, 
+         sticky="se", pady=c(15, 10), padx=c(4, 0))
+  tkgrid.columnconfigure(frame0, 0, weight=1)
+  tkgrid.configure(frame0.but.2, padx=c(40, 0))
+  tkgrid.configure(frame0.but.4, padx=c(4, 10))
+  tkpack(frame0, fill="x", side="bottom", anchor="e")
+
+  # Frame 1
+
+  frame1 <- ttkframe(tt, relief="flat")
+
+  frame1.lab.1 <- ttklabel(frame1, text="Old name")
+  frame1.lab.2 <- ttklabel(frame1, text="New name")
 
   if (length(names) == 1)
     prep.names <- paste("{", names, "}", sep="")
   else
     prep.names <- names
 
-  frame0.box.1 <- ttkcombobox(frame0, state="readonly", values=prep.names,
+  frame1.box.1 <- ttkcombobox(frame1, state="readonly", values=prep.names,
                               textvariable=old.var)
 
-  frame0.ent.1 <- ttkentry(frame0, textvariable=new.var)
+  frame1.ent.1 <- ttkentry(frame1, textvariable=new.var)
 
   if (!is.null(cur.name) && cur.name %in% names)
-    tcl(frame0.box.1, "current", match(cur.name, names) - 1)
+    tcl(frame1.box.1, "current", match(cur.name, names) - 1)
 
-  tkgrid(frame0.lab.1, frame0.box.1, pady=0)
-  tkgrid(frame0.lab.2, frame0.ent.1, pady=c(4, 0))
+  tkgrid(frame1.lab.1, frame1.box.1, pady=0)
+  tkgrid(frame1.lab.2, frame1.ent.1, pady=c(4, 0))
 
-  tkgrid.configure(frame0.lab.1, frame0.lab.2, sticky="w", padx=c(0, 2))
-  tkgrid.configure(frame0.box.1, frame0.ent.1, sticky="we")
+  tkgrid.configure(frame1.lab.1, frame1.lab.2, sticky="w", padx=c(0, 2))
+  tkgrid.configure(frame1.box.1, frame1.ent.1, sticky="we")
 
-  tkgrid.columnconfigure(frame0, 1, weight=1, minsize=25)
+  tkgrid.columnconfigure(frame1, 1, weight=1, minsize=25)
 
-  tkpack(frame0, fill="x", expand=TRUE, padx=10, pady=c(10, 0))
-
-  # Frame 1
-
-  frame1 <- ttkframe(tt, relief="flat")
-
-  frame1.but.1 <- ttkbutton(frame1, width=12, text="OK",
-                            command=SaveNames)
-  frame1.but.2 <- ttkbutton(frame1, width=12, text="Cancel",
-                            command=function() tclvalue(tt.done.var) <- 1)
-
-  tkgrid(frame1.but.1, frame1.but.2, pady=c(15, 10))
-  tkgrid.configure(frame1.but.2, padx=c(4, 10))
-
-  tkpack(frame1, anchor="e")
+  tkpack(frame1, fill="x", expand=TRUE, padx=10, pady=c(10, 0))
 
   # Bind events
 
@@ -103,7 +109,7 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tkbind(frame0.box.1, "<<ComboboxSelected>>", UpdateEntry)
+  tkbind(frame1.box.1, "<<ComboboxSelected>>", UpdateEntry)
 
   # GUI control
 

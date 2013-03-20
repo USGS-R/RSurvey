@@ -236,17 +236,22 @@ ViewData <- function(d, column.names=NULL, column.formats=NULL, parent=NULL) {
                             command=CopyValues)
   frame0.but.3 <- ttkbutton(frame0, width=12, text="Close",
                             command=function() tclvalue(tt.done.var) <- 1)
-  frame0.grp.4 <- ttksizegrip(frame0)
+  frame0.but.4 <- ttkbutton(frame0, width=12, text="Help",
+                            command=function() {
+                              print(help("ViewData", package="RSurvey"))
+                            }) 
+  frame0.grp.5 <- ttksizegrip(frame0)
 
-  tkgrid("x", frame0.but.2, frame0.but.3, frame0.grp.4)
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, frame0.grp.5)
 
   tkgrid.columnconfigure(frame0, 0, weight=1)
 
-  tkgrid.configure(frame0.but.2, frame0.but.3, padx=c(0, 4), pady=c(4, 10))
-  tkgrid.configure(frame0.but.3, columnspan=2, padx=c(0, 10))
-  tkgrid.configure(frame0.grp.4, sticky="se")
+  tkgrid.configure(frame0.but.2, frame0.but.3, frame0.but.4, 
+                   padx=c(0, 4), pady=c(10, 10))
+  tkgrid.configure(frame0.but.4, columnspan=2, padx=c(0, 10))
+  tkgrid.configure(frame0.grp.5, sticky="se")
 
-  tkraise(frame0.but.3, frame0.grp.4)
+  tkraise(frame0.but.4, frame0.grp.5)
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 

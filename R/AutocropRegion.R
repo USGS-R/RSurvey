@@ -1,4 +1,4 @@
-AutocropPolygon <- function(d, parent=NULL, ...) {
+AutocropRegion <- function(d, parent=NULL, ...) {
   # A GUI for specify input parameters for the Autocrop function.
 
   # Additional functions (subroutines)
@@ -70,7 +70,7 @@ AutocropPolygon <- function(d, parent=NULL, ...) {
   is.pkg <- "tripack" %in% .packages(all.available=TRUE) &&
             require(tripack, quietly=FALSE)
   if (!is.pkg)
-    stop("package tripack required for AutocropPolygon function")
+    stop("package tripack required for the AutocropRegion function")
 
   # Initialize parameters
 
@@ -115,27 +115,28 @@ AutocropPolygon <- function(d, parent=NULL, ...) {
 
   # Frame 0 contains buttons
 
-  frame0 <- ttkframe(tt, relief="flat", borderwidth=10)
+  frame0 <- ttkframe(tt, relief="flat")
+  
+  frame0.but.2 <- ttkbutton(frame0, width=10, text="Build",
+                            command=DrawPolygon)
+  frame0.but.3 <- ttkbutton(frame0, width=10, text="Refresh",
+                            command=RefreshPlot)
+  frame0.but.4 <- ttkbutton(frame0, width=10, text="Save",
+                            command=SavePolygon)
+  frame0.but.5 <- ttkbutton(frame0, width=10, text="Cancel",
+                            command=function() tclvalue(tt.done.var) <- 1)
+  frame0.but.6 <- ttkbutton(frame0, width=12, text="Help",
+                            command=function() {
+                              print(help("AutocropRegion", package="RSurvey"))
+                            })
 
-  frame0.but.2.1 <- ttkbutton(frame0, width=10, text="Build",
-                              command=DrawPolygon)
-
-  frame0.but.2.2 <- ttkbutton(frame0, width=10, text="Refresh",
-                              command=RefreshPlot)
-  frame0.but.2.3 <- ttkbutton(frame0, width=10, text="Save",
-                              command=SavePolygon)
-  frame0.but.2.4 <- ttkbutton(frame0, width=10, text="Cancel",
-                              command=function() tclvalue(tt.done.var) <- 1)
-
-  tkgrid(frame0.but.2.1, frame0.but.2.2, frame0.but.2.3, frame0.but.2.4,
-         padx=c(0, 4))
-
-  tkgrid.configure(frame0.but.2.3, padx=4)
-  tkgrid.configure(frame0.but.2.4, padx=0)
-
-  tcl("grid", "anchor", frame0, "center")
-
-  tkpack(frame0, side="bottom", anchor="e")
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, frame0.but.5, 
+         frame0.but.6, pady=c(15, 10), padx=c(4, 0))
+  
+  tkgrid.columnconfigure(frame0, 0, weight=1)
+  tkgrid.configure(frame0.but.2, padx=c(10, 0))
+  tkgrid.configure(frame0.but.6, padx=c(4, 10))
+  tkpack(frame0, fill="x", side="bottom", anchor="e")
 
   # Frame 1 contains parameters
 

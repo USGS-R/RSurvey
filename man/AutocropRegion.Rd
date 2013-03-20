@@ -1,6 +1,6 @@
-\name{AutocropPolygon}
+\name{AutocropRegion}
 
-\alias{AutocropPolygon}
+\alias{AutocropRegion}
 
 \title{Set Autocrop Input Parameters}
 
@@ -10,7 +10,7 @@ function.
 }
 
 \usage{
-AutocropPolygon(d, parent = NULL, ...)
+AutocropRegion(d, parent = NULL, ...)
 }
 
 \arguments{
@@ -43,7 +43,7 @@ Returns a polygon object of \code{\link{gpc.poly-class}}.
 
 \examples{\donttest{
 data(tritest, package = "tripack")
-AutocropPolygon(as.data.frame(tritest), asp = 1)
+AutocropRegion(as.data.frame(tritest), asp = 1)
 }}
 
 \keyword{misc}

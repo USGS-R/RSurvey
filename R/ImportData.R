@@ -352,22 +352,27 @@ ImportData <- function(parent=NULL) {
                             command=function() ReadFile(FALSE))
   frame0.but.5 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() tclvalue(tt.done.var) <- 1)
+  frame0.but.6 <- ttkbutton(frame0, width=12, text="Help",
+                            command=function() {
+                              print(help("ImportData", package="RSurvey"))
+                            })
+  frame0.grp.7 <- ttksizegrip(frame0)
 
-  frame0.grp.6 <- ttksizegrip(frame0)
-
-  tkgrid(frame0.but.1, frame0.but.2, "x", frame0.but.4, frame0.but.5,
-         frame0.grp.6)
+  tkgrid(frame0.but.1, frame0.but.2, "x", frame0.but.4, frame0.but.5, 
+         frame0.but.6, frame0.grp.7)
 
   tkgrid.columnconfigure(frame0, 2, weight=1)
 
   tkgrid.configure(frame0.but.1, frame0.but.2,
                    sticky="n", padx=c(0, 4), pady=c(4, 0))
   tkgrid.configure(frame0.but.1, padx=c(10, 4))
-  tkgrid.configure(frame0.but.4, frame0.but.5, padx=c(0, 4), pady=c(15, 10))
-  tkgrid.configure(frame0.but.5, columnspan=2, padx=c(0, 10))
-  tkgrid.configure(frame0.grp.6, sticky="se")
+  
+  tkgrid.configure(frame0.but.4, frame0.but.5, frame0.but.6, padx=c(0, 4), pady=c(15, 10))
+  tkgrid.configure(frame0.but.6, columnspan=2, padx=c(0, 10))
+  
+  tkgrid.configure(frame0.grp.7, sticky="se")
 
-  tkraise(frame0.but.5, frame0.grp.6)
+  tkraise(frame0.but.6, frame0.grp.7)
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
