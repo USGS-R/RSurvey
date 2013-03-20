@@ -168,7 +168,7 @@ SetConfiguration <- function(parent=NULL) {
   frame1.ent.7.2 <- ttkentry(frame1, width=8, textvariable=vxby.var)
   frame1.ent.8.2 <- ttkentry(frame1, width=8, textvariable=vyby.var)
 
-  tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(0, 4))
+  tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(15, 4))
   tkgrid(frame1.lab.2.1, frame1.ent.2.2, pady=c(0, 4))
   tkgrid(frame1.lab.3.1, frame1.ent.3.2, pady=c(0, 4))
   tkgrid(frame1.lab.4.1, frame1.ent.4.2, pady=c(0, 4))
