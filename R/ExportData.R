@@ -35,28 +35,16 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     n <- length(col.ids) - 1L
     if (sel == "all") {
       tkselection.set(frame1.lst.1.1, 0, n)
-      button.txt <- "Deselect"
-      button.cmd <- function() SelectVariables("none")
     } else if (sel == "none") {
       tkselection.clear(frame1.lst.1.1, 0, n)
-      button.txt <- "Select All"
-      button.cmd <- function() SelectVariables("all")
     } else {
       idxs <- 0:n
       sel <- as.integer(tkcurselection(frame1.lst.1.1))
       tkselection.clear(frame1.lst.1.1, 0, n)
       for (i in idxs[!(idxs %in% sel)])
         tkselection.set(frame1.lst.1.1, i)
-      if (length(sel) > 0) {
-        button.txt <- "Select All"
-        button.cmd <- function() SelectVariables("all")
-      } else {
-        button.txt <- "Deselect"
-        button.cmd <- function() SelectVariables("none")
-      }
     }
     ToggleExport()
-    tkconfigure(frame1.but.2.1, text=button.txt, command=button.cmd)
   }
 
   # Get file
@@ -198,7 +186,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   frame1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text=txt)
 
   frame1.lst.1.1 <- tklistbox(frame1, selectmode="extended", activestyle="none",
-                              relief="flat", borderwidth=5, width=50, height=4,
+                              relief="flat", borderwidth=5, width=10, height=4,
                               exportselection=FALSE, listvariable=variables.var,
                               highlightthickness=0)
   frame1.ysc.1.6 <- ttkscrollbar(frame1, orient="vertical")
@@ -206,22 +194,25 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
               yscrollcommand=paste(.Tk.ID(frame1.ysc.1.6), "set"))
   tkconfigure(frame1.ysc.1.6, command=paste(.Tk.ID(frame1.lst.1.1), "yview"))
 
-  frame1.but.2.1 <- ttkbutton(frame1, width=12, text="Select All",
+  frame1.but.2.1 <- ttkbutton(frame1, width=10, text="Select All",
                               command=function() SelectVariables("all"))
-  frame1.but.2.2 <- ttkbutton(frame1, width=12, text="Inverse",
+  frame1.but.2.2 <- ttkbutton(frame1, width=10, text="Deselect",
+                              command=function() SelectVariables("none"))
+  frame1.but.2.3 <- ttkbutton(frame1, width=10, text="Inverse",
                               command=function() SelectVariables("inverse"))
   frame1.chk.2.4 <- ttkcheckbutton(frame1, variable=records.var,
                                    text="Processed records only")
 
   tkgrid(frame1.lst.1.1, "x", "x", "x", "x", frame1.ysc.1.6)
-  tkgrid(frame1.but.2.1, frame1.but.2.2, "x", frame1.chk.2.4, "x", pady=c(4, 0))
+  tkgrid(frame1.but.2.1, frame1.but.2.2, frame1.but.2.3, frame1.chk.2.4, 
+         "x", "x", pady=c(4, 0))
 
   tkgrid.configure(frame1.lst.1.1, sticky="nsew", columnspan=5)
   tkgrid.configure(frame1.ysc.1.6, sticky="ns")
-  tkgrid.configure(frame1.but.2.1, padx=c(0, 4))
-  tkgrid.configure(frame1.chk.2.4, padx=c(6, 0))
+  tkgrid.configure(frame1.but.2.1, frame1.but.2.2, padx=c(0, 4))
+  tkgrid.configure(frame1.chk.2.4, padx=c(10, 0))
 
-  tkgrid.columnconfigure(frame1, 2, weight=1, minsize=15)
+  tkgrid.columnconfigure(frame1, 4, weight=1, minsize=0)
   tkgrid.rowconfigure(frame1, 0, weight=1)
 
   tkpack(frame1, fill="both", expand=TRUE, side="top", padx=10, pady=10)
@@ -238,9 +229,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
                                      text="Conversion specification formats")
 
     tkgrid(frame2.chk.1.1, frame2.chk.1.2)
-    tkgrid.configure(frame2.chk.1.2, padx=c(15, 0))
-
-    tcl("grid", "anchor", frame2, "center")
+    tkgrid.configure(frame2.chk.1.1, padx=c(15, 15))
 
     tkpack(frame2, fill="x", padx=10, pady=c(0, 10))
 
@@ -273,11 +262,12 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     tkgrid(frame3.rad.1.1, frame3.rad.1.2, frame3.rad.1.3, "x", sticky="w")
     tkgrid(frame3.rad.2.1, frame3.rad.2.2, frame3.rad.2.3, frame3.ent.2.4,
            sticky="w")
-
+    
+    
+    tkgrid.configure(frame3.rad.1.1, frame3.rad.2.1, padx=c(15, 0))
+    
     tkgrid.configure(frame3.rad.1.3, columnspan=2)
     tkgrid.configure(frame3.ent.2.4, padx=c(2, 0))
-
-    tcl("grid", "anchor", frame3, "center")
 
     tkpack(frame3, fill="x", padx=10, pady=c(0, 10))
   }

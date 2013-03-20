@@ -289,7 +289,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   tkgrid.configure(frame2a.but.8, padx=0)
 
   tcl("grid", "anchor", frame2a, "w")
-  tkgrid.columnconfigure(frame2a, 8, weight=1, minsize=13)
+  tkgrid.columnconfigure(frame2a, 8, weight=1, minsize=0)
   tkpack(frame2a, fill="x", padx=c(5, 0), pady=c(5, 2))
 
   frame2b <- ttklabelframe(frame2, relief="flat", borderwidth=5, padding=5,
@@ -299,7 +299,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   tkgrid(frame2b.ent, padx=0, pady=5)
   tkgrid.configure(frame2b.ent, sticky="we")
   tcl("grid", "anchor", frame2b, "w")
-  tkgrid.columnconfigure(frame2b, 0, weight=1, minsize=13)
+  tkgrid.columnconfigure(frame2b, 0, weight=1, minsize=10)
   tkpack(frame2b, fill="x", padx=c(5, 0), pady=c(0, 2))
 
   frame2c <- ttklabelframe(frame2, relief="flat", borderwidth=5, padding=5,
@@ -309,10 +309,9 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   frame2c.lab.1 <- ttklabel(frame2c, foreground=fg, text=fmt)
   frame2c.lab.2 <- ttklabel(frame2c, foreground=fg,
                             text=format(sample, format=fmt))
-  tkgrid(frame2c.lab.1, padx=5, pady=c(5, 1))
-  tkgrid(frame2c.lab.2, padx=5, pady=c(1, 5))
+  tkgrid(frame2c.lab.1, padx=25, pady=c(5, 1))
+  tkgrid(frame2c.lab.2, padx=25, pady=c(1, 5))
   tcl("grid", "anchor", frame2c, "w")
-  tkgrid.columnconfigure(frame2c, 0, weight=1, minsize=13)
   tkpack(frame2c, fill="x", padx=c(5, 0), pady=c(5, 0))
 
   # Layout paned window
@@ -326,7 +325,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   tkgrid.columnconfigure(frame1, frame1.tre, weight=1)
 
   tkadd(pw, frame1, weight=2)
-  tkadd(pw, frame2, weight=1)
+  tkadd(pw, frame2, weight=0)
 
   tkpack(pw, fill="both", expand=TRUE, padx=10, pady=c(10, 0))
 
