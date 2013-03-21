@@ -43,15 +43,6 @@ Image files in this directory are covered by the following public licenses:
 
 - - -
 
-**Image:** help.gif  
-**Icon set:** Futurosoft  
-**Designer:** Sergio Sanchez Lopez  
-**Site:** http://www.futurosoft.es  
-**Contact:** <sergio9087@hotmail.com></code>  
-**License:** [GPL][gpl]
-
-- - -
-
 **Image:** refresh.gif (remixed)  
 **Icon set:** Minimal perception  
 **Designer:** Mandarancio  
