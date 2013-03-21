@@ -345,7 +345,7 @@ OpenRSurvey <- function() {
   ConstructPolygon <- function(type) {
     if (is.null(Data("data.raw")))
       return()
-    msg <- paste("After the plot has been created, use the mouse to identify",
+    msg <- paste("After the graph has been created, use the mouse to identify",
                  "the vertices of the polygon. The identification process can",
                  "be terminated by clicking the second button and selecting",
                  "[Stop] from the menu, or from the [Stop] menu on the",
@@ -803,37 +803,37 @@ OpenRSurvey <- function() {
 
   tkadd(menu.file, "command", label="New project", accelerator="Ctrl+N",
         command=ClearObjs)
-  tkadd(menu.file, "command", label="Open project", accelerator="Ctrl+O",
+  tkadd(menu.file, "command", label="Open project\u2026", accelerator="Ctrl+O",
         command=OpenProj)
   tkadd(menu.file, "command", label="Save project", accelerator="Ctrl+S",
         command=SaveProj)
-  tkadd(menu.file, "command", label="Save project as",
+  tkadd(menu.file, "command", label="Save project as\u2026",
         accelerator="Shift+Ctrl+S", command=SaveProjAs)
 
   tkadd(menu.file, "separator")
   
   menu.file.import <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.import, "command", label="Text file",
+  tkadd(menu.file.import, "command", label="Text file\u2026",
         command=CallImportData)
-  tkadd(menu.file.import, "command", label="R object",
+  tkadd(menu.file.import, "command", label="R data set\u2026",
         command=function() print("notyet"))
   tkadd(menu.file, "cascade", label="Import data from", menu=menu.file.import)
   
   menu.file.export <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.export, "command", label="Text file",
+  tkadd(menu.file.export, "command", label="Text file\u2026",
         command=function() CallExportData("text"))
-  tkadd(menu.file.export, "command", label="Shapefile",
+  tkadd(menu.file.export, "command", label="Shapefile\u2026",
         command=function() CallExportData("shape"))
   tkadd(menu.file, "cascade", label="Export point data as", 
         menu=menu.file.export)
-  tkadd(menu.file, "command", label="Export grid data as",
+  tkadd(menu.file, "command", label="Export grid data as\u2026",
         command=function() CallExportData("grid"))
 
   tkadd(menu.file, "separator")
   menu.file.save <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.save, "command", label="R graphic", accelerator="Ctrl+R",
+  tkadd(menu.file.save, "command", label="R graphic\u2026", accelerator="Ctrl+R",
         command=SaveRDevice)
-  tkadd(menu.file.save, "command", label="RGL graphic",
+  tkadd(menu.file.save, "command", label="RGL graphic\u2026",
         command=SaveRGLDevice)
   tkadd(menu.file, "cascade", label="Save graph from", menu=menu.file.save)
 
@@ -846,17 +846,17 @@ OpenRSurvey <- function() {
   menu.edit <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
 
-  tkadd(menu.edit, "command", label="Manage data",
+  tkadd(menu.edit, "command", label="Manage data\u2026",
         command=CallManageData)
   
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Edit query",
+  tkadd(menu.edit, "command", label="Edit query\u2026",
         command=BuildQuery)
   tkadd(menu.edit, "command", label="Clear query",
         command=ClearQuery)
 
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Set sort order",
+  tkadd(menu.edit, "command", label="Set sort order\u2026",
         command=function() {
           col.ids <- sapply(Data("cols"), function(i) i$id)
           sort.on.old <- Data(c("vars", "sort.on"))
@@ -873,7 +873,7 @@ OpenRSurvey <- function() {
         })
 
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Preferences",
+  tkadd(menu.edit, "command", label="Interpolation preferences",
         command=function() {
           SetPreferences(tt)
         })
@@ -888,10 +888,10 @@ OpenRSurvey <- function() {
 
   tkadd(top.menu, "cascade", label="Polygon", menu=menu.poly, underline=0)
 
-  tkadd(menu.poly, "command", label="Manage polygons",
+  tkadd(menu.poly, "command", label="Manage polygons\u2026",
         command=CallManagePolygons)
   tkadd(menu.poly, "separator")
-  tkadd(menu.poly, "command", label="Set polygon limits",
+  tkadd(menu.poly, "command", label="Set polygon limits\u2026",
         command=CallSetPolygonLimits)
   tkadd(menu.poly, "command", label="Clear polygon limits",
         command=function() {
@@ -912,7 +912,7 @@ OpenRSurvey <- function() {
           ConstructPolygon(type="l")
         })
   tkadd(menu.poly, "cascade", label="Build", menu=menu.poly.con)
-  tkadd(menu.poly, "command", label="Autocrop region",
+  tkadd(menu.poly, "command", label="Autocrop region\u2026",
         command=CallAutocropRegion)
 
   # Graph menu
@@ -920,7 +920,7 @@ OpenRSurvey <- function() {
   menu.graph <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
   
-  tkadd(menu.graph, "command", label="Histogram", 
+  tkadd(menu.graph, "command", label="Histogram\u2026", 
         command=function() {
           CallProcessData()
           if (is.null(Data("data.pts")))
@@ -945,7 +945,7 @@ OpenRSurvey <- function() {
         command=CallPlot3d)
   
   tkadd(menu.graph, "separator")
-  tkadd(menu.graph, "command", label="Set axes limits",
+  tkadd(menu.graph, "command", label="Set axes limits\u2026",
         command=function() {
           lim <- SetAxesLimits(Data("lim.axes"), tt)
           Data("lim.axes", lim)
@@ -961,7 +961,7 @@ OpenRSurvey <- function() {
           SetConfiguration(tt)
         })
 
-  tkadd(menu.graph, "command", label="Choose color palette",
+  tkadd(menu.graph, "command", label="Choose color palette\u2026",
         command=function() {
           pal <- colorspace::choose_palette(pal=Data("color.palette"), 
                                             n=Data("nlevels"), parent=tt)
@@ -970,14 +970,18 @@ OpenRSurvey <- function() {
         })
 
   tkadd(menu.graph, "separator")
-  tkadd(menu.graph, "command", label="Close all plots", accelerator="Ctrl+F4",
+  tkadd(menu.graph, "command", label="Close all graphs", accelerator="Ctrl+F4",
         command=CloseDevices)
 
   # Help menu
 
   menu.help <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Help", menu=menu.help, underline=0)
-  tkadd(menu.help, "command", label="R functions (html)",
+  tkadd(menu.help, "command", label="Help",
+        command=function() {
+          print(help("OpenRSurvey", package="RSurvey"))
+        })
+  tkadd(menu.help, "command", label="R functions",
         command=function() {
           help(package="RSurvey")
         })

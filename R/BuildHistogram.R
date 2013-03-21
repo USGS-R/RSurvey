@@ -196,7 +196,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
                             command=function() tclvalue(tt.done.var) <- 1)
   frame0.but.4 <- ttkbutton(frame0, width=12, text="Help",
                             command=function() {
-                              print(help("BuildHistogram", package="RSurvey"))
+                              print(help("hist", package="graphics"))
                             })
   tkgrid(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4, 
          pady=10, padx=c(0, 4))

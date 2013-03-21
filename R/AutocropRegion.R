@@ -127,7 +127,7 @@ AutocropRegion <- function(d, parent=NULL, ...) {
                             command=function() tclvalue(tt.done.var) <- 1)
   frame0.but.6 <- ttkbutton(frame0, width=12, text="Help",
                             command=function() {
-                              print(help("AutocropRegion", package="RSurvey"))
+                              print(help("Autocrop", package="RSurvey"))
                             })
 
   tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, frame0.but.5, 

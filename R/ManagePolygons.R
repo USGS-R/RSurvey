@@ -429,14 +429,14 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   menu.file <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
 
-  tkadd(menu.file, "command", label="Open", accelerator="Ctrl+O",
+  tkadd(menu.file, "command", label="Open\u2026", accelerator="Ctrl+O",
         command=ImportPolygon)
-  tkadd(menu.file, "command", label="Save as", accelerator="Ctrl+S",
+  tkadd(menu.file, "command", label="Save as\u2026", accelerator="Ctrl+S",
         command=ExportPolygon)
 
   menu.edit <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
-  tkadd(menu.edit, "command", label="Rename", accelerator="Ctrl+R",
+  tkadd(menu.edit, "command", label="Rename\u2026", accelerator="Ctrl+R",
         command=RenamePolygon)
   tkadd(menu.edit, "command", label="Delete", accelerator="Del",
         command=ClearPolygon)

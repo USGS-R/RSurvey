@@ -400,7 +400,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   
   menu.tool <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Tool", menu=menu.tool, underline=0)
-  tkadd(menu.tool, "command", label="Build format for date-time object",
+  tkadd(menu.tool, "command", label="Build format for date-time object\u2026",
         command=CallFormatDateTime)
 
   # Finalize top menu

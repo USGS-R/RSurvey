@@ -142,9 +142,9 @@ SetConfiguration <- function(parent=NULL) {
 
   frame1 <- ttkframe(pw, relief="flat", borderwidth=0, padding=10)
 
-  txt <- "Approximate number of contour levels"
-  frame1.lab.1.1 <- ttklabel(frame1, text=txt)
   txt <- "Width of plotting window canvas, in inches"
+  frame1.lab.1.1 <- ttklabel(frame1, text=txt)
+  txt <- "Approximate number of contour levels"
   frame1.lab.2.1 <- ttklabel(frame1, text=txt)
   txt <- "Scaling for point symbols"
   frame1.lab.3.1 <- ttklabel(frame1, text=txt)
@@ -159,8 +159,8 @@ SetConfiguration <- function(parent=NULL) {
   txt <- "Increment for sequence of arrows in y direction"
   frame1.lab.8.1 <- ttklabel(frame1, text=txt)
 
-  frame1.ent.1.2 <- ttkentry(frame1, width=8, textvariable=nlevels.var)
-  frame1.ent.2.2 <- ttkentry(frame1, width=8, textvariable=width.var)
+  frame1.ent.1.2 <- ttkentry(frame1, width=8, textvariable=width.var)
+  frame1.ent.2.2 <- ttkentry(frame1, width=8, textvariable=nlevels.var)
   frame1.ent.3.2 <- ttkentry(frame1, width=8, textvariable=cex.pts.var)
   frame1.ent.4.2 <- ttkentry(frame1, width=8, textvariable=asp.yx.var)
   frame1.ent.5.2 <- ttkentry(frame1, width=8, textvariable=asp.zx.var)
@@ -239,11 +239,11 @@ SetConfiguration <- function(parent=NULL) {
 
   tkbind(frame1.ent.1.2, "<KeyRelease>",
          function() {
-           tclvalue(nlevels.var) <- CheckEntry("integer", tclvalue(nlevels.var))
+           tclvalue(nlevels.var) <- CheckEntry("integer", tclvalue(width.var))
          })
   tkbind(frame1.ent.2.2, "<KeyRelease>",
          function() {
-           tclvalue(width.var) <- CheckEntry("numeric", tclvalue(width.var))
+           tclvalue(width.var) <- CheckEntry("numeric", tclvalue(nlevels.var))
          })
   tkbind(frame1.ent.3.2, "<KeyRelease>",
          function() {

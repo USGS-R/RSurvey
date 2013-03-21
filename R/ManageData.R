@@ -457,7 +457,7 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   menu.edit <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
-  tkadd(menu.edit, "command", label="New", accelerator="Ctrl+N",
+  tkadd(menu.edit, "command", label="New\u2026", accelerator="Ctrl+N",
         command=SaveNewVar)
   tkadd(menu.edit, "command", label="Delete", command=DeleteVar)
   tkadd(menu.edit, "separator")
@@ -476,7 +476,7 @@ ManageData <- function(cols, vars, parent=NULL) {
   
   menu.graph <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
-  tkadd(menu.graph, "command", label="Histogram", 
+  tkadd(menu.graph, "command", label="Histogram\u2026", 
         command=CallBuildHistogram)
   
   tkconfigure(tt, menu=top.menu)

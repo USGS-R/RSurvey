@@ -41,7 +41,7 @@ argument values.
 }
 
 \seealso{
-\code{\link{ReadData}}, \code{\link{read.table}}, \code{\link{connections}}
+\code{\link{ReadData}}
 }
 
 \author{J.C. Fisher}

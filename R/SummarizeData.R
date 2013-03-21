@@ -23,10 +23,11 @@ SummarizeData <- function(obj, fmt=NULL) {
   BuildString <- function(s) {
     s.names <- names(s)
     s.names <- s.names[!s.names %in% "String"]
-    descriptions <- paste(sapply(s.names, function(i) dic[[i]]$id), ": ", sep="")
+    descriptions <- paste(vapply(s.names, function(i) dic[[i]]$id, ""), 
+                          "  ", sep="")
     fmt <-  paste("%-", max(nchar(descriptions)), "s", sep="")
     descriptions <- sprintf(fmt, descriptions)
-    values <- sapply(s.names, FormatValue)
+    values <- vapply(s.names, FormatValue, "")
     fmt <- paste("%", max(nchar(values)), "s", sep="")
     values <- sprintf(fmt, values)
     string <- paste(paste(paste(descriptions, values, sep=""), collapse="\n"), 
