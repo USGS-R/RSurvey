@@ -981,14 +981,27 @@ OpenRSurvey <- function() {
         command=function() {
           print(help("OpenRSurvey", package="RSurvey"))
         })
-  tkadd(menu.help, "command", label="R functions",
+  tkadd(menu.help, "command", label="Functions",
         command=function() {
           help(package="RSurvey")
         })
+  
+  tkadd(menu.help, "separator")
+  menu.help.rep <- tkmenu(tt, tearoff=0)
+  tkadd(menu.help.rep, "command", label="CRAN",
+        command=function() {
+          browseURL("http://cran.r-project.org/web/packages/RSurvey/")
+        })
+  tkadd(menu.help.rep, "command", label="GitHub",
+        command=function() {
+          browseURL("https://github.com/jfisher-usgs/RSurvey")
+        })
+  tkadd(menu.help, "cascade", label="Repository on", menu=menu.help.rep)
+  
   tkadd(menu.help, "separator")
   tkadd(menu.help, "command", label="About",
         command=AboutPackage)
-
+  
   if (!("RSurvey" %in% .packages())) {
       tkadd(menu.help, "separator")
       tkadd(menu.help, "command", label="Restore R session",
