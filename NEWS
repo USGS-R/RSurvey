@@ -2,8 +2,10 @@ Changes in Version 0.7-4
   
   o  
     
-  o  Measurement units have been removed. The user is tasked with the removal of
-     the unit header in the input text files.
+  o  Fixed bug with finding unique values in Edit Function GUI.
+    
+  o  Measurement units have been removed. Users need to remove unit headers 
+     from their input text files.
   
   o  Added GUI for sorting the processed data set.
   

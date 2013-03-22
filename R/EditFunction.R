@@ -18,6 +18,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       tcl("lappend", variable.var, show.ids[i])
 
     tkselection.clear(frame1.lst.2.1, 0, "end")
+    
+    tclvalue(value.var) <- ""
+    
     tkconfigure(frame1.but.5.1, state="disabled")
     tkfocus(frame2.txt.2.1)
   }
@@ -170,8 +173,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     idx <- as.integer(tkcurselection(frame1.lst.2.1))
     if (length(idx) == 0)
       return()
-    else
-      idx <- idx + 1L
+    id <- as.character(tkget(frame1.lst.2.1, idx, idx))
+    idx <- which(vapply(cols, function(i) i$id, "") == id)
+    
     var.fmt <- cols[[idx]]$format
     
     tkconfigure(tt, cursor="watch")
@@ -224,8 +228,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     idx <- as.integer(tkcurselection(frame1.lst.2.1))
     if (length(idx) == 0)
       return()
-    else
-      idx <- idx + 1L
+    id <- as.character(tkget(frame1.lst.2.1, idx, idx))
+    idx <- which(vapply(cols, function(i) i$id, "") == id)
+    
     var.fmt <- cols[[idx]]$format
     var.class <- cols[[idx]]$class
     
@@ -260,9 +265,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     old.fun <- cols[[as.integer(index)]]$fun
   }
   new.fun <- NULL
-
-  cls <- sapply(cols, function(i) i$class)
-  ids <- sapply(cols, function(i) i$id)
+  
+  ids <- vapply(cols, function(i) i$id, "")
+  cls <- vapply(cols, function(i) i$class,  "")
   if (!is.null(index)) {
     edit.fun.id <- ids[index]
     ids <- ids[-index]
