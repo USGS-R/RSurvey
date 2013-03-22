@@ -160,12 +160,13 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
       n <- ncol(d)
       h <- as.data.frame(matrix(NA, nrow=m, ncol=n))
       i <- 1L
+      
       if (headers[1]) {
-        h[i, ] <- col.nams
+        h[i, ] <- col.fmts
         i <- i + 1L
       }
       if (headers[2])
-        h[i, ] <- col.fmts
+        h[i, ] <- col.nams
 
       write.table(h, file=con, append=FALSE, quote=FALSE, row.names=FALSE,
                   col.names=FALSE, sep=sep)

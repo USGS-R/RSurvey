@@ -43,9 +43,9 @@ The imported data table requires at least two numeric variables.
 \details{
 This function is the primary method for importing table formatted data from
 a text file. The \code{headers} argument, a logical vector of length 2,
-indicates whether the file contains the names and conversion
-specification formats of the variables as its initial lines. For example,
-\code{headers = c(TRUE, FALSE)} indicates that the first 
+indicates whether the file contains the  conversion specification formats and 
+names of the variables as its initial lines. For example,
+\code{headers = c(FALSE, TRUE)} indicates that the first 
 line contains the names of variables, and no formats are included. 
 If \code{headers = c(FALSE, FALSE)}, the default, no header information is 
 contained within the file.
@@ -87,7 +87,7 @@ Sets the following components in \code{\link{Data}}:
 \examples{
 f <- system.file("extdata/DataExample.txt", package = "RSurvey")
 con <- file(f, open = "r", encoding = "latin1")
-ans <- ReadData(con, headers = c(TRUE, TRUE, TRUE))
+ans <- ReadData(con, headers = c(TRUE, TRUE))
 close(con)
 }
 

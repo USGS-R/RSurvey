@@ -14,8 +14,8 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     tkconfigure(tt, cursor="watch")
     if (file.type == "text") {
       is.processed <- as.logical(as.integer(tclvalue(records.var)))
-      headers <- c(as.logical(as.integer(tclvalue(head.names.var))),
-                   as.logical(as.integer(tclvalue(head.fmts.var))))
+      headers <- c(as.logical(as.integer(tclvalue(head.fmts.var))),
+                   as.logical(as.integer(tclvalue(head.names.var))))
       sep <- as.character(tclvalue(sep.var))
       if (sep == "other")
         sep <- as.character(tclvalue(sep.other.var))
@@ -127,8 +127,8 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
   variables.var    <- tclVar()
   records.var      <- tclVar(0)
-  head.names.var   <- tclVar(0)
   head.fmts.var    <- tclVar(0)
+  head.names.var   <- tclVar(0)
   sep.var          <- tclVar("\t")
   sep.other.var    <- tclVar()
   sort.on.var      <- tclVar()
@@ -229,10 +229,10 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
     frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                             text="Include header lines")
-    frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=head.names.var,
-                                     text="Names of the variables")
-    frame2.chk.1.2 <- ttkcheckbutton(frame2, variable=head.fmts.var,
+    frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=head.fmts.var,
                                      text="Conversion specification formats")
+    frame2.chk.1.2 <- ttkcheckbutton(frame2, variable=head.names.var,
+                                     text="Names of the variables")
 
     tkgrid(frame2.chk.1.1, frame2.chk.1.2)
     tkgrid.configure(frame2.chk.1.1, padx=c(15, 15))

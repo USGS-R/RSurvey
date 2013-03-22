@@ -35,18 +35,13 @@ ReadData <- function(con, headers=c(FALSE, FALSE), sep="\t",
       
       i <- 1L
       if (headers[1]) {
-        nams <- as.character(h[i, ])
-        nams[is.na(nams)] <- "Unknown"
-        i <- i + 1L
-      }
-      if (headers[2]) {
         fmts <- as.character(h[i, ])
 
         # Use formats to determine column classes
         n <- ncol(h)
         col.classes <- rep("character", n)
-        for (i in 1:n) {
-          fmt <- fmts[i]
+        for (j in 1:n) {
+          fmt <- fmts[j]
 
           test <- try(sprintf(fmt, 1), silent=TRUE)
           is.error <- inherits(test, "try-error")
@@ -56,14 +51,19 @@ ReadData <- function(con, headers=c(FALSE, FALSE), sep="\t",
               s <- paste(substr(fmt, 1, 1),
                          substr(fmt, nchar(fmt), nchar(fmt)), sep="")
               if (s %in% c("%d", "%i")) {
-                col.classes[i] <- "integer"
+                col.classes[j] <- "integer"
               } else if (s %in% c("%f", "%e", "%E")) {
-                col.classes[i] <- "numeric"
+                col.classes[j] <- "numeric"
               }
             }
           }
         }
         col.classes[fmts %in% "%Y-%m-%d %H:%M:%S"] <- "POSIXct"
+        i <- i + 1L
+      }
+      if (headers[2]) {
+        nams <- as.character(h[i, ])
+        nams[is.na(nams)] <- "Unknown"
       }
 
       skip <- 0L
@@ -78,10 +78,11 @@ ReadData <- function(con, headers=c(FALSE, FALSE), sep="\t",
     
     # Initialize missing headers
     n <- ncol(d)
+    
     if (!headers[1])
-      nams <- rep("Unknown", n)
-    if (!headers[2])
       fmts <- rep(NA, n)
+    if (!headers[2])
+      nams <- rep("Unknown", n)
 
     # Reset row names
     rownames(d) <- 1:nrow(d)

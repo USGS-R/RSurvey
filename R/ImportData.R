@@ -88,8 +88,8 @@ ImportData <- function(parent=NULL) {
       return(d)
 
     } else {
-      hds <- as.logical(c(as.integer(tclvalue(names.var)),
-                          as.integer(tclvalue(decis.var))))
+      hds <- as.logical(c(as.integer(tclvalue(decis.var)),
+                          as.integer(tclvalue(names.var))))
 
       RaiseWarning(tt)
       if (!is.null(Data("cols"))) {
@@ -251,8 +251,8 @@ ImportData <- function(parent=NULL) {
     tcl(frame4.tbl, "tag", "row", "h1", 0)
     tcl(frame4.tbl, "tag", "row", "h2", 1)
 
-    logic <- as.logical(as.integer(c(tclvalue(names.var), tclvalue(decis.var))))
-    headCol <- c("#FFD0D4", "#EBFFC6")[logic]
+    logic <- as.logical(as.integer(c(tclvalue(decis.var), tclvalue(names.var))))
+    headCol <- c("#EBFFC6", "#FFD0D4")[logic]
     if (length(headCol) < 2)
       headCol[(length(headCol) + 1):2] <- "white"
 
@@ -309,9 +309,9 @@ ImportData <- function(parent=NULL) {
   # Assign variables linked to Tk widgets
 
   table.var <- tclArray()
-
-  names.var  <- tclVar(0)
+  
   decis.var  <- tclVar(0)
+  names.var  <- tclVar(0)
   skip.var   <- tclVar(0)
   nrow.var   <- tclVar()
   source.var <- tclVar()
@@ -321,8 +321,8 @@ ImportData <- function(parent=NULL) {
   # Set header variables
 
   if (!is.null(Data("table.headers"))) {
-    tclvalue(names.var) <- Data("table.headers")[1]
-    tclvalue(decis.var) <- Data("table.headers")[2]
+    tclvalue(decis.var) <- Data("table.headers")[1]
+    tclvalue(names.var) <- Data("table.headers")[2]
   }
 
   # Open GUI
@@ -408,12 +408,12 @@ ImportData <- function(parent=NULL) {
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Header lines")
 
-  txt <- "Names of the variables, that is, column names in the data table"
-  frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=names.var,
-                                   command=SetTags, text=txt)
   txt <- paste("Conversion specification formats of the variables,",
                "for example, '%10.6f' or '%Y-%m-%d %H:%M'")
-  frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=decis.var,
+  frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=decis.var,
+                                   command=SetTags, text=txt)
+  txt <- "Names of the variables, that is, column names in the data table"
+  frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=names.var,
                                    command=SetTags, text=txt)
 
   tkgrid(frame2.chk.1.1, pady=1, sticky="w")

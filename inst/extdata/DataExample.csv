@@ -1,5 +1,5 @@
-T POSIXct,X numeric m,Y numeric m,Z numeric ft,Z numeric ft,Z numeric m,,Logical,Integer psia,,Logical,Date character,Time character,Character
 %m/%d/%Y %H:%M:%OS,%5.1f,%5.1f,%.3f,%.2f,,%.2e,,%d,,,,,%s
+T POSIXct,X numeric m,Y numeric m,Z numeric ft,Z numeric ft,Z numeric m,,Logical,Integer psia,,Logical,Date character,Time character,Character
 04/24/2009 10:43:38.275,7.8,-2.3,-0.870,998.28,-0.265,-2.62E-01,TRUE,1,,,8/20/2008,11:55:00 AM,
 04/24/2009 11:20:43.757,5.0,-4.7,-1.243,998.12,-0.379,-3.70E-01,TRUE,14,,,8/20/2008,11:55:00 AM,A1
 04/24/2009 12:08:31.895,2.2,-2.2,-2.362,997.65,-0.720,-6.59E-01,TRUE,6,,,8/20/2008,11:55:00 AM,A2
