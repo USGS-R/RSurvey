@@ -996,7 +996,7 @@ OpenRSurvey <- function() {
         command=function() {
           browseURL("https://github.com/jfisher-usgs/RSurvey")
         })
-  tkadd(menu.help, "cascade", label="Repository on", menu=menu.help.rep)
+  tkadd(menu.help, "cascade", label="Repository on  ", menu=menu.help.rep)
   
   tkadd(menu.help, "separator")
   tkadd(menu.help, "command", label="About",
