@@ -200,14 +200,14 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
               yscrollcommand=paste(.Tk.ID(frame1.ysc.1.6), "set"))
   tkconfigure(frame1.ysc.1.6, command=paste(.Tk.ID(frame1.lst.1.1), "yview"))
 
-  frame1.but.2.1 <- ttkbutton(frame1, width=10, text="Select All",
+  frame1.but.2.1 <- ttkbutton(frame1, width=8, text="All",
                               command=function() SelectVariables("all"))
-  frame1.but.2.2 <- ttkbutton(frame1, width=10, text="Deselect",
+  frame1.but.2.2 <- ttkbutton(frame1, width=8, text="None",
                               command=function() SelectVariables("none"))
-  frame1.but.2.3 <- ttkbutton(frame1, width=10, text="Inverse",
+  frame1.but.2.3 <- ttkbutton(frame1, width=8, text="Inverse",
                               command=function() SelectVariables("inverse"))
   frame1.chk.2.4 <- ttkcheckbutton(frame1, variable=records.var,
-                                   text="Processed records only")
+                                   text="Include processed records only")
 
   tkgrid(frame1.lst.1.1, "x", "x", "x", "x", frame1.ysc.1.6)
   tkgrid(frame1.but.2.1, frame1.but.2.2, frame1.but.2.3, frame1.chk.2.4, 
@@ -216,7 +216,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   tkgrid.configure(frame1.lst.1.1, sticky="nsew", columnspan=5)
   tkgrid.configure(frame1.ysc.1.6, sticky="ns")
   tkgrid.configure(frame1.but.2.1, frame1.but.2.2, padx=c(0, 4))
-  tkgrid.configure(frame1.chk.2.4, padx=c(10, 0))
+  tkgrid.configure(frame1.chk.2.4, padx=c(25, 0))
 
   tkgrid.columnconfigure(frame1, 4, weight=1, minsize=0)
   tkgrid.rowconfigure(frame1, 0, weight=1)

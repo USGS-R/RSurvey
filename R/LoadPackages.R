@@ -13,7 +13,7 @@ LoadPackages <- function(repo="http://cran.r-project.org") {
 
   is.tcl <- "tcltk" %in% available.pkgs
   if (is.tcl)
-    suppressPackageStartupMessages(require("tcltk"))
+    require("tcltk")
 
   if (any(is.missing)) {
     missing.pkgs <- pkgs[is.missing]
@@ -38,7 +38,7 @@ LoadPackages <- function(repo="http://cran.r-project.org") {
   }
 
   for (pkg in pkgs) {
-    is.pkg <- suppressPackageStartupMessages(require(pkg, character.only=TRUE))
+    is.pkg <- require(pkg, character.only=TRUE)
     if (!is.pkg && pkg %in% require.pkgs)
       stop(paste("package", pkg, "is required"))
   }

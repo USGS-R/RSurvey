@@ -8,7 +8,7 @@ WriteFile <- function(file.type="text", file.name=NULL, col.ids=NULL,
 
   if (file.type == "shape") {
     is.pkg <- "rgdal" %in% .packages(all.available=TRUE) &&
-              require(rgdal, quietly=FALSE)
+              require(rgdal)
     if (!is.pkg)
       stop("package rgdal required for shapefile support")
   }

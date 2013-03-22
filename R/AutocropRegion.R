@@ -68,7 +68,7 @@ AutocropRegion <- function(d, parent=NULL, ...) {
   # Main program
   
   is.pkg <- "tripack" %in% .packages(all.available=TRUE) &&
-            require(tripack, quietly=FALSE)
+            require(tripack)
   if (!is.pkg)
     stop("package tripack required for the AutocropRegion function")
 
