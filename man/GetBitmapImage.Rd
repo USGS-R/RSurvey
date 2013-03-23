@@ -37,20 +37,22 @@ An image of class \code{\link{tclObj}}.
 }
 
 \examples{\donttest{
-image.names <- c("left", "right", "up", "down", "top", "bottom", "upleft", 
-                 "upright", "downleft", "downright", "next", "previous", 
-                 "copy", "paste", "find", "delete", "view", "info", "plus", 
-                 "minus", "print", "histogram")
+img.names <- c("left", "right", "up", "down", "top", "bottom", "upleft", 
+               "upright", "downleft", "downright", "next", "previous", 
+               "copy", "paste", "find", "delete", "view", "info", "plus", 
+               "minus", "print", "histogram")
+fun <- function(i) print(img.names[i])
+tt <- tktoplevel(padx = 50, pady = 50)
 i <- 0
 j <- 0
 d <- 5
-tt <- tktoplevel(padx = 50, pady = 50)
-for (k in seq(along=image.names)) {
+for (k in seq(along=img.names)) {
   img <- paste("img", k, sep = ".")
   but <- paste("but", k, sep = ".")
-  assign(img, GetBitmapImage(image.names[k]))
-  assign(but, ttkbutton(tt, width = 2, image = get(img)))
-  tkgrid(get(but), row = i, column = j)
+  assign(img, GetBitmapImage(img.names[k]))
+  assign(but, ttkbutton(tt, width = 2, image = get(img), 
+                        command = local({k <- k; function() fun(k)})))
+  tkgrid(get(but), row = i, column = j, padx = 5, pady = 5)
   i <- k \%/\% d
   j <- j + 1
   if (j > d - 1)
