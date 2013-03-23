@@ -301,7 +301,7 @@ ViewData <- function(d, column.names=NULL, column.formats=NULL, parent=NULL) {
   frame2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
   .Tcl("option add *Table.font {CourierNew 9}")
-  frame2.tbl <- tkwidget(frame2, "table", rows=m + 1, cols=n + 2,
+  frame2.tbl <- tkwidget(frame2, "table", rows=m + 1, cols=n + 1,
                          colwidth=-2, rowheight=1, state="disabled",
                          height=height + 1, width=width + 1,
                          ipadx=5, ipady=1, wrap=0,
@@ -311,10 +311,10 @@ ViewData <- function(d, column.names=NULL, column.formats=NULL, parent=NULL) {
                          bordercursor="sb_h_double_arrow", cursor="plus",
                          colstretchmode="none", rowstretchmode="none",
                          drawmode="single", rowseparator="\n",
-                         colseparator="\t", selectmode="extended",
-                         insertofftime=0, anchor="nw", justify="left",
-                         borderwidth=0, highlightthickness=0, cache=1,
-                         command=function(r, c) GetCellValue(r, c),
+                         colseparator="\t", selectmode="extended", 
+                         selecttitle=1, insertofftime=0, anchor="nw", 
+                         justify="left", borderwidth=0, highlightthickness=0, 
+                         cache=1, command=function(r, c) GetCellValue(r, c),
                          xscrollcommand=function(...) tkset(frame2.xsc,...),
                          yscrollcommand=function(...) tkset(frame2.ysc,...))
 
