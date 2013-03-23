@@ -200,12 +200,12 @@ SetConfiguration <- function(parent=NULL) {
   frame2.chk.03.1 <- ttkcheckbutton(frame2, text=txt, variable=img.contour.var)
   txt <- "Show contour lines"
   frame2.chk.04.1 <- ttkcheckbutton(frame2, text=txt, variable=show.lines.var)
-  txt <- "Show points on surface"
+  txt <- "Show points on maps"
   frame2.chk.05.1 <- ttkcheckbutton(frame2, text=txt, variable=show.points.var)
   txt <- "Use uniform arrow lengths"
   frame2.chk.06.1 <- ttkcheckbutton(frame2, text=txt, variable=vuni.var)
 
-  txt <- "Show tickmarks on second axes"
+  txt <- "Show tickmarks on second axis"
   frame2.chk.07.1 <- ttkcheckbutton(frame2, text=txt, variable=show.2.axes.var)
   txt <- "Add minor tickmarks"
   frame2.chk.08.1 <- ttkcheckbutton(frame2, text=txt, variable=minor.ticks.var)

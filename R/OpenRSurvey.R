@@ -817,7 +817,8 @@ OpenRSurvey <- function() {
         command=CallImportData)
   tkadd(menu.file.import, "command", label="R data set\u2026",
         command=function() print("notyet"))
-  tkadd(menu.file, "cascade", label="Import data from", menu=menu.file.import)
+  tkadd(menu.file, "cascade", label="Import point data from", 
+        menu=menu.file.import)
   
   menu.file.export <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.export, "command", label="Text file\u2026",
