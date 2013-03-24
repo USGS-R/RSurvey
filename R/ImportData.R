@@ -146,9 +146,9 @@ ImportData <- function(parent=NULL) {
     for(j in 1:ncol(d))
       sapply(1:nrow(d), function(i)
         table.var[[i - 1, j - 1]] <- as.tclObj(d[i, j], drop=TRUE))
-
+    
     for (i in 1:ncol(d)) {
-      len <- max(nchar(gsub("\t", "    ", d[1:nrows, i])), na.omit=TRUE) + 3
+      len <- max(nchar(gsub("\t", "    ", d[1:nrows, i])), na.omit=TRUE) + 1
       if (len < 7)
         len <- 7
       tcl(frame4.tbl, "width", i - 1, len)
@@ -490,7 +490,7 @@ ImportData <- function(parent=NULL) {
                          colstretchmode="none", rowstretchmode="none",
                          anchor="nw", drawmode="single", rowseparator="\n",
                          colseparator="\t", selectmode="extended",
-                         insertofftime=0,
+                         insertofftime=0, highlightthickness=0,
                          xscrollcommand=function(...) tkset(frame4.xsc,...),
                          yscrollcommand=function(...) tkset(frame4.ysc,...))
 
@@ -508,8 +508,6 @@ ImportData <- function(parent=NULL) {
 
   tktag.configure(frame4.tbl, "active", background="#EAEEFE", relief="")
   tktag.configure(frame4.tbl, "sel", background="#EAEEFE", foreground="black")
-
-  tkconfigure(frame4.tbl, borderwidth=0, highlightthickness=0)
 
   tkgrid.columnconfigure(frame4, 0, weight=1)
   tkgrid.rowconfigure(frame4, 0, weight=1)

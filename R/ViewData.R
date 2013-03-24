@@ -185,21 +185,19 @@ ViewData <- function(d, column.names=NULL, column.formats=NULL, parent=NULL) {
       if (inherits(d[, j], "try-error"))
         d[, j] <- format(d[, j])
     }
-
-    if (column.names[j] == "")
-      nchar.title <- 0
-    else
-      nchar.title <- max(sapply(strsplit(column.names[j], "\n"), 
-                                function(i) nchar(i)))
-    nchar.data <- nchar(sample(d[,j], height))
-    len <- max(c(nchar.title, nchar.data)) + 3
+    
+    d[, j] <- gsub("(^ +)|( +$)", "", d[, j])
+    
+    nchar.title <- nchar(column.names[j])
+    nchar.data <- max(nchar(d[,j]))
+    len <- max(c(nchar.title, nchar.data)) + 1
     if (len < 10)
       len <- if (n == 1) 20 else 10
     col.width[j] <- len
   }
 
   # Construct character matrix from data frame
-  
+
   d <- rbind(c("", column.names), cbind(row.names(d), as.matrix(d)))
   d <- cbind(d, rep("", nrow(d)))
 
@@ -302,19 +300,19 @@ ViewData <- function(d, column.names=NULL, column.formats=NULL, parent=NULL) {
 
   .Tcl("option add *Table.font {CourierNew 9}")
   frame2.tbl <- tkwidget(frame2, "table", rows=m + 1, cols=n + 1,
-                         colwidth=-2, rowheight=1, state="disabled",
+                         colwidth=-2, rowheight=1, state="disable", 
                          height=height + 1, width=width + 1,
-                         ipadx=5, ipady=1, wrap=0,
+                         ipadx=2, wrap=1, justify="right",
                          highlightcolor="gray75", background="white",
                          foreground="black", titlerows=1, titlecols=1,
-                         multiline=0, resizeborders="col", colorigin=0,
+                         multiline=1, resizeborders="col", colorigin=0,
                          bordercursor="sb_h_double_arrow", cursor="plus",
                          colstretchmode="none", rowstretchmode="none",
                          drawmode="single", rowseparator="\n",
                          colseparator="\t", selectmode="extended", 
-                         selecttitle=1, insertofftime=0, anchor="nw", 
-                         justify="left", borderwidth=0, highlightthickness=0, 
-                         cache=1, command=function(r, c) GetCellValue(r, c),
+                         selecttitle=1, insertofftime=0, anchor="e", 
+                         highlightthickness=0, cache=1, 
+                         command=function(r, c) GetCellValue(r, c),
                          xscrollcommand=function(...) tkset(frame2.xsc,...),
                          yscrollcommand=function(...) tkset(frame2.ysc,...))
 
@@ -338,14 +336,11 @@ ViewData <- function(d, column.names=NULL, column.formats=NULL, parent=NULL) {
   tktag.configure(frame2.tbl, "active", background="#EAEEFE", relief="")
   tktag.configure(frame2.tbl, "sel", background="#EAEEFE", foreground="black")
 
-  tktag.configure(frame2.tbl, "title", background="#D9D9D9",
-                  foreground="black", multiline=1, ellipsis="...", wrap=1)
+  tktag.configure(frame2.tbl, "title", background="#D9D9D9", foreground="black")
 
   tcl(frame2.tbl, "tag", "row", "coltitles", 0)
-  tktag.configure(frame2.tbl, "coltitles", anchor="center", anchor="n",
-                  justify="center")
+  tktag.configure(frame2.tbl, "coltitles", anchor="center", justify="center")
   tcl(frame2.tbl, "tag", "col", "rowtitles", 0)
-  tktag.configure(frame2.tbl, "rowtitles", anchor="ne", justify="right")
 
   tkgrid.columnconfigure(frame2, 0, weight=1)
   tkgrid.rowconfigure(frame2, 0, weight=1)
