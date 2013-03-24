@@ -9,14 +9,14 @@ A \acronym{GUI} for viewing table formatted data.
 }
 
 \usage{
-ViewData(d, column.names = NULL, column.formats = NULL, parent = NULL)
+ViewData(d, col.names = NULL, col.formats = NULL, parent = NULL)
 }
 
 \arguments{
 \item{d}{data.frame; the data used to populate the table.}
-\item{column.names}{character; a vector giving the column names for the
+\item{col.names}{character; a vector giving the column names for the
   data table (optional).}
-\item{column.formats}{character; the conversion specification
+\item{col.formats}{character; the conversion specification
   format (optional).}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
@@ -48,12 +48,12 @@ V2 <- sample(LETTERS, n, replace = TRUE)
 V3 <- as.POSIXct(rnorm(n, mean = 0, sd = 1e6), origin = "2010-01-01")
 V4 <- sample(V1 * pi, n)
 d <- data.frame(V1, V2, V3, V4)
-column.names <- c("Integers", "Letters", "DateTime", "Numeric")
-column.formats <- c("\%d", "\%s", "\%m/\%d/\%Y \%H:\%M", NA)
-ViewData(d, column.names, column.formats)
+col.names <- c("Integers", "Letters", "DateTime", "Numeric")
+col.formats <- c("\%d", "\%s", "\%m/\%d/\%Y \%H:\%M", NA)
+ViewData(d, col.names, col.formats)
 
 row.names(d) <- 1:n + n
-ViewData(d, column.names, column.formats = column.formats)
+ViewData(d, col.names, col.formats = col.formats)
 }
 }
 

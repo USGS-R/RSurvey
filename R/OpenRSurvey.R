@@ -632,7 +632,7 @@ OpenRSurvey <- function() {
     
     nams <- sapply(state.vars, function(i) i)
     fmts <- sapply(cols, function(i) ifelse(is.null(i$format), NA, i$format))
-    ViewData(d, column.names=nams, column.formats=fmts, parent=tt)
+    ViewData(d, col.names=nams, col.formats=fmts, parent=tt)
     
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)

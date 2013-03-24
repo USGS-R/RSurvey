@@ -461,7 +461,7 @@ ManageData <- function(cols, vars, parent=NULL) {
         command=SaveNewVar)
   tkadd(menu.edit, "command", label="Delete", command=DeleteVar)
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="View data", command=CallViewData)
+  tkadd(menu.edit, "command", label="View all data", command=CallViewData)
 
   menu.arrange <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Arrange", menu=menu.arrange, underline=0)
