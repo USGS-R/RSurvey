@@ -6,7 +6,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   # Additional functions (subroutines)
 
   # Rebuild list box based on selected class type to show
-
   RebuildList <- function() {
     idx <- as.integer(tcl(frame1.box.3.1, "current"))
     show.ids <- ids
@@ -26,7 +25,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   }
 
   # Insert character string into text box
-
   InsertString <- function(txt, sel="<variable>") {
     tcl(frame2.txt.2.1, "edit", "separator")
     seltxt <- as.character(tktag.ranges(frame2.txt.2.1, 'sel'))
@@ -61,7 +59,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   }
 
   # Insert variable into text box
-
   InsertVar <- function() {
     idx <- as.integer(tkcurselection(frame1.lst.2.1))
     if (length(idx) == 0)
@@ -72,7 +69,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   }
 
   # Save function
-
   SaveFunction <- function() {
     txt <- as.character(tclvalue(tkget(frame2.txt.2.1, '1.0', 'end-1c')))
     if (txt == "") {
@@ -125,7 +121,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   }
 
   # Call date and time format editor
-
   CallFormatDateTime <- function() {
     spec <- FormatDateTime(parent=tt)
     tkfocus(frame2.txt.2.1)
@@ -134,7 +129,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   }
 
   # Text edit functions
-
   EditUndo <- function() {
     tkfocus(frame2.txt.2.1)
     tcl(frame2.txt.2.1, "edit", "undo")
@@ -161,14 +155,12 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   }
   
   # Clear all
-  
   ClearAll <- function() {
     tcl(frame2.txt.2.1, "delete", "1.0", "end")
     tkfocus(frame2.txt.2.1)
   }
   
   # Show unique values
-  
   ShowUniqueValues <- function() {
     idx <- as.integer(tkcurselection(frame1.lst.2.1))
     if (length(idx) == 0)
@@ -205,6 +197,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       if (inherits(var.vals.txt, "try-error"))
         var.vals.txt <- format(var.vals)
     }
+    var.vals.txt <- gsub("^\\s+|\\s+$", "", var.vals.txt)
     
     tclvalue(value.var) <- ""
     for (i in seq(along=var.vals.txt))
@@ -216,43 +209,36 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   }
   
   # Change variable selection
-  
   ChangeVar <- function() {
     tclvalue(value.var) <- ""
     tkconfigure(frame1.but.5.1, state="normal")
   }
   
   # Insert value into text box
-  
   InsertValue <- function() {
     idx <- as.integer(tkcurselection(frame1.lst.2.1))
     if (length(idx) == 0)
       return()
     id <- as.character(tkget(frame1.lst.2.1, idx, idx))
     idx <- which(vapply(cols, function(i) i$id, "") == id)
-    
     var.fmt <- cols[[idx]]$format
     var.class <- cols[[idx]]$class
-    
     idx <- as.integer(tkcurselection(frame1.lst.4.1))
     if (length(idx) == 0)
       return()
     val <- as.character(tkget(frame1.lst.4.1, idx, idx))
-    
     if (var.class == "factor" && is.na(suppressWarnings(as.numeric(val))))
       var.class <- "character"
-    
     if (var.class == "POSIXct") {
       txt <- paste("as.POSIXct(\"", val, "\", format = \"", var.fmt, "\")", 
                    sep="")
+    } else if (var.class == "integer") {
+      txt <- paste(val, "L", sep="")
+    } else if (var.class == "character" && val != "NA") {
+      txt <- paste("\"", val, "\"", sep="")
     } else {
-      val <- gsub("^\\s+|\\s+$", "", val)
-      if (var.class == "character" && val != "NA") 
-        txt <- paste("\"", val, "\"", sep="")
-      else
-        txt <- val
+      txt <- val
     }
-    
     InsertString(txt)
   }
 
@@ -275,13 +261,11 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   }
 
   # Class types
-
   classes <- c("numeric", "integer", "POSIXct", "logical",
                "character", "factor")
   classes <- classes[classes %in% cls]
 
   # Assign variables linked to Tk widgets
-
   variable.var <- tclVar()
   for (i in seq(along=ids))
     tcl("lappend", variable.var, ids[i]) # must be unique
@@ -302,7 +286,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tktitle(tt) <- win.title
 
   # Top menu
-
   top.menu <- tkmenu(tt, tearoff=0)
 
   # Project menu

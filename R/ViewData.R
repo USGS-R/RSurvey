@@ -89,24 +89,17 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
 
   # Goto data record
   GotoRecord <- function() {
-    rec <- as.integer(tclvalue(record.var))
+    rec <- as.character(tclvalue(record.var))
     if (is.na(rec))
       return()
     idx <- which(row.names %in% rec)
-    if (length(idx) == 0) {
-      if (rec > row.names[m]) {
-        idx <- m
-        tclvalue(record.var) <- row.names[m]
-      } else if (rec < row.names[1]) {
-        idx <- 1
-        tclvalue(record.var) <- row.names[1]
-      } else {
-        return()
-      }
+    if (length(idx) > 0) {
+      tkyview(frame2.tbl, idx[1] - 1L)
     } else {
-      idx <- idx[1]
+      msg <- "Row name (or record number) not found."
+      tkmessageBox(icon="info", message=msg, title="Goto", type="ok",
+                     parent=tt)
     }
-    tkyview(frame2.tbl, idx - 1L)
   }
 
   # Get single cell value for table
@@ -138,9 +131,8 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
 
   # Account for missing arguments
   if (is.null(col.names)) {
-    if (length(colnames(d)) == n) {
-      col.names <- colnames(d)
-    } else {
+    col.names <- colnames(d)
+    if (is.null(col.names) | length(col.names) != n) {
       col.names <- LETTERS[1:n]
       if (any(is.na(col.names))) {
         from <- seq(27, n, by=26)
@@ -148,7 +140,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
           to <- from[i] + 25
           if (to > n)
             to <- n
-          l <- paste(LETTERS[i], LETTERS[1:(to - from[i] + 1)], sep="")
+          l <- paste(LETTERS[i], LETTERS[1:(to - from[i] + 1L)], sep="")
           col.names[from[i]:to] <- l
         }
       }
@@ -167,9 +159,10 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
     row.names <- rownames(d)
   else
     row.names <- 1:m
+  row.names <- gsub("(^ +)|( +$)", "", as.character(row.names))
 
   # Determine width and height of column 0 and row 0, respectively
-  col.0.width  <- nchar(max(as.integer(row.names))) + 1L
+  col.0.width  <- max(nchar(row.names)) + 1L
   row.0.height <- max(vapply(strsplit(col.names, "\n"), length, 0L))
 
   # Format data table and determine column widths
@@ -256,7 +249,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
   frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0, height=200)
 
   frame1.lab.1.1 <- ttklabel(frame1, text="Find")
-  frame1.lab.2.1 <- ttklabel(frame1, text="Record")
+  frame1.lab.2.1 <- ttklabel(frame1, text="Row")
 
   frame1.ent.1.2 <- ttkentry(frame1, width=15, textvariable=pattern.var)
   frame1.ent.2.2 <- ttkentry(frame1, width=15, textvariable=record.var)
@@ -355,10 +348,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
   tkbind(frame1.ent.1.2, "<KeyRelease>",
          function() {
            matched.cells <<- NULL
-         })
-  tkbind(frame1.ent.2.2, "<KeyRelease>",
-         function() {
-           tclvalue(record.var) <- CheckEntry("integer", tclvalue(record.var))
          })
 
   tkbind(tt, "<Control-a>", SelectAll)

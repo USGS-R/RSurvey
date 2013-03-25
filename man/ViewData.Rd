@@ -36,11 +36,11 @@ Requires the Tcl package
 \author{J.C. Fisher}
 
 \seealso{
-\code{\link{tclArray}}, \code{\link{row.names}}
+\code{\link{tclArray}}, \code{\link{grep}}
 }
 
-\examples{
-\donttest{tclRequire("Tktable", warn = TRUE)
+\examples{\donttest{
+tclRequire("Tktable", warn = TRUE)
 
 n <- 1000
 V1 <- sample(c(1:9, NA), n, replace = TRUE)
@@ -52,9 +52,12 @@ col.names <- c("Integers", "Letters", "DateTime", "Numeric")
 col.formats <- c("\%d", "\%s", "\%m/\%d/\%Y \%H:\%M", NA)
 ViewData(d, col.names, col.formats)
 
-row.names(d) <- 1:n + n
-ViewData(d, col.names, col.formats = col.formats)
-}
-}
+rownames(d) <- paste(sample(LETTERS, n, replace = TRUE), 1:n, sep="")
+ViewData(d)
+
+colnames(d) <- NULL
+rownames(d) <- NULL
+ViewData(d)
+}}
 
 \keyword{misc}
