@@ -232,7 +232,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     if (var.class == "POSIXct") {
       txt <- paste("as.POSIXct(\"", val, "\", format = \"", var.fmt, "\")", 
                    sep="")
-    } else if (var.class == "integer") {
+    } else if (var.class == "integer" && val != "NA") {
       txt <- paste(val, "L", sep="")
     } else if (var.class == "character" && val != "NA") {
       txt <- paste("\"", val, "\"", sep="")
