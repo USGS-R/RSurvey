@@ -233,7 +233,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   tkconfigure(frame2.box.2.1, value=fun.names)
   tcl(frame2.box.2.1, "current", 0)
   
-  txt <- "A single number giving the suggested number of histogram cells"
+  txt <- "A single number giving the suggested number of cells"
   frame2.rbt.3.1 <- ttkradiobutton(frame2, variable=breaks.var, value=2L, 
                                   text=txt, command=ToggleState)
   frame2.scl.4.1 <- tkwidget(frame2, "ttk::scale", from=0, to=1, 
@@ -243,22 +243,22 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
                              })
   frame2.ent.4.3 <- ttkentry(frame2, width=4, textvariable=single.var)
   
-  txt <- "A vector giving the breakpoints between histogram cells"
+  txt <- "A vector giving the breakpoints between cells"
   frame2.rbt.5.1 <- ttkradiobutton(frame2, variable=breaks.var, value=3L, 
                                   text=txt, command=ToggleState)
   frame2.ent.6.1 <- ttkentry(frame2, width=15, textvariable=vector.var)
   
-  txt <- "A sequence giving the breakpoints between histogram cells"
+  txt <- "A sequence giving the breakpoints between cells"
   frame2.rbt.7.1 <- ttkradiobutton(frame2, variable=breaks.var, value=4L, 
                                   text=txt, command=ToggleState)
   
-  frame2.lab.8.1  <- ttklabel(frame2, text="Starting value of the sequence")
-  frame2.lab.9.1  <- ttklabel(frame2, text="Ending value of the sequence")
-  frame2.lab.10.1 <- ttklabel(frame2, text="Increment of the sequence")
+  frame2.lab.8.1  <- ttklabel(frame2, text="Starting value")
+  frame2.lab.9.1  <- ttklabel(frame2, text="Ending value")
+  frame2.lab.10.1 <- ttklabel(frame2, text="Increment")
   
-  frame2.ent.8.2  <- ttkentry(frame2, width=15, textvariable=from.var)
-  frame2.ent.9.2  <- ttkentry(frame2, width=15, textvariable=to.var)
-  frame2.ent.10.2 <- ttkentry(frame2, width=15, textvariable=by.var)
+  frame2.ent.8.2  <- ttkentry(frame2, width=10, textvariable=from.var)
+  frame2.ent.9.2  <- ttkentry(frame2, width=10, textvariable=to.var)
+  frame2.ent.10.2 <- ttkentry(frame2, width=10, textvariable=by.var)
   
   tkgrid(frame2.rbt.1.1, sticky="w", columnspan=3)
   tkgrid(frame2.box.2.1, padx=c(20, 0), pady=c(0, 10), sticky="we", columnspan=3)
@@ -267,8 +267,8 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   tkgrid(frame2.rbt.5.1, sticky="w", columnspan=3)
   tkgrid(frame2.ent.6.1, padx=c(20, 0), pady=c(0, 10), sticky="we", columnspan=3)
   tkgrid(frame2.rbt.7.1, sticky="w", columnspan=3)
-  tkgrid(frame2.lab.8.1,  frame2.ent.8.2)
-  tkgrid(frame2.lab.9.1,  frame2.ent.9.2)
+  tkgrid(frame2.lab.8.1, frame2.ent.8.2)
+  tkgrid(frame2.lab.9.1, frame2.ent.9.2)
   tkgrid(frame2.lab.10.1, frame2.ent.10.2)
   
   tkgrid.configure(frame2.scl.4.1, columnspan=2, padx=c(20, 4))
@@ -277,6 +277,8 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   tkgrid.configure(frame2.ent.8.2, frame2.ent.9.2, frame2.ent.10.2, 
                    columnspan=2, sticky="we")
   tkgrid.configure(frame2.ent.9.2, pady=2)
+  tkgrid.configure(frame2.ent.8.2, frame2.ent.9.2, frame2.ent.10.2, 
+                   padx=c(0,150))
   
   tkgrid.columnconfigure(frame2, 1, weight=1, minsize=50)
   tkpack(frame2, fill="x", expand=TRUE, ipadx=0, ipady=0, padx=10, pady=5)
@@ -299,7 +301,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
                                    text="Frequences (counts component)", 
                                    command=PlotHist)
   frame4.rbt.1.2 <- ttkradiobutton(frame4, variable=freq.var, value=FALSE, 
-                                   text="Density (total area of one)", 
+                                   text="Probability densities", 
                                    command=PlotHist)
   tkgrid(frame4.rbt.1.1, frame4.rbt.1.2)
   tkgrid.configure(frame4.rbt.1.1, padx=c(0, 10))
