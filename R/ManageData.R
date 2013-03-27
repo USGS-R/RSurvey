@@ -286,15 +286,16 @@ ManageData <- function(cols, vars, parent=NULL) {
     n <- cols[[1]]$summary$Count
     f <- EditFunction(cols, index=idx, value.length=n, parent=tt)
     
-    if (is.null(f)) {
-      if (cols[[idx]]$fun == "")
-        DeleteVar()
+    if (cols[[idx]]$fun == "" & (is.null(f$fun) || f$fun == "")) {
+      DeleteVar()
       return()
     }
-    
+    if (is.null(f))
+      return()
     if (f$fun == "") {
-      msg <- paste("Nothing has been defined for the function",
-                   "and the variable will be deleted.")
+      msg <- paste("Nothing has been defined for this function; therefore,\n",
+                   "the variable '", cols[[idx]]$name, "' will be removed.",
+                   sep="")
       ans <- as.character(tkmessageBox(icon="question", message=msg,
                                        title="Warning", type="okcancel",
                                        parent=tt))

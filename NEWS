@@ -1,6 +1,9 @@
 Changes in Version 0.7-4
   
-  o  
+  o  Added View Data for single variable.
+  
+  o  No longer required to have a data set loaded to open the Data Management 
+     GUI.
   
   o  Fixed bug with finding unique values in Edit Function GUI.
   
