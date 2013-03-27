@@ -31,14 +31,15 @@ pre-existing data frame or query building.
 }
 
 \value{
-Results in a character string of the user defined function; when evaluated,
-this string must be parseable.
+Returns a list with two character components: \code{fun}, 
+the user defined function (when evaluated, this string must be parseable),
+and \code{class}, the object class of the evaluated function.
 }
 
 \author{J.C. Fisher}
 
 \seealso{
-\code{\link{EvalFunction}}, \code{\link{parse}}
+\code{\link{EvalFunction}}
 }
 
 \examples{\donttest{

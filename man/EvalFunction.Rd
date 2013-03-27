@@ -26,8 +26,7 @@ numeric vectors.
 }
 
 \seealso{
-\code{\link{parse}}, \code{\link{eval}}, \code{\link{is.infinite}},
-\code{\link{is.nan}}
+\code{\link{parse}}, \code{\link{eval}}
 }
 
 \author{J.C. Fisher}

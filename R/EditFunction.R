@@ -5,74 +5,11 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   # Additional functions (subroutines)
 
-  # Rebuild list box based on selected class type to show
-  RebuildList <- function() {
-    idx <- as.integer(tcl(frame1.box.3.1, "current"))
-    show.ids <- ids
-    if (idx > 0)
-      show.ids <- ids[cls %in% classes[idx]]
-
-    tclvalue(variable.var) <- ""
-    for (i in seq(along=show.ids))
-      tcl("lappend", variable.var, show.ids[i])
-
-    tkselection.clear(frame1.lst.2.1, 0, "end")
-    
-    tclvalue(value.var) <- ""
-    
-    tkconfigure(frame1.but.5.1, state="disabled")
-    tkfocus(frame2.txt.2.1)
-  }
-
-  # Insert character string into text box
-  InsertString <- function(txt, sel="<variable>") {
-    tcl(frame2.txt.2.1, "edit", "separator")
-    seltxt <- as.character(tktag.ranges(frame2.txt.2.1, 'sel'))
-    if (length(seltxt) > 1)
-      tcl(frame2.txt.2.1, "delete", seltxt[1], seltxt[2])
-
-    cur <- as.character(tkindex(frame2.txt.2.1, "insert"))
-    cur <- as.integer(strsplit(cur, ".", fixed=TRUE)[[1]])
-    cur.line <- cur[1]
-    cur.char <- cur[2]
-
-    tkinsert(frame2.txt.2.1, "insert", txt)
-    tkfocus(frame2.txt.2.1)
-
-    if (txt %in% c("()", "[]")) {
-      cursor.insert <- paste(cur.line, cur.char + 1, sep=".")
-      tkmark.set(frame2.txt.2.1, "insert", cursor.insert)
-    } else {
-      search.txt <- gregexpr(pattern=sel, txt)[[1]]
-      if (search.txt[1] > 0) {
-        match.idx <- search.txt[1]
-        match.len <- attr(search.txt, "match.length")[1]
-        tkfocus(frame2.txt.2.1)
-
-        char <- c(match.idx, match.idx + match.len) + cur.char - 1
-        sel0 <- paste(cur.line, char[1], sep=".")
-        sel1 <- paste(cur.line, char[2], sep=".")
-        tktag.add(frame2.txt.2.1, 'sel', sel0, sel1)
-        tkmark.set(frame2.txt.2.1, "insert", sel1)
-      }
-    }
-  }
-
-  # Insert variable into text box
-  InsertVar <- function() {
-    idx <- as.integer(tkcurselection(frame1.lst.2.1))
-    if (length(idx) == 0)
-      return()
-    id <- as.character(tkget(frame1.lst.2.1, idx, idx))
-    txt <- paste("\"", id, "\"", sep="")
-    InsertString(txt)
-  }
-
   # Save function
   SaveFunction <- function() {
-    txt <- as.character(tclvalue(tkget(frame2.txt.2.1, '1.0', 'end-1c')))
+    txt <- as.character(tclvalue(tkget(frame2.txt.2.1, "1.0", "end-1c")))
     if (txt == "") {
-      new.fun <<- ""
+      rtn <<- list(fun="", class=NA)
     } else {
       fun <- txt
       pattern <- paste("\"", ids, "\"", sep="")
@@ -115,9 +52,72 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         return()
       }
       
-      new.fun <<- txt
+      rtn <<- list(fun=txt, class=class(val)[1])
     }
     tclvalue(tt.done.var) <- 1
+  }
+
+  # Rebuild list box based on selected class type to show
+  RebuildList <- function() {
+    idx <- as.integer(tcl(frame1.box.3.1, "current"))
+    show.ids <- ids
+    if (idx > 0)
+      show.ids <- ids[cls %in% classes[idx]]
+
+    tclvalue(variable.var) <- ""
+    for (i in seq(along=show.ids))
+      tcl("lappend", variable.var, show.ids[i])
+
+    tkselection.clear(frame1.lst.2.1, 0, "end")
+    
+    tclvalue(value.var) <- ""
+    
+    tkconfigure(frame1.but.5.1, state="disabled")
+    tkfocus(frame2.txt.2.1)
+  }
+
+  # Insert character string into text box
+  InsertString <- function(txt, sel="<variable>") {
+    tcl(frame2.txt.2.1, "edit", "separator")
+    seltxt <- as.character(tktag.ranges(frame2.txt.2.1, "sel"))
+    if (length(seltxt) > 1)
+      tcl(frame2.txt.2.1, "delete", seltxt[1], seltxt[2])
+
+    cur <- as.character(tkindex(frame2.txt.2.1, "insert"))
+    cur <- as.integer(strsplit(cur, ".", fixed=TRUE)[[1]])
+    cur.line <- cur[1]
+    cur.char <- cur[2]
+
+    tkinsert(frame2.txt.2.1, "insert", txt)
+    tkfocus(frame2.txt.2.1)
+
+    if (txt %in% c("()", "[]")) {
+      cursor.insert <- paste(cur.line, cur.char + 1, sep=".")
+      tkmark.set(frame2.txt.2.1, "insert", cursor.insert)
+    } else {
+      search.txt <- gregexpr(pattern=sel, txt)[[1]]
+      if (search.txt[1] > 0) {
+        match.idx <- search.txt[1]
+        match.len <- attr(search.txt, "match.length")[1]
+        tkfocus(frame2.txt.2.1)
+
+        char <- c(match.idx, match.idx + match.len) + cur.char - 1
+        sel0 <- paste(cur.line, char[1], sep=".")
+        sel1 <- paste(cur.line, char[2], sep=".")
+        tktag.add(frame2.txt.2.1, "sel", sel0, sel1)
+        tkmark.set(frame2.txt.2.1, "insert", sel1)
+      }
+    }
+  }
+
+  # Insert variable into text box
+  InsertVar <- function() {
+    idx <- as.integer(tkcurselection(frame1.lst.2.1))
+    if (length(idx) == 0)
+      return()
+    id <- as.character(tkget(frame1.lst.2.1, idx, idx))
+    txt <- paste("\"", id, "\"", sep="")
+    InsertString(txt)
   }
 
   # Call date and time format editor
@@ -211,6 +211,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   # Change variable selection
   ChangeVar <- function() {
     tclvalue(value.var) <- ""
+    idx <- as.integer(tkcurselection(frame1.lst.2.1))
+    if (length(idx) == 0)
+      return()
     tkconfigure(frame1.but.5.1, state="normal")
   }
   
@@ -250,7 +253,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   } else {
     old.fun <- cols[[as.integer(index)]]$fun
   }
-  new.fun <- NULL
+  rtn <- NULL
   
   ids <- vapply(cols, function(i) i$id, "")
   cls <- vapply(cols, function(i) i$class,  "")
@@ -583,5 +586,5 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  new.fun
+  rtn
 }

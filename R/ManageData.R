@@ -18,6 +18,8 @@ ManageData <- function(cols, vars, parent=NULL) {
   SetVarId <- function(idx=NULL) {
     if (is.null(idx))
       idx <- as.integer(tkcurselection(frame1.lst)) + 1
+    if (length(idx) == 0)
+      return()
 
     # Save name
 
@@ -60,7 +62,7 @@ ManageData <- function(cols, vars, parent=NULL) {
       new.fun <- cols[[idx]]$fun
       if (!identical(old.fun, new.fun)) {
         tkconfigure(frame2.txt.4.2, state="normal")
-        tcl(frame2.txt.4.2, "delete", '1.0', 'end')
+        tcl(frame2.txt.4.2, "delete", "1.0", "end")
         tkinsert(frame2.txt.4.2, "end", new.fun)
         tkconfigure(frame2.txt.4.2, state="disabled")
       }
@@ -76,7 +78,7 @@ ManageData <- function(cols, vars, parent=NULL) {
   # Save notebook content
 
   SaveNb <- function() {
-    idx <- as.integer(tkcurselection(frame1.lst)) + 1
+    idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0)
       return()
 
@@ -91,7 +93,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     # Save function
 
     old.fun <- cols[[idx]]$fun
-    new.fun <- as.character(tclvalue(tkget(frame2.txt.4.2, '1.0', 'end-1c')))
+    new.fun <- as.character(tclvalue(tkget(frame2.txt.4.2, "1.0", "end-1c")))
     cols[[idx]]$fun <<- new.fun
 
     # Save summary
@@ -107,11 +109,6 @@ ManageData <- function(cols, vars, parent=NULL) {
       cols[[idx]]$summary <<- SummarizeData(cols[[idx]]$summary, fmt=new.fmt)
     }
 
-    # Save class
-
-    if (!is.null(cols[[idx]]$summary))
-      cols[[idx]]$class <<- cols[[idx]]$summary$Class
-
     # Save name
 
     SetVarId(idx)
@@ -120,11 +117,9 @@ ManageData <- function(cols, vars, parent=NULL) {
   # Update notebook content
 
   UpdateNb <- function() {
-    idx <- as.integer(tkcurselection(frame1.lst)) + 1
-    if (length(idx) == 0) {
-      SaveNewVar()
+    idx <- as.integer(tkcurselection(frame1.lst)) + 1L
+    if (length(idx) == 0) 
       return()
-    }
 
     # Update name
 
@@ -133,25 +128,37 @@ ManageData <- function(cols, vars, parent=NULL) {
       saved.name <- ""
     tclvalue(name.var) <- saved.name
 
-    # Update format
-
-    tkconfigure(frame2.ent.2.2, state="normal")
-    saved.fmt <- cols[[idx]]$format
-    if (is.null(saved.fmt))
-      saved.fmt <- ""
-    tclvalue(fmt.var) <- saved.fmt
-    tkconfigure(frame2.ent.2.2, state="readonly")
-
     # Update class
 
     tkconfigure(frame2.ent.3.2, state="normal")
-    tclvalue(class.var) <- cols[[idx]]$class
+    saved.class <- cols[[idx]]$class
+    tclvalue(class.var) <- saved.class
     tkconfigure(frame2.ent.3.2, state="readonly")
+
+    # Update format
+
+    saved.fmt <- cols[[idx]]$format   
+    if (is.null(saved.fmt)) {
+      if (saved.class %in% c("character", "logical")) {
+        saved.fmt <- "%s"
+      } else if (saved.class == "numeric") {
+        saved.fmt <- "%f"
+      } else if (saved.class == "integer") {
+        saved.fmt <- "%d"
+      } else if (saved.class == "POSIXct") {
+        saved.fmt <- "%d/%m/%Y %H:%M:%OS"
+      } else {
+        saved.fmt <- ""
+      }
+    }
+    tkconfigure(frame2.ent.2.2, state="normal")
+    tclvalue(fmt.var) <- saved.fmt
+    tkconfigure(frame2.ent.2.2, state="readonly")
 
     # Update function
 
     tkconfigure(frame2.txt.4.2, state="normal")
-    tcl(frame2.txt.4.2, "delete", '1.0', 'end')
+    tcl(frame2.txt.4.2, "delete", "1.0", "end")
     tkinsert(frame2.txt.4.2, "end", cols[[idx]]$fun)
     tkconfigure(frame2.txt.4.2, state="disabled")
 
@@ -163,7 +170,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     # Update summary
 
     tkconfigure(frame3.txt, state="normal")
-    tcl(frame3.txt, "delete", '1.0', 'end')
+    tcl(frame3.txt, "delete", "1.0", "end")
 
     sum.str <- cols[[idx]]$summary$String
     if (!is.null(sum.str))
@@ -175,22 +182,19 @@ ManageData <- function(cols, vars, parent=NULL) {
   # Account for change in notebook tab
 
   ChangeTab <- function() {
-    idx <- as.integer(tkcurselection(frame1.lst)) + 1
+    idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0)
       return()
 
     SaveNb()
     UpdateNb()
 
-    tabid <- tclvalue(tcl(nb, 'select'))
+    tabid <- tclvalue(tcl(nb, "select"))
 
-    # Arrive at variable tab
+    # Arrive at tab
 
     if (tabid == frame2$ID) {
       tkfocus(frame2)
-
-    # Arrive at summary tab
-
     } else if (tabid == frame3$ID) {
       tkfocus(frame3)
     }
@@ -201,17 +205,17 @@ ManageData <- function(cols, vars, parent=NULL) {
   SaveNewVar <- function() {
     SaveNb()
     id <- "New Variable"
-    tcl("lappend", list.var, id)
     n <- length(cols)
-    tkselection.clear(frame1.lst, 0, n)
+    cols[[n + 1]] <<- list(name=id, format="%s", class="logical", fun="")
+    
+    tcl("lappend", list.var, id)
+    tkselection.clear(frame1.lst, 0, "end")
     tkselection.set(frame1.lst, n, n)
-    tkyview(frame1.lst, n - 1L)
-    cols[[n + 1]] <<- list(name=id, class="logical", fun="")
+    tkyview(frame1.lst, n)
+    
     UpdateNb()
     SetVarId()
-
-    if (n > 0)
-      CallEditFunction()
+    CallEditFunction()
   }
 
   # Delete existing variable
@@ -236,45 +240,60 @@ ManageData <- function(cols, vars, parent=NULL) {
     }
 
     tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var), idx - 1, idx - 1)
-
+    
     cols <<- cols[-idx]
     vars <<- vars[!vars %in% idx]
+    
+    if (length(cols) == 0)
+      cols <<- NULL
+    if (length(vars) == 0)
+      vars <<- NULL
+    
     for (i in seq(along=vars)) {
       if (vars[[i]] > idx)
         vars[[i]][1] <<- vars[[i]] - 1
     }
 
     tkselection.clear(frame1.lst, 0, "end")
-    if (idx > length(cols))
-      tkselection.set(frame1.lst, idx - 2)
-    else
-      tkselection.set(frame1.lst, idx - 1)
-    UpdateNb()
+    
+    n <- length(cols)
+    if (n > 0) {
+      if (idx > n)
+        tkselection.set(frame1.lst, idx - 2)
+      else
+        tkselection.set(frame1.lst, idx - 1)
+      UpdateNb()
+    } else {
+      tclvalue(name.var) <- ""
+      tclvalue(class.var) <- ""
+      tclvalue(fmt.var) <- ""
+      tkconfigure(frame2.txt.4.2, state="normal")
+      tcl(frame2.txt.4.2, "delete", "1.0", "end")
+      tkconfigure(frame2.txt.4.2, state="disabled")
+      tkconfigure(frame3.txt, state="normal")
+      tcl(frame3.txt, "delete", "1.0", "end")
+      tkconfigure(frame3.txt, state="disabled")
+    }
   }
 
   # Edit a variables function formula
 
   CallEditFunction <- function() {
-    idx <- as.integer(tkcurselection(frame1.lst)) + 1
+    idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0)
       return()
     
-    if(is.null(Data("data.raw"))) {
-      n <- NULL
-    } else {
-      n <- nrow(Data("data.raw"))
-    }
+    n <- cols[[1]]$summary$Count
+    f <- EditFunction(cols, index=idx, value.length=n, parent=tt)
     
-    new.fun <- EditFunction(cols, index=idx, value.length=n, parent=tt)
-    
-    if (is.null(new.fun)) {
+    if (is.null(f)) {
       if (cols[[idx]]$fun == "")
         DeleteVar()
       return()
     }
     
-    if (new.fun == "") {
-      msg <- paste("Nothing is defined for the function",
+    if (f$fun == "") {
+      msg <- paste("Nothing has been defined for the function",
                    "and the variable will be deleted.")
       ans <- as.character(tkmessageBox(icon="question", message=msg,
                                        title="Warning", type="okcancel",
@@ -283,10 +302,15 @@ ManageData <- function(cols, vars, parent=NULL) {
         DeleteVar()
       return()
     }
-
+    
+    cols[[idx]]$class <<- f$class
+    
+    tkconfigure(frame2.ent.2.2, state="normal")
+    tclvalue(fmt.var) <- ""
+    tkconfigure(frame2.ent.2.2, state="readonly")
     tkconfigure(frame2.txt.4.2, state="normal")
-    tcl(frame2.txt.4.2, "delete", '1.0', 'end')
-    tkinsert(frame2.txt.4.2, "end", new.fun)
+    tcl(frame2.txt.4.2, "delete", "1.0", "end")
+    tkinsert(frame2.txt.4.2, "end", f$fun)
     tkconfigure(frame2.txt.4.2, state="disabled")
 
     SaveNb()
@@ -296,7 +320,9 @@ ManageData <- function(cols, vars, parent=NULL) {
   # Edit format
 
   CallFormat <- function() {
-    idx <- as.integer(tkcurselection(frame1.lst)) + 1
+    idx <- as.integer(tkcurselection(frame1.lst)) + 1L
+    if (length(idx) == 0)
+      return()
 
     sample.value <- cols[[idx]]$sample
 
@@ -316,7 +342,7 @@ ManageData <- function(cols, vars, parent=NULL) {
   # Arrange variables in listbox
 
   Arrange <- function(type) {
-    idx <- as.integer(tkcurselection(frame1.lst)) + 1
+    idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0)
       return()
 
@@ -337,14 +363,14 @@ ManageData <- function(cols, vars, parent=NULL) {
       if (idx == 1)
         return()
       new.idxs <- 1:n
-      new.idxs[c(idx - 1, idx)] <- c(idx, idx - 1)
-      new.idx <- idx - 1
+      new.idxs[c(idx - 1L, idx)] <- c(idx, idx - 1L)
+      new.idx <- idx - 1L
     } else if (type == "forward") {
       if (idx == n)
         return()
       new.idxs <- 1:n
-      new.idxs[c(idx, idx + 1)] <- c(idx + 1, idx)
-      new.idx <- idx + 1
+      new.idxs[c(idx, idx + 1L)] <- c(idx + 1L, idx)
+      new.idx <- idx + 1L
     }
 
     cols <<- cols[new.idxs]
@@ -366,16 +392,17 @@ ManageData <- function(cols, vars, parent=NULL) {
   # View data for selected variable
 
   CallViewData <- function(type="dataframe") {
-    if (length(cols) == 0)
+    idx <- as.integer(tkcurselection(frame1.lst)) + 1L
+    if (length(idx) == 0)
       return()
+    
     tkconfigure(tt, cursor="watch")
     SaveNb()
     
-    if (type == "data") {
-      idxs <- as.integer(tkcurselection(frame1.lst)) + 1L
-    } else {
+    if (type == "data")
+      idxs <- idx
+    else
       idxs <- 1:length(cols)
-    }
     
     funs <- sapply(cols, function(i) ifelse(is.null(i$fun), NA, i$fun))
     nams <- sapply(cols, function(i) ifelse(is.null(i$name), NA, i$name))
@@ -409,6 +436,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     ids <- sapply(cols, function(i) ifelse(is.null(i$id), NA, i$id))
     funs <- sapply(cols, function(i) ifelse(is.null(i$fun), NA, i$fun))
     d <- sapply(idxs, function(i) EvalFunction(funs[i], cols))
+    d <- as.data.frame(d)
     
     var.names <- ids[idxs]
     if (idx %in% idxs)
@@ -416,8 +444,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     else
       var.default <- var.names[1]
     
-    BuildHistogram(as.data.frame(d), var.names=var.names, 
-                   var.default=var.default, parent=tt)
+    BuildHistogram(d, var.names=var.names, var.default=var.default, parent=tt)
     tkfocus(tt)
   }
 
@@ -429,19 +456,19 @@ ManageData <- function(cols, vars, parent=NULL) {
   rtn <- NULL
 
   old.cols <- cols
-  ids <- sapply(cols, function(i) i$id)
+  ids <- vapply(cols, function(i) i$id, "")
 
   w <- 300
   h <- 50
 
   # Assign the variables linked to Tk widgets
 
-  list.var <- tclVar()
-  for (i in ids)
-    tcl("lappend", list.var, i)
+  list.var <- tclVar() 
+  for (i in seq(along=ids))
+    tcl("lappend", list.var, ids[i])
 
-  name.var <- tclVar()
-  fmt.var  <- tclVar()
+  name.var  <- tclVar()
+  fmt.var   <- tclVar()
   class.var <- tclVar()
 
   tt.done.var <- tclVar(0)
@@ -638,9 +665,13 @@ ManageData <- function(cols, vars, parent=NULL) {
   tkgrid.rowconfigure(frame3, 0, weight=1, minsize=25)
 
   # Insert notebook and paned window
-
+  
   tkadd(pw, nb, weight=1)
   tkpack(pw, fill="both", expand="yes", padx=10, pady=c(10, 2))
+  
+  # Update Notebook
+  
+  UpdateNb()
 
   # Bind events
 
@@ -663,8 +694,6 @@ ManageData <- function(cols, vars, parent=NULL) {
   tkbind(frame2.ent.1.2, "<Return>", function() SetVarId())
 
   # GUI control
-
-  UpdateNb()
 
   tkfocus(tt)
   tkgrab(tt)

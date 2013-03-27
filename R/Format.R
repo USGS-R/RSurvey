@@ -10,7 +10,6 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
       return(TRUE)
     if (substr(fmt, 1L, 1L) != "%")
       return(TRUE)
-
     code <- substr(fmt, nchar(fmt), nchar(fmt))
     if (inherits(sample, "integer")) {
       if (code != "d")

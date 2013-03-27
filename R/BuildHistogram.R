@@ -18,7 +18,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
       breaks <- as.integer(tclvalue(single.var))
     } else if (type == 3L) {
       s <- as.character(tclvalue(vector.var))
-      str.split <- unlist(strsplit(s, '[[:space:]]'))
+      str.split <- unlist(strsplit(s, "[[:space:]]"))
       num.split <- suppressWarnings(as.numeric(str.split))
       breaks <- num.split[!is.na(num.split)]
       if (length(breaks) == 0) 

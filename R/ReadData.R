@@ -169,6 +169,6 @@ ReadData <- function(con, headers=c(FALSE, FALSE), sep="\t",
   })
 
   ans <- paste("\nTime required to import data:",
-               format(elapsed.time['elapsed']), "seconds\n", "\n")
+               format(elapsed.time["elapsed"]), "seconds\n", "\n")
   invisible(ans)
 }

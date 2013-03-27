@@ -204,9 +204,6 @@ OpenRSurvey <- function() {
   # Manage data
 
   CallManageData <- function() {
-    if (is.null(Data("data.raw")))
-      return()
-    
     ans <- ManageData(Data("cols"), Data("vars"), tt)
     if (!is.null(ans)) {
       Data("cols", ans$cols)
@@ -613,27 +610,24 @@ OpenRSurvey <- function() {
 
   CallViewData <- function() {
     CallProcessData()
+    
     if (is.null(Data("data.pts")))
       return()
 
-    tkconfigure(tt, cursor="watch")
-
     vars <- Data("vars")
     cols <- Data("cols")
-
+    
     lst <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate",
                 vx="x-vector", vy="y-vector")
-    state.vars <- lst[names(lst) %in% names(vars)]
-    state.idxs <- sapply(names(state.vars), function(i) vars[[i]])
     
-    d <- Data("data.pts")[, names(state.vars)]
+    d <- Data("data.pts")
+    nams <- vapply(names(d), function(i) lst[[i]], "")
     
-    cols <- cols[state.idxs]
+    fmts <- vapply(names(d), function(i) cols[[vars[[i]]]]$format, "")
+    fmts[fmts == ""] <- NA
     
-    nams <- sapply(state.vars, function(i) i)
-    fmts <- sapply(cols, function(i) ifelse(is.null(i$format), NA, i$format))
+    tkconfigure(tt, cursor="watch")
     ViewData(d, col.names=nams, col.formats=fmts, parent=tt)
-    
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }
@@ -643,7 +637,7 @@ OpenRSurvey <- function() {
   CallProcessData <- function(interpolate=FALSE) {
     vars <- Data("vars")
     var.names <- names(vars)
-    if (!all(c("x", "y") %in% var.names) || is.null(Data("data.raw"))) {
+    if (!all(c("x", "y") %in% var.names)) {
       Data("data.pts", NULL)
       Data("data.grd", NULL)
       return()
@@ -721,14 +715,14 @@ OpenRSurvey <- function() {
     
     cols <- Data("cols")
     old.fun <- Data("query.fun")
-    new.fun <- EditFunction(cols, fun=old.fun, value.length=n,
-                            value.class="logical", 
-                            win.title="Edit Query", parent=tt)
-    if (is.null(new.fun))
+    f <- EditFunction(cols, fun=old.fun, value.length=n, value.class="logical", 
+                      win.title="Edit Query", parent=tt)
+    if (is.null(f))
       return()
-    if (new.fun == "")
-      new.fun <- NULL
-    Data("query.fun", new.fun)
+    if (f$fun == "")
+      Data("query.fun", NULL)
+    else
+      Data("query.fun", f$fun)
     Data("data.pts", NULL)
     Data("data.grd", NULL)
   }
