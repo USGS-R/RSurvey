@@ -6,9 +6,9 @@ SummarizeData <- function(obj, fmt=NULL) {
   # Format value
   FormatValue <- function(i) {
     fmt <- dic[[i]]$fmt
-    if (is.null(fmt) || obj.class == "integer") {
+    if (is.null(fmt) || s$Class == "integer") {
       val <- try(format(s[[i]]), silent=TRUE)
-    } else if (obj.class == "POSIXct") {
+    } else if (s$Class == "POSIXct") {
       val <- try(format(s[[i]], format=fmt), silent=TRUE)
     } else {
       val <- try(sprintf(fmt, s[[i]]), silent=TRUE)
@@ -43,9 +43,6 @@ SummarizeData <- function(obj, fmt=NULL) {
     return(NULL)
   if (is.null(fmt) || is.na(fmt) || fmt == "")
     fmt <- NULL
-  
-  # Save object class
-  obj.class <- class(obj)[1]
 
   # Build dictionary with summary components
   dic <- list()
@@ -63,6 +60,7 @@ SummarizeData <- function(obj, fmt=NULL) {
   dic$"Median"    <- list(id="Median", fmt=fmt)
   dic$"3rd Qu."   <- list(id="Upper quartile", fmt=fmt)
   dic$"Max."      <- list(id="Maximum", fmt=fmt)
+  dic$"Class"     <- list(id="Class")
 
   # Reformat old summary string
   is.summary.list <- inherits(obj, "list") && !is.null(obj$String)
@@ -106,7 +104,7 @@ SummarizeData <- function(obj, fmt=NULL) {
       } else {
         s$"Time Per." <- format(s$"Max." - s$"Min.", units="auto")
       }
-
+      
     } else if (inherits(obj, "logical")) {
       s$"FALSE" <- length(which(!obj))
       s$"TRUE" <- length(which(obj))
@@ -116,6 +114,7 @@ SummarizeData <- function(obj, fmt=NULL) {
         obj <- as.factor(obj)
       s$"Unique" <- length(levels(obj))
     }
+    s$Class <- class(obj)[1]
   }
   s$String <- BuildString(s)
   return(s)
