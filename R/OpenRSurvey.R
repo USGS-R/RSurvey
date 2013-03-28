@@ -216,12 +216,12 @@ OpenRSurvey <- function() {
   # Export data
 
   CallExportData <- function(file.type) {
-    if (is.null(Data("data.raw")))
+    if (is.null(Data("cols")))
       return()
 
     is.coordinate <- !is.null(Data("vars")$x) & !is.null(Data("vars")$y)
     if (!is.coordinate & file.type %in% c("shape", "grid"))
-      stop("Spatial coordinates missing")
+      return()
 
     if (file.type == "grid") {
       CallProcessData(interpolate=TRUE)
