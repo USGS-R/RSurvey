@@ -6,9 +6,9 @@ SummarizeData <- function(obj, fmt=NULL) {
   # Format value
   FormatValue <- function(i) {
     fmt <- dic[[i]]$fmt
-    if (is.null(fmt) || s$Class == "integer") {
+    if (is.null(fmt) || obj.class == "integer") {
       val <- try(format(s[[i]]), silent=TRUE)
-    } else if (s$Class == "POSIXct") {
+    } else if (obj.class == "POSIXct") {
       val <- try(format(s[[i]], format=fmt), silent=TRUE)
     } else {
       val <- try(sprintf(fmt, s[[i]]), silent=TRUE)
@@ -43,10 +43,12 @@ SummarizeData <- function(obj, fmt=NULL) {
     return(NULL)
   if (is.null(fmt) || is.na(fmt) || fmt == "")
     fmt <- NULL
+  
+  # Save object class
+  obj.class <- class(obj)[1]
 
   # Build dictionary with summary components
   dic <- list()
-  dic$"Class"     <- list(id="Class")
   dic$"Time Per." <- list(id="Length of period")
   dic$"NA's"      <- list(id="Number of NA's", fmt="%d")
   dic$"Count"     <- list(id="Count", fmt="%d")
@@ -80,7 +82,6 @@ SummarizeData <- function(obj, fmt=NULL) {
     # Common parameters
 
     s <- list()
-    s$Class <- class(obj)[1]
     s$Count <- length(obj)
     s$"NA's" <- length(which(is.na(obj)))
 

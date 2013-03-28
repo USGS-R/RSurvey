@@ -344,9 +344,9 @@ ImportData <- function(parent=NULL) {
 
   frame0 <- ttkframe(tt, relief="flat")
 
-  frame0.but.1 <- ttkbutton(frame0, width=12, text="Paste",
+  frame0.but.1 <- ttkbutton(frame0, width=8, text="Paste",
                             command=PasteData)
-  frame0.but.2 <- ttkbutton(frame0, width=12, text="Clear",
+  frame0.but.2 <- ttkbutton(frame0, width=8, text="Clear",
                             command=ClearData)
   frame0.but.4 <- ttkbutton(frame0, width=12, text="Load",
                             command=function() ReadFile(FALSE))

@@ -216,31 +216,41 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
   }
 
   tktitle(tt) <- "View Data"
+  
+  # Create menus
+
+  top.menu <- tkmenu(tt, tearoff=0)
+
+  menu.edit <- tkmenu(tt, tearoff=0, relief="flat")
+  tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
+  tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+C",
+        command=CopyValues)
+  tkadd(menu.edit, "command", label="Select all", accelerator="Ctrl+A",
+        command=SelectAll)
+  
+  tkconfigure(tt, menu=top.menu)
 
   # Frame 0, ok button and size grip
 
   frame0 <- ttkframe(tt, relief="flat")
 
-  frame0.but.2 <- ttkbutton(frame0, width=12, text="Copy",
-                            command=CopyValues)
-  frame0.but.3 <- ttkbutton(frame0, width=12, text="Close",
+  frame0.but.2 <- ttkbutton(frame0, width=12, text="Close",
                             command=function() tclvalue(tt.done.var) <- 1)
-  frame0.but.4 <- ttkbutton(frame0, width=12, text="Help",
+  frame0.but.3 <- ttkbutton(frame0, width=12, text="Help",
                             command=function() {
                               print(help("ViewData", package="RSurvey"))
                             }) 
-  frame0.grp.5 <- ttksizegrip(frame0)
+  frame0.grp.4 <- ttksizegrip(frame0)
 
-  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, frame0.grp.5)
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.grp.4)
 
   tkgrid.columnconfigure(frame0, 0, weight=1)
+  
+  tkgrid.configure(frame0.but.2, frame0.but.3, pady=10)
+  tkgrid.configure(frame0.but.3, columnspan=2, padx=c(4, 10))
+  tkgrid.configure(frame0.grp.4, sticky="se")
 
-  tkgrid.configure(frame0.but.2, frame0.but.3, frame0.but.4, 
-                   padx=c(0, 4), pady=c(10, 10))
-  tkgrid.configure(frame0.but.4, columnspan=2, padx=c(0, 10))
-  tkgrid.configure(frame0.grp.5, sticky="se")
-
-  tkraise(frame0.but.4, frame0.grp.5)
+  tkraise(frame0.but.3, frame0.grp.4)
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
@@ -280,7 +290,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
   tkgrid.configure(frame1.but.2.3, columnspan=2, sticky="we")
   tkgrid.configure(frame1.chk.1.5, padx=c(12, 0))
   tkgrid.configure(frame1.chk.1.6, padx=c(4, 0))
-  tkgrid.configure(frame1.chk.1.7, padx=c(4, 10))
+  tkgrid.configure(frame1.chk.1.7, padx=c(4, 25))
 
   tkpack(frame1, side="bottom", anchor="nw", padx=c(10, 0))
 
@@ -342,14 +352,16 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
   # Bind events
 
   tclServiceMode(TRUE)
-
+  
+  
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
   tkbind(frame1.ent.1.2, "<KeyRelease>",
          function() {
            matched.cells <<- NULL
          })
-
+  
+  tkbind(tt, "<Control-c>", CopyValues)
   tkbind(tt, "<Control-a>", SelectAll)
   tkbind(frame1.ent.1.2, "<Return>", function() Find("next"))
   tkbind(frame1.ent.1.2, "<Up>", function() Find("prev"))

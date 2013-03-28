@@ -523,18 +523,16 @@ ManageData <- function(cols, vars, parent=NULL) {
   # Frame 0, ok and cancel buttons, and size grip
 
   frame0 <- ttkframe(tt, relief="flat")
-
-  frame0.but.1 <- ttkbutton(frame0, width=2, image=GetBitmapImage("up"),
-                            command=function() Arrange("backward"))
-  frame0.but.2 <- ttkbutton(frame0, width=2, image=GetBitmapImage("top"),
+  frame0.but.1 <- ttkbutton(frame0, width=2, image=GetBitmapImage("top"),
                             command=function() Arrange("back"))
-  frame0.but.3 <- ttkbutton(frame0, width=2, image=GetBitmapImage("bottom"),
-                            command=function() Arrange("front"))
-  frame0.but.4 <- ttkbutton(frame0, width=2, image=GetBitmapImage("down"),
+  frame0.but.2 <- ttkbutton(frame0, width=2, image=GetBitmapImage("up"),
+                            command=function() Arrange("backward"))
+  frame0.but.3 <- ttkbutton(frame0, width=2, image=GetBitmapImage("down"),
                             command=function() Arrange("forward"))
+  frame0.but.4 <- ttkbutton(frame0, width=2, image=GetBitmapImage("bottom"),
+                            command=function() Arrange("front"))
   frame0.but.5 <- ttkbutton(frame0, width=2, image=GetBitmapImage("view"),
                             command=function() CallViewData("data"))
-  
   frame0.but.6 <- ttkbutton(frame0, width=2, image=GetBitmapImage("plus"),
                             command=SaveNewVar)
   frame0.but.7 <- ttkbutton(frame0, width=2, image=GetBitmapImage("delete"),

@@ -468,17 +468,18 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   # Frame 0, ok and cancel buttons, and size grip
 
   frame0 <- ttkframe(tt, relief="flat")
-
-  frame0.but.1  <- ttkbutton(frame0, width=2, image=GetBitmapImage("up"),
-                             command=function() ArrangePolygon("backward"))
-  frame0.but.2  <- ttkbutton(frame0, width=2, image=GetBitmapImage("top"),
+  
+  frame0.but.1  <- ttkbutton(frame0, width=2, image=GetBitmapImage("top"),
                              command=function() ArrangePolygon("back"))
-  frame0.but.3  <- ttkbutton(frame0, width=2, image=GetBitmapImage("bottom"),
-                             command=function() ArrangePolygon("front"))
-  frame0.but.4  <- ttkbutton(frame0, width=2, image=GetBitmapImage("down"),
+  frame0.but.2  <- ttkbutton(frame0, width=2, image=GetBitmapImage("up"),
+                             command=function() ArrangePolygon("backward"))
+  frame0.but.3  <- ttkbutton(frame0, width=2, image=GetBitmapImage("down"),
                              command=function() ArrangePolygon("forward"))
+  frame0.but.4  <- ttkbutton(frame0, width=2, image=GetBitmapImage("bottom"),
+                             command=function() ArrangePolygon("front"))
   frame0.but.5  <- ttkbutton(frame0, width=2, image=GetBitmapImage("delete"),
                              command=ClearPolygon)
+  
   frame0.but.7  <- ttkbutton(frame0, width=12, text="OK",
                              command=function() SavePolygon("ok"))
   frame0.but.8  <- ttkbutton(frame0, width=12, text="Cancel",
@@ -499,7 +500,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   tkgrid.configure(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4,
                    frame0.but.5, sticky="n", padx=c(0, 2), pady=c(4, 0))
   tkgrid.configure(frame0.but.1, padx=c(10, 2))
-  tkgrid.configure(frame0.but.5, padx=c(15, 0))
+  tkgrid.configure(frame0.but.5, padx=c(20, 0))
   tkgrid.configure(frame0.but.7, frame0.but.8, frame0.but.9, frame0.but.10,
                    padx=c(4, 0), pady=c(15, 10))
   tkgrid.configure(frame0.but.10, columnspan=2, padx=c(4, 10))
