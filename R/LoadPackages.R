@@ -17,12 +17,12 @@ LoadPackages <- function(repo="http://cran.r-project.org") {
 
   if (any(is.missing)) {
     missing.pkgs <- pkgs[is.missing]
-    msg <- paste("The following packages used by RSurvey are missing:",
+    msg <- paste("The following package(s) used by RSurvey are missing:",
                  paste(" ", paste(missing.pkgs, collapse=", ")),
-                 "Without these packages, some features will not be available.",
+                 "Some features will not be available without these packages.",
                  "Install these packages from CRAN?", sep="\n")
     if (is.tcl)
-      ans <- as.character(tkmessageBox(icon="error", message=msg,
+      ans <- as.character(tkmessageBox(icon="question", message=msg,
                                        title="Missing Packages", type="yesno"))
     else
       ans <- readline(paste(msg, " (yes/no)  "))
