@@ -276,11 +276,7 @@ OpenRSurvey <- function() {
   # About package
 
   AboutPackage <- function() {
-    if ("package:RSurvey" %in% search())
-      path <- system.file("DESCRIPTION", package="RSurvey")
-    else
-      path <- file.path(getwd(), "DESCRIPTION")
-    msg <- paste(readLines(path, n=-1L), collapse="\n")
+    msg <- paste(readLines(about.path, n=-1L), collapse="\n")
     tkmessageBox(icon="info", message=msg, title="About", parent=tt)
   }
 
@@ -749,17 +745,19 @@ OpenRSurvey <- function() {
             "    Edit - GUI Preferences: SDI, then Save and restart R.\n\n")
 
   # Establish default directories and load required packages
+  path <- getwd()
   if ("package:RSurvey" %in% search()) {
-    path <- system.file("RSurvey-ex", package="RSurvey")
     image.path <- system.file("images", package="RSurvey")
+    about.path <- system.file("DESCRIPTION", package="RSurvey")
   } else {
-    path <- getwd()
-    image.path <- file.path(getwd(), "inst", "images")
+    image.path <- file.path(path, "inst", "images")
+    about.path <- file.path(path, "DESCRIPTION")
+    r.path <- file.path(path, "R")
     LoadPackages()
   }
   if (is.null(Data("default.dir")))
     Data("default.dir", path)
-
+  
   # Set options
   SetCsi()
   options(digits.secs=3)
@@ -1000,8 +998,7 @@ OpenRSurvey <- function() {
               CloseGUI()
               Data("data.pts", NULL)
               Data("data.grd", NULL)
-              RestoreSession(file.path(getwd(), "R"), save.objs="Data",
-                             fun.call="OpenRSurvey")
+              RestoreSession(r.path, save.objs="Data", fun.call="OpenRSurvey")
             })
   }
 
