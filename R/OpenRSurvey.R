@@ -740,9 +740,6 @@ OpenRSurvey <- function() {
   
   # Main program
 
-  # Load required R packages
-  LoadPackages()
-
   # Warn if using Windows OS and running in MDI mode
   if (.Platform$OS.type == "windows" && getIdentification() == "RGui")
     message("\n\n    You are running R in MDI mode which *may* interfere\n",
@@ -751,18 +748,17 @@ OpenRSurvey <- function() {
             "    set in the command line or by clicking in the Menu:\n",
             "    Edit - GUI Preferences: SDI, then Save and restart R.\n\n")
 
-  # Establish default directories
-  if ("package:RSurvey" %in% search())
+  # Establish default directories and load required packages
+  if ("package:RSurvey" %in% search()) {
     path <- system.file("RSurvey-ex", package="RSurvey")
-  else
+    image.path <- system.file("images", package="RSurvey")
+  } else {
     path <- getwd()
+    image.path <- file.path(getwd(), "inst", "images")
+    LoadPackages()
+  }
   if (is.null(Data("default.dir")))
     Data("default.dir", path)
-
-  if ("package:RSurvey" %in% search())
-    image.path <- system.file("images", package="RSurvey")
-  else
-    image.path <- file.path(path, "inst", "images")
 
   # Set options
   SetCsi()

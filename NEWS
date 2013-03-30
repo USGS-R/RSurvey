@@ -1,5 +1,7 @@
 Changes in Version 0.7-4
   
+  o  Main GUI is lauched automatically when RSurvey is loaded.
+  
   o  Added View Data for single variable.
   
   o  No longer required to have a data set loaded to open the Data Management 
