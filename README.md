@@ -9,15 +9,6 @@ polygon clipping. A graphical user interface (GUI) is provided and
 requires R operate as an SDI application, using multiple
 top-level windows for the console, graphics, and pager.
 
-Files can be one of four types as indicated by their extension; tables:
-*.txt*, *.csv*, *.dat,* or *.shp*; grids: *.grd*; polygons: *.ply*;
-or binary project images: *.rda*. Tables, *.txt*, *.csv*, *.dat*,
-can be compressed by [gzip](http://www.gzip.org/ "gzip")
-with additional extension *.gz*.
-Shapefles, *.shp*, and interpolated grid files, *.grd*, are limited to data
-export. Measurement unit consistency is tasked to the user. 
-Time zones, spatial datum's and projections are not supported.
-
 The set of standards used for coding RSurvey is documented in
 [Google's R Style Guide](http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html "Google's R Style Guide").
 
@@ -42,9 +33,9 @@ for shapefile support,
 [dichromat](http://cran.r-project.org/web/packages/dichromat/index.html "dichromat")
 for color-blind safe palettes, and
 [tripack](http://cran.r-project.org/web/packages/tripack/index.html "tripack")
-for auto-cropping. Note that 'tripack' has a restricted licence which 
-explicitly forbids commercial use. If any of these recommended packages are 
-missing, RSurvey will offer to install them when it first starts up.
+for auto-cropping. Note that the licence for 'tripack' explicitly forbids 
+commercial use. If any of these recommended packages are missing, RSurvey will 
+offer to install them when it first starts up.
 
 Support for displaying table data is provided by
 [tktable](http://tktable.sourceforge.net/ "tktable"),
@@ -57,7 +48,7 @@ A call to `tclRequire` will indicate whether tktable is available for use:
 Run
 ---
 
-Load RSurvey in the current R session and activate main GUI:
+Load RSurvey in the current R session and activate the main GUI:
 
     > library(RSurvey)
 
