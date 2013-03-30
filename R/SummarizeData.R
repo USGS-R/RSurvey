@@ -22,7 +22,7 @@ SummarizeData <- function(obj, fmt=NULL) {
   # Build text string
   BuildString <- function(s) {
     s.names <- names(s)
-    s.names <- s.names[!s.names %in% "String"]
+    s.names <- s.names[!s.names %in% c("Class", "String")]
     descriptions <- paste(vapply(s.names, function(i) dic[[i]]$id, ""), 
                           "  ", sep="")
     fmt <-  paste("%-", max(nchar(descriptions)), "s", sep="")
@@ -80,6 +80,7 @@ SummarizeData <- function(obj, fmt=NULL) {
     # Common parameters
 
     s <- list()
+    s$Class <- class(obj)[1]
     s$Count <- length(obj)
     s$"NA's" <- length(which(is.na(obj)))
 
@@ -114,7 +115,6 @@ SummarizeData <- function(obj, fmt=NULL) {
         obj <- as.factor(obj)
       s$"Unique" <- length(levels(obj))
     }
-    s$Class <- class(obj)[1]
   }
   s$String <- BuildString(s)
   return(s)
