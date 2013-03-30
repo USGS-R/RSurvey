@@ -35,18 +35,16 @@ Open an R session and install the required packages from CRAN:
 
     > install.packages('RSurvey')
 
-Install optional R packages
+In addition to the required packages, RSurvey uses functions in a number of 
+recommended packages:
 [rgdal](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal")
 for shapefile support, 
 [dichromat](http://cran.r-project.org/web/packages/dichromat/index.html "dichromat")
 for color-blind safe palettes, and
 [tripack](http://cran.r-project.org/web/packages/tripack/index.html "tripack")
-for auto-cropping:
-
-    > install.packages(c('rgdal', 'dichromat', 'tripack'))
-
-Note that 'tripack' has a restricted licence which explicitly forbids 
-commercial use.
+for auto-cropping. Note that 'tripack' has a restricted licence which 
+explicitly forbids commercial use. If any of these recommended packages are 
+missing, RSurvey will offer to install them when it first starts up.
 
 Support for displaying table data is provided by
 [tktable](http://tktable.sourceforge.net/ "tktable"),
@@ -59,12 +57,8 @@ A call to `tclRequire` will indicate whether tktable is available for use:
 Run
 ---
 
-Load RSurvey in the current R session:
+Load RSurvey in the current R session and activate main GUI:
 
     > library(RSurvey)
-
-Activate the main GUI:
-
-    > OpenRSurvey()
 
 Example data sets are provided in `inst/extdata`.
