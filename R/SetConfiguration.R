@@ -4,11 +4,11 @@ SetConfiguration <- function(parent=NULL) {
   # Additional functions (subroutines)
 
   UpdatePar <- function() {
-    val <- as.integer(tclvalue(nlevels.var))
-    Data("nlevels", if (is.na(val)) NULL else val)
-
     val <- as.numeric(tclvalue(width.var))
     Data("width", if (is.na(val)) NULL else val)
+    
+    val <- as.integer(tclvalue(nlevels.var))
+    Data("nlevels", if (is.na(val)) NULL else val)
 
     val <- as.numeric(tclvalue(cex.pts.var))
     Data("cex.pts", if (is.na(val)) NULL else val)
@@ -46,8 +46,8 @@ SetConfiguration <- function(parent=NULL) {
 
   # Assign variables linked to Tk widgets
 
-  nlevels.var      <- tclVar()
   width.var        <- tclVar()
+  nlevels.var      <- tclVar()
   cex.pts.var      <- tclVar()
   asp.yx.var       <- tclVar()
   asp.zx.var       <- tclVar()
@@ -65,10 +65,10 @@ SetConfiguration <- function(parent=NULL) {
   ticks.inside.var <- tclVar()
   rm.pnt.line.var  <- tclVar()
 
-  if (!is.null(Data("nlevels")))
-    tclvalue(nlevels.var) <- Data("nlevels")
   if (!is.null(Data("width")))
     tclvalue(width.var) <- Data("width")
+  if (!is.null(Data("nlevels")))
+    tclvalue(nlevels.var) <- Data("nlevels")
   if (!is.null(Data("cex.pts")))
     tclvalue(cex.pts.var) <- Data("cex.pts")
   if (!is.null(Data("asp.yx")))
@@ -239,11 +239,11 @@ SetConfiguration <- function(parent=NULL) {
 
   tkbind(frame1.ent.1.2, "<KeyRelease>",
          function() {
-           tclvalue(nlevels.var) <- CheckEntry("integer", tclvalue(width.var))
+           tclvalue(width.var) <- CheckEntry("numeric", tclvalue(width.var))
          })
   tkbind(frame1.ent.2.2, "<KeyRelease>",
          function() {
-           tclvalue(width.var) <- CheckEntry("numeric", tclvalue(nlevels.var))
+           tclvalue(nlevels.var) <- CheckEntry("integer", tclvalue(nlevels.var))
          })
   tkbind(frame1.ent.3.2, "<KeyRelease>",
          function() {
