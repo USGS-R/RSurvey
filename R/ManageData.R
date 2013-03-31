@@ -216,7 +216,7 @@ ManageData <- function(cols, vars, parent=NULL) {
       detail <- paste(sapply(cols, function(i) i$id)[dependent.vars],
                       collapse="\n")
       tkmessageBox(icon="info", message=msg, detail=detail,
-                   title="Prevented Deletion", type="ok", parent=tt)
+                   title="Deletion Prevented", type="ok", parent=tt)
       return()
     }
 
