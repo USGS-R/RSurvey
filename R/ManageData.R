@@ -110,7 +110,6 @@ ManageData <- function(cols, vars, parent=NULL) {
     }
 
     # Save name
-
     SetVarId(idx)
   }
 
@@ -138,7 +137,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     # Update format
 
     saved.fmt <- cols[[idx]]$format   
-    if (is.null(saved.fmt)) {
+    if (is.null(saved.fmt) || saved.fmt == "") {
       if (saved.class %in% c("character", "logical")) {
         saved.fmt <- "%s"
       } else if (saved.class == "numeric") {
@@ -262,23 +261,38 @@ ManageData <- function(cols, vars, parent=NULL) {
 
   SaveNewVar <- function() {
     SaveNb()
-    id <- "New Variable"
-    n <- length(cols)
-    cols[[n + 1]] <<- list(name=id, format="%s", class="logical", fun="")
     
-    tcl("lappend", list.var, id)
+    new.name <- "New Variable"
+    idx <- length(cols) + 1L
+    
+    cols[[idx]] <- list(id="", name=new.name, class="", fun="")
+    
+    n <- cols[[1]]$summary$Count
+    f <- EditFunction(cols, index=idx, value.length=n, parent=tt)
+    
+    if (is.null(f$fun) || f$fun == "") 
+      return()
+    
+    cols <<- cols
+    cols[[idx]]$fun     <<- f$fun
+    cols[[idx]]$class   <<- f$class
+    cols[[idx]]$summary <<- f$summary
+    cols[[idx]]$sample  <<- f$sample
+    
+    tcl("lappend", list.var, new.name)
     tkselection.clear(frame1.lst, 0, "end")
-    tkselection.set(frame1.lst, n, n)
-    tkyview(frame1.lst, n)
+    tkselection.set(frame1.lst, idx - 1L, idx - 1L)
+    tkyview(frame1.lst, idx - 1L)
     
     UpdateNb()
-    SetVarId()
-    CallEditFunction()
+    SetVarId(idx)
   }
 
   # Edit a variables function formula
 
   CallEditFunction <- function() {
+    SaveNb()
+    
     idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0)
       return()
@@ -286,11 +300,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     n <- cols[[1]]$summary$Count
     f <- EditFunction(cols, index=idx, value.length=n, parent=tt)
     
-    if (cols[[idx]]$fun == "" & (is.null(f$fun) || f$fun == "")) {
-      DeleteVar()
-      return()
-    }
-    if (is.null(f))
+    if (is.null(f$fun)) 
       return()
     if (f$fun == "") {
       msg <- paste("Nothing has been defined for this function; therefore,\n",
@@ -304,17 +314,11 @@ ManageData <- function(cols, vars, parent=NULL) {
       return()
     }
     
-    cols[[idx]]$class <<- f$class
+    cols[[idx]]$fun     <<- f$fun
+    cols[[idx]]$class   <<- f$class
+    cols[[idx]]$summary <<- f$summary
+    cols[[idx]]$sample  <<- f$sample
     
-    tkconfigure(frame2.ent.2.2, state="normal")
-    tclvalue(fmt.var) <- ""
-    tkconfigure(frame2.ent.2.2, state="readonly")
-    tkconfigure(frame2.txt.4.2, state="normal")
-    tcl(frame2.txt.4.2, "delete", "1.0", "end")
-    tkinsert(frame2.txt.4.2, "end", f$fun)
-    tkconfigure(frame2.txt.4.2, state="disabled")
-
-    SaveNb()
     UpdateNb()
   }
 

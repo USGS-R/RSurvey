@@ -31,9 +31,11 @@ pre-existing data frame or query building.
 }
 
 \value{
-Returns a list with two character components: \code{fun}, 
-the user defined function (when evaluated, this string must be parseable),
-and \code{class}, the object class of the evaluated function.
+Returns a list with two four components: 
+\code{fun}, the user defined function (when evaluated, this string must be parseable);
+\code{class}, the object class of the evaluated function;
+\code{summary}, a numeric summary; and
+\code{sample} of the object.
 }
 
 \author{J.C. Fisher}

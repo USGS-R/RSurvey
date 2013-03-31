@@ -9,7 +9,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   SaveFunction <- function() {
     txt <- as.character(tclvalue(tkget(frame2.txt.2.1, "1.0", "end-1c")))
     if (txt == "") {
-      rtn <<- list(fun="", class=NA)
+      rtn <<- list(fun="")
     } else {
       fun <- txt
       pattern <- paste("\"", ids, "\"", sep="")
@@ -25,34 +25,35 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                      type="ok", parent=tt)
         return()
       }
-      val <- EvalFunction(txt, cols)
-      if (inherits(val, "try-error")) {
+      obj <- EvalFunction(txt, cols)
+      if (inherits(obj, "try-error")) {
         msg <- "Function results in error during evaluation, try revising."
-        tkmessageBox(icon="error", message=msg, detail=val, title="Error",
+        tkmessageBox(icon="error", message=msg, detail=obj, title="Error",
                      type="ok", parent=tt)
         return()
       }
       
-      if (!is.null(value.length) && length(val) != value.length) {
+      if (!is.null(value.length) && length(obj) != value.length) {
         msg <- paste("Evaluated function must be of length ", value.length, 
                      ", try revising.", sep="")
-        dtl <- paste("Resulting object is currently of length ", length(val), 
+        dtl <- paste("Resulting object is currently of length ", length(obj), 
                      ".", sep="")
         tkmessageBox(icon="error", message=msg, detail=dtl, title="Error",
                      type="ok", parent=tt)
         return()
       }
       
-      if (!is.null(value.class) && !inherits(val, value.class)) {
+      if (!is.null(value.class) && !inherits(obj, value.class)) {
         msg <- paste("A query must result in an object of class \"", value.class, 
                      "\". The evaluated function is an object of class \"", 
-                     class(val), "\", please revise.", sep="")
+                     class(obj), "\", please revise.", sep="")
         tkmessageBox(icon="error", message=msg, title="Error", type="ok", 
                      parent=tt)
         return()
       }
       
-      rtn <<- list(fun=txt, class=class(val)[1])
+      rtn <<- list(fun=txt, class=class(obj)[1], summary=SummarizeData(obj), 
+                   sample=na.omit(obj)[1])
     }
     tclvalue(tt.done.var) <- 1
   }
@@ -256,7 +257,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   rtn <- NULL
   
   ids <- vapply(cols, function(i) i$id, "")
-  cls <- vapply(cols, function(i) i$class,  "")
+  cls <- vapply(cols, function(i) i$class, "")
   if (!is.null(index)) {
     edit.fun.id <- ids[index]
     ids <- ids[-index]
@@ -485,7 +486,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   frame2 <- tkframe(pw, relief="flat", padx=0, pady=0)
 
   txt <- "Define function"
-  if (!is.null(index))
+  if (!is.null(index) && edit.fun.id != "")
     txt <- paste(txt, " for \"", edit.fun.id, "\"", sep="")
   frame2.lab.1.1 <- ttklabel(frame2, text=txt, foreground="#414042")
   
