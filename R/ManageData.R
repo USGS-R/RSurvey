@@ -200,24 +200,6 @@ ManageData <- function(cols, vars, parent=NULL) {
     }
   }
 
-  # Save new variable
-
-  SaveNewVar <- function() {
-    SaveNb()
-    id <- "New Variable"
-    n <- length(cols)
-    cols[[n + 1]] <<- list(name=id, format="%s", class="logical", fun="")
-    
-    tcl("lappend", list.var, id)
-    tkselection.clear(frame1.lst, 0, "end")
-    tkselection.set(frame1.lst, n, n)
-    tkyview(frame1.lst, n)
-    
-    UpdateNb()
-    SetVarId()
-    CallEditFunction()
-  }
-
   # Delete existing variable
 
   DeleteVar <- function() {
@@ -274,6 +256,24 @@ ManageData <- function(cols, vars, parent=NULL) {
       tcl(frame3.txt, "delete", "1.0", "end")
       tkconfigure(frame3.txt, state="disabled")
     }
+  }
+
+  # Save new variable
+
+  SaveNewVar <- function() {
+    SaveNb()
+    id <- "New Variable"
+    n <- length(cols)
+    cols[[n + 1]] <<- list(name=id, format="%s", class="logical", fun="")
+    
+    tcl("lappend", list.var, id)
+    tkselection.clear(frame1.lst, 0, "end")
+    tkselection.set(frame1.lst, n, n)
+    tkyview(frame1.lst, n)
+    
+    UpdateNb()
+    SetVarId()
+    CallEditFunction()
   }
 
   # Edit a variables function formula
