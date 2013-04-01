@@ -202,7 +202,7 @@ ManageData <- function(cols, vars, parent=NULL) {
   # Delete existing variable
 
   DeleteVar <- function() {
-    idx <- as.integer(tkcurselection(frame1.lst)) + 1
+    idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0)
       return()
 
@@ -211,16 +211,27 @@ ManageData <- function(cols, vars, parent=NULL) {
     dependent.vars <- funs.with.var[!funs.with.var %in% idx]
 
     if (length(dependent.vars) > 0) {
-      msg <- paste("Removal of this variable first requires that the",
-                   "following dependent variable(s) be removed:", sep="\n")
-      detail <- paste(sapply(cols, function(i) i$id)[dependent.vars],
-                      collapse="\n")
-      tkmessageBox(icon="info", message=msg, detail=detail,
-                   title="Deletion Prevented", type="ok", parent=tt)
+      ids <- vapply(cols, function(i) i$id, "")[dependent.vars]
+      msg <- paste("Variables dependent on variable \"", cols[[idx]]$id, 
+                   "\" include:\n\n  ", paste(ids, collapse=", "),
+                   "\n\nThese variables must first be removed before this ", 
+                   "operation can be completed.", sep="")
+      tkmessageBox(icon="error", message=msg, title="Deletion Prevented", 
+                   type="ok", parent=tt)
       return()
     }
+    if (!is.null(cols[[idx]]$index)) {
+      msg <- paste("Variable \"", cols[[idx]]$id, 
+                   "\" corresponds with imported data.\n\n",
+                   "Are you sure you want to remove it?", sep="")
+      ans <- tkmessageBox(icon="question", message=msg, title="Question", 
+                          type="okcancel", parent=tt)
+      if (as.character(ans) == "cancel") 
+        return()
+    }
 
-    tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var), idx - 1, idx - 1)
+    tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var), 
+                              idx - 1L, idx - 1L)
     
     cols <<- cols[-idx]
     vars <<- vars[!vars %in% idx]
@@ -265,19 +276,15 @@ ManageData <- function(cols, vars, parent=NULL) {
     new.name <- "New Variable"
     idx <- length(cols) + 1L
     
-    cols[[idx]] <- list(id="", name=new.name, class="", fun="")
-    
-    n <- cols[[1]]$summary$Count
-    f <- EditFunction(cols, index=idx, value.length=n, parent=tt)
+    cols[[idx]] <- list(id="", class="")
+    value.length <- cols[[1]]$summary$Count
+    f <- EditFunction(cols, index=idx, value.length=value.length, parent=tt)
     
     if (is.null(f$fun) || f$fun == "") 
       return()
     
-    cols <<- cols
-    cols[[idx]]$fun     <<- f$fun
-    cols[[idx]]$class   <<- f$class
-    cols[[idx]]$summary <<- f$summary
-    cols[[idx]]$sample  <<- f$sample
+    cols[[idx]] <<- list(id="", name="New Variable", class=f$class, fun=f$fun, 
+                         sample=f$sample, summary=f$summary)
     
     tcl("lappend", list.var, new.name)
     tkselection.clear(frame1.lst, 0, "end")
@@ -431,7 +438,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     idxs <- which(sapply(cols, function(i) i$class) %in% cont.classes)
     
     if (length(idxs) == 0) {
-      msg <- paste("Histogram may only be built for continous variables;",
+      msg <- paste("A histogram may only be built for continous variables;",
                    "that is, variables of class \"numeric\" or \"integer\".")
       tkmessageBox(icon="info", message=msg, title="Histogram", type="ok", 
                    parent=tt)
