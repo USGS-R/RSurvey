@@ -1,5 +1,9 @@
+Changes in Version 0.7-5
+
+  o  
+
 Changes in Version 0.7-4
-  
+
   o  Main GUI is lauched automatically when RSurvey is loaded.
   
   o  Added View Data for single variable.
@@ -17,9 +21,8 @@ Changes in Version 0.7-4
      from their input text files.
   
   o  Added GUI for sorting the processed data set.
-  
+
 Changes in Version 0.7-3
-  
+
   o  Removed dependency on the 'tripack' package because of its restricted 
      license which explicitly forbids commercial use.
-  
