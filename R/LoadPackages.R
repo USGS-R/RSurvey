@@ -33,12 +33,12 @@ LoadPackages <- function(repo="http://cran.r-project.org") {
       cran.pkgs <- available.packages(contriburl)
       if (!all(missing.pkgs %in% cran.pkgs))
         repo <- NULL
-      install.packages(missing.pkgs, repos=repo)
+      install.packages(missing.pkgs, repos=repo, quiet=TRUE)
     }
   }
 
   for (pkg in pkgs) {
-    is.pkg <- require(pkg, character.only=TRUE)
+    is.pkg <- require(pkg, character.only=TRUE, quietly=FALSE)
     if (!is.pkg && pkg %in% require.pkgs)
       stop(paste("package", pkg, "is required"))
   }
