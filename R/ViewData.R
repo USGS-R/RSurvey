@@ -310,7 +310,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
                          colstretchmode="none", rowstretchmode="none",
                          drawmode="single", rowseparator="\n",
                          colseparator="\t", selectmode="extended", 
-                         selecttitle=1, insertofftime=0, anchor="e", 
+                         selecttitle=1, insertofftime=0, anchor="ne", 
                          highlightthickness=0, cache=1, 
                          command=function(r, c) GetCellValue(r, c),
                          xscrollcommand=function(...) tkset(frame2.xsc,...),

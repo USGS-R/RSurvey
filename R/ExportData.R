@@ -207,7 +207,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   frame1.but.2.3 <- ttkbutton(frame1, width=8, text="Inverse",
                               command=function() SelectVariables("inverse"))
   frame1.chk.2.4 <- ttkcheckbutton(frame1, variable=records.var,
-                                   text="Include processed records only")
+                                   text="Include only processed records")
 
   tkgrid(frame1.lst.1.1, "x", "x", "x", "x", frame1.ysc.1.6)
   tkgrid(frame1.but.2.1, frame1.but.2.2, frame1.but.2.3, frame1.chk.2.4, 
