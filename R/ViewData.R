@@ -302,7 +302,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
   frame2.tbl <- tkwidget(frame2, "table", rows=m + 1, cols=n + 1,
                          colwidth=-2, rowheight=1, state="disable", 
                          height=nrows + 1, width=ncols + 1,
-                         ipadx=1, wrap=1, justify="right",
+                         ipadx=1, ipady=1, wrap=1, justify="right",
                          highlightcolor="gray75", background="white",
                          foreground="black", titlerows=1, titlecols=1,
                          multiline=1, resizeborders="col", colorigin=0,
