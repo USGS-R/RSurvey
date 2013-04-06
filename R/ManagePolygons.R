@@ -21,7 +21,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
       rtn <<- list()
     }
     if (type == "ok")
-      tclvalue(tt.done.var) <- 1L
+      tclvalue(tt.done.var) <- 1
   }
 
   # Plot polygon
@@ -483,7 +483,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   frame0.but.7  <- ttkbutton(frame0, width=12, text="OK",
                              command=function() SavePolygon("ok"))
   frame0.but.8  <- ttkbutton(frame0, width=12, text="Cancel",
-                             command=function() tclvalue(tt.done.var) <- 1L)
+                             command=function() tclvalue(tt.done.var) <- 1)
   frame0.but.9  <- ttkbutton(frame0, width=12, text="Apply",
                              command=function() SavePolygon("apply"))
   frame0.but.10 <- ttkbutton(frame0, width=12, text="Help",
@@ -632,7 +632,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
 
   tclServiceMode(TRUE)
 
-  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1L)
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
   tkbind(frame2.cvs, "<Motion>", function(x, y) MouseMotion(x, y))
   tkbind(frame2.cvs, "<Leave>", MouseLeave)
