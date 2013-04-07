@@ -9,7 +9,7 @@ Reads table formatted data from a connection and creates a data frame from it.
 }
 
 \usage{
-ReadData(con, headers = c(FALSE, FALSE), sep = "\t",
+ReadData(con, headers = c(FALSE, FALSE), sep = "\t", dec = ".",
          quote = "\"'", nrows = -1, na.strings = c("", "NA"),
          skip = 0, comment.char = "#", encoding = getOption("encoding"))
 }
@@ -20,6 +20,7 @@ ReadData(con, headers = c(FALSE, FALSE), sep = "\t",
   data table contains header lines: see \sQuote{Details}.}
 \item{sep}{character; the field separator string. Values on each line of the
   file are separated by this string.}
+\item{dec}{character; used in the file for decimal points.}
 \item{quote}{character; the set of quoting characters.}
 \item{nrows}{integer; the maximum number of rows to read in. Negative and other
   invalid values are ignored (optional).}

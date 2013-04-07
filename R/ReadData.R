@@ -1,4 +1,4 @@
-ReadData <- function(con, headers=c(FALSE, FALSE), sep="\t",
+ReadData <- function(con, headers=c(FALSE, FALSE), sep="\t", dec=".",
                      quote="\"'", nrows=-1, na.strings=c("", "NA"), skip=0,
                      comment.char="#", encoding=getOption("encoding")) {
   # Reads table formatted data from a connection and creates a
@@ -17,9 +17,9 @@ ReadData <- function(con, headers=c(FALSE, FALSE), sep="\t",
   elapsed.time <- system.time({
 
     # Establish arguments to pass to read.table
-    args <- list(file=con, header=FALSE, sep=sep, quote=quote, row.names=NULL,
-                 na.strings=na.strings, check.names=TRUE, fill=TRUE,
-                 strip.white=TRUE, blank.lines.skip=TRUE,
+    args <- list(file=con, header=FALSE, sep=sep, dec=dec, quote=quote, 
+                 row.names=NULL, na.strings=na.strings, check.names=TRUE, 
+                 fill=TRUE, strip.white=TRUE, blank.lines.skip=TRUE,
                  comment.char=comment.char, allowEscapes=TRUE, flush=TRUE,
                  fileEncoding="", encoding=encoding)
 

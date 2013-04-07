@@ -64,17 +64,29 @@ ImportData <- function(parent=NULL) {
       nrows <- nrw
 
     sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
-    com <- com0[as.integer(tcl(frame3.box.1.4, "current")) + 1]
+    dec <- dec0[as.integer(tcl(frame3.box.1.5, "current")) + 1]
     nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
-    quo <- quo0[as.integer(tcl(frame3.box.2.4, "current")) + 1]
-
+    quo <- quo0[as.integer(tcl(frame3.box.2.5, "current")) + 1]
+    com <- com0[as.integer(tcl(frame3.box.3.2, "current")) + 1]
+    
+    if (is.na(sep)) {
+      sep <- as.character(tclvalue(sep.var))
+    }
+    if (is.na(nas)) {
+      nas <- as.character(tclvalue(nas.var))
+      if (nas == "")
+        nas <- "NA"
+    }
+    if (is.na(com))
+      com <- as.character(tclvalue(com.var))
+    
     if (summary.only) {
-      d <- try(read.table(con, header=FALSE, sep=sep, quote=quo, row.names=NULL,
-                          na.strings=c("", nas), colClasses="character",
-                          nrows=nrows, skip=skp, check.names=TRUE, fill=TRUE,
-                          strip.white=TRUE, blank.lines.skip=TRUE,
-                          comment.char=com, allowEscapes=TRUE,
-                          flush=TRUE), silent=TRUE)
+      d <- try(read.table(con, header=FALSE, sep=sep, quote=quo, dec=dec, 
+                          row.names=NULL, na.strings=c("", nas), 
+                          colClasses="character", nrows=nrows, skip=skp, 
+                          check.names=TRUE, fill=TRUE, strip.white=TRUE, 
+                          blank.lines.skip=TRUE, comment.char=com, 
+                          allowEscapes=TRUE, flush=TRUE), silent=TRUE)
       close(con)
       if (inherits(d, "try-error")) {
         RaiseError(2L, d)
@@ -82,7 +94,6 @@ ImportData <- function(parent=NULL) {
       }
 
       # Remove columns containing all NA values
-
       is.all.na <- sapply(seq(along=d), function(i) all(is.na(d[, i])))
       d <- d[, !is.all.na, drop=FALSE]
       return(d)
@@ -98,7 +109,7 @@ ImportData <- function(parent=NULL) {
       }
 
       tkconfigure(tt, cursor="watch")
-      ans <- ReadData(con, headers=hds, sep=sep, quote=quo, nrows=nrw,
+      ans <- ReadData(con, headers=hds, sep=sep, dec=dec, quote=quo, nrows=nrw,
                       na.strings=c("", nas), skip=skp, comment.char=com)
       tkconfigure(tt, cursor="arrow")
       close(con)
@@ -112,7 +123,8 @@ ImportData <- function(parent=NULL) {
         Data("table.headers", hds)
         Data("table.skip", skp)
         Data("table.sep", sep)
-        Data("table.na.strings", nas)
+        Data("table.dec", dec)
+        Data("table.na", nas)
         Data("table.quote", quo)
         Data("comment.char", com)
         tclvalue(tt.done.var) <- 1
@@ -123,6 +135,22 @@ ImportData <- function(parent=NULL) {
   # Rebuild table
 
   RebuildTable <- function() {
+    sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
+    ent.state <- if (is.na(sep)) "normal" else "disabled"
+    tkconfigure(frame3.ent.1.3, state=ent.state)
+    if (ent.state == "normal")
+      tkfocus(frame3.ent.1.3)
+    nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
+    ent.state <- if (is.na(nas)) "normal" else "disabled"
+    tkconfigure(frame3.ent.2.3, state=ent.state)
+    if (ent.state == "normal")
+      tkfocus(frame3.ent.2.3)
+    com <- com0[as.integer(tcl(frame3.box.3.2, "current")) + 1]
+    ent.state <- if (is.na(com)) "normal" else "disabled"
+    tkconfigure(frame3.ent.3.3, state=ent.state)
+    if (ent.state == "normal")
+      tkfocus(frame3.ent.3.3)
+    
     if (tclvalue(source.var) == "" && is.null(cb))
       return()
 
@@ -290,19 +318,22 @@ ImportData <- function(parent=NULL) {
 
   nrows <- 50
 
-  sep0 <- c("\t", "", ",", ";", "|")
+  sep0 <- c("\t", "", ",", ";", "|", NA)
   sep1 <- c("Tab ( \\t )", "White space (  )", "Comma ( , )",
-            "Semicolon ( ; )", "Pipe ( | )")
+            "Semicolon ( ; )", "Pipe ( | )", "Custom\u2026")
 
-  nas0 <- c("NA", "na", "N/A", "n/a")
-  nas1 <- c("NA", "na", "N/A", "n/a")
+  nas0 <- c("NA", "na", "N/A", "n/a", NA)
+  nas1 <- c("NA", "na", "N/A", "n/a", "Custom\u2026")
 
   quo0 <- c("", "\"", "'")
   quo1 <- c("", "Double ( \" )", "Single ( \' )")
+  
+  dec0 <- c(".", ",")
+  dec1 <- c("Period ( . )", "Comma ( , )")
 
-  com0 <- c("", "#", "!", "\\", "~")
+  com0 <- c("", "#", "!", "\\", "~", NA)
   com1 <- c("", "Number sign ( # )", "Exclamation ( ! )",
-            "Backslash ( \\\\ )", "Tilde ( ~ )")
+            "Backslash ( \\\\ )", "Tilde ( ~ )", "Custom\u2026")
 
   enc <- Data("encoding")
 
@@ -310,11 +341,14 @@ ImportData <- function(parent=NULL) {
 
   table.var <- tclArray()
   
-  decis.var  <- tclVar(0)
-  names.var  <- tclVar(0)
-  skip.var   <- tclVar(0)
-  nrow.var   <- tclVar()
-  source.var <- tclVar()
+  decis.var   <- tclVar(0)
+  names.var   <- tclVar(0)
+  skip.var    <- tclVar(0)
+  nrow.var    <- tclVar()
+  source.var  <- tclVar()
+  sep.var     <- tclVar()
+  nas.var     <- tclVar()
+  comment.var <- tclVar()
 
   tt.done.var <- tclVar(0)
 
@@ -367,7 +401,8 @@ ImportData <- function(parent=NULL) {
                    sticky="n", padx=c(0, 4), pady=c(4, 0))
   tkgrid.configure(frame0.but.1, padx=c(10, 4))
   
-  tkgrid.configure(frame0.but.4, frame0.but.5, frame0.but.6, padx=c(0, 4), pady=c(15, 10))
+  tkgrid.configure(frame0.but.4, frame0.but.5, frame0.but.6, 
+                   padx=c(0, 4), pady=c(15, 10))
   tkgrid.configure(frame0.but.6, columnspan=2, padx=c(0, 10))
   
   tkgrid.configure(frame0.grp.7, sticky="se")
@@ -427,53 +462,90 @@ ImportData <- function(parent=NULL) {
                           text="Select import parameters")
 
   frame3.lab.1.1 <- ttklabel(frame3, text="Seperator")
-  frame3.lab.1.3 <- ttklabel(frame3, text="Comment")
-  frame3.lab.1.5 <- ttklabel(frame3, text="Skip lines")
+  frame3.lab.1.4 <- ttklabel(frame3, text="Decimal")
+  frame3.lab.1.6 <- ttklabel(frame3, text="Skip lines")
   frame3.lab.2.1 <- ttklabel(frame3, text="NA strings")
-  frame3.lab.2.3 <- ttklabel(frame3, text="Quote")
-  frame3.lab.2.5 <- ttklabel(frame3, text="Max lines")
+  frame3.lab.2.4 <- ttklabel(frame3, text="Quote")
+  frame3.lab.2.6 <- ttklabel(frame3, text="Max lines")
+  frame3.lab.3.1 <- ttklabel(frame3, text="Comment")
 
   frame3.box.1.2 <- ttkcombobox(frame3, width=17, state="readonly", value=sep1)
-  frame3.box.1.4 <- ttkcombobox(frame3, width=17, state="readonly", value=com1)
+  frame3.box.1.5 <- ttkcombobox(frame3, width=12, state="readonly", value=dec1)
   frame3.box.2.2 <- ttkcombobox(frame3, width=17, state="readonly", value=nas1)
-  frame3.box.2.4 <- ttkcombobox(frame3, width=17, state="readonly", value=quo1)
+  frame3.box.2.5 <- ttkcombobox(frame3, width=12, state="readonly", value=quo1)
+  frame3.box.3.2 <- ttkcombobox(frame3, width=17, state="readonly", value=com1)
+  
+  frame3.ent.1.3 <- ttkentry(frame3, width=12, textvariable=sep.var)
+  frame3.ent.1.7 <- ttkentry(frame3, width=12, textvariable=skip.var)
+  frame3.ent.2.3 <- ttkentry(frame3, width=12, textvariable=nas.var)
+  frame3.ent.2.7 <- ttkentry(frame3, width=12, textvariable=nrow.var)
+  frame3.ent.3.3 <- ttkentry(frame3, width=12, textvariable=comment.var)
 
-  frame3.ent.1.6 <- ttkentry(frame3, width=17, textvariable=skip.var)
-  frame3.ent.2.6 <- ttkentry(frame3, width=17, textvariable=nrow.var)
-
-  frame3.but.2.7 <- ttkbutton(frame3, width=2, image=GetBitmapImage("find"),
+  frame3.but.2.8 <- ttkbutton(frame3, width=2, image=GetBitmapImage("find"),
                               command=NumLinesInFile)
 
-  tkgrid(frame3.lab.1.1, frame3.box.1.2, frame3.lab.1.3, frame3.box.1.4,
-         frame3.lab.1.5, frame3.ent.1.6)
-  tkgrid(frame3.lab.2.1, frame3.box.2.2, frame3.lab.2.3, frame3.box.2.4,
-         frame3.lab.2.5, frame3.ent.2.6, frame3.but.2.7, pady=c(4, 0))
+  tkgrid(frame3.lab.1.1, frame3.box.1.2, frame3.ent.1.3, frame3.lab.1.4, 
+         frame3.box.1.5, frame3.lab.1.6, frame3.ent.1.7, "x")
+  tkgrid(frame3.lab.2.1, frame3.box.2.2, frame3.ent.2.3, frame3.lab.2.4, 
+         frame3.box.2.5, frame3.lab.2.6, frame3.ent.2.7, frame3.but.2.8, 
+         pady=c(4, 0))
+  tkgrid(frame3.lab.3.1, frame3.box.3.2, frame3.ent.3.3, 
+         "x", "x", "x", "x", "x", pady=c(4, 0))
 
-  tkgrid.configure(frame3.lab.1.1, frame3.lab.1.3, frame3.lab.1.5,
-                   frame3.lab.2.1, frame3.lab.2.3, frame3.lab.2.5,
-                   padx=c(10, 2), sticky="w")
+  tkgrid.configure(frame3.lab.1.1, frame3.lab.1.4, frame3.lab.1.6,
+                   frame3.lab.2.1, frame3.lab.2.4, frame3.lab.2.6,
+                   frame3.lab.3.1, padx=c(10, 2), sticky="w")
 
-  tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, padx=c(0, 2))
-  tkgrid.configure(frame3.but.2.7, padx=c(2, 0))
+  tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, frame3.lab.3.1, padx=c(0, 2))
+  tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, frame3.ent.3.3, padx=c(2, 0))
+  tkgrid.configure(frame3.but.2.8, padx=c(2, 0))
 
   tkpack(frame3, anchor="w", fill="x", padx=10, pady=c(0, 15))
 
   tcl(frame3.box.1.2, "current", 0)
-  tcl(frame3.box.1.4, "current", 0)
+  tcl(frame3.box.1.5, "current", 0)
   tcl(frame3.box.2.2, "current", 0)
-  tcl(frame3.box.2.4, "current", 0)
+  tcl(frame3.box.2.5, "current", 0)
+  tcl(frame3.box.3.2, "current", 0)
 
   if (!is.null(Data("table.skip")))
     tclvalue(skip.var) <- Data("table.skip")
-
-  if (!is.null(Data("table.sep")))
-    tcl(frame3.box.1.2, "current", match(Data("table.sep"), sep0) - 1)
-  if (!is.null(Data("comment.char")))
-    tcl(frame3.box.1.4, "current", match(Data("comment.char"), com0) - 1)
-  if (!is.null(Data("table.na.strings")))
-    tcl(frame3.box.2.2, "current", match(Data("table.na.strings"), nas0) - 1)
+  
+  if (!is.null(Data("table.sep"))) {
+    if (Data("table.sep") %in% sep0) {
+      tcl(frame3.box.1.2, "current", match(Data("table.sep"), sep0) - 1)
+      tkconfigure(frame3.ent.1.3, state="disabled")
+    } else {
+      tcl(frame3.box.1.2, "current", match(NA, sep0) - 1)
+      tkconfigure(frame3.ent.1.3, state="normal")
+      tclvalue(sep.var) <- Data("table.sep")
+    }
+  }
+  if (!is.null(Data("table.na"))) {
+    if (Data("table.na") %in% nas0) {
+      tcl(frame3.box.2.2, "current", match(Data("table.na"), nas0) - 1)
+      tkconfigure(frame3.ent.2.3, state="disabled")
+    } else {
+      tcl(frame3.box.2.2, "current", match(NA, nas0) - 1)
+      tkconfigure(frame3.ent.2.3, state="normal")
+      tclvalue(nas.var) <- Data("table.na")
+    }
+  }
+  if (!is.null(Data("comment.char"))) {
+    if (Data("comment.char") %in% com0) {
+      tcl(frame3.box.3.2, "current", match(Data("comment.char"), com0) - 1)
+      tkconfigure(frame3.ent.3.3, state="disabled")
+    } else {
+      tcl(frame3.box.3.2, "current", match(NA, com0) - 1)
+      tkconfigure(frame3.ent.3.3, state="normal")
+      tclvalue(com.var) <- Data("comment.char")
+    }
+  }
+  
+  if (!is.null(Data("table.dec")))
+    tcl(frame3.box.1.5, "current", match(Data("table.dec"), dec0) - 1)
   if (!is.null(Data("table.quote")))
-    tcl(frame3.box.2.4, "current", match(Data("table.quote"), quo0) - 1)
+    tcl(frame3.box.2.5, "current", match(Data("table.quote"), quo0) - 1)
 
   # Frame 4, example data table
 
@@ -525,17 +597,22 @@ ImportData <- function(parent=NULL) {
   tkbind(frame1.ent.1, "<Return>", RebuildTable)
 
   tkbind(frame3.box.1.2, "<<ComboboxSelected>>", RebuildTable)
-  tkbind(frame3.box.1.4, "<<ComboboxSelected>>", RebuildTable)
+  tkbind(frame3.box.1.5, "<<ComboboxSelected>>", RebuildTable)
   tkbind(frame3.box.2.2, "<<ComboboxSelected>>", RebuildTable)
-  tkbind(frame3.box.2.4, "<<ComboboxSelected>>", RebuildTable)
-
-  tkbind(frame3.ent.1.6, "<KeyRelease>",
+  tkbind(frame3.box.2.5, "<<ComboboxSelected>>", RebuildTable)
+  tkbind(frame3.box.3.2, "<<ComboboxSelected>>", RebuildTable)
+  
+  tkbind(frame3.ent.1.3, "<KeyRelease>", RebuildTable)
+  tkbind(frame3.ent.2.3, "<KeyRelease>", RebuildTable)
+  tkbind(frame3.ent.3.3, "<KeyRelease>", RebuildTable)
+  
+  tkbind(frame3.ent.1.7, "<KeyRelease>",
          function() {
            tclvalue(skip.var) <- CheckEntry("integer", tclvalue(skip.var))
            RebuildTable()
          }
   )
-  tkbind(frame3.ent.2.6, "<KeyRelease>",
+  tkbind(frame3.ent.2.7, "<KeyRelease>",
          function() {
            tclvalue(nrow.var) <- CheckEntry("integer", tclvalue(nrow.var))
            RebuildTable()
