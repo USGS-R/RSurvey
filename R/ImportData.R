@@ -136,20 +136,16 @@ ImportData <- function(parent=NULL) {
 
   RebuildTable <- function() {
     sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
-    ent.state <- if (is.na(sep)) "normal" else "disabled"
-    tkconfigure(frame3.ent.1.3, state=ent.state)
-    if (ent.state == "normal")
-      tkfocus(frame3.ent.1.3)
+    sep.state <- if (is.na(sep)) "normal" else "disabled"
+    tkconfigure(frame3.ent.1.3, state=sep.state)
+    
     nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
-    ent.state <- if (is.na(nas)) "normal" else "disabled"
-    tkconfigure(frame3.ent.2.3, state=ent.state)
-    if (ent.state == "normal")
-      tkfocus(frame3.ent.2.3)
+    nas.state <- if (is.na(nas)) "normal" else "disabled"
+    tkconfigure(frame3.ent.2.3, state=nas.state)
+    
     com <- com0[as.integer(tcl(frame3.box.3.2, "current")) + 1]
-    ent.state <- if (is.na(com)) "normal" else "disabled"
-    tkconfigure(frame3.ent.3.3, state=ent.state)
-    if (ent.state == "normal")
-      tkfocus(frame3.ent.3.3)
+    com.state <- if (is.na(com)) "normal" else "disabled"
+    tkconfigure(frame3.ent.3.3, state=com.state)
     
     if (tclvalue(source.var) == "" && is.null(cb))
       return()
@@ -341,14 +337,14 @@ ImportData <- function(parent=NULL) {
 
   table.var <- tclArray()
   
-  decis.var   <- tclVar(0)
-  names.var   <- tclVar(0)
-  skip.var    <- tclVar(0)
-  nrow.var    <- tclVar()
-  source.var  <- tclVar()
-  sep.var     <- tclVar()
-  nas.var     <- tclVar()
-  comment.var <- tclVar()
+  decis.var  <- tclVar(0)
+  names.var  <- tclVar(0)
+  skip.var   <- tclVar(0)
+  nrow.var   <- tclVar()
+  source.var <- tclVar()
+  sep.var    <- tclVar()
+  nas.var    <- tclVar()
+  com.var    <- tclVar()
 
   tt.done.var <- tclVar(0)
 
@@ -461,12 +457,12 @@ ImportData <- function(parent=NULL) {
   frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Select import parameters")
 
-  frame3.lab.1.1 <- ttklabel(frame3, text="Seperator")
+  frame3.lab.1.1 <- ttklabel(frame3, text="Separator")
   frame3.lab.1.4 <- ttklabel(frame3, text="Decimal")
-  frame3.lab.1.6 <- ttklabel(frame3, text="Skip lines")
+  frame3.lab.1.6 <- ttklabel(frame3, text="Skip rows")
   frame3.lab.2.1 <- ttklabel(frame3, text="NA strings")
   frame3.lab.2.4 <- ttklabel(frame3, text="Quote")
-  frame3.lab.2.6 <- ttklabel(frame3, text="Max lines")
+  frame3.lab.2.6 <- ttklabel(frame3, text="Max rows")
   frame3.lab.3.1 <- ttklabel(frame3, text="Comment")
 
   frame3.box.1.2 <- ttkcombobox(frame3, width=17, state="readonly", value=sep1)
@@ -479,7 +475,7 @@ ImportData <- function(parent=NULL) {
   frame3.ent.1.7 <- ttkentry(frame3, width=12, textvariable=skip.var)
   frame3.ent.2.3 <- ttkentry(frame3, width=12, textvariable=nas.var)
   frame3.ent.2.7 <- ttkentry(frame3, width=12, textvariable=nrow.var)
-  frame3.ent.3.3 <- ttkentry(frame3, width=12, textvariable=comment.var)
+  frame3.ent.3.3 <- ttkentry(frame3, width=12, textvariable=com.var)
 
   frame3.but.2.8 <- ttkbutton(frame3, width=2, image=GetBitmapImage("find"),
                               command=NumLinesInFile)
@@ -596,16 +592,30 @@ ImportData <- function(parent=NULL) {
 
   tkbind(frame1.ent.1, "<Return>", RebuildTable)
 
-  tkbind(frame3.box.1.2, "<<ComboboxSelected>>", RebuildTable)
+  tkbind(frame3.box.1.2, "<<ComboboxSelected>>", 
+         function() {
+           RebuildTable()
+           if (is.na(sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]))
+             tkfocus(frame3.ent.1.3)
+         })
+  tkbind(frame3.box.2.2, "<<ComboboxSelected>>",
+         function() {
+           RebuildTable()
+           if (is.na(nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]))
+             tkfocus(frame3.ent.2.3)
+         })
+  tkbind(frame3.box.3.2, "<<ComboboxSelected>>",
+         function() {
+           RebuildTable()
+           if (is.na(com0[as.integer(tcl(frame3.box.3.2, "current")) + 1]))
+             tkfocus(frame3.ent.3.3)
+         })
   tkbind(frame3.box.1.5, "<<ComboboxSelected>>", RebuildTable)
-  tkbind(frame3.box.2.2, "<<ComboboxSelected>>", RebuildTable)
   tkbind(frame3.box.2.5, "<<ComboboxSelected>>", RebuildTable)
-  tkbind(frame3.box.3.2, "<<ComboboxSelected>>", RebuildTable)
   
   tkbind(frame3.ent.1.3, "<KeyRelease>", RebuildTable)
   tkbind(frame3.ent.2.3, "<KeyRelease>", RebuildTable)
   tkbind(frame3.ent.3.3, "<KeyRelease>", RebuildTable)
-  
   tkbind(frame3.ent.1.7, "<KeyRelease>",
          function() {
            tclvalue(skip.var) <- CheckEntry("integer", tclvalue(skip.var))

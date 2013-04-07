@@ -1,6 +1,7 @@
 Changes in Version 0.7-5
 
-  o  
+  o  In Import Data GUI, added decimal argument and custom entries for 
+     separator, NA strings, and comment parameters.
 
 Changes in Version 0.7-4
 
