@@ -56,7 +56,7 @@ ImportData <- function(parent=NULL) {
     con <- GetConnection(src, enc)
 
     if (inherits(con, "try-error") || !isOpen(con, "r")) {
-      RaiseError(1L, con)
+      RaiseError(1, con)
       return()
     }
 
