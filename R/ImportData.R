@@ -28,7 +28,7 @@ ImportData <- function(parent=NULL) {
 
   # Establish data connection
 
-  GetConnection <- function(src) {
+  GetConnection <- function(src, enc) {
     if (src == "") {
       con <- try(textConnection(cb), silent=TRUE)
     } else if (substr(src, 1, 6) %in% c("http:/", "ftp://", "file:/")) {
@@ -45,8 +45,15 @@ ImportData <- function(parent=NULL) {
   # Read file and populate example table
 
   ReadFile <- function(summary.only=TRUE) {
+    sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
+    dec <- dec0[as.integer(tcl(frame3.box.1.5, "current")) + 1]
+    nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
+    quo <- quo0[as.integer(tcl(frame3.box.2.5, "current")) + 1]
+    com <- com0[as.integer(tcl(frame3.box.3.2, "current")) + 1]
+    enc <- enc0[as.integer(tcl(frame3.box.3.5, "current")) + 1]
+    
     src <- as.character(tclvalue(source.var))
-    con <- GetConnection(src)
+    con <- GetConnection(src, enc)
 
     if (inherits(con, "try-error") || !isOpen(con, "r")) {
       RaiseError(1L, con)
@@ -56,18 +63,12 @@ ImportData <- function(parent=NULL) {
     skp <- as.integer(tclvalue(skip.var))
     if (is.na(skp) || skp < 0)
       skp <- 0
-
+    
     nrw <- as.integer(tclvalue(nrow.var))
     if (is.na(nrw))
       nrw <- -1
     if (nrw > 0 && nrw < nrows)
       nrows <- nrw
-
-    sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
-    dec <- dec0[as.integer(tcl(frame3.box.1.5, "current")) + 1]
-    nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
-    quo <- quo0[as.integer(tcl(frame3.box.2.5, "current")) + 1]
-    com <- com0[as.integer(tcl(frame3.box.3.2, "current")) + 1]
     
     if (is.na(sep)) {
       sep <- as.character(tclvalue(sep.var))
@@ -127,6 +128,7 @@ ImportData <- function(parent=NULL) {
         Data("table.na", nas)
         Data("table.quote", quo)
         Data("comment.char", com)
+        Data("encoding", enc)
         tclvalue(tt.done.var) <- 1
       }
     }
@@ -187,7 +189,8 @@ ImportData <- function(parent=NULL) {
 
   NumLinesInFile <- function() {
     src <- as.character(tclvalue(source.var))
-    con <- GetConnection(src)
+    enc <- enc0[as.integer(tcl(frame3.box.3.5, "current")) + 1]
+    con <- GetConnection(src, enc)
     if (inherits(con, "try-error"))
       return()
 
@@ -330,8 +333,9 @@ ImportData <- function(parent=NULL) {
   com0 <- c("", "#", "!", "\\", "~", NA)
   com1 <- c("", "Number sign ( # )", "Exclamation ( ! )",
             "Backslash ( \\\\ )", "Tilde ( ~ )", "Custom\u2026")
-
-  enc <- Data("encoding")
+  
+  enc0 <- c("native.enc", "latin1", "UTF-8", "bytes")
+  enc1 <- c("", "ISO-8859-1 (latin1)", "Unicode (UTF-8)", "Bytes")
 
   # Assign variables linked to Tk widgets
 
@@ -413,22 +417,22 @@ ImportData <- function(parent=NULL) {
 
   frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
-  frame1.lab.1 <- ttklabel(frame1, text="Import data from")
+  frame1.lab.1.1 <- ttklabel(frame1, text="Import data from")
   txt <- paste("    or transfer data from clipboard via a copy and paste",
                "operation.")
-  frame1.lab.2 <- ttklabel(frame1, text=txt)
+  frame1.lab.2.1 <- ttklabel(frame1, text=txt)
 
-  frame1.ent.1 <- ttkentry(frame1, textvariable=source.var)
-  frame1.but.1 <- ttkbutton(frame1, width=8, text="Browse",
-                            command=GetDataFile)
+  frame1.ent.1.2 <- ttkentry(frame1, textvariable=source.var)
+  frame1.but.1.3 <- ttkbutton(frame1, width=8, text="Browse",
+                              command=GetDataFile)
 
-  tkgrid(frame1.lab.1, frame1.ent.1, frame1.but.1, pady=c(10, 0))
-  tkgrid(frame1.lab.2, "x", "x", pady=c(5, 0))
+  tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.but.1.3, pady=c(10, 0))
+  tkgrid(frame1.lab.2.1, "x", "x", "x", pady=c(5, 0))
 
-  tkgrid.configure(frame1.lab.1, sticky="w")
-  tkgrid.configure(frame1.ent.1, sticky="we", padx=2)
+  tkgrid.configure(frame1.lab.1.1, sticky="w")
+  tkgrid.configure(frame1.ent.1.2, sticky="we", padx=2)
 
-  tkgrid.configure(frame1.lab.2, columnspan=3, sticky="w")
+  tkgrid.configure(frame1.lab.2.1, columnspan=3, sticky="w")
 
   tkgrid.columnconfigure(frame1, 1, weight=1)
 
@@ -455,7 +459,7 @@ ImportData <- function(parent=NULL) {
   # Frame 3, import parameters
 
   frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Select import parameters")
+                          text="Specify import arguments")
 
   frame3.lab.1.1 <- ttklabel(frame3, text="Separator")
   frame3.lab.1.4 <- ttklabel(frame3, text="Decimal")
@@ -464,12 +468,14 @@ ImportData <- function(parent=NULL) {
   frame3.lab.2.4 <- ttklabel(frame3, text="Quote")
   frame3.lab.2.6 <- ttklabel(frame3, text="Max rows")
   frame3.lab.3.1 <- ttklabel(frame3, text="Comment")
+  frame3.lab.3.4 <- ttklabel(frame3, text="Encoding")
 
   frame3.box.1.2 <- ttkcombobox(frame3, width=17, state="readonly", value=sep1)
-  frame3.box.1.5 <- ttkcombobox(frame3, width=12, state="readonly", value=dec1)
+  frame3.box.1.5 <- ttkcombobox(frame3, width=17, state="readonly", value=dec1)
   frame3.box.2.2 <- ttkcombobox(frame3, width=17, state="readonly", value=nas1)
-  frame3.box.2.5 <- ttkcombobox(frame3, width=12, state="readonly", value=quo1)
+  frame3.box.2.5 <- ttkcombobox(frame3, width=17, state="readonly", value=quo1)
   frame3.box.3.2 <- ttkcombobox(frame3, width=17, state="readonly", value=com1)
+  frame3.box.3.5 <- ttkcombobox(frame3, width=17, state="readonly", value=enc1)
   
   frame3.ent.1.3 <- ttkentry(frame3, width=12, textvariable=sep.var)
   frame3.ent.1.7 <- ttkentry(frame3, width=12, textvariable=skip.var)
@@ -485,12 +491,12 @@ ImportData <- function(parent=NULL) {
   tkgrid(frame3.lab.2.1, frame3.box.2.2, frame3.ent.2.3, frame3.lab.2.4, 
          frame3.box.2.5, frame3.lab.2.6, frame3.ent.2.7, frame3.but.2.8, 
          pady=c(4, 0))
-  tkgrid(frame3.lab.3.1, frame3.box.3.2, frame3.ent.3.3, 
-         "x", "x", "x", "x", "x", pady=c(4, 0))
+  tkgrid(frame3.lab.3.1, frame3.box.3.2, frame3.ent.3.3, frame3.lab.3.4, 
+         frame3.box.3.5, "x", "x", "x", pady=c(4, 0))
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.1.4, frame3.lab.1.6,
                    frame3.lab.2.1, frame3.lab.2.4, frame3.lab.2.6,
-                   frame3.lab.3.1, padx=c(10, 2), sticky="w")
+                   frame3.lab.3.1, frame3.lab.3.4, padx=c(10, 2), sticky="w")
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, frame3.lab.3.1, padx=c(0, 2))
   tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, frame3.ent.3.3, padx=c(2, 0))
@@ -542,6 +548,8 @@ ImportData <- function(parent=NULL) {
     tcl(frame3.box.1.5, "current", match(Data("table.dec"), dec0) - 1)
   if (!is.null(Data("table.quote")))
     tcl(frame3.box.2.5, "current", match(Data("table.quote"), quo0) - 1)
+  if (!is.null(Data("encoding")))
+    tcl(frame3.box.3.5, "current", match(Data("encoding"), enc0) - 1)
 
   # Frame 4, example data table
 
@@ -590,7 +598,7 @@ ImportData <- function(parent=NULL) {
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tkbind(frame1.ent.1, "<Return>", RebuildTable)
+  tkbind(frame1.ent.1.2, "<Return>", RebuildTable)
 
   tkbind(frame3.box.1.2, "<<ComboboxSelected>>", 
          function() {
@@ -612,6 +620,7 @@ ImportData <- function(parent=NULL) {
          })
   tkbind(frame3.box.1.5, "<<ComboboxSelected>>", RebuildTable)
   tkbind(frame3.box.2.5, "<<ComboboxSelected>>", RebuildTable)
+  tkbind(frame3.box.3.5, "<<ComboboxSelected>>", RebuildTable)
   
   tkbind(frame3.ent.1.3, "<KeyRelease>", RebuildTable)
   tkbind(frame3.ent.2.3, "<KeyRelease>", RebuildTable)

@@ -1,7 +1,7 @@
 Changes in Version 0.7-5
 
-  o  In Import Data GUI, added decimal argument and custom entries for 
-     separator, NA strings, and comment parameters.
+  o  In Import Data GUI, added decimal and encoding arguments and custom entries
+     for separator, NA strings, and comment parameters.
 
 Changes in Version 0.7-4
 
