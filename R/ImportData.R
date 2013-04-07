@@ -7,8 +7,8 @@ ImportData <- function(parent=NULL) {
 
   RaiseError <- function(type, detail) {
     msg <- NULL
-    msg[1L] <- "Connection to data source failed."
-    msg[2L] <- "Problems occured while reading data from text file."
+    msg[1] <- "Connection to data source failed."
+    msg[2] <- "Problems occured while reading data from text file."
     tkmessageBox(icon="error", message=msg[type], detail=detail, title="Error",
                  type="ok", parent=tt)
   }
@@ -334,8 +334,8 @@ ImportData <- function(parent=NULL) {
   com1 <- c("", "Number sign ( # )", "Exclamation ( ! )",
             "Backslash ( \\\\ )", "Tilde ( ~ )", "Custom\u2026")
   
-  enc0 <- c("native.enc", "latin1", "UTF-8", "bytes")
-  enc1 <- c("", "ISO-8859-1 (latin1)", "Unicode (UTF-8)", "Bytes")
+  enc0 <- c("native.enc", iconvlist())
+  enc1 <- c("", iconvlist())
 
   # Assign variables linked to Tk widgets
 
