@@ -463,10 +463,10 @@ ImportData <- function(parent=NULL) {
 
   frame3.lab.1.1 <- ttklabel(frame3, text="Separator")
   frame3.lab.1.4 <- ttklabel(frame3, text="Decimal")
-  frame3.lab.1.6 <- ttklabel(frame3, text="Skip rows")
+  frame3.lab.1.6 <- ttklabel(frame3, text="Skip lines")
   frame3.lab.2.1 <- ttklabel(frame3, text="NA strings")
   frame3.lab.2.4 <- ttklabel(frame3, text="Quote")
-  frame3.lab.2.6 <- ttklabel(frame3, text="Max rows")
+  frame3.lab.2.6 <- ttklabel(frame3, text="Max lines")
   frame3.lab.3.1 <- ttklabel(frame3, text="Comment")
   frame3.lab.3.4 <- ttklabel(frame3, text="Encoding")
 
