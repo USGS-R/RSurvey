@@ -17,7 +17,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
       headers <- c(as.logical(as.integer(tclvalue(head.fmts.var))),
                    as.logical(as.integer(tclvalue(head.names.var))))
       sep <- as.character(tclvalue(sep.var))
-      if (sep == "other")
+      if (sep == "custom")
         sep <- as.character(tclvalue(sep.other.var))
       is.compressed <- as.logical(as.integer(tclvalue(compress.var)))
       WriteFile(file.type, file.name, col.ids, is.processed, headers, sep,
@@ -92,10 +92,10 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
       tclvalue(file.var) <- f.new
   }
 
-  # Toggle state of other seperator entry
+  # Toggle state of other separator entry
 
   ToggleSeperator <- function() {
-    is.other <- as.character(tclvalue(sep.var)) == "other"
+    is.other <- as.character(tclvalue(sep.var)) == "custom"
     if (is.other) {
       tkconfigure(frame3.ent.2.4, state="normal")
       tkfocus(frame3.ent.2.4)
@@ -154,9 +154,9 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   }
 
   if (file.type == "text")
-    tktitle(tt) <- "Export To Text File"
+    tktitle(tt) <- "Export to Text File"
   else
-    tktitle(tt) <- "Export To Shapefile"
+    tktitle(tt) <- "Export to Shapefile"
 
   # Frame 0, export and cancel buttons
 
@@ -239,10 +239,10 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
     tkpack(frame2, fill="x", padx=10, pady=c(0, 10))
 
-    # Frame 3, field seperator
+    # Frame 3, field separator
 
     frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                            text="Select field seperator")
+                            text="Select field separator")
 
     frame3.ent.2.4 <- ttkentry(frame3, width=7, textvariable=sep.other.var,
                                state="readonly")
@@ -262,13 +262,12 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
                                      text="Comma", width=13,
                                      command=ToggleSeperator)
     frame3.rad.2.3 <- ttkradiobutton(frame3, variable=sep.var,
-                                     value="other", text="Other",
+                                     value="custom", text="Custom\u2026",
                                      command=ToggleSeperator)
 
     tkgrid(frame3.rad.1.1, frame3.rad.1.2, frame3.rad.1.3, "x", sticky="w")
     tkgrid(frame3.rad.2.1, frame3.rad.2.2, frame3.rad.2.3, frame3.ent.2.4,
            sticky="w")
-    
     
     tkgrid.configure(frame3.rad.1.1, frame3.rad.2.1, padx=c(15, 0))
     
@@ -281,7 +280,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   # Frame 4, output file and compression
 
   frame4 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Specify output file")
+                          text="Set output file")
   frame4.ent.1.1 <- ttkentry(frame4, width=12, textvariable=file.var)
   frame4.but.1.3 <- ttkbutton(frame4, width=8, text="Browse",
                               command=GetDataFile)
