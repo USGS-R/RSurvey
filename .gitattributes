@@ -4,7 +4,7 @@
 * text=auto
 
 # This setting tells git to always normalize the files specified. When 
-# committed they are stored with LF, on checkout they are converted to the OS's 
+# committed they are stored with LF, on checkout they are converted to the OS's
 # native line endings.
 *.R text
 *.Rd text
@@ -13,7 +13,7 @@
 *.csv text
 *.txt text
 
-# This setting tells git that the files specified are not text at all, and it 
+# This setting tells git that the files specified are not text at all, and it
 # should not try to change them.
 *.png binary
 *.gif binary
