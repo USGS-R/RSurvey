@@ -459,7 +459,7 @@ ImportData <- function(parent=NULL) {
   # Frame 3, import parameters
 
   frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Specify import arguments")
+                          text="Set import parameters")
 
   frame3.lab.1.1 <- ttklabel(frame3, text="Separator")
   frame3.lab.1.4 <- ttklabel(frame3, text="Decimal")
