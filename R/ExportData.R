@@ -145,18 +145,13 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
   tclServiceMode(FALSE)
   tt <- tktoplevel()
-
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
     tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
-
-  if (file.type == "text")
-    tktitle(tt) <- "Export to Text File"
-  else
-    tktitle(tt) <- "Export to Shapefile"
+  tktitle(tt) <- "Export Data"
 
   # Frame 0, export and cancel buttons
 

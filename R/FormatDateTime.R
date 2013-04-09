@@ -4,8 +4,16 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
 
   # Additional functions (subroutines)
 
-  # Selection change in the viewtree
+  # Save format
+  SaveFormat <- function() {
+    fmt <- as.character(tclvalue(fmt.var))
+    if (fmt == "")
+      fmt <- "%d/%m/%Y %H:%M:%OS"
+    new.fmt <<- fmt
+    tclvalue(tt.done.var) <- 1
+  }
 
+  # Selection change in the viewtree
   SelectionChange <- function() {
     cur.sel <- tcl(frame1.tre, "selection")
     cur.val <- as.character(tcl(frame1.tre, "item", cur.sel, "-values"))[1]
@@ -15,14 +23,12 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   }
 
   # Update sample date-time entry
-
   UpdateSample <- function() {
     txt <- sub("%$", "", tclvalue(fmt.var))
     tclvalue(sample.var) <- if (txt == "") "" else format(sample, format=txt)
   }
 
   # Add string to format entry
-
   AddString <- function(txt) {
     if (as.logical(tcl(frame2a.ent, "selection", "present")))
       tcl(frame2a.ent, "delete", "sel.first", "sel.last")
@@ -32,7 +38,6 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   }
 
   # Expand or collapse nodes in treeview
-
   ToggleTreeView <- function(open.nodes) {
     if (open.nodes)
       img <- img.minus
@@ -54,14 +59,12 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   }
 
   # Copy format to clipboard
-
   CopyFormat <- function() {
     txt <- as.character(tclvalue(fmt.var))
     cat(txt, file="clipboard")
   }
 
   # Paste format from clipboard
-
   PasteFormat <- function() {
     cb <- try(scan(file="clipboard", what="character", sep="\n", quiet=TRUE),
               silent=TRUE)
@@ -73,18 +76,10 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   }
 
  # Clear format from entry
-
   ClearFormat <- function() {
     tclvalue(fmt.var) <- ""
     UpdateSample()
     tkfocus(frame2a.ent)
-  }
-
-  # Save format
-
-  SaveFormat <- function() {
-    new.fmt <<- as.character(tclvalue(fmt.var))
-    tclvalue(tt.done.var) <- 1
   }
 
 

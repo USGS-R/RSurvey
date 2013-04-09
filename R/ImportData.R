@@ -372,7 +372,7 @@ ImportData <- function(parent=NULL) {
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
 
-  tktitle(tt) <- "Import from Text File"
+  tktitle(tt) <- "Import Data"
 
   # Frame 0 contains load and cancel buttons, and size grip
 
@@ -558,7 +558,7 @@ ImportData <- function(parent=NULL) {
   .Tcl("option add *Table.font {CourierNew 9}")
   frame4.tbl <- tkwidget(frame4, "table", rows=1, cols=1, variable=table.var,
                          state="disabled", colwidth=13, rowheight=1, width=1,
-                         height=10, ipadx=3, ipady=1, wrap=0,
+                         height=5, ipadx=3, ipady=1, wrap=0,
                          highlightcolor="gray75", background="white",
                          foreground="black", titlerows=0, titlecols=0,
                          multiline=0, resizeborders="col",

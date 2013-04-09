@@ -3,8 +3,29 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
   # Additional functions (subroutines)
 
+  # Save conversion specification format
+  SaveFormat <- function() {
+    fmt <- as.character(tclvalue(fmt.var))
+    if (as.character(tclvalue(sample.var)) == "") {
+      msg <- paste("Invalid format '", fmt, "'; please try again.", sep="")
+      tkmessageBox(icon="error", message=msg, title="Error", type="ok",
+                   parent=tt)
+    } else {
+      if (fmt == "") {
+        if (inherits(sample, c("character", "logical"))) {
+          fmt <- "%s"
+        } else if (inherits(sample, "numeric")) {
+          fmt <- "%f"
+        } else if (inherits(sample, "integer")) {
+          fmt <- "%d"
+        }
+      }
+      new.fmt <<- fmt
+      tclvalue(tt.done.var) <- 1
+    }
+  }
+  
   # Translate format string, return TRUE if custom format
-
   TranslateFormat <- function() {
     if (nchar(fmt) < 2L)
       return(TRUE)
@@ -146,7 +167,6 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   }
 
   # Update sample value
-
   UpdateSample <- function() {
     fmt <- as.character(tclvalue(fmt.var))
     if (fmt == "") {
@@ -202,14 +222,12 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   }
 
   # Copy format to clipboard
-
   CopyFormat <- function() {
     txt <- as.character(tclvalue(fmt.var))
     cat(txt, file="clipboard")
   }
 
   # Paste format from clipboard
-
   PasteFormat <- function() {
     cb <- try(scan(file="clipboard", what="character", sep="\n", quiet=TRUE),
               silent=TRUE)
@@ -220,20 +238,6 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     tclvalue(fmt.var) <- cb
     UpdateSample()
     tkfocus(frame2.ent.1)
-  }
-
-  # Save conversion specification format
-
-  SaveFormat <- function() {
-    fmt <- as.character(tclvalue(fmt.var))
-    if (as.character(tclvalue(sample.var)) == "") {
-      msg <- paste("Invalid format '", fmt, "'; please try again.", sep="")
-      tkmessageBox(icon="error", message=msg, title="Error", type="ok",
-                   parent=tt)
-    } else {
-      new.fmt <<- fmt
-      tclvalue(tt.done.var) <- 1
-    }
   }
 
 
