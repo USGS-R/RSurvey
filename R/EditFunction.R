@@ -364,6 +364,12 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertString(" | "))
   tkadd(menu.operator, "command", label="Not",
         command=function() InsertString("!"))
+  tkadd(menu.operator, "command", label="In",
+        command=function() InsertString(" %in% "))
+  tkadd(menu.operator, "command", label="Match",
+        command=function() {
+          InsertString("match(<variable>, <values>, nomatch = NA)")
+        })
   tkadd(menu.operator, "command", label="Exponentiation",
         command=function() InsertString("<variable>^<power>"))
 
@@ -520,19 +526,21 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                               command=function() InsertString(" == "))
   frame2a.but.10 <- ttkbutton(frame2a, width=3, text="\u2260",
                               command=function() InsertString(" != "))
-  frame2a.but.11 <- ttkbutton(frame2a, width=3, text="( )",
+  frame2a.but.11 <- ttkbutton(frame2a, width=3, text="in",
+                              command=function() InsertString(" %in% "))
+  frame2a.but.12 <- ttkbutton(frame2a, width=3, text="( )",
                               command=function() InsertString("()"))
-  frame2a.but.12 <- ttkbutton(frame2a, width=3, text="[ ]",
+  frame2a.but.13 <- ttkbutton(frame2a, width=3, text="[ ]",
                               command=function() InsertString("[]"))
   
   tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
          frame2a.but.05, frame2a.but.06, frame2a.but.07, frame2a.but.08, 
          frame2a.but.09, frame2a.but.10, frame2a.but.11, frame2a.but.12, 
-         padx=c(0, 2), pady=c(4, 0))
+         frame2a.but.13, padx=c(0, 2), pady=c(4, 0))
 
   tkgrid.configure(frame2a.but.01, padx=c(2, 2))
-  tkgrid.configure(frame2a.but.05, frame2a.but.11, padx=c(12, 2))
-  tkgrid.configure(frame2a.but.12, padx=c(2, 0))
+  tkgrid.configure(frame2a.but.05, frame2a.but.12, padx=c(12, 2))
+  tkgrid.configure(frame2a.but.13, padx=c(2, 0))
 
   tkgrid(frame2.lab.1.1, "x")
   tkgrid(frame2.txt.2.1, frame2.ysc.2.2)
