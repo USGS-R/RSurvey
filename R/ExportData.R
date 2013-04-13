@@ -223,21 +223,21 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     # Frame 2, header lines
 
     frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                            text="Include header lines")
+                            text="Add metadata")
     frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=head.fmts.var,
                                      text="Conversion specification formats")
     frame2.chk.1.2 <- ttkcheckbutton(frame2, variable=head.names.var,
-                                     text="Names of the variables")
+                                     text="Column names")
 
     tkgrid(frame2.chk.1.1, frame2.chk.1.2)
     tkgrid.configure(frame2.chk.1.1, padx=c(15, 15))
 
     tkpack(frame2, fill="x", padx=10, pady=c(0, 10))
 
-    # Frame 3, field separator
+    # Frame 3, export parmaters
 
     frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                            text="Select field separator")
+                            text="Export parameters")
 
     frame3.ent.2.4 <- ttkentry(frame3, width=7, textvariable=sep.other.var,
                                state="readonly")
@@ -275,12 +275,12 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   # Frame 4, output file and compression
 
   frame4 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Set output file")
+                          text="Output file")
   frame4.ent.1.1 <- ttkentry(frame4, width=12, textvariable=file.var)
   frame4.but.1.3 <- ttkbutton(frame4, width=8, text="Browse",
                               command=GetDataFile)
 
-  txt <- "Compress file using gzip; extension 'gz' added to file name"
+  txt <- "Compress file using gzip"
   frame4.chk.2.2 <- ttkcheckbutton(frame4, variable=compress.var, text=txt,
                                    command=ToggleExtension)
 
