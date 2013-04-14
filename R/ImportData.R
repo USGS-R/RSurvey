@@ -417,8 +417,8 @@ ImportData <- function(parent=NULL) {
   frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
   frame1.lab.1.1 <- ttklabel(frame1, text="Import data from")
-  txt <- paste("    or transfer data from clipboard via a copy and paste",
-               "operation.")
+  txt <- paste("or transfer data from clipboard via a copy and paste",
+               "operation.  A section of the data table will be shown below.")
   frame1.lab.2.1 <- ttklabel(frame1, text=txt)
 
   frame1.ent.1.2 <- ttkentry(frame1, textvariable=source.var)
@@ -426,7 +426,7 @@ ImportData <- function(parent=NULL) {
                               command=GetDataFile)
 
   tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.but.1.3, pady=c(10, 0))
-  tkgrid(frame1.lab.2.1, "x", "x", "x", pady=c(5, 0))
+  tkgrid(frame1.lab.2.1, "x", "x", "x", pady=c(5, 0), padx=c(15, 10))
 
   tkgrid.configure(frame1.lab.1.1, sticky="w")
   tkgrid.configure(frame1.ent.1.2, sticky="we", padx=2)
@@ -443,10 +443,10 @@ ImportData <- function(parent=NULL) {
                           text="Header lines")
 
   txt <- paste("Conversion specification formats of the variables,",
-               "for example, '%10.6f' or '%Y-%m-%d %H:%M'")
+               "for example, '%10.6f' or '%Y-%m-%d %H:%M'.")
   frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=decis.var,
                                    command=SetTags, text=txt)
-  txt <- "Names of the variables, that is, column names in the data table"
+  txt <- "Names of the variables, that is, column names in the data table."
   frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=names.var,
                                    command=SetTags, text=txt)
 
