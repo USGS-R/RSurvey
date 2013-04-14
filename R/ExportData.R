@@ -337,15 +337,23 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   frame4.lab.3.1 <- ttklabel(frame4, text="End-of-line")
   frame4.box.2.2 <- ttkcombobox(frame4, width=17, state="readonly", value=enc1)
   frame4.box.3.2 <- ttkcombobox(frame4, width=17, state="readonly", value=eol1)
-  txt <- "Compress using gzip"
+  txt <- "Compress using"
   frame4.chk.2.3 <- ttkcheckbutton(frame4, variable=compress.var, text=txt,
                                    command=ToggleExtension)
   
-  tkgrid(frame4.ent.1.1, "x", "x", "x", frame4.but.1.5)
-  tkgrid.configure(frame4.ent.1.1, sticky="we", columnspan=4, padx=c(0, 2))
+  
+  
+  frame4.lab.2.4 <- ttklabel(frame4, text="gzip", anchor="w", foreground="blue")
+  
+  
+  
+  
+  
+  tkgrid(frame4.ent.1.1, "x", "x", "x", "x", frame4.but.1.5)
+  tkgrid.configure(frame4.ent.1.1, sticky="we", columnspan=5, padx=c(0, 2))
   
   if (file.type == "text") {
-    tkgrid(frame4.lab.2.1, frame4.box.2.2, frame4.chk.2.3, pady=c(4, 0), 
+    tkgrid(frame4.lab.2.1, frame4.box.2.2, frame4.chk.2.3, frame4.lab.2.4, pady=c(4, 0), 
            sticky="w")
     tkgrid(frame4.lab.3.1, frame4.box.3.2, pady=c(4, 4), sticky="w")
     tkgrid.configure(frame4.lab.2.1, frame4.lab.3.1, padx=c(0, 2))
@@ -353,7 +361,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     tcl(frame4.box.3.2, "current", 0)
   }
   
-  tkgrid.columnconfigure(frame4, 3, weight=1)
+  tkgrid.columnconfigure(frame4, 4, weight=1)
   tkpack(frame4, fill="x", padx=10, pady=c(0, 15))
 
   # Bind events
@@ -385,6 +393,12 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
              }
            })
   }
+  
+  
+  tkbind(frame4.lab.2.4, "<ButtonPress>", 
+         function()  browseURL("http://www.gzip.org/"))
+  tkbind(frame4.lab.2.4, "<Enter>", function() tkconfigure(tt, cursor="hand2"))
+  tkbind(frame4.lab.2.4, "<Leave>", function() tkconfigure(tt, cursor="arrow"))
 
   # GUI control
 
