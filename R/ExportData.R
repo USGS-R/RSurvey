@@ -22,7 +22,6 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
       dec <- dec0[as.integer(tcl(frame3.box.1.5, "current")) + 1]
       nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
       qme <- qme0[as.integer(tcl(frame3.box.2.5, "current")) + 1]
-      com <- com0[as.integer(tcl(frame3.box.3.2, "current")) + 1]
       quote <- as.logical(as.integer(tclvalue(quote.var)))
       
       if (is.na(sep))
@@ -32,8 +31,6 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
         if (nas == "")
           nas <- "NA"
       }
-      if (is.na(com))
-        com <- as.character(tclvalue(com.var))
       
       enc <- enc0[as.integer(tcl(frame4.box.2.2, "current")) + 1]
       eol <- eol0[as.integer(tcl(frame4.box.3.2, "current")) + 1]
@@ -154,15 +151,11 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   nas0 <- c("NA", "na", "N/A", "n/a", NA)
   nas1 <- c("NA", "na", "N/A", "n/a", "Custom\u2026")
   
-  com0 <- c("#", "!", "\\", "~", NA)
-  com1 <- c("Number sign ( # )", "Exclamation ( ! )",
-            "Backslash ( \\\\ )", "Tilde ( ~ )", "Custom\u2026")
-  
   dec0 <- c(".", ",")
   dec1 <- c("Period ( . )", "Comma ( , )")
   
   qme0 <- c("escape", "double")
-  qme1 <- c("Escape", "Double")
+  qme1 <- c("Escape quote", "Double quote")
   
   enc0 <- c("native.enc", iconvlist())
   enc1 <- c("", iconvlist())
@@ -179,12 +172,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   row.names.var    <- tclVar(0)
   sep.var          <- tclVar()
   nas.var          <- tclVar()
-  com.var          <- tclVar()
   quote.var        <- tclVar(0)
-  sep.other.var    <- tclVar()
-  sort.on.var      <- tclVar()
-  na.last.var      <- tclVar(1)
-  decreasing.var   <- tclVar(0)
   file.var         <- tclVar()
   compress.var     <- tclVar(0)
   tt.done.var      <- tclVar(0)
@@ -253,7 +241,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   frame1.but.2.3 <- ttkbutton(frame1, width=8, text="Inverse",
                               command=function() SelectVariables("inverse"))
   frame1.chk.2.4 <- ttkcheckbutton(frame1, variable=records.var,
-                                   text="Include only processed records")
+                                   text="Only export processed records")
 
   tkgrid(frame1.lst.1.1, "x", "x", "x", "x", frame1.ysc.1.6)
   tkgrid(frame1.but.2.1, frame1.but.2.2, frame1.but.2.3, frame1.chk.2.4, 
@@ -262,7 +250,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   tkgrid.configure(frame1.lst.1.1, sticky="nsew", columnspan=5)
   tkgrid.configure(frame1.ysc.1.6, sticky="ns")
   tkgrid.configure(frame1.but.2.1, frame1.but.2.2, padx=c(0, 4))
-  tkgrid.configure(frame1.chk.2.4, padx=c(25, 0))
+  tkgrid.configure(frame1.chk.2.4, padx=c(10, 0))
 
   tkgrid.columnconfigure(frame1, 4, weight=1, minsize=0)
   tkgrid.rowconfigure(frame1, 0, weight=1)
@@ -284,7 +272,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     
     tkgrid(frame2.chk.1.1, frame2.chk.1.2, frame2.chk.1.3)
     tkgrid.configure(frame2.chk.1.1, padx=c(10, 0))
-    tkgrid.configure(frame2.chk.1.2, padx=15)
+    tkgrid.configure(frame2.chk.1.2, padx=10)
     tkgrid.configure(frame2.chk.1.3, padx=c(0, 10))
 
     tkpack(frame2, fill="x", padx=10, pady=c(0, 10))
@@ -296,9 +284,8 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     
     frame3.lab.1.1 <- ttklabel(frame3, text="Separator")
     frame3.lab.1.4 <- ttklabel(frame3, text="Decimal")
-    frame3.lab.2.1 <- ttklabel(frame3, text="NA strings")
+    frame3.lab.2.1 <- ttklabel(frame3, text="NA string")
     frame3.lab.2.4 <- ttklabel(frame3, text="Method")
-    frame3.lab.3.1 <- ttklabel(frame3, text="Comment")
    
     frame3.box.1.2 <- ttkcombobox(frame3, width=17, state="readonly", 
                                   value=sep1)
@@ -308,32 +295,27 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
                                   value=nas1)
     frame3.box.2.5 <- ttkcombobox(frame3, width=17, state="readonly", 
                                   value=qme1)
-    frame3.box.3.2 <- ttkcombobox(frame3, width=17, state="readonly", 
-                                  value=com1)
     
     frame3.ent.1.3 <- ttkentry(frame3, width=12, textvariable=sep.var, 
                                state="disabled")
     frame3.ent.2.3 <- ttkentry(frame3, width=12, textvariable=nas.var, 
                                state="disabled")
-    frame3.ent.3.3 <- ttkentry(frame3, width=12, textvariable=com.var, 
-                               state="disabled")
     
-    frame3.chk.3.4 <- ttkcheckbutton(frame3, variable=quote.var, text="Quote")
+    txt <- "Surround character variables by double quotes"
+    frame3.chk.3.1 <- ttkcheckbutton(frame3, variable=quote.var, text=txt)
     
     tkgrid(frame3.lab.1.1, frame3.box.1.2, frame3.ent.1.3, frame3.lab.1.4, 
            frame3.box.1.5)
     tkgrid(frame3.lab.2.1, frame3.box.2.2, frame3.ent.2.3, frame3.lab.2.4, 
            frame3.box.2.5, pady=4)
-    tkgrid(frame3.lab.3.1, frame3.box.3.2, frame3.ent.3.3, frame3.chk.3.4, "x")
+    tkgrid(frame3.chk.3.1)
     
     tkgrid.configure(frame3.lab.1.1, frame3.lab.1.4, frame3.lab.2.1, 
-                     frame3.lab.2.4, frame3.lab.3.1, padx=c(10, 2), sticky="w")
+                     frame3.lab.2.4, padx=c(10, 2), sticky="w")
     
-    tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, frame3.lab.3.1, 
-                     padx=c(0, 2))
-    tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, frame3.ent.3.3, 
-                     padx=c(2, 0))
-    tkgrid.configure(frame3.chk.3.4, columnspan=2, sticky="w", padx=10)
+    tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, padx=c(0, 2))
+    tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, padx=c(2, 0))
+    tkgrid.configure(frame3.chk.3.1, columnspan=5, sticky="w")
 
     tkpack(frame3, fill="x", padx=10, pady=c(0, 10))
     
@@ -341,7 +323,6 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     tcl(frame3.box.1.5, "current", 0)
     tcl(frame3.box.2.2, "current", 0)
     tcl(frame3.box.2.5, "current", 0)
-    tcl(frame3.box.3.2, "current", 0)
   }
 
   # Frame 4, output file and compression
@@ -368,7 +349,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
            sticky="w")
     tkgrid(frame4.lab.3.1, frame4.box.3.2, pady=c(4, 4), sticky="w")
     tkgrid.configure(frame4.lab.2.1, frame4.lab.3.1, padx=c(0, 2))
-    tkgrid.configure(frame4.chk.2.3, padx=c(25, 0))
+    tkgrid.configure(frame4.chk.2.3, padx=c(10, 0))
     tcl(frame4.box.3.2, "current", 0)
   }
   
@@ -382,36 +363,28 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   tkbind(frame1.lst.1.1, "<<ListboxSelect>>", ToggleExport)
   tkbind(frame4.ent.1.1, "<KeyRelease>", ToggleExport)
   
-  tkbind(frame3.box.1.2, "<<ComboboxSelected>>", 
-         function() {
-           sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
-           if (is.na(sep)) {
-             tkconfigure(frame3.ent.1.3, state="normal")
-             tkfocus(frame3.ent.1.3)
-           } else {
-             tkconfigure(frame3.ent.1.3, state="disabled")
-           }
-         })
-  tkbind(frame3.box.2.2, "<<ComboboxSelected>>", 
-         function() {
-           nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
-           if (is.na(nas)) {
-             tkconfigure(frame3.ent.2.3, state="normal")
-             tkfocus(frame3.ent.2.3)
-           } else {
-             tkconfigure(frame3.ent.2.3, state="disabled")
-           }
-         })
-  tkbind(frame3.box.3.2, "<<ComboboxSelected>>", 
-         function() {
-           com <- com0[as.integer(tcl(frame3.box.3.2, "current")) + 1]
-           if (is.na(com)) {
-             tkconfigure(frame3.ent.3.3, state="normal")
-             tkfocus(frame3.ent.3.3)
-           } else {
-             tkconfigure(frame3.ent.3.3, state="disabled")
-           }
-         })
+  if (file.type == "text") {
+    tkbind(frame3.box.1.2, "<<ComboboxSelected>>", 
+           function() {
+             sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
+             if (is.na(sep)) {
+               tkconfigure(frame3.ent.1.3, state="normal")
+               tkfocus(frame3.ent.1.3)
+             } else {
+               tkconfigure(frame3.ent.1.3, state="disabled")
+             }
+           })
+    tkbind(frame3.box.2.2, "<<ComboboxSelected>>", 
+           function() {
+             nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
+             if (is.na(nas)) {
+               tkconfigure(frame3.ent.2.3, state="normal")
+               tkfocus(frame3.ent.2.3)
+             } else {
+               tkconfigure(frame3.ent.2.3, state="disabled")
+             }
+           })
+  }
 
   # GUI control
 
