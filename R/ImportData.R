@@ -70,9 +70,8 @@ ImportData <- function(parent=NULL) {
     if (nrw > 0 && nrw < nrows)
       nrows <- nrw
     
-    if (is.na(sep)) {
+    if (is.na(sep))
       sep <- as.character(tclvalue(sep.var))
-    }
     if (is.na(nas)) {
       nas <- as.character(tclvalue(nas.var))
       if (nas == "")
