@@ -44,7 +44,7 @@ OpenRSurvey <- function() {
   SaveProj <- function() {
     if (!is.null(Data("proj.file"))) {
       if (file.access(Data("proj.file"), mode = 0) != 0)
-          Data("proj.file", NULL)
+        Data("proj.file", NULL)
     }
     if (is.null(Data("proj.file"))) {
       f <- GetFile(cmd="Save As", exts="rda", win.title="Save Project As",
@@ -1020,10 +1020,10 @@ OpenRSurvey <- function() {
   frame0 <- ttkframe(tt, relief="flat", borderwidth=2)
   tkpack(frame0, side="top", fill="x")
 
-  tkimage.create("photo", import.var, format="GIF",
-                 file=file.path(image.path, "import.gif"))
   tkimage.create("photo", save.var, format="GIF",
                  file=file.path(image.path, "save.gif"))
+  tkimage.create("photo", import.var, format="GIF",
+                 file=file.path(image.path, "import.gif"))
   tkimage.create("photo", data.var, format="GIF",
                  file=file.path(image.path, "data.gif"))
   tkimage.create("photo", polygon.var, format="GIF",
@@ -1036,11 +1036,11 @@ OpenRSurvey <- function() {
                  file=file.path(image.path, "close.gif"))
 
   frame0.but.1  <- tkbutton(frame0, relief="flat", overrelief="raised",
-                            borderwidth=1, image=import.var,
-                            command=CallImportData)
-  frame0.but.2  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=save.var,
                             command=SaveProj)
+  frame0.but.2  <- tkbutton(frame0, relief="flat", overrelief="raised",
+                            borderwidth=1, image=import.var,
+                            command=CallImportData)
   frame0.but.3  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=data.var,
                             command=CallManageData)

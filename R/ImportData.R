@@ -120,14 +120,15 @@ ImportData <- function(parent=NULL) {
       }
 
       if (!is.null(ans)) {
-        Data("table.headers", hds)
-        Data("table.skip", skp)
-        Data("table.sep", sep)
-        Data("table.dec", dec)
-        Data("table.na", nas)
-        Data("table.quote", quo)
-        Data("comment.char", com)
-        Data("encoding", enc)
+        Data("import.file", src)
+        Data("import.headers", hds)
+        Data("import.skip", skp)
+        Data("import.sep", sep)
+        Data("import.dec", dec)
+        Data("import.na", nas)
+        Data("import.quote", quo)
+        Data("import.comment", com)
+        Data("import.encoding", enc)
         tclvalue(tt.done.var) <- 1
       }
     }
@@ -353,9 +354,9 @@ ImportData <- function(parent=NULL) {
 
   # Set header variables
 
-  if (!is.null(Data("table.headers"))) {
-    tclvalue(decis.var) <- Data("table.headers")[1]
-    tclvalue(names.var) <- Data("table.headers")[2]
+  if (!is.null(Data("import.headers"))) {
+    tclvalue(decis.var) <- Data("import.headers")[1]
+    tclvalue(names.var) <- Data("import.headers")[2]
   }
 
   # Open GUI
@@ -510,46 +511,46 @@ ImportData <- function(parent=NULL) {
   tcl(frame3.box.2.5, "current", 0)
   tcl(frame3.box.3.2, "current", 0)
 
-  if (!is.null(Data("table.skip")))
-    tclvalue(skip.var) <- Data("table.skip")
+  if (!is.null(Data("import.skip")))
+    tclvalue(skip.var) <- Data("import.skip")
   
-  if (!is.null(Data("table.sep"))) {
-    if (Data("table.sep") %in% sep0) {
-      tcl(frame3.box.1.2, "current", match(Data("table.sep"), sep0) - 1)
+  if (!is.null(Data("import.sep"))) {
+    if (Data("import.sep") %in% sep0) {
+      tcl(frame3.box.1.2, "current", match(Data("import.sep"), sep0) - 1)
       tkconfigure(frame3.ent.1.3, state="disabled")
     } else {
       tcl(frame3.box.1.2, "current", match(NA, sep0) - 1)
       tkconfigure(frame3.ent.1.3, state="normal")
-      tclvalue(sep.var) <- Data("table.sep")
+      tclvalue(sep.var) <- Data("import.sep")
     }
   }
-  if (!is.null(Data("table.na"))) {
-    if (Data("table.na") %in% nas0) {
-      tcl(frame3.box.2.2, "current", match(Data("table.na"), nas0) - 1)
+  if (!is.null(Data("import.na"))) {
+    if (Data("import.na") %in% nas0) {
+      tcl(frame3.box.2.2, "current", match(Data("import.na"), nas0) - 1)
       tkconfigure(frame3.ent.2.3, state="disabled")
     } else {
       tcl(frame3.box.2.2, "current", match(NA, nas0) - 1)
       tkconfigure(frame3.ent.2.3, state="normal")
-      tclvalue(nas.var) <- Data("table.na")
+      tclvalue(nas.var) <- Data("import.na")
     }
   }
-  if (!is.null(Data("comment.char"))) {
-    if (Data("comment.char") %in% com0) {
-      tcl(frame3.box.3.2, "current", match(Data("comment.char"), com0) - 1)
+  if (!is.null(Data("import.comment"))) {
+    if (Data("import.comment") %in% com0) {
+      tcl(frame3.box.3.2, "current", match(Data("import.comment"), com0) - 1)
       tkconfigure(frame3.ent.3.3, state="disabled")
     } else {
       tcl(frame3.box.3.2, "current", match(NA, com0) - 1)
       tkconfigure(frame3.ent.3.3, state="normal")
-      tclvalue(com.var) <- Data("comment.char")
+      tclvalue(com.var) <- Data("import.comment")
     }
   }
   
-  if (!is.null(Data("table.dec")))
-    tcl(frame3.box.1.5, "current", match(Data("table.dec"), dec0) - 1)
-  if (!is.null(Data("table.quote")))
-    tcl(frame3.box.2.5, "current", match(Data("table.quote"), quo0) - 1)
-  if (!is.null(Data("encoding")))
-    tcl(frame3.box.3.5, "current", match(Data("encoding"), enc0) - 1)
+  if (!is.null(Data("import.dec")))
+    tcl(frame3.box.1.5, "current", match(Data("import.dec"), dec0) - 1)
+  if (!is.null(Data("import.quote")))
+    tcl(frame3.box.2.5, "current", match(Data("import.quote"), quo0) - 1)
+  if (!is.null(Data("import.encoding")))
+    tcl(frame3.box.3.5, "current", match(Data("import.encoding"), enc0) - 1)
 
   # Frame 4, example data table
 

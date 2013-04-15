@@ -165,17 +165,17 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
   # Assign variables linked to Tk widgets
 
-  variables.var    <- tclVar()
-  records.var      <- tclVar(0)
-  conv.fmts.var    <- tclVar(0)
-  col.names.var    <- tclVar(0)
-  row.names.var    <- tclVar(0)
-  sep.var          <- tclVar()
-  nas.var          <- tclVar()
-  quote.var        <- tclVar(0)
-  file.var         <- tclVar()
-  compress.var     <- tclVar(0)
-  tt.done.var      <- tclVar(0)
+  variables.var <- tclVar()
+  records.var   <- tclVar(0)
+  conv.fmts.var <- tclVar(0)
+  col.names.var <- tclVar(0)
+  row.names.var <- tclVar(0)
+  sep.var       <- tclVar()
+  nas.var       <- tclVar()
+  quote.var     <- tclVar(0)
+  file.var      <- tclVar()
+  compress.var  <- tclVar(0)
+  tt.done.var   <- tclVar(0)
 
   for (i in seq(along=col.ids))
     tcl("lappend", variables.var, col.ids[i])

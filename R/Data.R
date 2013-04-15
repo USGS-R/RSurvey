@@ -22,7 +22,6 @@ Data <- local({
                   "rm.pnt.line"   = 0,
                   "grid.res"      = list(x=NA, y=NA),
                   "grid.mba"      = list(n=NA, m=NA, h=11),
-                  "encoding"      = getOption("encoding"),
                   "color.palette" = colorspace::diverge_hcl
               )
 
@@ -45,7 +44,7 @@ Data <- local({
         save.params <- c(save.params, "nlevels", "asp.yx", "asp.zx",
                          "vmax", "vxby", "vyby", "rkey", "show.poly",
                          "img.contour", "show.lines", "show.points",
-                         "vuni", "date.fmt", "polys", "project.file",
+                         "vuni", "date.fmt", "polys", "proj.file",
                          "show.2.axes", "minor.ticks", "ticks.inside",
                          "color.palette", "rm.pnt.line")
       save.params <- save.params[save.params %in% names(dat)]
