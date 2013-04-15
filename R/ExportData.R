@@ -1,5 +1,5 @@
 ExportData <- function(col.ids, file.type="text", parent=NULL) {
-  # Export data to file
+# Export data to file
 
   # Additional functions (subroutines)
 
@@ -14,8 +14,14 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     tkconfigure(tt, cursor="watch")
     if (file.type == "text") {
       is.processed <- as.logical(as.integer(tclvalue(records.var)))
+      
+      
+      
       headers <- c(as.logical(as.integer(tclvalue(conv.fmts.var))),
                    as.logical(as.integer(tclvalue(col.names.var))))
+      
+      
+      
       row.names <- as.logical(as.integer(tclvalue(row.names.var)))
       
       sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
@@ -42,7 +48,21 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
       WriteFile(file.type, file.name, col.ids, is.processed, headers, sep,
                 is.compressed)
       
-      
+      if (file.access(file.name, mode=0) == 0) {
+        Data("export.processed", is.processed)
+        
+        
+        Data("export.rows", row.names)
+        
+        Data("export.sep", sep)
+        Data("export.dec", dec)
+        Data("export.na", nas)
+        Data("export.qmethod", qme)
+        Data("export.quote", quote)
+        Data("export.encoding", enc)
+        Data("export.eol", eol)
+        Data("export.compressed", is.compressed)
+      }
       
       
     } else {
@@ -56,6 +76,9 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
       
       
     }
+    
+    
+    
     tkconfigure(tt, cursor="arrow")
     tclvalue(tt.done.var) <- 1
   }
@@ -256,6 +279,9 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   tkgrid.rowconfigure(frame1, 0, weight=1)
 
   tkpack(frame1, fill="both", expand=TRUE, side="top", padx=10, pady=10)
+  
+  if (!is.null(Data("export.processed")))
+    tclvalue(records.var) <- Data("export.processed")
 
   if (file.type == "text") {
 
@@ -276,6 +302,14 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     tkgrid.configure(frame2.chk.1.3, padx=c(0, 10))
 
     tkpack(frame2, fill="x", padx=10, pady=c(0, 10))
+    
+    
+    
+    
+    
+    
+    if (!is.null(Data("export.rows")))
+      tclvalue(row.names.var) <- Data("export.rows")
 
     # Frame 3, export parmaters
 
@@ -324,6 +358,33 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     tcl(frame3.box.1.5, "current", 0)
     tcl(frame3.box.2.2, "current", 0)
     tcl(frame3.box.2.5, "current", 0)
+    
+    if (!is.null(Data("export.sep"))) {
+      if (Data("export.sep") %in% sep0) {
+        tcl(frame3.box.1.2, "current", match(Data("export.sep"), sep0) - 1)
+        tkconfigure(frame3.ent.1.3, state="disabled")
+      } else {
+        tcl(frame3.box.1.2, "current", match(NA, sep0) - 1)
+        tkconfigure(frame3.ent.1.3, state="normal")
+        tclvalue(sep.var) <- Data("export.sep")
+      }
+    }
+    if (!is.null(Data("export.na"))) {
+      if (Data("export.na") %in% nas0) {
+        tcl(frame3.box.2.2, "current", match(Data("export.na"), nas0) - 1)
+        tkconfigure(frame3.ent.2.3, state="disabled")
+      } else {
+        tcl(frame3.box.2.2, "current", match(NA, nas0) - 1)
+        tkconfigure(frame3.ent.2.3, state="normal")
+        tclvalue(nas.var) <- Data("export.na")
+      }
+    }
+    if (!is.null(Data("export.dec")))
+      tcl(frame3.box.1.5, "current", match(Data("export.dec"), dec0) - 1)
+    if (!is.null(Data("export.qmethod")))
+      tcl(frame3.box.2.5, "current", match(Data("export.qmethod"), qme0) - 1)
+    if (!is.null(Data("export.quote")))
+      tclvalue(quote.var) <- Data("export.quote")
   }
 
   # Frame 4, output file and compression
@@ -353,6 +414,13 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     tkgrid.configure(frame4.lab.2.1, frame4.lab.3.1, padx=c(0, 2))
     tkgrid.configure(frame4.chk.2.3, padx=c(10, 0))
     tcl(frame4.box.3.2, "current", 0)
+    
+    if (!is.null(Data("export.encoding")))
+      tcl(frame4.box.2.2, "current", match(Data("export.encoding"), enc0) - 1)
+    if (!is.null(Data("export.eol")))
+      tcl(frame4.box.3.2, "current", match(Data("export.eol"), eol0) - 1)
+    if (!is.null(Data("export.compress")))
+      tclvalue(compress.var) <- Data("export.compress")
   }
   
   tkgrid.columnconfigure(frame4, 4, weight=1)
@@ -387,7 +455,6 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
              }
            })
   }
-  
   
   tkbind(frame4.lab.2.4, "<ButtonPress>", 
          function()  browseURL("http://www.gzip.org/"))
