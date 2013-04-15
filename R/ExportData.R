@@ -315,7 +315,8 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     
     tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, padx=c(0, 2))
     tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, padx=c(2, 0))
-    tkgrid.configure(frame3.chk.3.1, columnspan=5, sticky="w")
+    tkgrid.configure(frame3.chk.3.1, columnspan=5, sticky="w", padx=10, 
+                     pady=c(5, 0))
 
     tkpack(frame3, fill="x", padx=10, pady=c(0, 10))
     
@@ -335,19 +336,12 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   
   frame4.lab.2.1 <- ttklabel(frame4, text="Encoding")
   frame4.lab.3.1 <- ttklabel(frame4, text="End-of-line")
+  frame4.lab.2.4 <- ttklabel(frame4, text="gzip", anchor="w", foreground="blue")
   frame4.box.2.2 <- ttkcombobox(frame4, width=17, state="readonly", value=enc1)
   frame4.box.3.2 <- ttkcombobox(frame4, width=17, state="readonly", value=eol1)
   txt <- "Compress using"
   frame4.chk.2.3 <- ttkcheckbutton(frame4, variable=compress.var, text=txt,
                                    command=ToggleExtension)
-  
-  
-  
-  frame4.lab.2.4 <- ttklabel(frame4, text="gzip", anchor="w", foreground="blue")
-  
-  
-  
-  
   
   tkgrid(frame4.ent.1.1, "x", "x", "x", "x", frame4.but.1.5)
   tkgrid.configure(frame4.ent.1.1, sticky="we", columnspan=5, padx=c(0, 2))
