@@ -13,7 +13,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
     tkconfigure(tt, cursor="watch")
     if (file.type == "text") {
-      is.processed <- as.logical(as.integer(tclvalue(records.var)))
+      is.processed <- as.logical(as.integer(tclvalue(processed.var)))
       
       
       
@@ -189,7 +189,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   # Assign variables linked to Tk widgets
 
   variables.var <- tclVar()
-  records.var   <- tclVar(0)
+  processed.var <- tclVar(0)
   conv.fmts.var <- tclVar(0)
   col.names.var <- tclVar(0)
   row.names.var <- tclVar(0)
@@ -263,7 +263,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
                               command=function() SelectVariables("none"))
   frame1.but.2.3 <- ttkbutton(frame1, width=8, text="Inverse",
                               command=function() SelectVariables("inverse"))
-  frame1.chk.2.4 <- ttkcheckbutton(frame1, variable=records.var,
+  frame1.chk.2.4 <- ttkcheckbutton(frame1, variable=processed.var,
                                    text="Only export processed records")
 
   tkgrid(frame1.lst.1.1, "x", "x", "x", "x", frame1.ysc.1.6)
@@ -281,7 +281,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   tkpack(frame1, fill="both", expand=TRUE, side="top", padx=10, pady=10)
   
   if (!is.null(Data("export.processed")))
-    tclvalue(records.var) <- Data("export.processed")
+    tclvalue(processed.var) <- Data("export.processed")
 
   if (file.type == "text") {
 
