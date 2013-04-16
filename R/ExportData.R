@@ -181,7 +181,7 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   qme1 <- c("Escape quote", "Double quote")
   
   enc0 <- c("native.enc", iconvlist())
-  enc1 <- c("", iconvlist())
+  enc1 <- c("Default", iconvlist())
   
   eol0 <- c("\n", "\r\n")
   eol1 <- c("LF ( \\n )", "CR+LF ( \\r\\n )")
@@ -413,6 +413,8 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
     tkgrid(frame4.lab.3.1, frame4.box.3.2, pady=c(4, 4), sticky="w")
     tkgrid.configure(frame4.lab.2.1, frame4.lab.3.1, padx=c(0, 2))
     tkgrid.configure(frame4.chk.2.3, padx=c(10, 0))
+    
+    tcl(frame4.box.2.2, "current", 0)
     tcl(frame4.box.3.2, "current", 0)
     
     if (!is.null(Data("export.encoding")))

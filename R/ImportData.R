@@ -325,17 +325,17 @@ ImportData <- function(parent=NULL) {
   nas1 <- c("NA", "na", "N/A", "n/a", "Custom\u2026")
 
   quo0 <- c("", "\"", "'")
-  quo1 <- c("", "Double ( \" )", "Single ( \' )")
+  quo1 <- c("None", "Double ( \" )", "Single ( \' )")
   
   dec0 <- c(".", ",")
   dec1 <- c("Period ( . )", "Comma ( , )")
 
   com0 <- c("", "#", "!", "\\", "~", NA)
-  com1 <- c("", "Number sign ( # )", "Exclamation ( ! )",
+  com1 <- c("None", "Number sign ( # )", "Exclamation ( ! )",
             "Backslash ( \\\\ )", "Tilde ( ~ )", "Custom\u2026")
   
   enc0 <- c("native.enc", iconvlist())
-  enc1 <- c("", iconvlist())
+  enc1 <- c("Default", iconvlist())
 
   # Assign variables linked to Tk widgets
 
@@ -510,6 +510,7 @@ ImportData <- function(parent=NULL) {
   tcl(frame3.box.2.2, "current", 0)
   tcl(frame3.box.2.5, "current", 0)
   tcl(frame3.box.3.2, "current", 0)
+  tcl(frame3.box.3.5, "current", 0)
 
   if (!is.null(Data("import.skip")))
     tclvalue(skip.var) <- Data("import.skip")
