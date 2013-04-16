@@ -1,10 +1,9 @@
 ManageData <- function(cols, vars, parent=NULL) {
-  # A GUI for managing and manipulating data
+# A GUI for managing and manipulating data
 
   # Additional functions (subroutines)
 
   # Save changes and close GUI
-
   SaveChanges <- function(type) {
     SaveNb()
     if (!identical(cols, old.cols))
@@ -14,7 +13,6 @@ ManageData <- function(cols, vars, parent=NULL) {
   }
 
   # Set variable id and update functions to reflect this change
-
   SetVarId <- function(idx=NULL) {
     if (is.null(idx))
       idx <- as.integer(tkcurselection(frame1.lst)) + 1
@@ -22,23 +20,15 @@ ManageData <- function(cols, vars, parent=NULL) {
       return()
 
     # Save name
-
     nam <- tclvalue(name.var)
-    if (nam == "")
-      nam <- NULL
     cols[[idx]]$name <<- nam
-
-    # Insure content for id
-
-    if (is.null(nam))
-      cols[[idx]]$name <<- "Unknown"
+    if (nam == "") 
+      nam <- "Unknown"
 
     # Account for duplicate ids
-
     new.id <- nam
     old.id <- cols[[idx]]$id
-    old.ids <- sapply(cols, function(i) i$id)
-
+    old.ids <- vapply(cols, function(i) i$id, "")
     i <- 1
     hold.new.id <- new.id
     while (new.id %in% old.ids[-idx]) {
@@ -50,15 +40,12 @@ ManageData <- function(cols, vars, parent=NULL) {
                               idx - 1, idx - 1, new.id)
 
     # Update functions
-
     if (!is.null(old.id)) {
       old.fun <- cols[[idx]]$fun
-
       str.1 <- paste("\"", old.id, "\"", sep="")
       str.2 <- paste("\"", new.id, "\"", sep="")
       funs <- sapply(cols, function(i) gsub(str.1, str.2, i$fun, fixed=TRUE))
       sapply(1:length(cols), function(i) cols[[i]]$fun <<- funs[[i]])
-
       new.fun <- cols[[idx]]$fun
       if (!identical(old.fun, new.fun)) {
         tkconfigure(frame2.txt.4.2, state="normal")
@@ -66,7 +53,6 @@ ManageData <- function(cols, vars, parent=NULL) {
         tkinsert(frame2.txt.4.2, "end", new.fun)
         tkconfigure(frame2.txt.4.2, state="disabled")
       }
-      
       query.fun <- Data("query.fun")
       if (!is.null(query.fun)) {
          query.fun <- gsub(str.1, str.2, query.fun, fixed=TRUE)
@@ -76,14 +62,12 @@ ManageData <- function(cols, vars, parent=NULL) {
   }
 
   # Save notebook content
-
   SaveNb <- function() {
     idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0)
       return()
 
     # Save format
-
     old.fmt <- cols[[idx]]$format
     new.fmt <- as.character(tclvalue(fmt.var))
     if (new.fmt == "")
@@ -91,16 +75,13 @@ ManageData <- function(cols, vars, parent=NULL) {
     cols[[idx]]$format <<- new.fmt
 
     # Save function
-
     old.fun <- cols[[idx]]$fun
     new.fun <- as.character(tclvalue(tkget(frame2.txt.4.2, "1.0", "end-1c")))
     cols[[idx]]$fun <<- new.fun
 
     # Save summary
-
     is.fun <- !identical(old.fun, new.fun)
     is.fmt <- !identical(old.fmt, new.fmt)
-
     if (is.fun) {
       obj <- EvalFunction(new.fun, cols)
       cols[[idx]]$summary <<- SummarizeData(obj, fmt=new.fmt)
@@ -114,28 +95,24 @@ ManageData <- function(cols, vars, parent=NULL) {
   }
 
   # Update notebook content
-
   UpdateNb <- function() {
     idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0) 
       return()
 
     # Update name
-
     saved.name <- cols[[idx]]$name
     if (is.null(saved.name))
       saved.name <- ""
     tclvalue(name.var) <- saved.name
 
     # Update class
-
     tkconfigure(frame2.ent.3.2, state="normal")
     saved.class <- cols[[idx]]$class
     tclvalue(class.var) <- saved.class
     tkconfigure(frame2.ent.3.2, state="readonly")
 
     # Update format
-
     saved.fmt <- cols[[idx]]$format   
     if (is.null(saved.fmt) || saved.fmt == "") {
       if (saved.class %in% c("character", "logical")) {
@@ -155,43 +132,34 @@ ManageData <- function(cols, vars, parent=NULL) {
     tkconfigure(frame2.ent.2.2, state="readonly")
 
     # Update function
-
     tkconfigure(frame2.txt.4.2, state="normal")
     tcl(frame2.txt.4.2, "delete", "1.0", "end")
     tkinsert(frame2.txt.4.2, "end", cols[[idx]]$fun)
     tkconfigure(frame2.txt.4.2, state="disabled")
-
     s <- "disabled"
     if (is.null(cols[[idx]]$index))
       s <- "normal"
     tkconfigure(frame2.but.4.3, state=s)
 
     # Update summary
-
     tkconfigure(frame3.txt, state="normal")
     tcl(frame3.txt, "delete", "1.0", "end")
-
     sum.str <- cols[[idx]]$summary$String
     if (!is.null(sum.str))
       tkinsert(frame3.txt, "end", sum.str)
-
     tkconfigure(frame3.txt, state="disabled")
   }
 
   # Account for change in notebook tab
-
   ChangeTab <- function() {
     idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0)
       return()
-
     SaveNb()
     UpdateNb()
-
     tabid <- tclvalue(tcl(nb, "select"))
 
     # Arrive at tab
-
     if (tabid == frame2$ID) {
       tkfocus(frame2)
     } else if (tabid == frame3$ID) {
@@ -582,7 +550,6 @@ ManageData <- function(cols, vars, parent=NULL) {
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
   # Paned window
-
   pw <- ttkpanedwindow(tt, orient="horizontal")
 
   # Frame 1, listbox with variable names

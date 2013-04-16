@@ -39,5 +39,4 @@ export(AddAxis,
        SetPolygonLimits,
        SetPreferences,
        SummarizeData,
-       ViewData,
-       WriteFile)
+       ViewData)

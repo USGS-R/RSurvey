@@ -1,4 +1,4 @@
-ExportData <- function(col.ids, file.type="text", parent=NULL) {
+ExportData <- function(file.type="text", parent=NULL) {
 # Export data to file
 
   # Additional functions (subroutines)
@@ -6,29 +6,99 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   # Final export of data to file
 
   ExportToFile <- function() {
-    file.name <- as.character(tclvalue(file.var))
-
+    tkconfigure(tt, cursor="watch")
+    
     idxs <- as.integer(tkcurselection(frame1.lst.1.1)) + 1L
     col.ids <- col.ids[idxs]
-
-    tkconfigure(tt, cursor="watch")
+    is.proc <- as.logical(as.integer(tclvalue(processed.var)))
+    file.name <- as.character(tclvalue(file.var))
+    
+    # Organize data
+    vars <- Data("vars")
+    cols <- Data("cols")
+    
+    all.col.ids <- vapply(1:length(cols), function(i) cols[[i]]$id, "")
+    if (file.type == "shape") {
+      id.x <- all.col.ids[vars$x]
+      id.y <- all.col.ids[vars$y]
+      if (!id.x %in% col.ids)
+        col.ids <- c(col.ids, id.x)
+      if (!id.y %in% col.ids)
+        col.ids <- c(col.ids, id.y)
+    }
+    col.idxs <- which(all.col.ids %in% col.ids)
+    
+    col.ids  <- vapply(col.idxs, function(i) cols[[i]]$id, "")
+    col.funs <- vapply(col.idxs, function(i) cols[[i]]$fun, "")
+    col.nams <- vapply(col.idxs, function(i) cols[[i]]$name, "")
+    
+    
+    
+    
+    
+    
+    col.fmts <- sapply(col.idxs,
+                       function(i) {
+                         rtn <- cols[[i]]$format
+                         if (is.null(rtn))
+                           rtn <- NA
+                         rtn
+                       })
+    
+    
+    
+    
+    
+    
+    # Identify data set and records
+    if (is.proc)
+      row.idxs <- as.integer(row.names(Data("data.pts")))
+    else
+      row.idxs <- 1:length(EvalFunction(col.funs[1], cols))
+    n <- length(col.idxs)
+    m <- length(row.idxs)
+    d <- as.data.frame(matrix(NA, nrow=m, ncol=n))
+    for (i in 1:n) {
+      obj <- EvalFunction(col.funs[i], cols)[row.idxs]
+      
+      # Format variables
+      if (file.type == "text") {
+        fmt <- col.fmts[i]
+        if (is.na(fmt)) {
+          obj <- format(obj, na.encode=FALSE)
+        } else {
+          if (inherits(obj, "POSIXt")) {
+            obj <- format(obj, format=fmt, na.encode=FALSE)
+          } else {
+            ans <- try(sprintf(fmt, obj), silent=TRUE)
+            if (inherits(ans, "try-error")) {
+              obj <- format(obj, na.encode=FALSE)
+            } else {
+              obj <- ans
+              obj[obj %in% c("NA", "NaN")] <- NA
+            }
+          }
+        }
+      }
+      
+      d[, i] <- obj
+    }
+    
+    # Write text file
+    
     if (file.type == "text") {
-      is.processed <- as.logical(as.integer(tclvalue(processed.var)))
-      
-      
-      
-      headers <- c(as.logical(as.integer(tclvalue(conv.fmts.var))),
-                   as.logical(as.integer(tclvalue(col.names.var))))
-      
-      
-      
-      row.names <- as.logical(as.integer(tclvalue(row.names.var)))
+      is.fmts <- as.logical(as.integer(tclvalue(conv.fmts.var)))
+      is.cols <- as.logical(as.integer(tclvalue(col.names.var)))
+      is.rows <- as.logical(as.integer(tclvalue(row.names.var)))
+      is.quot <- as.logical(as.integer(tclvalue(quote.var)))
+      is.gzip <- as.logical(as.integer(tclvalue(compress.var)))
       
       sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
       dec <- dec0[as.integer(tcl(frame3.box.1.5, "current")) + 1]
       nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
       qme <- qme0[as.integer(tcl(frame3.box.2.5, "current")) + 1]
-      quote <- as.logical(as.integer(tclvalue(quote.var)))
+      enc <- enc0[as.integer(tcl(frame4.box.2.2, "current")) + 1]
+      eol <- eol0[as.integer(tcl(frame4.box.3.2, "current")) + 1]
       
       if (is.na(sep))
         sep <- as.character(tclvalue(sep.var))
@@ -38,46 +108,78 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
           nas <- "NA"
       }
       
-      enc <- enc0[as.integer(tcl(frame4.box.2.2, "current")) + 1]
-      eol <- eol0[as.integer(tcl(frame4.box.3.2, "current")) + 1]
-      is.compressed <- as.logical(as.integer(tclvalue(compress.var)))
+      # Set file connection
+      if (is.gzip)
+        con <- gzfile(description=file.name, open="w", encoding=enc)
+      else
+        con <- file(description=file.name, open="w", encoding=enc)
+      if (!inherits(con, "connection"))
+        stop("Connection error")
+      on.exit(close(con))
       
+      # Write headers
+      headers <- c(is.fmts, is.cols)
+      if (any(headers)) {
+        h <- as.data.frame(matrix(NA, nrow=sum(headers), ncol=ncol(d)))
+        i <- 1L
+        if (headers[1]) {
+          h[i, ] <- col.fmts
+          i <- i + 1L
+        }
+        if (headers[2])
+          h[i, ] <- col.nams
+        write.table(h, file=con, append=FALSE, quote=is.quot, sep=sep, 
+                    eol=eol, na=nas, dec=dec, row.names=FALSE, col.names=FALSE, 
+                    qmethod=qme, fileEncoding=enc)
+      }
       
+      # Write table
+      write.table(d, file=con, append=any(headers), quote=is.quot, sep=sep, 
+                  eol=eol, na=nas, dec=dec, row.names=is.rows, col.names=FALSE, 
+                  qmethod=qme, fileEncoding=enc)
       
-      
-      WriteFile(file.type, file.name, col.ids, is.processed, headers, sep,
-                is.compressed)
-      
+      # Update default values for GUI
       if (file.access(file.name, mode=0) == 0) {
-        Data("export.processed", is.processed)
-        
-        
-        Data("export.rows", row.names)
-        
+        Data("export.processed", is.proc)
+        Data("export.fmts", is.fmts)
+        Data("export.cols", is.cols)
+        Data("export.rows", is.rows)
         Data("export.sep", sep)
         Data("export.dec", dec)
         Data("export.na", nas)
         Data("export.qmethod", qme)
-        Data("export.quote", quote)
+        Data("export.quote", is.quot)
         Data("export.encoding", enc)
         Data("export.eol", eol)
-        Data("export.compressed", is.compressed)
+        Data("export.compressed", is.gzip)
       }
       
+    # Write shapefile
+    
+    } else if (file.type == "shape") {
       
-    } else {
+      # Names are finicky for shapefiles, rules are convoluted,
+      # that is, 8-bit names and no periods
+      new.col.ids <- gsub("\\.", "", make.names(substr(col.ids, 1, 7),
+                          unique=TRUE))
+      colnames(d) <- new.col.ids
       
+      idx.x <- which(col.ids %in% id.x)
+      idx.y <- which(col.ids %in% id.y)
+      coordinates(d) <- new.col.ids[c(idx.x, idx.y)]
       
+      dsn <- dirname(file.name)
+      layer <- basename(file.name)
+    
+      ext <- tolower(tail(unlist(strsplit(layer, "\\."))[-1], 1))
+      if (length(ext) != 0)
+        layer <- sub(paste(".", ext, "$", sep=""), "", layer)
       
+      rgdal::writeOGR(obj=d, dsn=dsn, layer=layer, driver="ESRI Shapefile",
+                      verbose=TRUE, overwrite_layer=TRUE)
       
-      WriteFile(file.type, file.name, col.ids)
-      
-      
-      
-      
+      Data("export.processed", is.proc)
     }
-    
-    
     
     tkconfigure(tt, cursor="arrow")
     tclvalue(tt.done.var) <- 1
@@ -102,13 +204,12 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   }
 
   # Get file
-
   GetDataFile <- function() {
     if (file.type == "text") {
       default.ext <- "txt"
       exts <- c("txt", "csv", "dat")
-      is.compressed <- as.logical(as.integer(tclvalue(compress.var)))
-      if (is.compressed) {
+      is.gzip <- as.logical(as.integer(tclvalue(compress.var)))
+      if (is.gzip) {
         default.ext <- "gz"
         exts <- "gz"
       }
@@ -120,7 +221,6 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
                  defaultextension=default.ext)
     if (is.null(f))
       return()
-    
     if (attr(f, "extension") == "csv")
       tclvalue(sep.var) <- ","
     tclvalue(file.var) <- f
@@ -128,26 +228,23 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   }
 
   # Toggle gz extension on file entry
-
   ToggleExtension <- function() {
     f <- as.character(tclvalue(file.var))
     n <- nchar(f)
     if (nchar(f) < 3L)
       return()
     is.gz <- substr(f, n - 2L, n) == ".gz"
-    is.compressed <- as.logical(as.integer(tclvalue(compress.var)))
-
+    is.gzip <- as.logical(as.integer(tclvalue(compress.var)))
     f.new <- f
-    if (is.compressed & !is.gz)
+    if (is.gzip & !is.gz)
       f.new <- paste(f, ".gz", sep="")
-    if (!is.compressed & is.gz)
+    if (!is.gzip & is.gz)
       f.new <- substr(f, 1L, n - 3L)
     if (!identical(f, f.new))
       tclvalue(file.var) <- f.new
   }
 
   # Toggle state of export button
-
   ToggleExport <- function() {
     idxs <- as.integer(tkcurselection(frame1.lst.1.1))
     f <- as.character(tclvalue(file.var))
@@ -158,12 +255,19 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
   # Main program
 
-  # Check arguments
-
-  if (missing(col.ids) || length(col.ids) < 1L || !is.character(col.ids))
-    stop()
+  # Check for required information
+  col.ids <- vapply(Data("cols"), function(i) i$id, "")
+  if (length(col.ids) == 0)
+    return()
   if (!file.type %in% c("text", "shape"))
     stop()
+  if (file.type == "shape") {
+    is.pkg <- "rgdal" %in% .packages(all.available=TRUE) && require(rgdal)
+    if (!is.pkg)
+      stop("package rgdal required for shapefile support")
+    if (is.null(Data(c("vars", "x"))) | is.null(Data(c("vars", "y"))))
+      stop("shapefiles require x,y coordinate values")
+  }
   
   # Initialize values
   
@@ -183,8 +287,8 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   enc0 <- c("native.enc", iconvlist())
   enc1 <- c("Default", iconvlist())
   
-  eol0 <- c("\n", "\r\n")
-  eol1 <- c("LF ( \\n )", "CR+LF ( \\r\\n )")
+  eol0 <- c("\n", "\r", "\r\n")
+  eol1 <- c("LF ( \\n )", "CR ( \\r )", "CR+LF ( \\r\\n )")
 
   # Assign variables linked to Tk widgets
 
@@ -282,10 +386,14 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
   
   if (!is.null(Data("export.processed")))
     tclvalue(processed.var) <- Data("export.processed")
+  if (is.null(Data("data.pts"))) {
+    tclvalue(processed.var) <- 0
+    tkconfigure(frame1.chk.2.4, state="disabled")
+  }
 
   if (file.type == "text") {
 
-    # Frame 2, header lines
+    # Frame 2, meta data
 
     frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                             text="Add metadata")
@@ -303,11 +411,10 @@ ExportData <- function(col.ids, file.type="text", parent=NULL) {
 
     tkpack(frame2, fill="x", padx=10, pady=c(0, 10))
     
-    
-    
-    
-    
-    
+    if (!is.null(Data("export.fmts")))
+      tclvalue(conv.fmts.var) <- Data("export.fmts")
+    if (!is.null(Data("export.cols")))
+      tclvalue(col.names.var) <- Data("export.cols")
     if (!is.null(Data("export.rows")))
       tclvalue(row.names.var) <- Data("export.rows")
 

@@ -225,11 +225,18 @@ OpenRSurvey <- function() {
 
     if (file.type == "grid") {
       CallProcessData(interpolate=TRUE)
-      WriteFile(file.type="grid")
+      d <- Data("data.grd")
+      if (is.null(d))
+        return()
+      f <- GetFile(cmd="Save As", exts="grd", file=NULL,
+                   win.title="Save Data As", defaultextension="grd")
+      if (is.null(f))
+        return()
+      dput(d, file=f)
+    
     } else {
       CallProcessData()
-      col.ids <- sapply(Data("cols"), function(i) i$id)
-      ExportData(col.ids, file.type=file.type, parent=tt)
+      ExportData(file.type=file.type, parent=tt)
     }
 
     tkfocus(tt)
