@@ -1,10 +1,176 @@
 ImportData <- function(parent=NULL) {
-  # A GUI for reading table formatted data.
+# A GUI for reading table formatted data.
 
   # Additional functions (subroutines)
-
+  
+  # Read table
+  
+  ReadTable <- function(con, headers=c(FALSE, FALSE), sep="\t", dec=".",
+                        quote="\"'", nrows=-1, na.strings=c("", "NA"), skip=0,
+                        comment.char="#", encoding=getOption("encoding")) {
+    
+    # Clear previous data
+    Data(clear.data=TRUE)
+    
+    # Track computational time
+    elapsed.time <- system.time({
+      
+      # Establish arguments to pass to read.table
+      args <- list(file=con, header=FALSE, sep=sep, dec=dec, quote=quote, 
+                   row.names=NULL, na.strings=na.strings, check.names=TRUE, 
+                   fill=TRUE, strip.white=TRUE, blank.lines.skip=TRUE,
+                   comment.char=comment.char, allowEscapes=TRUE, flush=TRUE,
+                   fileEncoding="", encoding=encoding)
+      
+      # Load headers
+      
+      col.classes <- "character"
+      nheaders <- sum(headers)
+      if (nheaders > 0L) {
+        h.args <- c(args, skip=skip, nrows=nheaders, colClasses=col.classes)
+        h <- try(do.call(read.table, h.args), silent=TRUE)
+        if (inherits(h, "try-error"))
+          return(h)
+        
+        i <- 1L
+        if (headers[1]) {
+          fmts <- as.character(h[i, ])
+          
+          # Use formats to determine column classes
+          n <- ncol(h)
+          col.classes <- rep("character", n)
+          for (j in 1:n) {
+            fmt <- fmts[j]
+            
+            test <- try(sprintf(fmt, 1), silent=TRUE)
+            is.error <- inherits(test, "try-error")
+            if (!is.error) {
+              is.num <- !is.na(suppressWarnings(as.numeric(test)))
+              if (is.num) {
+                s <- paste(substr(fmt, 1, 1),
+                           substr(fmt, nchar(fmt), nchar(fmt)), sep="")
+                if (s %in% c("%d", "%i")) {
+                  col.classes[j] <- "integer"
+                } else if (s %in% c("%f", "%e", "%E")) {
+                  col.classes[j] <- "numeric"
+                }
+              }
+            }
+          }
+          col.classes[fmts %in% "%Y-%m-%d %H:%M:%S"] <- "POSIXct"
+          i <- i + 1L
+        }
+        if (headers[2]) {
+          nams <- as.character(h[i, ])
+          nams[is.na(nams)] <- "Unknown"
+        }
+        
+        skip <- 0L
+        nrows <- nrows - nheaders
+      }
+      
+      # Load data
+      d.args <- c(args, skip=skip, nrows=nrows, list(colClasses=col.classes))
+      d <- try(do.call(read.table, d.args), silent=TRUE)
+      if (inherits(d, "try-error"))
+        return(d)
+      
+      # Initialize missing headers
+      n <- ncol(d)
+      if (!headers[1])
+        fmts <- rep(NA, n)
+      if (!headers[2])
+        nams <- rep("Unknown", n)
+      
+      # Reset row names
+      rownames(d) <- 1:nrow(d)
+  
+      # Initialize variables
+      cols <- list()
+      vars <- list()
+      ids <- NULL
+  
+      # Establish column types
+      for (j in 1:n) {
+        val <- d[, j]
+        fmt <- if (is.na(fmts[j])) NULL else fmts[j]
+  
+        # Try to determine class of character variables
+        if (inherits(val, "character")) {
+          is.date <- FALSE
+          if (!is.null(fmt) && !all(is.na(val))) {
+            date.time <- as.POSIXct(val, format=fmt)
+            is.date <- all(!is.na(date.time[!is.na(val)]))
+          }
+          if (is.date)
+            val <- date.time
+          else
+            val <- type.convert(d[, j], as.is=TRUE)
+        }
+        
+        # Determine default x-, y-, z-axis variables
+        if (inherits(val, c("numeric", "integer"))) {
+          val[!is.finite(val)] <- NA
+          if (is.null(vars$x)) {
+            vars$x <- j
+          } else if (is.null(vars$y)) {
+            vars$y <- j
+          } else if (is.null(vars$z)) {
+            vars$z <- j
+          }
+        }
+        
+        # Set variable class
+        cls <- class(val)[1]
+           
+        # Set missing formats
+        if (is.null(fmt)) {
+          if (cls %in% c("character", "logical")) {
+            fmt <- "%s"
+          } else if (cls == "numeric") {
+            fmt <- "%f"
+          } else if (cls == "integer") {
+            fmt <- "%d"
+          }
+        }
+        
+        # Organize metadata
+        
+        nam <- nams[j]
+        id <- nam
+        i <- 1L
+        hold.id <- id
+        while (id %in% ids) {
+          id <- paste(hold.id, " (", i, ")", sep="")
+          i <- i + 1L
+        }
+        ids <- c(ids, id)
+        
+        cols[[j]] <- list()
+        cols[[j]]$id      <- id
+        cols[[j]]$name    <- nam
+        cols[[j]]$format  <- fmt
+        cols[[j]]$class   <- cls
+        cols[[j]]$index   <- j
+        cols[[j]]$fun     <- paste("\"", id, "\"", sep="")
+        cols[[j]]$sample  <- na.omit(val)[1]
+        cols[[j]]$summary <- SummarizeData(val, fmt=fmt)
+        
+        d[, j] <- val
+      }
+      
+      # Save data
+      Data("data.raw", d)
+      Data("cols", cols)
+      Data("vars", vars)
+    })
+  
+    ans <- paste("\nTime required to import data:",
+                 format(elapsed.time["elapsed"]), "seconds\n", "\n")
+    return(ans)
+  }
+  
   # Raise error message for bad connection
-
   RaiseError <- function(type, detail) {
     msg <- NULL
     msg[1] <- "Connection to data source failed."
@@ -14,7 +180,6 @@ ImportData <- function(parent=NULL) {
   }
 
   # Raise warning message if data already exists
-
   RaiseWarning <- function(parent) {
     if (!is.null(Data("cols"))) {
       msg <- "This action will delete existing data?"
@@ -25,9 +190,8 @@ ImportData <- function(parent=NULL) {
         Data(clear.data=TRUE)
     }
   }
-
+  
   # Establish data connection
-
   GetConnection <- function(src, enc) {
     if (src == "") {
       con <- try(textConnection(cb), silent=TRUE)
@@ -41,10 +205,10 @@ ImportData <- function(parent=NULL) {
     }
     con
   }
-
-  # Read file and populate example table
-
-  ReadFile <- function(summary.only=TRUE) {
+  
+  # Read data from file and populate example table
+  
+  ReadData <- function(summary.only=TRUE) {
     sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
     dec <- dec0[as.integer(tcl(frame3.box.1.5, "current")) + 1]
     nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
@@ -99,18 +263,21 @@ ImportData <- function(parent=NULL) {
       return(d)
 
     } else {
-      hds <- as.logical(c(as.integer(tclvalue(decis.var)),
-                          as.integer(tclvalue(names.var))))
-
+      
       RaiseWarning(tt)
       if (!is.null(Data("cols"))) {
         close(con)
         return()
       }
-
+      
+      is.fmts <- as.logical(as.integer(tclvalue(conv.fmts.var)))
+      is.cols <- as.logical(as.integer(tclvalue(col.names.var)))
+      headers <- c(is.fmts, is.cols)
+      
       tkconfigure(tt, cursor="watch")
-      ans <- ReadData(con, headers=hds, sep=sep, dec=dec, quote=quo, nrows=nrw,
-                      na.strings=c("", nas), skip=skp, comment.char=com)
+      ans <- ReadTable(con, headers=headers, sep=sep, dec=dec, quote=quo, 
+                       nrows=nrw, na.strings=c("", nas), skip=skp, 
+                       comment.char=com)
       tkconfigure(tt, cursor="arrow")
       close(con)
 
@@ -121,7 +288,8 @@ ImportData <- function(parent=NULL) {
 
       if (!is.null(ans)) {
         Data("import.file", src)
-        Data("import.headers", hds)
+        Data("import.fmts", is.fmts)
+        Data("import.cols", is.cols)
         Data("import.skip", skp)
         Data("import.sep", sep)
         Data("import.dec", dec)
@@ -152,7 +320,7 @@ ImportData <- function(parent=NULL) {
     if (tclvalue(source.var) == "" && is.null(cb))
       return()
 
-    d <- ReadFile()
+    d <- ReadData()
     if (is.null(d))
       return()
 
@@ -205,7 +373,6 @@ ImportData <- function(parent=NULL) {
   }
 
   # Data file
-
   GetDataFile <- function() {
     exts <- c("txt", "csv", "dat", "gz")
     f <- GetFile(cmd="Open", exts=exts, win.title="Open Data File", parent=tt)
@@ -217,19 +384,15 @@ ImportData <- function(parent=NULL) {
     cb <<- NULL
     if (attr(f, "extension") == "csv")
       tcl(frame3.box.1.2, "current", match(",", sep0) - 1)
-
     RebuildTable()
   }
 
   # Paste clipboard
-
   PasteData <- function() {
     tkselection.set(frame4.tbl, "origin")
-
     cb <- try(scan(file="clipboard", what="character", sep="\n", quiet=TRUE),
               silent=TRUE)
     cb <<- if (inherits(cb, "try-error")) NULL else cb
-
     if (is.null(cb))
       return()
     tclvalue(source.var) <- ""
@@ -237,7 +400,6 @@ ImportData <- function(parent=NULL) {
   }
 
   # Clear all
-
   ClearData <- function() {
     cb <<- NULL
     tclvalue(source.var) <- ""
@@ -248,20 +410,16 @@ ImportData <- function(parent=NULL) {
   }
 
   # Reset GUI
-
   ResetGUI <- function() {
     tkconfigure(frame4.tbl, state="normal")
-
     tcl("unset", table.var)
     if (GetEndRow() > 0)
       tkdelete(frame4.tbl, "rows", 1, GetEndRow())
     if (GetEndCol() > 0)
       tkdelete(frame4.tbl, "cols", 1, GetEndCol())
     tcl(frame4.tbl, "clear", "all")
-
     tkselection.set(frame4.tbl, "origin")
     tkconfigure(frame4.tbl, state="disabled")
-
     s <- "normal"
     if (tclvalue(source.var) == "" && is.null(cb))
       s <- "disabled"
@@ -269,26 +427,22 @@ ImportData <- function(parent=NULL) {
   }
 
   # Set tags in table
-
   SetTags <- function() {
     if (GetEndRow() == 0 & GetEndCol() == 0)
       return()
-
     tcl(frame4.tbl, "clear", "tags")
     tcl(frame4.tbl, "tag", "row", "h1", 0)
     tcl(frame4.tbl, "tag", "row", "h2", 1)
-
-    logic <- as.logical(as.integer(c(tclvalue(decis.var), tclvalue(names.var))))
-    headCol <- c("#EBFFC6", "#FFD0D4")[logic]
+    is.fmts <- as.logical(as.integer(tclvalue(conv.fmts.var)))
+    is.cols <- as.logical(as.integer(tclvalue(col.names.var)))
+    headCol <- c("#EBFFC6", "#FFD0D4")[c(is.fmts, is.cols)]
     if (length(headCol) < 2)
       headCol[(length(headCol) + 1):2] <- "white"
-
     tktag.configure(frame4.tbl, "h1", background=headCol[1])
     tktag.configure(frame4.tbl, "h2", background=headCol[2])
   }
 
   # Determine the tables maximum row and column
-
   GetEndRow <- function() as.numeric(tkindex(frame4.tbl, "end", "row"))
   GetEndCol <- function() as.numeric(tkindex(frame4.tbl, "end", "col"))
 
@@ -296,17 +450,17 @@ ImportData <- function(parent=NULL) {
   # Main program
 
   # GUI requires Tktable
-
   is.tktable <- !inherits(try(tcl("package", "present", "Tktable"),
                           silent=TRUE), "try-error")
-
   if (!is.tktable) {
     f <- GetFile(cmd="Open", exts="txt", win.title="Open Data File",
                  parent=parent)
     if (!is.null(f)) {
       RaiseWarning(parent)
       if (is.null(Data("cols")))
-        ReadData(f)
+        con <- file(description=f, open="r")
+        ReadTable(con)
+        close(con)
     }
     return()
   }
@@ -341,23 +495,22 @@ ImportData <- function(parent=NULL) {
 
   table.var <- tclArray()
   
-  decis.var  <- tclVar(0)
-  names.var  <- tclVar(0)
-  skip.var   <- tclVar(0)
-  nrow.var   <- tclVar()
-  source.var <- tclVar()
-  sep.var    <- tclVar()
-  nas.var    <- tclVar()
-  com.var    <- tclVar()
+  conv.fmts.var  <- tclVar(0)
+  col.names.var  <- tclVar(0)
+  skip.var       <- tclVar(0)
+  nrow.var       <- tclVar()
+  source.var     <- tclVar()
+  sep.var        <- tclVar()
+  nas.var        <- tclVar()
+  com.var        <- tclVar()
 
   tt.done.var <- tclVar(0)
 
-  # Set header variables
-
-  if (!is.null(Data("import.headers"))) {
-    tclvalue(decis.var) <- Data("import.headers")[1]
-    tclvalue(names.var) <- Data("import.headers")[2]
-  }
+  # Set header lines
+  if (!is.null(Data("import.fmts")))
+    tclvalue(conv.fmts.var) <- Data("import.fmts")
+  if (!is.null(Data("import.cols")))
+    tclvalue(col.names.var) <- Data("import.cols")
 
   # Open GUI
 
@@ -383,7 +536,7 @@ ImportData <- function(parent=NULL) {
   frame0.but.2 <- ttkbutton(frame0, width=8, text="Clear",
                             command=ClearData)
   frame0.but.4 <- ttkbutton(frame0, width=12, text="Load",
-                            command=function() ReadFile(FALSE))
+                            command=function() ReadData(FALSE))
   frame0.but.5 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() tclvalue(tt.done.var) <- 1)
   frame0.but.6 <- ttkbutton(frame0, width=12, text="Help",
@@ -446,10 +599,10 @@ ImportData <- function(parent=NULL) {
 
   txt <- paste("Conversion specification formats of the variables,",
                "for example, '%10.6f' or '%Y-%m-%d %H:%M'.")
-  frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=decis.var,
+  frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=conv.fmts.var,
                                    command=SetTags, text=txt)
   txt <- "Names of the variables, that is, column names in the data table."
-  frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=names.var,
+  frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=col.names.var,
                                    command=SetTags, text=txt)
 
   tkgrid(frame2.chk.1.1, pady=1, sticky="w")

@@ -27,7 +27,7 @@ Data(option, value, which.attr = NULL, clear.proj = FALSE, clear.data = FALSE,
 
 \section{Data}{
 Imported raw data is saved to the data frame \code{data.raw},
-see \code{\link{ReadData}}. Processed point data is saved to the data frame
+see \code{\link{ImportData}}. Processed point data is saved to the data frame
 \code{data.pts} and interpolated surface data is saved to the list
 \code{data.grd}, see \code{\link{ProcessData}}.
 }

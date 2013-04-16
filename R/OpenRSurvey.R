@@ -25,13 +25,19 @@ OpenRSurvey <- function() {
   OpenProj <- function() {
     f <- GetFile(cmd="Open", exts="rda", win.title="Open Project File",
                  parent=tt)
-    if (is.null(f))
+    if (is.null(f) || file.access(f, mode=0) == -1L)
       return()
     if (ClearObjs() == "cancel")
       return()
-
+    
     project <- NULL
-    load(file=f)
+    ans <- try(load(file=f), silent=TRUE)
+    if (inherits(ans, "try-error")) {
+      msg <- "Not a valid project file."
+      tkmessageBox(icon="error", message=msg, detail=ans, title="Error",
+                   type="ok", parent=tt)
+      return()
+    }
     Data(replace.all=project)
     Data("proj.file", f)
 
