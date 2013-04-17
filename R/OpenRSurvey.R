@@ -778,18 +778,11 @@ OpenRSurvey <- function() {
   # Assign variables linked to Tk entry widgets
   tt.done.var <- tclVar(0)
 
-  # Package version number
-  f <- "DESCRIPTION"
-  if ("package:RSurvey" %in% search())
-    f <- system.file("DESCRIPTION", package="RSurvey")
-  ver <- scan(f, what="character", skip=1, nlines=1, quiet=TRUE)[2]
-  Data("ver", paste("RSurvey", ver))
-
   # Open GUI
   tclServiceMode(FALSE)
   tt <- tktoplevel()
   tkwm.geometry(tt, Data("win.loc"))
-  tktitle(tt) <- Data("ver")
+  tktitle(tt) <- "RSurvey"
   tkwm.resizable(tt, 1, 0)
 
   # Top menu

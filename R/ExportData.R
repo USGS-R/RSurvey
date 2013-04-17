@@ -164,7 +164,6 @@ ExportData <- function(file.type="text", parent=NULL) {
     }
     
     tkconfigure(tt, cursor="arrow")
-    tclvalue(tt.done.var) <- 1
   }
 
   # Select all or none from variable list
@@ -306,9 +305,8 @@ ExportData <- function(file.type="text", parent=NULL) {
   frame0 <- ttkframe(tt, relief="flat")
   frame0.but.2 <- ttkbutton(frame0, width=12, text="Export",
                             command=ExportToFile)
-  frame0.but.3 <- ttkbutton(frame0, width=12, text="Cancel",
+  frame0.but.3 <- ttkbutton(frame0, width=12, text="Close",
                             command=function() tclvalue(tt.done.var) <- 1)
-  
   frame0.but.4 <- ttkbutton(frame0, width=12, text="Help",
                             command=function() {
                               print(help("ExportData", package="RSurvey"))
