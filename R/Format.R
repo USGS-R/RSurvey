@@ -385,8 +385,8 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   frame2a.but.12 <- ttkbutton(frame2a, width=2, image=GetBitmapImage("paste"),
                              command=PasteFormat)
   
-  frame2a.chk.13 <- ttkcheckbutton(frame2a, text="Custom", variable=custom.var,
-                                   command=ToggleState)
+  frame2a.chk.13 <- ttkcheckbutton(frame2a, text="Custom\u2026", 
+                                   variable=custom.var, command=ToggleState)
 
   if (is.numeric(sample)) {
     if (is.integer(sample))
