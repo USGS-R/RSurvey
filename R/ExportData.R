@@ -27,28 +27,10 @@ ExportData <- function(file.type="text", parent=NULL) {
         col.ids <- c(col.ids, id.y)
     }
     col.idxs <- which(all.col.ids %in% col.ids)
-    
     col.ids  <- vapply(col.idxs, function(i) cols[[i]]$id, "")
     col.funs <- vapply(col.idxs, function(i) cols[[i]]$fun, "")
     col.nams <- vapply(col.idxs, function(i) cols[[i]]$name, "")
-    
-    
-    
-    
-    
-    
-    col.fmts <- sapply(col.idxs,
-                       function(i) {
-                         rtn <- cols[[i]]$format
-                         if (is.null(rtn))
-                           rtn <- NA
-                         rtn
-                       })
-    
-    
-    
-    
-    
+    col.fmts <- vapply(col.idxs, function(i) cols[[i]]$format, "")
     
     # Identify data set and records
     if (is.proc)
@@ -64,7 +46,7 @@ ExportData <- function(file.type="text", parent=NULL) {
       # Format variables
       if (file.type == "text") {
         fmt <- col.fmts[i]
-        if (is.na(fmt)) {
+        if (fmt == "") {
           obj <- format(obj, na.encode=FALSE)
         } else {
           if (inherits(obj, "POSIXt")) {

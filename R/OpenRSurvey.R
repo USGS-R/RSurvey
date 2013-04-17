@@ -144,8 +144,8 @@ OpenRSurvey <- function() {
         return()
     }
 
-    ids <- sapply(cols, function(i) i$id)
-    classes <- sapply(cols, function(i) i$class)
+    ids <- vapply(cols, function(i) i$id, "")
+    classes <- vapply(cols, function(i) i$class, "")
 
     idxs.n <- which(classes %in% c("numeric", "integer"))
 
@@ -176,7 +176,7 @@ OpenRSurvey <- function() {
   RefreshVars <- function(item) {
     cols <- Data("cols")
 
-    col.classes <- sapply(cols, function(i) i$class)
+    col.classes <- vapply(cols, function(i) i$class, "")
 
     idxs.n <- which(col.classes %in% c("numeric", "integer"))
 
@@ -631,9 +631,7 @@ OpenRSurvey <- function() {
     
     d <- Data("data.pts")
     nams <- vapply(names(d), function(i) lst[[i]], "")
-    
     fmts <- vapply(names(d), function(i) cols[[vars[[i]]]]$format, "")
-    fmts[fmts == ""] <- NA
     
     tkconfigure(tt, cursor="watch")
     ViewData(d, col.names=nams, col.formats=fmts, parent=tt)
@@ -860,7 +858,7 @@ OpenRSurvey <- function() {
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Set sort order\u2026",
         command=function() {
-          col.ids <- sapply(Data("cols"), function(i) i$id)
+          col.ids <- vapply(Data("cols"), function(i) i$id, "")
           sort.on.old <- Data(c("vars", "sort.on"))
           sort.on.new <- SetSortOrder(col.ids, sort.on.old, parent=tt)
           if (!identical(sort.on.old, sort.on.new)) {

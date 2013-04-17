@@ -150,10 +150,12 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
     col.names[is.na(col.names)] <- ""
     col.names <- gsub("(^ +)|( +$)", "", col.names)
   }
-  if (is.null(col.formats))
-    col.formats <- rep(NA, n)
-  else
+  if (is.null(col.formats)) {
+    col.formats <- rep("", n)
+  } else {
     col.formats <- as.character(col.formats[1:n])
+    col.formats[is.na(col.formats)] <- ""
+  }
   
   if (length(rownames(d)) == m)
     row.names <- rownames(d)
@@ -168,7 +170,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
   # Format data table and determine column widths
   col.width <- NULL
   for (j in 1:n) {
-    if (is.na(col.formats[j])) {
+    if (col.formats[j] == "") {
       d[, j] <- format(d[, j])
     } else if (inherits(d[, j], c("POSIXct", "POSIXlt"))) {
       d[, j] <- format(d[, j], format=col.formats[j])
@@ -195,7 +197,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
 
   # Assign variables linked to Tk widgets
   table.var   <- tclArray()
-  record.var <- tclVar()
+  record.var  <- tclVar()
   pattern.var <- tclVar()
   fixed.var   <- tclVar(1)
   perl.var    <- tclVar(0)

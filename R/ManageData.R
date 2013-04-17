@@ -70,8 +70,6 @@ ManageData <- function(cols, vars, parent=NULL) {
     # Save format
     old.fmt <- cols[[idx]]$format
     new.fmt <- as.character(tclvalue(fmt.var))
-    if (new.fmt == "")
-      new.fmt <- NULL
     cols[[idx]]$format <<- new.fmt
 
     # Save function
@@ -359,7 +357,7 @@ ManageData <- function(cols, vars, parent=NULL) {
       vars[[i]][1] <<- idxs[new.idxs %in% vars[[i]][1]]
     }
     
-    ids <- sapply(cols, function(i) i$id)
+    ids <- vapply(cols, function(i) i$id, "")
 
     for (i in 1:n)
       tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var),
@@ -384,9 +382,10 @@ ManageData <- function(cols, vars, parent=NULL) {
     else
       idxs <- 1:length(cols)
     
-    funs <- sapply(cols, function(i) ifelse(is.null(i$fun), NA, i$fun))
-    nams <- sapply(cols, function(i) ifelse(is.null(i$name), NA, i$name))
-    fmts <- sapply(cols, function(i) ifelse(is.null(i$format), NA, i$format))
+    nams <- vapply(cols, function(i) i$name, "")
+    fmts <- vapply(cols, function(i) i$format, "")
+    funs <- vapply(cols, function(i) i$fun, "")
+    
     d <- lapply(idxs, function(i) EvalFunction(funs[i], cols))
     
     ViewData(as.data.frame(d), nams[idxs], fmts[idxs], parent=tt)
@@ -403,7 +402,7 @@ ManageData <- function(cols, vars, parent=NULL) {
       return()
     
     cont.classes <- c("integer", "numeric")
-    idxs <- which(sapply(cols, function(i) i$class) %in% cont.classes)
+    idxs <- which(vapply(cols, function(i) i$class, "") %in% cont.classes)
     
     if (length(idxs) == 0) {
       msg <- paste("A histogram may only be built for continous variables;",
@@ -413,8 +412,9 @@ ManageData <- function(cols, vars, parent=NULL) {
       return()
     }
     
-    ids <- sapply(cols, function(i) ifelse(is.null(i$id), NA, i$id))
-    funs <- sapply(cols, function(i) ifelse(is.null(i$fun), NA, i$fun))
+    ids  <- vapply(cols, function(i) i$id, "")
+    funs <- vapply(cols, function(i) i$fun, "")
+    
     d <- sapply(idxs, function(i) EvalFunction(funs[i], cols))
     d <- as.data.frame(d)
     

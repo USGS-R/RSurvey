@@ -189,7 +189,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     }
     
     var.vals <- sort(var.vals, na.last=TRUE)
-    if (is.null(var.fmt)) {
+    if (var.fmt == "") {
       var.vals.txt <- format(var.vals)
     } else if (var.class == "POSIXct") {
       var.vals.txt <- format(var.vals, format=var.fmt)

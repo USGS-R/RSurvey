@@ -131,6 +131,8 @@ ImportData <- function(parent=NULL) {
             fmt <- "%f"
           } else if (cls == "integer") {
             fmt <- "%d"
+          } else {
+            fmt <- ""
           }
         }
         
@@ -258,7 +260,7 @@ ImportData <- function(parent=NULL) {
       }
 
       # Remove columns containing all NA values
-      is.all.na <- sapply(seq(along=d), function(i) all(is.na(d[, i])))
+      is.all.na <- vapply(seq(along=d), function(i) all(is.na(d[, i])), TRUE)
       d <- d[, !is.all.na, drop=FALSE]
       return(d)
 
