@@ -3,7 +3,7 @@ EvalFunction <- function(txt, cols) {
 
   d <- list()
   
-  ids <- sapply(cols, function(i) i$id)
+  ids <- vapply(cols, function(i) i$id, "")
 
   for (i in seq(along=ids)) {
     id.quoted <- paste("\"", ids[i], "\"", sep="")

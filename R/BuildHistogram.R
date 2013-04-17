@@ -50,7 +50,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
       
     } else {
       obj$xname <- xlab
-      n <- max(sapply(obj, length))
+      n <- max(vapply(obj, length, 0L))
       for (i in names(obj)) {
         obj[[i]] <- format(obj[[i]])
         length(obj[[i]]) <- n

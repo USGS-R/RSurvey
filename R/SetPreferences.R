@@ -12,7 +12,7 @@ SetPreferences <- function(parent=NULL) {
 
     grid.res <- list(x=as.numeric(tclvalue(grid.dx.var)),
                      y=as.numeric(tclvalue(grid.dy.var)))
-    if (all(sapply(grid.res, function(i) is.na(i))))
+    if (all(vapply(grid.res, function(i) is.na(i), TRUE)))
       Data("grid.res", NULL)
     else
       Data("grid.res", grid.res)
@@ -20,7 +20,7 @@ SetPreferences <- function(parent=NULL) {
     grid.mba <- list(n=as.integer(tclvalue(mba.n.var)),
                      m=as.integer(tclvalue(mba.m.var)),
                      h=as.integer(tclvalue(mba.h.var)))
-    if (all(sapply(grid.mba, function(i) is.na(i))))
+    if (all(vapply(grid.mba, function(i) is.na(i), TRUE)))
       Data("grid.mba", NULL)
     else
       Data("grid.mba", grid.mba)

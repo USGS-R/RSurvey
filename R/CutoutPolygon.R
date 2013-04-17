@@ -26,7 +26,7 @@ CutoutPolygon <- function(dat, ply=NULL) {
     dat$z <- pnt.in.ply
 
   d <- get.pts(ply)
-  holes <- sapply(d, function(x) x$hole)
+  holes <- vapply(d, function(x) x$hole, TRUE)
   d <- append(d[!holes], d[holes])
 
   for (i in seq(along=d)) {

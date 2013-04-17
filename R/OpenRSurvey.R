@@ -661,7 +661,7 @@ OpenRSurvey <- function() {
         if (is.null(v)) NULL else EvalFunction(cols[[v]]$fun, cols)
       }
       lst <- lapply(var.names, function(i) Eval(vars[[i]]))
-      len <- sapply(lst, function(i) length(i))
+      len <- vapply(lst, length, 0L)
       max.len <- max(len)
 
       d <- as.data.frame(matrix(NA, nrow=max.len, ncol=length(lst)))

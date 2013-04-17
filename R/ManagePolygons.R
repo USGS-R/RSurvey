@@ -9,7 +9,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
 
   SavePolygon <- function(type) {
     if (length(polys) > 0) {
-      polys <- polys[sapply(polys, function(i) inherits(i, "gpc.poly"))]
+      polys <- polys[vapply(polys, function(i) inherits(i, "gpc.poly"), TRUE)]
       if (!data.poly %in% names(polys))
         data.poly <- NULL
       if (!crop.poly %in% names(polys))

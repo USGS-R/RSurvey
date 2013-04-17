@@ -128,8 +128,8 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
     if (!is.na(ymax))
       j <- j & y <= ymax
 
-    rows.na <- sapply(1:nrow(z), function(idx) !all(is.na(z[idx, ])))
-    cols.na <- sapply(1:ncol(z), function(idx) !all(is.na(z[, idx])))
+    rows.na <- vapply(1:nrow(z), function(idx) !all(is.na(z[idx, ])), TRUE)
+    cols.na <- vapply(1:ncol(z), function(idx) !all(is.na(z[, idx])), TRUE)
 
     if (nrow(z) < length(x))
       i <- i & (c(FALSE, rows.na) | c(rows.na, FALSE))

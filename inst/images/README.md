@@ -9,23 +9,22 @@ Image files in this directory are covered by the following public licenses:
 
 - - -
 
-**Images:** axes.gif, polygon.gif, transect.gif, pch.gif, col.gif  
+**Images:** axes.gif, polygon.gif, pch.gif  
 **Designer:** Jason C. Fisher  
 **License:** GNU General Public License ([GPL][gpl])
 
 - - -
 
-**Images:** config.gif, new.gif, save.gif, saveas.gif  
+**Images:** config.gif, save.gif  
 **Icon set:** Crystal Clear  
 **Designer:** Everaldo Coelho  
 **Site:** <http://www.everaldo.com>  
 **Contact:** <everaldo@everaldo.com></code>  
 **License:** GNU Lesser General Public License ([LGPL][lgpl])
 
-
 - - -
 
-**Images:** globe.gif, import.gif  
+**Images:** import.gif  
 **Designer:** David Vignoni  
 **Icon set:** Nuvola  
 **Site:** <http://www.icon-king.com>  
@@ -40,15 +39,6 @@ Image files in this directory are covered by the following public licenses:
 **Site:** <http://www.notmart.org>  
 **Contact:** <mart@notmart.org></code>  
 **License:** [LGPL][lgpl]
-
-- - -
-
-**Image:** refresh.gif (remixed)  
-**Icon set:** Minimal perception  
-**Designer:** Mandarancio  
-**Site:** <http://mandarancio.deviantart.com>  
-**Contact:** <manda.mgf@gmail.com></code>  
-**License:** Creative Commons ([Attribution-Noncommercial 3.0 Unported][cc])
 
 - - -
 

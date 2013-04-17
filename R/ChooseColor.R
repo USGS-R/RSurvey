@@ -171,7 +171,7 @@ ChooseColor <- function(col, parent=NULL) {
     else
       txt <- substring(txt, 1, 7)
     sep.txt <- strsplit(txt, "")[[1]]
-    idxs <- which(sapply(sep.txt, function(i) i %in% hex.digits))
+    idxs <- which(vapply(sep.txt, function(i) i %in% hex.digits, TRUE))
     txt <- paste(sep.txt[idxs], collapse="")
     txt
   }
