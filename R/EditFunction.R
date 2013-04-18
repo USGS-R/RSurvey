@@ -263,6 +263,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     ids <- ids[-index]
     cls <- cls[-index]
   }
+  
+  if (!is.null(value.length))
+    value.length <- as.integer(value.length)
 
   # Class types
   classes <- c("numeric", "integer", "POSIXct", "logical",
@@ -408,28 +411,38 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   # Frame 0, ok and cancel buttons, and size grip
 
   frame0 <- tkframe(tt, relief="flat", padx=0, pady=0)
-
-  frame0.but.2 <- ttkbutton(frame0, width=12, text="OK",
+  
+  if (is.null(value.length)) {
+    txt <- ""
+  } else {
+    txt <- paste("Resulting object must be of length", value.length)
+    if (!is.null(value.class))
+      txt <- paste(txt, "and class", value.class)
+    txt <- paste(txt, ".", sep="")
+  }
+  frame0.lab.1 <- ttklabel(frame0, text=txt, foreground="#A40802")
+  frame0.but.3 <- ttkbutton(frame0, width=12, text="OK",
                             command=SaveFunction)
-  frame0.but.3 <- ttkbutton(frame0, width=12, text="Cancel",
+  frame0.but.4 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() tclvalue(tt.done.var) <- 1)
-  frame0.but.4 <- ttkbutton(frame0, width=12, text="Help",
+  frame0.but.5 <- ttkbutton(frame0, width=12, text="Help",
                             command=function() {
                               print(help("EditFunction", package="RSurvey"))
                             }) 
-  frame0.grp.5 <- ttksizegrip(frame0)
+  frame0.grp.6 <- ttksizegrip(frame0)
 
-  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, frame0.grp.5)
+  tkgrid(frame0.lab.1, "x", frame0.but.3, frame0.but.4, frame0.but.5, 
+         frame0.grp.6)
 
-  tkgrid.columnconfigure(frame0, 0, weight=1)
-
-  tkgrid.configure(frame0.but.2, frame0.but.3, frame0.but.4, 
+  tkgrid.columnconfigure(frame0, 1, weight=1)
+  
+  tkgrid.configure(frame0.lab.1, padx=10, pady=c(0, 10), sticky="sw")
+  tkgrid.configure(frame0.but.3, frame0.but.4, frame0.but.5, 
                    padx=c(0, 4), pady=c(15, 10))
-  tkgrid.configure(frame0.but.4, columnspan=2, padx=c(0, 10))
+  tkgrid.configure(frame0.but.5, columnspan=2, padx=c(0, 10))
+  tkgrid.configure(frame0.grp.6, sticky="se")
 
-  tkgrid.configure(frame0.grp.5, sticky="se")
-
-  tkraise(frame0.but.4, frame0.grp.5)
+  tkraise(frame0.but.5, frame0.grp.6)
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
@@ -440,9 +453,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   # Frame 1
 
   frame1 <- tkframe(pw, relief="flat", padx=0, pady=0)
-
-  frame1.lab.1.1 <- ttklabel(frame1, text="Double click to insert variable",
-                             foreground="#414042")
+  
+  txt <- "Double click to insert variable"
+  frame1.lab.1.1 <- ttklabel(frame1, text=txt, foreground="#414042")
   frame1.lst.2.1 <- tklistbox(frame1, selectmode="browse", activestyle="none",
                               relief="flat", borderwidth=5, width=25, height=8,
                               exportselection=FALSE, listvariable=variable.var,
