@@ -60,7 +60,7 @@ Sets the following components in \code{\link{Data}}:
 \item{data.raw}{data.frame; the imported (or raw) data table.}
 \item{cols}{list; length equal to the current number of data variables.
   Each component in \code{cols} is linked to a specific variable,
-  see \code{\link{ManageData}}.}
+  see \code{\link{ManageVariables}}.}
 \item{vars}{list; an initial guess of the state variables. Integer components
   \code{x}, \code{y}, and \code{z} specify the index number in
   \code{cols} that correspond to the respective state variable.}

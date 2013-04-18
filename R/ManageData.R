@@ -1,4 +1,4 @@
-ManageData <- function(cols, vars, parent=NULL) {
+ManageVariables <- function(cols, vars, parent=NULL) {
 # A GUI for managing and manipulating data
 
   # Additional functions (subroutines)
@@ -464,7 +464,7 @@ ManageData <- function(cols, vars, parent=NULL) {
     tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
-  tktitle(tt) <- "Manage Data"
+  tktitle(tt) <- "Manage Variables"
 
   # Create menus
 
@@ -525,7 +525,7 @@ ManageData <- function(cols, vars, parent=NULL) {
                              command=function() SaveChanges("apply"))
   frame0.but.12 <- ttkbutton(frame0, width=12, text="Help",
                              command=function() {
-                               print(help("ManageData", package="RSurvey", 
+                               print(help("ManageVariables", package="RSurvey", 
                                           verbose=FALSE))
                              })
   frame0.grp.12 <- ttksizegrip(frame0)

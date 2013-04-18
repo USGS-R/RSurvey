@@ -15,7 +15,7 @@ EvalFunction(txt, cols)
 \arguments{
 \item{txt}{character; a string representation of an \R function;
   see \sQuote{Details}.}
-\item{cols}{list; see \code{\link{ManageData}}.}
+\item{cols}{list; see \code{\link{ManageVariables}}.}
 }
 
 \value{

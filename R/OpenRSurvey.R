@@ -207,10 +207,10 @@ OpenRSurvey <- function() {
     ButtonState(vars)
   }
 
-  # Manage data
+  # Manage variables
 
-  CallManageData <- function() {
-    ans <- ManageData(Data("cols"), Data("vars"), tt)
+  CallManageVariables <- function() {
+    ans <- ManageVariables(Data("cols"), Data("vars"), tt)
     if (!is.null(ans)) {
       Data("cols", ans$cols)
       Data("vars", ans$vars)
@@ -839,8 +839,8 @@ OpenRSurvey <- function() {
   menu.edit <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
 
-  tkadd(menu.edit, "command", label="Manage data\u2026",
-        command=CallManageData)
+  tkadd(menu.edit, "command", label="Manage variables\u2026",
+        command=CallManageVariables)
   
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Edit query\u2026",
@@ -1047,7 +1047,7 @@ OpenRSurvey <- function() {
                             command=CallImportData)
   frame0.but.3  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=data.var,
-                            command=CallManageData)
+                            command=CallManageVariables)
   frame0.but.4  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=polygon.var,
                             command=CallManagePolygons)

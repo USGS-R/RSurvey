@@ -14,7 +14,7 @@ EditFunction(cols, index = NULL, fun = NULL, value.length = NULL,
 }
 
 \arguments{
-\item{cols}{list; see \code{\link{ManageData}}.}
+\item{cols}{list; see \code{\link{ManageVariables}}.}
 \item{index}{integer; an element index number in \code{cols}.}
 \item{fun}{character; existing function, only used if \code{index=NULL}.}
 \item{value.length}{integer; the required \code{\link{length}} for the 

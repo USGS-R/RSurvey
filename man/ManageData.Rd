@@ -1,15 +1,15 @@
-\name{ManageData}
+\name{ManageVariables}
 
-\alias{ManageData}
+\alias{ManageVariables}
 
-\title{Manage Data}
+\title{Manage Variables}
 
 \description{
-A \acronym{GUI} for managing, querying, and formatting data.
+A \acronym{GUI} for managing variables in the data table.
 }
 
 \usage{
-ManageData(cols, vars, parent = NULL)
+ManageVariables(cols, vars, parent = NULL)
 }
 
 \arguments{
@@ -54,7 +54,7 @@ The \code{vars} object is a list with components:
 
 \examples{
 \donttest{data(project)
-ManageData(project$cols, project$vars)}
+ManageVariables(project$cols, project$vars)}
 }
 
 \keyword{misc}
