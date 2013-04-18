@@ -1,5 +1,5 @@
 ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE, 
-                     parent=NULL) {
+                     win.title="View Data", parent=NULL) {
 # A GUI for viewing table formatted data.
 
   # Additional functions (subroutines)
@@ -24,12 +24,9 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
     if (is.null(matched.cells)) {
       n <- ncol(d) - 1L
 
-      case  <- as.logical(as.integer(tclvalue(case.var)))
-      perl  <- as.logical(as.integer(tclvalue(perl.var)))
-      fixed <- as.logical(as.integer(tclvalue(fixed.var)))
-
       matched.idxs <- suppressWarnings(grep(pattern, t(d[-1L, -1L]),
-                                       fixed=fixed, perl=perl, ignore.case=case,
+                                       fixed=fixed, perl=perl, 
+                                       ignore.case=!match.case,
                                        useBytes=FALSE, invert=FALSE))
 
       if (length(matched.idxs) == 0L) {
@@ -96,6 +93,10 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
     idx <- which(row.names %in% rec)
     if (length(idx) > 0) {
       tkyview(frame2.tbl, idx[1] - 1L)
+      first.cell.str <- paste(idx, ",0", sep="")
+      last.cell.str  <- paste(idx, n, sep=",")
+      tkselection.clear(frame2.tbl, "all")
+      tkselection.set(frame2.tbl, first.cell.str, last.cell.str)
     } else {
       msg <- "Row name (or record number) not found."
       tkmessageBox(icon="info", message=msg, title="Goto", type="ok",
@@ -146,8 +147,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
                    "    Keyboard:",
                    "        Backspace deletes the character before the insertion cursor.",
                    "        Delete removes the character after the insertion cursor.",
-                   "        Escape rereads the value from the data source, discarding",
-                   "            any edits that have may been performed on the cell.",
                    "",
                    "Miscellaneous",
                    "    Keyboard:",
@@ -188,7 +187,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
                    "Miscellaneous",
                    "    Keyboard:",
                    "        Control-c copies the selected cell.",
-                   "        Control-v pastes to the selected cell.",
                    "        Control-Minus and Control-Equals decrease and increase",
                    "            the width of the column with the active cell.",
                    "        Moving the mouse while Button-1 is pressed while you are",
@@ -297,14 +295,16 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
 
   # Add titles and row names to character data frame
   d <- rbind(c("", col.names), cbind(row.names, as.matrix(d)))
+  
+  # Assigin global variables
+  match.case <- TRUE
+  perl <- FALSE
+  fixed <- TRUE
 
   # Assign variables linked to Tk widgets
   table.var   <- tclArray()
   record.var  <- tclVar()
   pattern.var <- tclVar()
-  fixed.var   <- tclVar(1)
-  perl.var    <- tclVar(0)
-  case.var    <- tclVar(0)
   tt.done.var <- tclVar(0)
 
   # Open GUI
@@ -320,7 +320,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
   
-  tktitle(tt) <- "View Data"
+  tktitle(tt) <- win.title
   
   # Create menus
 
@@ -367,7 +367,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
   frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0, height=200)
 
   frame1.lab.1.1 <- ttklabel(frame1, text="Find")
-  frame1.lab.2.1 <- ttklabel(frame1, text="Row")
+  frame1.lab.2.1 <- ttklabel(frame1, text="Record")
 
   frame1.ent.1.2 <- ttkentry(frame1, width=15, textvariable=pattern.var)
   frame1.ent.2.2 <- ttkentry(frame1, width=15, textvariable=record.var)
@@ -378,27 +378,14 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
                               command=function() Find("next"))
   frame1.but.2.3 <- ttkbutton(frame1, width=4, text="Goto", command=GotoRecord)
 
-  frame1.chk.1.5 <- ttkcheckbutton(frame1, variable=case.var,
-                                   text="Ignore case",
-                                   command=function() matched.cells <<- NULL)
-  frame1.chk.1.6 <- ttkcheckbutton(frame1, variable=perl.var, text="Perl",
-                                   command=function() matched.cells <<- NULL)
-  frame1.chk.1.7 <- ttkcheckbutton(frame1, variable=fixed.var, text="Fixed",
-                                   command=function() matched.cells <<- NULL)
-
-  tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.but.1.3, frame1.but.1.4,
-         frame1.chk.1.5, frame1.chk.1.6, frame1.chk.1.7, pady=c(0, 4))
+  tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.but.1.3, frame1.but.1.4, 
+         pady=c(0, 4))
   tkgrid(frame1.lab.2.1, frame1.ent.2.2, frame1.but.2.3)
 
   tkgrid.configure(frame1.ent.1.2, frame1.ent.2.2, padx=c(0, 2))
-
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, padx=c(0, 2), sticky="w")
-  tkgrid.configure(frame1.but.1.3, padx=c(0, 2))
-
-  tkgrid.configure(frame1.but.2.3, columnspan=2, sticky="we")
-  tkgrid.configure(frame1.chk.1.5, padx=c(12, 0))
-  tkgrid.configure(frame1.chk.1.6, padx=c(4, 0))
-  tkgrid.configure(frame1.chk.1.7, padx=c(4, 25))
+  tkgrid.configure(frame1.but.1.4, padx=c(2, 10))
+  tkgrid.configure(frame1.but.2.3, columnspan=2, padx=c(0, 10), sticky="we")
 
   tkpack(frame1, side="bottom", anchor="nw", padx=c(10, 0))
 
@@ -463,6 +450,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
   
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
   tkbind(tt, "<Control-c>", CopyValues)
+##tkbind(tt, "<Return>", function() tcl("curvalue", frame2.tbl) )
   
   tkbind(frame1.ent.1.2, "<KeyRelease>",
          function() {

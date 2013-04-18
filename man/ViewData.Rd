@@ -10,7 +10,7 @@ A \acronym{GUI} for viewing table formatted data.
 
 \usage{
 ViewData(d, col.names = NULL, col.formats = NULL, is.editable = FALSE, 
-         parent = NULL)
+         win.title = "View Data", parent = NULL)
 }
 
 \arguments{
@@ -20,6 +20,7 @@ ViewData(d, col.names = NULL, col.formats = NULL, is.editable = FALSE,
 \item{col.formats}{character; the conversion specification
   format (optional).}
 \item{is.editable}{logical; can values in the data table be changed.}
+\item{win.title}{character; a string to display as the title of the dialog box.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 

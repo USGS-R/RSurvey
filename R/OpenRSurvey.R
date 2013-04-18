@@ -619,23 +619,26 @@ OpenRSurvey <- function() {
 
   CallViewData <- function(is.editable=FALSE) {
     CallProcessData()
-    
-    if (is.null(Data("data.pts")))
-      return()
-
-    vars <- Data("vars")
-    cols <- Data("cols")
-    
-    lst <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate",
-                vx="x-vector", vy="y-vector")
-    
-    d <- Data("data.pts")
-    nams <- vapply(names(d), function(i) lst[[i]], "")
-    fmts <- vapply(names(d), function(i) cols[[vars[[i]]]]$format, "")
-    
     tkconfigure(tt, cursor="watch")
-    ViewData(d, col.names=nams, col.formats=fmts, is.editable=is.editable, 
-             parent=tt)
+    cols <- Data("cols")
+    if (is.editable) {
+      if (is.null(Data("data.raw")))
+        return()
+      nams <- vapply(cols, function(i) i$name, "")
+      ViewData(Data("data.raw"), col.names=nams, is.editable=TRUE, 
+               win.title="Edit Raw Data", parent=tt)
+    } else {
+      if (is.null(Data("data.pts")))
+        return()
+      vars <- Data("vars")
+      lst <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate",
+                  vx="x-vector", vy="y-vector")
+      col.names <- names(Data("data.pts"))
+      nams <- vapply(col.names, function(i) lst[[i]], "")
+      fmts <- vapply(col.names, function(i) cols[[vars[[i]]]]$format, "")
+      ViewData(Data("data.pts"), col.names=nams, col.formats=fmts, 
+               win.title="Processed Data", parent=tt)
+    }
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }

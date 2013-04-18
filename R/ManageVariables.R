@@ -389,7 +389,8 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     
     d <- lapply(idxs, function(i) EvalFunction(funs[i], cols))
     
-    ViewData(as.data.frame(d), nams[idxs], fmts[idxs], parent=tt)
+    ViewData(as.data.frame(d), nams[idxs], fmts[idxs], win.title="Raw Data", 
+             parent=tt)
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }
