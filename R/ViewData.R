@@ -1,5 +1,6 @@
-ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
-  # A GUI for viewing table formatted data.
+ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE, 
+                     parent=NULL) {
+# A GUI for viewing table formatted data.
 
   # Additional functions (subroutines)
 
@@ -98,13 +99,105 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
     } else {
       msg <- "Row name (or record number) not found."
       tkmessageBox(icon="info", message=msg, title="Goto", type="ok",
-                     parent=tt)
+                   parent=tt)
     }
   }
 
   # Get single cell value for table
   GetCellValue <- function(r, c) {
     as.tclObj(d[as.integer(r) + 1L, as.integer(c) + 1L], drop=TRUE)
+  }
+  
+  # Show help message
+  ShowHelpMessage <- function() {
+    if (is.editable) {
+      msg <- paste("Navigation",
+                   "    Button:",
+                   "        Clicking Button-1 in a cell activates that cell.",
+                   "        Clicking Button-1 in an already active cell moves the",
+                   "            insertion cursor to the character nearest the mouse.",
+                   "    Keyboard:",
+                   "        Home moves the table to have the first cell in view.",
+                   "        End moves the table to have the last cell in view.",
+                   "        Control-Home moves the table to the first cell and",
+                   "            activates that cell.",
+                   "        Control-End moves the table to the last cell and activates",
+                   "            that cell.",
+                   "        The left, right, up and down arrows move the active cell.",
+                   "        Control-leftarrow and Control-rightarrow move the",
+                   "            insertion cursor within the cell.",
+                   "        Control-a moves the insertion cursor to the beginning.",
+                   "        Control-e moves the insertion cursor to the end.",
+                   "",
+                   "Selection",
+                   "    Button:",
+                   "        Moving the mouse while Button-1 is pressed will stroke",
+                   "            out a selection area.",
+                   "        Clicking Button-1 in a header cell selects all cells in that",
+                   "            row or column.",
+                   "    Keyboard:",
+                   "        Shift-Control-Home extends the selection to the first cell.",
+                   "        Shift-Control-End extends the selection to the last cell.",
+                   "        Shift-<arrow> extends the selection in that direction.",
+                   "        Control-slash selects all the cells.",
+                   "        Control-backslash clears selection from all the cells.",
+                   "",
+                   "Editing",
+                   "    Keyboard:",
+                   "        Backspace deletes the character before the insertion cursor.",
+                   "        Delete removes the character after the insertion cursor.",
+                   "        Escape rereads the value from the data source, discarding",
+                   "            any edits that have may been performed on the cell.",
+                   "",
+                   "Miscellaneous",
+                   "    Keyboard:",
+                   "        Control-c copies the selected cell.",
+                   "        Control-v pastes to the selected cell.",
+                   "        Control-Minus and Control-Equals decrease and increase",
+                   "            the width of the column with the active cell.",
+                   "        Moving the mouse while Button-1 is pressed while you are",
+                   "            over a column border will cause interactive resizing of",
+                   "            that column to occur.",
+                   sep="\n")
+    } else {
+      msg <- paste("Navigation",
+                   "    Button:",
+                   "        Clicking Button-1 in a cell activates that cell.",
+                   "    Keyboard:",
+                   "        Home moves the table to have the first cell in view.",
+                   "        End moves the table to have the last cell in view.",
+                   "        Control-Home moves the table to the first cell and",
+                   "            activates that cell.",
+                   "        Control-End moves the table to the last cell and activates",
+                   "            that cell.",
+                   "        The left, right, up and down arrows move the active cell.",
+                   "",
+                   "Selection",
+                   "    Button:",
+                   "        Moving the mouse while Button-1 is pressed will stroke",
+                   "            out a selection area.",
+                   "        Clicking Button-1 in a header cell selects all cells in that",
+                   "            row or column.",
+                   "    Keyboard:",
+                   "        Shift-Control-Home extends the selection to the first cell.",
+                   "        Shift-Control-End extends the selection to the last cell.",
+                   "        Shift-<arrow> extends the selection in that direction.",
+                   "        Control-slash selects all the cells.",
+                   "        Control-backslash clears selection from all the cells.",
+                   "",
+                   "Miscellaneous",
+                   "    Keyboard:",
+                   "        Control-c copies the selected cell.",
+                   "        Control-v pastes to the selected cell.",
+                   "        Control-Minus and Control-Equals decrease and increase",
+                   "            the width of the column with the active cell.",
+                   "        Moving the mouse while Button-1 is pressed while you are",
+                   "            over a column border will cause interactive resizing of",
+                   "            that column to occur.",
+                   sep="\n")
+    }
+    tkmessageBox(icon="info", message=msg, title="Information", type="ok", 
+                 parent=tt)
   }
 
 
@@ -115,6 +208,16 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
                               silent=TRUE), "try-error")
   if (!is.tktable)
     return()
+  
+  # Set parameters based on whether the table is editable
+  if (is.editable) {
+    ent.state <- "normal"
+    anchor.text <- "nw"
+    col.formats <- NULL
+  } else {
+    ent.state <- "disabled"
+    anchor.text <- "ne"
+  }
 
   # Initialize search results
   matched.cells <- NULL
@@ -171,7 +274,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
   col.width <- NULL
   for (j in 1:n) {
     if (col.formats[j] == "") {
-      d[, j] <- format(d[, j])
+      d[, j] <- format(d[, j], digits=15, scientific=FALSE, drop0trailing=TRUE)
     } else if (inherits(d[, j], c("POSIXct", "POSIXlt"))) {
       d[, j] <- format(d[, j], format=col.formats[j])
     } else {
@@ -216,7 +319,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
     tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
-
+  
   tktitle(tt) <- "View Data"
   
   # Create menus
@@ -227,8 +330,11 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
   tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+C",
         command=CopyValues)
-  tkadd(menu.edit, "command", label="Select all", accelerator="Ctrl+A",
-        command=SelectAll)
+  tkadd(menu.edit, "command", label="Select all", command=SelectAll)
+  
+  help.edit <- tkmenu(tt, tearoff=0, relief="flat")
+  tkadd(top.menu, "cascade", label="Help", menu=help.edit, underline=0)
+  tkadd(help.edit, "command", label="Behavior", command=ShowHelpMessage)
   
   tkconfigure(tt, menu=top.menu)
 
@@ -302,17 +408,17 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
 
   .Tcl("option add *Table.font {CourierNew 9}")
   frame2.tbl <- tkwidget(frame2, "table", rows=m + 1, cols=n + 1,
-                         colwidth=-2, rowheight=1, state="disable", 
+                         colwidth=-2, rowheight=1, state=ent.state, 
                          height=nrows + 1, width=ncols + 1,
                          ipadx=1, ipady=1, wrap=1, justify="right",
                          highlightcolor="gray75", background="white",
                          foreground="black", titlerows=1, titlecols=1,
-                         multiline=1, resizeborders="col", colorigin=0,
+                         multiline=0, resizeborders="col", colorigin=0,
                          bordercursor="sb_h_double_arrow", cursor="plus",
                          colstretchmode="none", rowstretchmode="none",
-                         drawmode="single", rowseparator="\n",
+                         drawmode="single", flashmode=1, rowseparator="\n",
                          colseparator="\t", selectmode="extended", 
-                         selecttitle=1, insertofftime=0, anchor="ne", 
+                         selecttitle=1, insertofftime=0, anchor=anchor.text, 
                          highlightthickness=0, cache=1, 
                          command=function(r, c) GetCellValue(r, c),
                          xscrollcommand=function(...) tkset(frame2.xsc,...),
@@ -336,9 +442,9 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
   tkgrid.configure(frame2.xsc, sticky="we", padx=c(10, 0), pady=c(0, 5))
 
   tktag.configure(frame2.tbl, "active", background="#EAEEFE", relief="")
-  tktag.configure(frame2.tbl, "sel", background="#EAEEFE", foreground="black")
-
-  tktag.configure(frame2.tbl, "title", background="#D9D9D9", foreground="black")
+  tktag.configure(frame2.tbl, "sel",    background="#EAEEFE", foreground="#000000")
+  tktag.configure(frame2.tbl, "title",  background="#D9D9D9", foreground="#000000")
+  tktag.configure(frame2.tbl, "flash",  background="#FFFFFF", foreground="#FF0033")
 
   tcl(frame2.tbl, "tag", "row", "coltitles", 0)
   tktag.configure(frame2.tbl, "coltitles", anchor="center", justify="center")
@@ -355,16 +461,13 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, parent=NULL) {
 
   tclServiceMode(TRUE)
   
-  
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
-
+  tkbind(tt, "<Control-c>", CopyValues)
+  
   tkbind(frame1.ent.1.2, "<KeyRelease>",
          function() {
            matched.cells <<- NULL
          })
-  
-  tkbind(tt, "<Control-c>", CopyValues)
-  tkbind(tt, "<Control-a>", SelectAll)
   tkbind(frame1.ent.1.2, "<Return>", function() Find("next"))
   tkbind(frame1.ent.1.2, "<Up>", function() Find("prev"))
   tkbind(frame1.ent.1.2, "<Down>", function() Find("next"))

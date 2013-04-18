@@ -9,7 +9,8 @@ A \acronym{GUI} for viewing table formatted data.
 }
 
 \usage{
-ViewData(d, col.names = NULL, col.formats = NULL, parent = NULL)
+ViewData(d, col.names = NULL, col.formats = NULL, is.editable = FALSE, 
+         parent = NULL)
 }
 
 \arguments{
@@ -18,6 +19,7 @@ ViewData(d, col.names = NULL, col.formats = NULL, parent = NULL)
   data table (optional).}
 \item{col.formats}{character; the conversion specification
   format (optional).}
+\item{is.editable}{logical; can values in the data table be changed.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 

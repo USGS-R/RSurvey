@@ -617,7 +617,7 @@ OpenRSurvey <- function() {
 
   # Call view data for state variable data
 
-  CallViewData <- function() {
+  CallViewData <- function(is.editable=FALSE) {
     CallProcessData()
     
     if (is.null(Data("data.pts")))
@@ -634,7 +634,8 @@ OpenRSurvey <- function() {
     fmts <- vapply(names(d), function(i) cols[[vars[[i]]]]$format, "")
     
     tkconfigure(tt, cursor="watch")
-    ViewData(d, col.names=nams, col.formats=fmts, parent=tt)
+    ViewData(d, col.names=nams, col.formats=fmts, is.editable=is.editable, 
+             parent=tt)
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }
@@ -839,6 +840,8 @@ OpenRSurvey <- function() {
   menu.edit <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
 
+  tkadd(menu.edit, "command", label="Edit raw data\u2026",
+        command=function() CallViewData(is.editable=TRUE))
   tkadd(menu.edit, "command", label="Manage variables\u2026",
         command=CallManageVariables)
   
@@ -873,7 +876,7 @@ OpenRSurvey <- function() {
   
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="View processed data",
-        command=CallViewData)
+        command=function() CallViewData())
 
   # Polygon menu
 
