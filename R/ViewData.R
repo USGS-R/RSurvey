@@ -192,7 +192,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     col.formats <- as.character(col.formats[1:n])
     col.formats[is.na(col.formats)] <- ""
     if (!is.null(read.only$cols))
-      col.formats[read.only$cols] <- ""
+      col.formats[!1:n %in% read.only$cols] <- ""
   }
   
   if (length(rownames(d)) == m)
@@ -397,8 +397,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
   tkbind(tt, "<Control-c>", CopyValues)
   tkbind(frame2.tbl, "<Return>", "break")
-  
-# browser()
   
   tkbind(frame1.ent.1.2, "<KeyRelease>",
          function() {
