@@ -626,7 +626,7 @@ OpenRSurvey <- function() {
         return()
       nams <- vapply(cols, function(i) i$name, "")
       ViewData(Data("data.raw"), col.names=nams, is.editable=TRUE, 
-               win.title="Edit Raw Data", parent=tt)
+               win.title="Raw Data", parent=tt)
     } else {
       if (is.null(Data("data.pts")))
         return()
