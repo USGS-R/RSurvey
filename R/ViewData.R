@@ -435,6 +435,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
 
   tcl(frame2.tbl, "tag", "row", "coltitles", 0)
   tktag.configure(frame2.tbl, "coltitles", anchor="center", justify="center")
+  tktag.configure(frame2.tbl, "rowtitles", anchor="ne", justify="right")
   tcl(frame2.tbl, "tag", "col", "rowtitles", 0)
 
   tkgrid.columnconfigure(frame2, 0, weight=1)
@@ -450,7 +451,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
   
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
   tkbind(tt, "<Control-c>", CopyValues)
-##tkbind(tt, "<Return>", function() tcl("curvalue", frame2.tbl) )
+##tkbind(tt, "<Return>", function() tcl(frame2.tbl, "curvalue") )
   
   tkbind(frame1.ent.1.2, "<KeyRelease>",
          function() {
