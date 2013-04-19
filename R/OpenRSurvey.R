@@ -1069,8 +1069,9 @@ OpenRSurvey <- function() {
                             borderwidth=1, image=close.var,
                             command=CloseDevices)
 
-  tkpack(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4, frame0.but.5,
-         frame0.but.6, frame0.but.7, side="left")
+  tkgrid(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4, frame0.but.5,
+         frame0.but.6, frame0.but.7, sticky="w", padx=1)
+  tkgrid.configure(frame0.but.1, padx=c(5, 0))
 
   separator <- ttkseparator(tt, orient="horizontal")
   tkpack(separator, fill="x")

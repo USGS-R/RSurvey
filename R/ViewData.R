@@ -111,14 +111,8 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   
   # Tag column
   TagColumn <- function(...) {
-    if (as.integer(...) %in% read.only$cols) 
+    if (as.integer(...) %in% read.only) 
       return(as.tclObj("disabledcol"))
-  }
-  
-  # Tag row
-  TagRow <- function(...) {
-    if (as.integer(...) %in% read.only$rows) 
-      return(as.tclObj("disabledrow"))
   }
   
   # Show help message
@@ -151,11 +145,11 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   
   if (inherits(read.only, "logical")) {
     if (read.only) 
-      read.only <- list(rows=1:m, cols=1:n)
+      read.only <- 1:n
     else
-      read.only <- list()
+      read.only <- NULL
   }
-  if (!inherits(read.only, "list"))
+  if (!inherits(read.only, c("NULL", "integer")))
     stop("problem with read.only argument")
 
   # Initialize search results
@@ -191,8 +185,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   } else {
     col.formats <- as.character(col.formats[1:n])
     col.formats[is.na(col.formats)] <- ""
-    if (!is.null(read.only$cols))
-      col.formats[!1:n %in% read.only$cols] <- ""
+    col.formats[!1:n %in% read.only] <- ""
   }
   
   if (length(rownames(d)) == m)
@@ -346,7 +339,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                          highlightthickness=0, cache=1, 
                          command=function(r, c) GetCellValue(r, c),
                          coltagcommand=function(...) TagColumn(...),
-                         rowtagcommand=function(...) TagRow(...),
                          xscrollcommand=function(...) tkset(frame2.xsc,...),
                          yscrollcommand=function(...) tkset(frame2.ysc,...))
 
@@ -381,7 +373,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tktag.configure(frame2.tbl, "coltitles", anchor="center", justify="center")
   tktag.configure(frame2.tbl, "rowtitles", anchor="ne", justify="right")
   tktag.configure(frame2.tbl, "disabledcol", state="disabled", anchor="ne")
-  tktag.configure(frame2.tbl, "disabledrow", state="disabled", anchor="ne")
 
   tkgrid.columnconfigure(frame2, 0, weight=1)
   tkgrid.rowconfigure(frame2, 0, weight=1)
