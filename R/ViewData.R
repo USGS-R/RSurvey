@@ -1,4 +1,4 @@
-ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE, 
+ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE, 
                      win.title="View Data", parent=NULL) {
 # A GUI for viewing table formatted data.
 
@@ -109,91 +109,25 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
     as.tclObj(d[as.integer(r) + 1L, as.integer(c) + 1L], drop=TRUE)
   }
   
+  # Tag column
+  TagColumn <- function(...) {
+    if (as.integer(...) %in% read.only$cols) 
+      return(as.tclObj("disabledcol"))
+  }
+  
+  # Tag row
+  TagRow <- function(...) {
+    if (as.integer(...) %in% read.only$rows) 
+      return(as.tclObj("disabledrow"))
+  }
+  
   # Show help message
   ShowHelpMessage <- function() {
-    if (is.editable) {
-      msg <- paste("Navigation",
-                   "    Button:",
-                   "        Clicking Button-1 in a cell activates that cell.",
-                   "        Clicking Button-1 in an already active cell moves the",
-                   "            insertion cursor to the character nearest the mouse.",
-                   "    Keyboard:",
-                   "        Home moves the table to have the first cell in view.",
-                   "        End moves the table to have the last cell in view.",
-                   "        Control-Home moves the table to the first cell and",
-                   "            activates that cell.",
-                   "        Control-End moves the table to the last cell and activates",
-                   "            that cell.",
-                   "        The left, right, up and down arrows move the active cell.",
-                   "        Control-leftarrow and Control-rightarrow move the",
-                   "            insertion cursor within the cell.",
-                   "        Control-a moves the insertion cursor to the beginning.",
-                   "        Control-e moves the insertion cursor to the end.",
-                   "",
-                   "Selection",
-                   "    Button:",
-                   "        Moving the mouse while Button-1 is pressed will stroke",
-                   "            out a selection area.",
-                   "        Clicking Button-1 in a header cell selects all cells in that",
-                   "            row or column.",
-                   "    Keyboard:",
-                   "        Shift-Control-Home extends the selection to the first cell.",
-                   "        Shift-Control-End extends the selection to the last cell.",
-                   "        Shift-<arrow> extends the selection in that direction.",
-                   "        Control-slash selects all the cells.",
-                   "        Control-backslash clears selection from all the cells.",
-                   "",
-                   "Editing",
-                   "    Keyboard:",
-                   "        Backspace deletes the character before the insertion cursor.",
-                   "        Delete removes the character after the insertion cursor.",
-                   "",
-                   "Miscellaneous",
-                   "    Keyboard:",
-                   "        Control-c copies the selected cell.",
-                   "        Control-v pastes to the selected cell.",
-                   "        Control-Minus and Control-Equals decrease and increase",
-                   "            the width of the column with the active cell.",
-                   "        Moving the mouse while Button-1 is pressed while you are",
-                   "            over a column border will cause interactive resizing of",
-                   "            that column to occur.",
-                   sep="\n")
-    } else {
-      msg <- paste("Navigation",
-                   "    Button:",
-                   "        Clicking Button-1 in a cell activates that cell.",
-                   "    Keyboard:",
-                   "        Home moves the table to have the first cell in view.",
-                   "        End moves the table to have the last cell in view.",
-                   "        Control-Home moves the table to the first cell and",
-                   "            activates that cell.",
-                   "        Control-End moves the table to the last cell and activates",
-                   "            that cell.",
-                   "        The left, right, up and down arrows move the active cell.",
-                   "",
-                   "Selection",
-                   "    Button:",
-                   "        Moving the mouse while Button-1 is pressed will stroke",
-                   "            out a selection area.",
-                   "        Clicking Button-1 in a header cell selects all cells in that",
-                   "            row or column.",
-                   "    Keyboard:",
-                   "        Shift-Control-Home extends the selection to the first cell.",
-                   "        Shift-Control-End extends the selection to the last cell.",
-                   "        Shift-<arrow> extends the selection in that direction.",
-                   "        Control-slash selects all the cells.",
-                   "        Control-backslash clears selection from all the cells.",
-                   "",
-                   "Miscellaneous",
-                   "    Keyboard:",
-                   "        Control-c copies the selected cell.",
-                   "        Control-Minus and Control-Equals decrease and increase",
-                   "            the width of the column with the active cell.",
-                   "        Moving the mouse while Button-1 is pressed while you are",
-                   "            over a column border will cause interactive resizing of",
-                   "            that column to occur.",
-                   sep="\n")
-    }
+    if ("package:RSurvey" %in% search()) 
+      f <- system.file("other", "TableBehavior.txt", package="RSurvey")
+    else 
+      f <- file.path(getwd(), "inst", "other", "TableBehavior.txt")
+    msg <- paste(readLines(f, n=-1L), collapse="\n")
     tkmessageBox(icon="info", message=msg, title="Information", type="ok", 
                  parent=tt)
   }
@@ -207,24 +141,25 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
   if (!is.tktable)
     return()
   
-  # Set parameters based on whether the table is editable
-  if (is.editable) {
-    ent.state <- "normal"
-    anchor.text <- "nw"
-    col.formats <- NULL
-  } else {
-    ent.state <- "disabled"
-    anchor.text <- "ne"
-  }
-
-  # Initialize search results
-  matched.cells <- NULL
-
   # Table dimensions
   m <- nrow(d)
   n <- ncol(d)
   if (m == 0)
     return()
+  
+  # Set parameters based on whether the table is editable
+  
+  if (inherits(read.only, "logical")) {
+    if (read.only) 
+      read.only <- list(rows=1:m, cols=1:n)
+    else
+      read.only <- list()
+  }
+  if (!inherits(read.only, "list"))
+    stop("problem with read.only argument")
+
+  # Initialize search results
+  matched.cells <- NULL
 
   # Number of rows and columns in the viewable table
   nrows <- if (m > 15) 15 else m
@@ -256,6 +191,8 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
   } else {
     col.formats <- as.character(col.formats[1:n])
     col.formats[is.na(col.formats)] <- ""
+    if (!is.null(read.only$cols))
+      col.formats[read.only$cols] <- ""
   }
   
   if (length(rownames(d)) == m)
@@ -395,7 +332,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
 
   .Tcl("option add *Table.font {CourierNew 9}")
   frame2.tbl <- tkwidget(frame2, "table", rows=m + 1, cols=n + 1,
-                         colwidth=-2, rowheight=1, state=ent.state, 
+                         colwidth=-2, rowheight=1, state="normal", 
                          height=nrows + 1, width=ncols + 1,
                          ipadx=1, ipady=1, wrap=1, justify="right",
                          highlightcolor="gray75", background="white",
@@ -405,9 +342,11 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
                          colstretchmode="none", rowstretchmode="none",
                          drawmode="single", flashmode=1, rowseparator="\n",
                          colseparator="\t", selectmode="extended", 
-                         selecttitle=1, insertofftime=0, anchor=anchor.text, 
+                         selecttitle=1, insertofftime=0, anchor="nw", 
                          highlightthickness=0, cache=1, 
                          command=function(r, c) GetCellValue(r, c),
+                         coltagcommand=function(...) TagColumn(...),
+                         rowtagcommand=function(...) TagRow(...),
                          xscrollcommand=function(...) tkset(frame2.xsc,...),
                          yscrollcommand=function(...) tkset(frame2.ysc,...))
 
@@ -429,14 +368,20 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
   tkgrid.configure(frame2.xsc, sticky="we", padx=c(10, 0), pady=c(0, 5))
 
   tktag.configure(frame2.tbl, "active", background="#EAEEFE", relief="")
-  tktag.configure(frame2.tbl, "sel",    background="#EAEEFE", foreground="#000000")
-  tktag.configure(frame2.tbl, "title",  background="#D9D9D9", foreground="#000000")
-  tktag.configure(frame2.tbl, "flash",  background="#FFFFFF", foreground="#FF0033")
+  tktag.configure(frame2.tbl, "sel",    background="#EAEEFE", 
+                  foreground="#000000")
+  tktag.configure(frame2.tbl, "title",  background="#D9D9D9", 
+                  foreground="#000000")
+  tktag.configure(frame2.tbl, "flash",  background="#FFFFFF", 
+                  foreground="#FF0033")
 
   tcl(frame2.tbl, "tag", "row", "coltitles", 0)
+  tcl(frame2.tbl, "tag", "col", "rowtitles", 0)
+  
   tktag.configure(frame2.tbl, "coltitles", anchor="center", justify="center")
   tktag.configure(frame2.tbl, "rowtitles", anchor="ne", justify="right")
-  tcl(frame2.tbl, "tag", "col", "rowtitles", 0)
+  tktag.configure(frame2.tbl, "disabledcol", state="disabled", anchor="ne")
+  tktag.configure(frame2.tbl, "disabledrow", state="disabled", anchor="ne")
 
   tkgrid.columnconfigure(frame2, 0, weight=1)
   tkgrid.rowconfigure(frame2, 0, weight=1)
@@ -451,7 +396,9 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, is.editable=FALSE,
   
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
   tkbind(tt, "<Control-c>", CopyValues)
-##tkbind(tt, "<Return>", function() tcl(frame2.tbl, "curvalue") )
+  tkbind(frame2.tbl, "<Return>", "break")
+  
+# browser()
   
   tkbind(frame1.ent.1.2, "<KeyRelease>",
          function() {

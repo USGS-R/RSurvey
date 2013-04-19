@@ -382,12 +382,12 @@ ExportData <- function(file.type="text", parent=NULL) {
     frame2.chk.1.2 <- ttkcheckbutton(frame2, variable=col.names.var,
                                      text="Variable names")
     frame2.chk.1.3 <- ttkcheckbutton(frame2, variable=row.names.var,
-                                     text="Record indexes")
+                                     text="Record numbers")
     
     tkgrid(frame2.chk.1.1, frame2.chk.1.2, frame2.chk.1.3)
-    tkgrid.configure(frame2.chk.1.1, padx=c(10, 0))
+    tkgrid.configure(frame2.chk.1.1, padx=c(0))
     tkgrid.configure(frame2.chk.1.2, padx=10)
-    tkgrid.configure(frame2.chk.1.3, padx=c(0, 10))
+    tkgrid.configure(frame2.chk.1.3, padx=c(0))
 
     tkpack(frame2, fill="x", padx=10, pady=c(0, 10))
     
@@ -436,7 +436,7 @@ ExportData <- function(file.type="text", parent=NULL) {
     
     tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, padx=c(0, 2))
     tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, padx=c(2, 0))
-    tkgrid.configure(frame3.chk.3.1, columnspan=5, sticky="w", padx=10, 
+    tkgrid.configure(frame3.chk.3.1, columnspan=5, sticky="w", padx=0, 
                      pady=c(5, 0))
 
     tkpack(frame3, fill="x", padx=10, pady=c(0, 10))

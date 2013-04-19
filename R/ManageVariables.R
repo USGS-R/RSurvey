@@ -135,7 +135,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     tkinsert(frame2.txt.4.2, "end", cols[[idx]]$fun)
     tkconfigure(frame2.txt.4.2, state="disabled")
     s <- "disabled"
-    if (is.null(cols[[idx]]$index))
+    if (is.na(cols[[idx]]$index))
       s <- "normal"
     tkconfigure(frame2.but.4.3, state=s)
 
@@ -186,7 +186,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
                    type="ok", parent=tt)
       return()
     }
-    if (!is.null(cols[[idx]]$index)) {
+    if (!is.na(cols[[idx]]$index)) {
       msg <- paste("Variable \"", cols[[idx]]$id, 
                    "\" corresponds with imported data.\n\n",
                    "Are you sure you want to remove it?", sep="")
@@ -250,8 +250,8 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     if (is.null(f$fun) || f$fun == "") 
       return()
     
-    cols[[idx]] <<- list(id="", name="New Variable", class=f$class, fun=f$fun, 
-                         sample=f$sample, summary=f$summary)
+    cols[[idx]] <<- list(id="", name="New Variable", class=f$class, index=NA, 
+                         fun=f$fun, sample=f$sample, summary=f$summary)
     
     tcl("lappend", list.var, new.name)
     tkselection.clear(frame1.lst, 0, "end")
@@ -389,8 +389,8 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     
     d <- lapply(idxs, function(i) EvalFunction(funs[i], cols))
     
-    ViewData(as.data.frame(d), nams[idxs], fmts[idxs], win.title="Raw Data", 
-             parent=tt)
+    ViewData(as.data.frame(d), nams[idxs], fmts[idxs], read.only=TRUE,
+             win.title="Raw Data", parent=tt)
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }

@@ -1,0 +1,45 @@
+Navigation
+    Button:
+        Clicking Button-1 in a cell activates that cell.
+        Clicking Button-1 in an already active cell moves the
+            insertion cursor to the character nearest the mouse.
+    Keyboard:
+        Home moves the table to have the first cell in view.
+        End moves the table to have the last cell in view.
+        Control-Home moves the table to the first cell and
+            activates that cell.
+        Control-End moves the table to the last cell and activates
+            that cell.
+        The left, right, up and down arrows move the active cell.
+        Control-leftarrow and Control-rightarrow move the
+            insertion cursor within the cell.
+        Control-a moves the insertion cursor to the beginning.
+        Control-e moves the insertion cursor to the end.
+
+Selection
+    Button:
+        Moving the mouse while Button-1 is pressed will stroke
+            out a selection area.
+        Clicking Button-1 in a header cell selects all cells in
+            that row or column.
+    Keyboard:
+        Shift-Control-Home extends the selection to the first cell.
+        Shift-Control-End extends the selection to the last cell.
+        Shift-<arrow> extends the selection in that direction.
+        Control-slash selects all the cells.
+        Control-backslash clears selection from all the cells.
+
+Editing
+    Keyboard:
+        Backspace deletes the character before the insertion cursor.
+        Delete removes the character after the insertion cursor.
+
+Miscellaneous
+    Keyboard:
+        Control-c copies the selected cell.
+        Control-v pastes to the selected cell.
+        Control-Minus and Control-Equals decrease and increase
+            the width of the column with the active cell.
+        Moving the mouse while Button-1 is pressed while you are
+            over a column border will cause interactive resizing
+            of that column to occur.

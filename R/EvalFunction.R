@@ -8,7 +8,7 @@ EvalFunction <- function(txt, cols) {
   for (i in seq(along=ids)) {
     id.quoted <- paste("\"", ids[i], "\"", sep="")
     if (regexpr(id.quoted, txt, fixed=TRUE)[1] >= 0) {
-      if (is.null(cols[[i]]$index)) {
+      if (is.na(cols[[i]]$index)) {
         d[[i]] <- EvalFunction(cols[[i]]$fun, cols)
       } else {
         d[[i]] <- Data("data.raw")[, cols[[i]]$index]

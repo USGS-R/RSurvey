@@ -606,7 +606,6 @@ OpenRSurvey <- function() {
   }
 
   # Set the height of (default-sized) characters in inches.
-
   SetCsi <- function() {
     if (is.null(Data("csi"))) {
       x11(pointsize=12)
@@ -616,28 +615,28 @@ OpenRSurvey <- function() {
   }
 
   # Call view data for state variable data
-
-  CallViewData <- function(is.editable=FALSE) {
+  CallViewData <- function(read.only) {
     CallProcessData()
     tkconfigure(tt, cursor="watch")
     cols <- Data("cols")
-    if (is.editable) {
-      if (is.null(Data("data.raw")))
-        return()
-      nams <- vapply(cols, function(i) i$name, "")
-      ViewData(Data("data.raw"), col.names=nams, is.editable=TRUE, 
-               win.title="Raw Data", parent=tt)
-    } else {
+    vars <- Data("vars")
+    if (read.only) {
       if (is.null(Data("data.pts")))
         return()
-      vars <- Data("vars")
       lst <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate",
                   vx="x-vector", vy="y-vector")
       col.names <- names(Data("data.pts"))
       nams <- vapply(col.names, function(i) lst[[i]], "")
       fmts <- vapply(col.names, function(i) cols[[vars[[i]]]]$format, "")
       ViewData(Data("data.pts"), col.names=nams, col.formats=fmts, 
-               win.title="Processed Data", parent=tt)
+               read.only=TRUE, win.title="Processed Data", parent=tt)
+    } else {
+      if (is.null(Data("data.raw")))
+        return()
+      idxs <- vapply(cols, function(i) i$index, 0L)
+      nams <- vapply(cols, function(i) i$name, "")[!is.na(idxs)]
+      ViewData(Data("data.raw")[, na.omit(idxs)], col.names=nams, 
+               read.only=FALSE, win.title="Raw Data", parent=tt)
     }
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
@@ -844,7 +843,7 @@ OpenRSurvey <- function() {
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
 
   tkadd(menu.edit, "command", label="Edit raw data\u2026",
-        command=function() CallViewData(is.editable=TRUE))
+        command=function() CallViewData(read.only=FALSE))
   tkadd(menu.edit, "command", label="Manage variables\u2026",
         command=CallManageVariables)
   
@@ -879,7 +878,7 @@ OpenRSurvey <- function() {
   
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="View processed data",
-        command=function() CallViewData())
+        command=function() CallViewData(read.only=TRUE))
 
   # Polygon menu
 

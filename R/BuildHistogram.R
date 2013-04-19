@@ -57,7 +57,8 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
         obj[[i]][is.na(obj[[i]])] <- ""
       }
       obj <- as.data.frame(do.call(cbind, obj))
-      ViewData(obj, col.names=names(obj), win.title="Histogram Data", parent=tt)
+      ViewData(obj, col.names=names(obj), read.only=TRUE, 
+               win.title="Histogram Data", parent=tt)
     }
   }
   

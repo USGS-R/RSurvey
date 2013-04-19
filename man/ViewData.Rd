@@ -9,7 +9,7 @@ A \acronym{GUI} for viewing table formatted data.
 }
 
 \usage{
-ViewData(d, col.names = NULL, col.formats = NULL, is.editable = FALSE, 
+ViewData(d, col.names = NULL, col.formats = NULL, read.only = FALSE, 
          win.title = "View Data", parent = NULL)
 }
 
@@ -19,7 +19,11 @@ ViewData(d, col.names = NULL, col.formats = NULL, is.editable = FALSE,
   data table (optional).}
 \item{col.formats}{character; the conversion specification
   format (optional).}
-\item{is.editable}{logical; can values in the data table be changed.}
+\item{read.only}{logical or list; specifies whether the table is read only.
+  Alternatively, read only can be specified for individual rows and columns
+  using a \code{list} object with components \code{rows} and \code{cols}. Each
+  component is a vector of integer values giving the index number(s) of the
+  rows and columns that will be disabled.}
 \item{win.title}{character; a string to display as the title of the dialog box.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
