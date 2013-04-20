@@ -299,19 +299,19 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   menu.edit <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
-  tkadd(menu.edit, "command", label="Undo", accelerator="Ctrl+Z",
+  tkadd(menu.edit, "command", label="Undo", accelerator="Ctrl+z",
         command=EditUndo)
-  tkadd(menu.edit, "command", label="Redo", accelerator="Ctrl+Y",
+  tkadd(menu.edit, "command", label="Redo", accelerator="Ctrl+y",
         command=EditRedo)
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+X",
+  tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+x",
         command=EditCut)
-  tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+C",
+  tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c",
         command=EditCopy)
-  tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+V",
+  tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+v",
         command=EditPaste)
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Select all", accelerator="Ctrl+A",
+  tkadd(menu.edit, "command", label="Select all", accelerator="Ctrl+a",
         command=EditSelectAll)
   tkadd(menu.edit, "command", label="Clear all", 
         command=ClearAll)

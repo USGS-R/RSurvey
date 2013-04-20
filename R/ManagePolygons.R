@@ -429,23 +429,23 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   menu.file <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
 
-  tkadd(menu.file, "command", label="Open\u2026", accelerator="Ctrl+O",
+  tkadd(menu.file, "command", label="Open\u2026", accelerator="Ctrl+o",
         command=ImportPolygon)
-  tkadd(menu.file, "command", label="Save as\u2026", accelerator="Ctrl+S",
+  tkadd(menu.file, "command", label="Save as\u2026", accelerator="Ctrl+s",
         command=ExportPolygon)
 
   menu.edit <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
-  tkadd(menu.edit, "command", label="Rename\u2026", accelerator="Ctrl+R",
+  tkadd(menu.edit, "command", label="Rename\u2026", accelerator="Ctrl+r",
         command=RenamePolygon)
-  tkadd(menu.edit, "command", label="Delete", accelerator="Del",
+  tkadd(menu.edit, "command", label="Delete", accelerator="Delete",
         command=ClearPolygon)
 
   menu.select <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Select", menu=menu.select, underline=0)
-  tkadd(menu.select, "command", label="All", accelerator="Ctrl+A",
+  tkadd(menu.select, "command", label="All", accelerator="Ctrl+a",
         command=function() SelectPolygon("all"))
-  tkadd(menu.select, "command", label="Deselect", accelerator="Shift+Ctrl+A",
+  tkadd(menu.select, "command", label="Deselect", accelerator="Shift+Ctrl+a",
         command=function() SelectPolygon("none"))
   tkadd(menu.select, "command", label="Inverse",
         command=function() SelectPolygon("inverse"))

@@ -796,14 +796,14 @@ OpenRSurvey <- function() {
   menu.file <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
 
-  tkadd(menu.file, "command", label="New project", accelerator="Ctrl+N",
+  tkadd(menu.file, "command", label="New project", accelerator="Ctrl+n",
         command=ClearObjs)
-  tkadd(menu.file, "command", label="Open project\u2026", accelerator="Ctrl+O",
+  tkadd(menu.file, "command", label="Open project\u2026", accelerator="Ctrl+o",
         command=OpenProj)
-  tkadd(menu.file, "command", label="Save project", accelerator="Ctrl+S",
+  tkadd(menu.file, "command", label="Save project", accelerator="Ctrl+s",
         command=SaveProj)
   tkadd(menu.file, "command", label="Save project as\u2026",
-        accelerator="Shift+Ctrl+S", command=SaveProjAs)
+        accelerator="Shift+Ctrl+s", command=SaveProjAs)
 
   tkadd(menu.file, "separator")
   
@@ -827,7 +827,7 @@ OpenRSurvey <- function() {
 
   tkadd(menu.file, "separator")
   menu.file.save <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.save, "command", label="R graphic\u2026", accelerator="Ctrl+R",
+  tkadd(menu.file.save, "command", label="R graphic\u2026", accelerator="Ctrl+r",
         command=SaveRDevice)
   tkadd(menu.file.save, "command", label="RGL graphic\u2026",
         command=SaveRGLDevice)

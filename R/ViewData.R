@@ -266,16 +266,17 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
   tkadd(menu.edit, "separator")
   menu.edit.width <- tkmenu(tt, tearoff=0)
-  tkadd(menu.edit.width, "command", label="Increase", accelerator="Ctrl+equal",
+  tkadd(menu.edit.width, "command", label="Increase", accelerator="Ctrl+\u003d",
         command=function() tkevent.generate(frame2.tbl, "<Control-equal>"))
-  tkadd(menu.edit.width, "command", label="Decrease", accelerator="Ctrl+minus",
+  tkadd(menu.edit.width, "command", label="Decrease", accelerator="Ctrl+\u2212",
         command=function() tkevent.generate(frame2.tbl, "<Control-minus>"))
   tkadd(menu.edit, "cascade", label="Column width", menu=menu.edit.width)
   
   # Selection menu
   menu.sel <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Select", menu=menu.sel, underline=0)
-  tkadd(menu.sel, "command", label="Select all cells", accelerator="Ctrl+slash", 
+  tkadd(menu.sel, "command", label="Select all cells", 
+        accelerator="Ctrl+\u2044",
         command=function() tkevent.generate(frame2.tbl, "<Control-slash>"))
   tkadd(menu.sel, "separator")
   menu.sel.extend <- tkmenu(tt, tearoff=0)
@@ -286,28 +287,30 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
         accelerator="Shift+Ctrl+End",
         command=function() tkevent.generate(frame2.tbl, "<Shift-Control-End>"))
   tkadd(menu.sel.extend, "separator")
-  tkadd(menu.sel.extend, "command", label="Row above", accelerator="Shift+Up",
+  tkadd(menu.sel.extend, "command", label="Row above", 
+        accelerator="Shift+\u2191",
         command=function() tkevent.generate(frame2.tbl, "<Shift-Up>"))
-  tkadd(menu.sel.extend, "command", label="Row below", accelerator="Shift+Down",
+  tkadd(menu.sel.extend, "command", label="Row below", 
+        accelerator="Shift+\u2193",
         command=function() tkevent.generate(frame2.tbl, "<Shift-Down>"))
   tkadd(menu.sel.extend, "command", label="Column left", 
-        accelerator="Shift+Left",
+        accelerator="Shift+\u2190",
         command=function() tkevent.generate(frame2.tbl, "<Shift-Left>"))
   tkadd(menu.sel.extend, "command", label="Column right", 
-        accelerator="Shift+Right",
+        accelerator="Shift+\u2192",
         command=function() tkevent.generate(frame2.tbl, "<Shift-Right>"))
   tkadd(menu.sel, "cascade", label="Extend selection to", menu=menu.sel.extend)
   
   # Navigation menu
   menu.nav <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Navigate", menu=menu.nav, underline=0)
-  tkadd(menu.nav, "command", label="Move up", accelerator="Up", 
+  tkadd(menu.nav, "command", label="Move up", accelerator="\u2191", 
         command=function() tkevent.generate(frame2.tbl, "<Up>"))
-  tkadd(menu.nav, "command", label="Move down", accelerator="Down", 
+  tkadd(menu.nav, "command", label="Move down", accelerator="\u2193", 
         command=function() tkevent.generate(frame2.tbl, "<Down>"))
-  tkadd(menu.nav, "command", label="Move left", accelerator="Left", 
+  tkadd(menu.nav, "command", label="Move left", accelerator="\u2190", 
         command=function() tkevent.generate(frame2.tbl, "<Left>"))
-  tkadd(menu.nav, "command", label="Move right", accelerator="Right", 
+  tkadd(menu.nav, "command", label="Move right", accelerator="\u2192", 
         command=function() tkevent.generate(frame2.tbl, "<Right>"))
   tkadd(menu.nav, "separator")
   if (is.editable) {
@@ -342,9 +345,9 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
           menu=menu.nav.active)
     tkadd(menu.nav, "separator")
     menu.nav.in <- tkmenu(tt, tearoff=0)
-    tkadd(menu.nav.in, "command", label="Left", accelerator="Ctrl+Left",
+    tkadd(menu.nav.in, "command", label="Left", accelerator="Ctrl+\u2190",
           command=function() tkevent.generate(frame2.tbl, "<Control-Left>"))
-    tkadd(menu.nav.in, "command", label="Right", accelerator="Ctrl+Right",
+    tkadd(menu.nav.in, "command", label="Right", accelerator="Ctrl+\u2192",
           command=function() tkevent.generate(frame2.tbl, "<Control-Right>"))
     tkadd(menu.nav.in, "separator")
     tkadd(menu.nav.in, "command", label="Beggining", accelerator="Ctrl+a",
