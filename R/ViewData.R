@@ -109,17 +109,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     if (as.integer(...) %in% read.only) 
       return(as.tclObj("disabledcol"))
   }
-  
-  # Show help message
-  ShowHelpMessage <- function() {
-    if ("package:RSurvey" %in% search()) 
-      f <- system.file("other", "TableBehavior.txt", package="RSurvey")
-    else 
-      f <- file.path(getwd(), "inst", "other", "TableBehavior.txt")
-    msg <- paste(readLines(f, n=-1L), collapse="\n")
-    tkmessageBox(icon="info", message=msg, title="Information", type="ok", 
-                 parent=tt)
-  }
 
 
   # Main program
@@ -146,6 +135,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
   if (!inherits(read.only, c("NULL", "integer")))
     stop("problem with read.only argument")
+  is.editable <- is.null(read.only) || read.only != 1:n
 
   # Initialize search results
   matched.cells <- NULL
@@ -250,134 +240,138 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   # Create menus
 
   top.menu <- tkmenu(tt, tearoff=0)
-
+  
+  # Edit menu
   menu.edit <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
   tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c",
         command=function() tcl("tk_tableCopy", frame2.tbl))
-  tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+x",
-        command=function() tcl("tk_tableCut", frame2.tbl))
-  tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+v",
-        command=function() tcl("tk_tablePaste", frame2.tbl))
+  if (is.editable) {
+    tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+x",
+          command=function() tcl("tk_tableCut", frame2.tbl))
+    tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+v",
+          command=function() tcl("tk_tablePaste", frame2.tbl))
+    tkadd(menu.edit, "separator")
+    menu.edit.del <- tkmenu(tt, tearoff=0)
+    tkadd(menu.edit.del, "command", label="Character after cursor", 
+          accelerator="Delete",
+          command=function() tkevent.generate(frame2.tbl, "<Delete>"))
+    tkadd(menu.edit.del, "command", label="Character before cursor", 
+          accelerator="Backspace",
+          command=function() tkevent.generate(frame2.tbl, "<BackSpace>"))
+    tkadd(menu.edit.del, "command", label="All characters after cursor", 
+          accelerator="Ctrl+k",
+          command=function() tkevent.generate(frame2.tbl, "<Control-k>"))
+    tkadd(menu.edit, "cascade", label="Inside cell delete", menu=menu.edit.del)
+  }
   tkadd(menu.edit, "separator")
   menu.edit.width <- tkmenu(tt, tearoff=0)
-  tkadd(menu.edit.width, "command", label="Increase", 
-        accelerator="Ctrl+equal",
-        command=function() {
-          tkfocus(frame2.tbl)
-          tkevent.generate(frame2.tbl, "<Control-equal>")
-        })
-  tkadd(menu.edit.width, "command", label="Decrease", 
-        accelerator="Ctrl+minus",
-        command=function() {
-          tkfocus(frame2.tbl)
-          tkevent.generate(frame2.tbl, "<Control-minus>")
-        })
+  tkadd(menu.edit.width, "command", label="Increase", accelerator="Ctrl+equal",
+        command=function() tkevent.generate(frame2.tbl, "<Control-equal>"))
+  tkadd(menu.edit.width, "command", label="Decrease", accelerator="Ctrl+minus",
+        command=function() tkevent.generate(frame2.tbl, "<Control-minus>"))
   tkadd(menu.edit, "cascade", label="Column width", menu=menu.edit.width)
   
-  
-  
-  
-  menu.nav <- tkmenu(tt, tearoff=0, relief="flat")
-  tkadd(top.menu, "cascade", label="Navigate", menu=menu.nav, underline=0)
-  
-  menu.nav.to <- tkmenu(tt, tearoff=0)
-  tkadd(menu.nav.to, "command", label="First cell", 
-        accelerator="Home",
-        command=function() tksee(frame2.tbl, "origin"))
-  tkadd(menu.nav.to, "command", label="Last cell", 
-        accelerator="End",
-        command=function() tksee(frame2.tbl, "end"))
-  
-  
-  tkadd(menu.nav, "cascade", label="Move to", menu=menu.nav.to)
-  
-  menu.nav.act <- tkmenu(tt, tearoff=0)
-  tkadd(menu.nav.act, "command", label="First cell", 
-        accelerator="Ctrl+Home",
-        command=function() {
-          tkfocus(frame2.tbl)
-          tkevent.generate(frame2.tbl, "<Control-Home>")
-        })
-  tkadd(menu.nav.act, "command", label="Last cell", 
-        accelerator="Ctrl+End",
-        command=function() {
-          tkfocus(frame2.tbl)
-          tkevent.generate(frame2.tbl, "<Control-End>")
-        })
-  
-  tkadd(menu.nav, "cascade", label="Move to and activate", menu=menu.nav.act)
-  
-  
-  
-  
-  
-  
-  
-  
-# http://tktable.cvs.sourceforge.net/viewvc/tktable/tktable/library/tkTable.tcl?revision=1.14&view=markup
-  
-  
-  
+  # Selection menu
   menu.sel <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Select", menu=menu.sel, underline=0)
   tkadd(menu.sel, "command", label="Select all cells", accelerator="Ctrl+slash", 
-        command=function() {
-          tkselection.set(frame2.tbl, "0, 0", "end")
-        })
-  tkadd(menu.sel, "command", label="Clear selection", accelerator="Ctrl+backslash",
-        command=function() {
-          tkselection.clear(frame2.tbl, "all")
-        })
+        command=function() tkevent.generate(frame2.tbl, "<Control-slash>"))
+  tkadd(menu.sel, "separator")
   menu.sel.extend <- tkmenu(tt, tearoff=0)
   tkadd(menu.sel.extend, "command", label="First cell", 
         accelerator="Shift+Ctrl+Home",
-        command=function() {
-          tkfocus(frame2.tbl)
-          tkevent.generate(frame2.tbl, "<Shift-Control-Home>")
-        })
+        command=function() tkevent.generate(frame2.tbl, "<Shift-Control-Home>"))
   tkadd(menu.sel.extend, "command", label="Last cell", 
         accelerator="Shift+Ctrl+End",
-        command=function() {
-          tkfocus(frame2.tbl)
-          tkevent.generate(frame2.tbl, "<Shift-Control-End>")
-        })
+        command=function() tkevent.generate(frame2.tbl, "<Shift-Control-End>"))
   tkadd(menu.sel.extend, "separator")
-  tkadd(menu.sel.extend, "command", label="Row above", 
-        accelerator="Shift+Up",
-        command=function() {
-          tkfocus(frame2.tbl)
-          tkevent.generate(frame2.tbl, "<Shift-Up>")
-        })
-  tkadd(menu.sel.extend, "command", label="Row below", 
-        accelerator="Shift+Down",
-        command=function() {
-          tkfocus(frame2.tbl)
-          tkevent.generate(frame2.tbl, "<Shift-Down>")
-        })
+  tkadd(menu.sel.extend, "command", label="Row above", accelerator="Shift+Up",
+        command=function() tkevent.generate(frame2.tbl, "<Shift-Up>"))
+  tkadd(menu.sel.extend, "command", label="Row below", accelerator="Shift+Down",
+        command=function() tkevent.generate(frame2.tbl, "<Shift-Down>"))
   tkadd(menu.sel.extend, "command", label="Column left", 
         accelerator="Shift+Left",
-        command=function() {
-          tkfocus(frame2.tbl)
-          tkevent.generate(frame2.tbl, "<Shift-Left>")
-        })
+        command=function() tkevent.generate(frame2.tbl, "<Shift-Left>"))
   tkadd(menu.sel.extend, "command", label="Column right", 
         accelerator="Shift+Right",
-        command=function() {
-          tkfocus(frame2.tbl)
-          tkevent.generate(frame2.tbl, "<Shift-Right>")
-        })
+        command=function() tkevent.generate(frame2.tbl, "<Shift-Right>"))
   tkadd(menu.sel, "cascade", label="Extend selection to", menu=menu.sel.extend)
   
-  
-
-  
-  
-  
-  
-  help.edit <- tkmenu(tt, tearoff=0, relief="flat")
-  tkadd(top.menu, "cascade", label="Help", menu=help.edit, underline=0)
-  tkadd(help.edit, "command", label="Behavior", command=ShowHelpMessage)
+  # Navigation menu
+  menu.nav <- tkmenu(tt, tearoff=0, relief="flat")
+  tkadd(top.menu, "cascade", label="Navigate", menu=menu.nav, underline=0)
+  tkadd(menu.nav, "command", label="Move up", accelerator="Up", 
+        command=function() tkevent.generate(frame2.tbl, "<Up>"))
+  tkadd(menu.nav, "command", label="Move down", accelerator="Down", 
+        command=function() tkevent.generate(frame2.tbl, "<Down>"))
+  tkadd(menu.nav, "command", label="Move left", accelerator="Left", 
+        command=function() tkevent.generate(frame2.tbl, "<Left>"))
+  tkadd(menu.nav, "command", label="Move right", accelerator="Right", 
+        command=function() tkevent.generate(frame2.tbl, "<Right>"))
+  tkadd(menu.nav, "separator")
+  if (is.editable) {
+    menu.nav.view <- tkmenu(tt, tearoff=0)
+    tkadd(menu.nav.view, "command", label="First cell in view", 
+          accelerator="Home",
+          command=function() tkevent.generate(frame2.tbl, "<Home>"))
+    tkadd(menu.nav.view, "command", label="Last cell in view", 
+          accelerator="End",
+          command=function() tkevent.generate(frame2.tbl, "<End>"))
+    tkadd(menu.nav.view, "separator")
+    tkadd(menu.nav.view, "command", label="Prior page in view", 
+          accelerator="Ctrl+PageUp",
+          command=function() tkevent.generate(frame2.tbl, "<Control-Prior>"))
+    tkadd(menu.nav.view, "command", label="Next page in view", 
+          accelerator="Ctrl+PageDown",
+          command=function() tkevent.generate(frame2.tbl, "<Control-Next>"))
+    tkadd(menu.nav, "cascade", label="Move table to have", menu=menu.nav.view)
+    tkadd(menu.nav, "separator")
+    menu.nav.active <- tkmenu(tt, tearoff=0)
+    tkadd(menu.nav.active, "command", label="First cell", 
+          accelerator="Ctrl+Home",
+          command=function() tkevent.generate(frame2.tbl, "<Control-Home>"))
+    tkadd(menu.nav.active, "command", label="Last cell", accelerator="Ctrl+End",
+          command=function() tkevent.generate(frame2.tbl, "<Control-End>"))
+    tkadd(menu.nav.active, "separator")
+    tkadd(menu.nav.active, "command", label="Prior page", accelerator="PageUp",
+          command=function() tkevent.generate(frame2.tbl, "<Prior>"))
+    tkadd(menu.nav.active, "command", label="Next page", accelerator="PageDown",
+          command=function() tkevent.generate(frame2.tbl, "<Next>"))
+    tkadd(menu.nav, "cascade", label="Move activate cell to", 
+          menu=menu.nav.active)
+    tkadd(menu.nav, "separator")
+    menu.nav.in <- tkmenu(tt, tearoff=0)
+    tkadd(menu.nav.in, "command", label="Left", accelerator="Ctrl+Left",
+          command=function() tkevent.generate(frame2.tbl, "<Control-Left>"))
+    tkadd(menu.nav.in, "command", label="Right", accelerator="Ctrl+Right",
+          command=function() tkevent.generate(frame2.tbl, "<Control-Right>"))
+    tkadd(menu.nav.in, "separator")
+    tkadd(menu.nav.in, "command", label="Beggining", accelerator="Ctrl+a",
+          command=function() tkevent.generate(frame2.tbl, "<Control-a>"))
+    tkadd(menu.nav.in, "command", label="End", accelerator="Ctrl+e",
+          command=function() tkevent.generate(frame2.tbl, "<Control-e>"))
+    tkadd(menu.nav, "cascade", label="Move inside cell to the", 
+          menu=menu.nav.in)
+  } else {
+    menu.nav.view <- tkmenu(tt, tearoff=0)
+    tkadd(menu.nav.view, "command", label="Prior page in view", 
+          accelerator="PageUp",
+          command=function() tkevent.generate(frame2.tbl, "<Prior>"))
+    tkadd(menu.nav.view, "command", label="Next page in view", 
+          accelerator="PageDown",
+          command=function() tkevent.generate(frame2.tbl, "<Next>"))
+    tkadd(menu.nav, "cascade", label="Move table to have", menu=menu.nav.view)
+    tkadd(menu.nav, "separator")
+    menu.nav.active <- tkmenu(tt, tearoff=0)
+    tkadd(menu.nav.active, "command", label="First cell", 
+          accelerator="Ctrl+Home",
+          command=function() tkevent.generate(frame2.tbl, "<Control-Home>"))
+    tkadd(menu.nav.active, "command", label="Last cell", accelerator="Ctrl+End",
+          command=function() tkevent.generate(frame2.tbl, "<Control-End>"))
+    tkadd(menu.nav, "cascade", label="Move activate cell to", 
+          menu=menu.nav.active)
+  }
   
   tkconfigure(tt, menu=top.menu)
 
@@ -492,7 +486,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   tkpack(frame2, fill="both", expand=TRUE)
 
-  tkselection.set(frame2.tbl, "origin")
 
   # Bind events
 
@@ -509,14 +502,14 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkbind(frame1.ent.1.2, "<Up>", function() Find("prev"))
   tkbind(frame1.ent.1.2, "<Down>", function() Find("next"))
   tkbind(frame1.ent.2.2, "<Return>", function() GotoRecord())
-  
-  
-  
 
   # GUI control
 
   tkgrab(tt)
-  tkfocus(tt)
+  tkfocus(frame2.tbl)
+  tkactivate(frame2.tbl, "origin")
+  tkselection.set(frame2.tbl, "active")
+  tksee(frame2.tbl, "active")
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)
