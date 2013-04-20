@@ -4,11 +4,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   # Additional functions (subroutines)
 
-  # Copy values to clipboard
-  CopyValues <- function() {
-    tcl("tk_tableCopy", frame2.tbl)
-  }
-
   # Select all cells
   SelectAll <- function() {
     tkselection.set(frame2.tbl, "origin", "end")
@@ -258,9 +253,127 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   menu.edit <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
-  tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+C",
-        command=CopyValues)
-  tkadd(menu.edit, "command", label="Select all", command=SelectAll)
+  tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c",
+        command=function() tcl("tk_tableCopy", frame2.tbl))
+  tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+x",
+        command=function() tcl("tk_tableCut", frame2.tbl))
+  tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+v",
+        command=function() tcl("tk_tablePaste", frame2.tbl))
+  tkadd(menu.edit, "separator")
+  menu.edit.width <- tkmenu(tt, tearoff=0)
+  tkadd(menu.edit.width, "command", label="Increase", 
+        accelerator="Ctrl+equal",
+        command=function() {
+          tkfocus(frame2.tbl)
+          tkevent.generate(frame2.tbl, "<Control-equal>")
+        })
+  tkadd(menu.edit.width, "command", label="Decrease", 
+        accelerator="Ctrl+minus",
+        command=function() {
+          tkfocus(frame2.tbl)
+          tkevent.generate(frame2.tbl, "<Control-minus>")
+        })
+  tkadd(menu.edit, "cascade", label="Column width", menu=menu.edit.width)
+  
+  
+  
+  
+  menu.nav <- tkmenu(tt, tearoff=0, relief="flat")
+  tkadd(top.menu, "cascade", label="Navigate", menu=menu.nav, underline=0)
+  
+  menu.nav.to <- tkmenu(tt, tearoff=0)
+  tkadd(menu.nav.to, "command", label="First cell", 
+        accelerator="Home",
+        command=function() tksee(frame2.tbl, "origin"))
+  tkadd(menu.nav.to, "command", label="Last cell", 
+        accelerator="End",
+        command=function() tksee(frame2.tbl, "end"))
+  
+  
+  tkadd(menu.nav, "cascade", label="Move to", menu=menu.nav.to)
+  
+  menu.nav.act <- tkmenu(tt, tearoff=0)
+  tkadd(menu.nav.act, "command", label="First cell", 
+        accelerator="Ctrl+Home",
+        command=function() {
+          tkfocus(frame2.tbl)
+          tkevent.generate(frame2.tbl, "<Control-Home>")
+        })
+  tkadd(menu.nav.act, "command", label="Last cell", 
+        accelerator="Ctrl+End",
+        command=function() {
+          tkfocus(frame2.tbl)
+          tkevent.generate(frame2.tbl, "<Control-End>")
+        })
+  
+  tkadd(menu.nav, "cascade", label="Move to and activate", menu=menu.nav.act)
+  
+  
+  
+  
+  
+  
+  
+  
+# http://tktable.cvs.sourceforge.net/viewvc/tktable/tktable/library/tkTable.tcl?revision=1.14&view=markup
+  
+  
+  
+  menu.sel <- tkmenu(tt, tearoff=0, relief="flat")
+  tkadd(top.menu, "cascade", label="Select", menu=menu.sel, underline=0)
+  tkadd(menu.sel, "command", label="Select all cells", accelerator="Ctrl+slash", 
+        command=function() {
+          tkselection.set(frame2.tbl, "0, 0", "end")
+        })
+  tkadd(menu.sel, "command", label="Clear selection", accelerator="Ctrl+backslash",
+        command=function() {
+          tkselection.clear(frame2.tbl, "all")
+        })
+  menu.sel.extend <- tkmenu(tt, tearoff=0)
+  tkadd(menu.sel.extend, "command", label="First cell", 
+        accelerator="Shift+Ctrl+Home",
+        command=function() {
+          tkfocus(frame2.tbl)
+          tkevent.generate(frame2.tbl, "<Shift-Control-Home>")
+        })
+  tkadd(menu.sel.extend, "command", label="Last cell", 
+        accelerator="Shift+Ctrl+End",
+        command=function() {
+          tkfocus(frame2.tbl)
+          tkevent.generate(frame2.tbl, "<Shift-Control-End>")
+        })
+  tkadd(menu.sel.extend, "separator")
+  tkadd(menu.sel.extend, "command", label="Row above", 
+        accelerator="Shift+Up",
+        command=function() {
+          tkfocus(frame2.tbl)
+          tkevent.generate(frame2.tbl, "<Shift-Up>")
+        })
+  tkadd(menu.sel.extend, "command", label="Row below", 
+        accelerator="Shift+Down",
+        command=function() {
+          tkfocus(frame2.tbl)
+          tkevent.generate(frame2.tbl, "<Shift-Down>")
+        })
+  tkadd(menu.sel.extend, "command", label="Column left", 
+        accelerator="Shift+Left",
+        command=function() {
+          tkfocus(frame2.tbl)
+          tkevent.generate(frame2.tbl, "<Shift-Left>")
+        })
+  tkadd(menu.sel.extend, "command", label="Column right", 
+        accelerator="Shift+Right",
+        command=function() {
+          tkfocus(frame2.tbl)
+          tkevent.generate(frame2.tbl, "<Shift-Right>")
+        })
+  tkadd(menu.sel, "cascade", label="Extend selection to", menu=menu.sel.extend)
+  
+  
+
+  
+  
+  
   
   help.edit <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Help", menu=help.edit, underline=0)
@@ -340,7 +453,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                          command=function(r, c) GetCellValue(r, c),
                          coltagcommand=function(...) TagColumn(...),
                          xscrollcommand=function(...) tkset(frame2.xsc,...),
-                         yscrollcommand=function(...) tkset(frame2.ysc,...))
+                         yscrollcommand=function(...) tkset(frame2.ysc,...))  
 
   frame2.xsc <- tkscrollbar(frame2, orient="horizontal",
                             command=function(...) tkxview(frame2.tbl,...))
@@ -386,7 +499,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tclServiceMode(TRUE)
   
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
-  tkbind(tt, "<Control-c>", CopyValues)
   tkbind(frame2.tbl, "<Return>", "break")
   
   tkbind(frame1.ent.1.2, "<KeyRelease>",
@@ -397,6 +509,9 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkbind(frame1.ent.1.2, "<Up>", function() Find("prev"))
   tkbind(frame1.ent.1.2, "<Down>", function() Find("next"))
   tkbind(frame1.ent.2.2, "<Return>", function() GotoRecord())
+  
+  
+  
 
   # GUI control
 
