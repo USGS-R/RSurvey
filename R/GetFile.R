@@ -8,7 +8,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
 
   # Determine file extension
   FileExt <- function(x) {
-    ext <- tolower(tail(unlist(strsplit(basename(x), "\\."))[-1], 1))
+    ext <- tail(unlist(strsplit(basename(x), "\\."))[-1], 1)
     if (length(ext) == 0L)
       ext <- ""
     ext
@@ -18,24 +18,25 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
   # Main program
 
   # Initialize file filters
-  all.filters <- list(bmp  = "Windows Bitmap Files",
-                      csv  = "Text Files",
-                      eps  = "Encapsulated Postscript Files",
-                      grd  = "Interpolated Grid Text Files",
-                      gz   = "Compressed Text Files",
-                      pdf  = "PDF Files",
-                      ply  = "Polygon Text Files",
-                      png  = "PNG Files",
-                      jpg  = "Jpeg Files",
-                      jpeg = "Jpeg Files",
-                      ps   = "Postscript Files",
-                      r    = "R Source Files",
-                      rda  = "RSurvey Project Files",
-                      shp  = "ESRI Shapefiles",
-                      tab  = "Text Files",
-                      tif  = "TIFF Files",
-                      tiff = "TIFF Files",
-                      txt  = "Text Files"
+  all.filters <- list(bmp   = "Windows Bitmap Files",
+                      csv   = "Text Files",
+                      eps   = "Encapsulated Postscript Files",
+                      grd   = "Interpolated Grid Text Files",
+                      gz    = "Compressed Text Files",
+                      pdf   = "PDF Files",
+                      ply   = "Polygon Text Files",
+                      png   = "PNG Files",
+                      jpg   = "Jpeg Files",
+                      jpeg  = "Jpeg Files",
+                      ps    = "Postscript Files",
+                      R     = "R Source Files",
+                      rda   = "R Data Sets",
+                      RData = "RSurvey Project Files",
+                      shp   = "ESRI Shapefiles",
+                      tab   = "Text Files",
+                      tif   = "TIFF Files",
+                      tiff  = "TIFF Files",
+                      txt   = "Text Files"
                   )
 
   # Process connection and return
@@ -60,7 +61,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
   # Build filters
   filters <- matrix(nrow=0, ncol=2)
   if (!is.null(exts)) {
-    for (ext in tolower(exts)) {
+    for (ext in exts) {
       typ <- all.filters[[ext]]
       if (is.null(typ))
         typ <- toupper(ext)

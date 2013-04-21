@@ -20,3 +20,4 @@
 *.xlsx binary
 *.ai binary
 *.rda binary
+*.RData binary

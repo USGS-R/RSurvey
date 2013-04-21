@@ -21,7 +21,7 @@ OpenRSurvey <- function() {
   # Open binary project file
 
   OpenProj <- function() {
-    f <- GetFile(cmd="Open", exts="rda", win.title="Open Project File",
+    f <- GetFile(cmd="Open", exts="RData", win.title="Open Project File",
                  parent=tt)
     if (is.null(f) || file.access(f, mode=0) == -1L)
       return()
@@ -51,8 +51,8 @@ OpenRSurvey <- function() {
         Data("proj.file", NULL)
     }
     if (is.null(Data("proj.file"))) {
-      f <- GetFile(cmd="Save As", exts="rda", win.title="Save Project As",
-                   defaultextension="rda", parent=tt)
+      f <- GetFile(cmd="Save As", exts="RData", win.title="Save Project As",
+                   defaultextension="RData", parent=tt)
       if (!is.null(f)) {
         Data("proj.file", f)
         Data("default.dir", attr(f, "directory"))

@@ -1,5 +1,7 @@
 Changes in Version 0.7-5
 
+  o  RSurvey project files are now specified using the .RData file extension.
+
   o  Functions ReadFile and WriteFile have been embedded into the ImportData and 
      ExportData functions, respectively.
   

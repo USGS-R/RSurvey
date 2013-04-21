@@ -17,7 +17,7 @@ All functions within \pkg{RSurvey} are accessible through this \acronym{GUI}.
 Files can be one of four types as indicated by their extension:
 tables (\file{.txt}, \file{.csv}, \file{.dat}, or \file{.shp}),
 grids (\file{.grd}), polygons (\file{.ply}), or binary project images
-(\file{.rda}).Tables (\file{.txt}, \file{.csv}, \file{.dat})
+(\file{.RData}).Tables (\file{.txt}, \file{.csv}, \file{.dat})
 can be compressed by \href{http://www.gzip.org/}{gzip}
 with additional extension \file{.gz}. Shapefiles (\file{.shp}) and interpolated
 grid files (\file{.grd}) are limited to data export.
