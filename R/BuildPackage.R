@@ -1,6 +1,6 @@
+# Writes a series of commands for creating an R package to a Windows batch file.
+
 BuildPackage <- function() {
-  # Writes a series of commands for creating an R package to
-  # a Windows batch file.
 
   # Software requirements for building R packages in Windows XP Pro:
   #   Download and install the Rtools installer (choose to update Search Path)

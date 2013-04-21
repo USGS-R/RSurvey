@@ -40,8 +40,8 @@ See \code{\link{read.polyfile}} within the \pkg{rgeos} package for details.
 }
 
 \value{
-Queries and sets the \code{polys} component of \code{\link{Data}}; 
-includes attributes of \code{polys} (\code{data.poly} and \code{crop.poly}), 
+Queries and sets the \code{polys} component of \code{\link{Data}};
+includes attributes of \code{polys} (\code{data.poly} and \code{crop.poly}),
 see \code{\link{SetPolygonLimits}}.
 }
 

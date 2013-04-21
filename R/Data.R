@@ -1,9 +1,10 @@
+# A function used to set or query data and parameters.
+
 Data <- local({
-  # A function used to set or query data and parameters.
 
   # Store data locally
   dat <- list()
-  
+
   # Set default values
   default <- list("nlevels"       = 20,
                   "width"         = 7,
@@ -70,7 +71,7 @@ Data <- local({
             option.new <- c(option.new, option[i])
         }
       }
-    
+
     # Determine numeric indices from character option element
     } else {
       idx <- match(option[1], names(dat))
@@ -90,7 +91,7 @@ Data <- local({
     # Determine number of options
     noption <- length(option)
     noption.new <- length(option.new)
-    
+
     # Return value
     if (missing(value)) {
       if (noption.new < noption) {

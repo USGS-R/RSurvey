@@ -1,7 +1,7 @@
+# A GUI for managing and manipulating polygons; based on the rgeos package.
+
 ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
                            parent=NULL) {
-  # A GUI for managing and manipulating polygons;
-  # based on the rgeos package.
 
   # Additional functions (subroutines)
 
@@ -67,7 +67,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
     yran <<- extendrange(yran, f=0.02)
 
     cmd <- tclvalue(rb.var)
-    
+
     polys.base <<- NULL
     if (cmd == "exc") {
       if (length(idxs) > 1L) {
@@ -77,7 +77,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
           union.polys <- try(union(union.polys, polys[[idx]]), silent=TRUE)
           inter.polys <- try(intersect(inter.polys, polys[[idx]]), silent=TRUE)
         }
-        if (!inherits(union.polys, "try-error") && 
+        if (!inherits(union.polys, "try-error") &&
             !inherits(inter.polys, "try-error"))
           polys.base <<- setdiff(union.polys, inter.polys)
       }
@@ -91,16 +91,16 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
       }
       build.polys <- polys[[idxs[1]]]
       for (idx in idxs[-1]) {
-        build.polys <- try(do.call(fun, list(build.polys, polys[[idx]])), 
+        build.polys <- try(do.call(fun, list(build.polys, polys[[idx]])),
                            silent=TRUE)
       }
       if (!inherits(build.polys, "try-error"))
         polys.base <<- build.polys
     }
-    
+
     if (!is.null(polys.base)) {
       base.pts <- get.pts(polys.base)
-      if (length(base.pts) == 0) 
+      if (length(base.pts) == 0)
         polys.base <<- NULL
     }
     if (!is.null(polys.base)) {
@@ -120,7 +120,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
       tclvalue(hole.var) <- sum(hole)
       tclvalue(vert.var) <- vert
     }
-    
+
     for (i in idxs)
       DrawPolygon(get.pts(polys[[i]]), tag=names(polys)[i], col.line=col.pal[i])
   }
@@ -381,13 +381,13 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
                substr(rainbow(100), 1, 7))
 
   polys.base <- NULL
-  
-  if (is.null(polys)) 
+
+  if (is.null(polys))
     polys <- list()
-  
+
   data.poly <- attr(polys, "data.poly")
   crop.poly <- attr(polys, "crop.poly")
-  
+
   if (is.null(data.poly))
     data.poly <- NA
   if (is.null(crop.poly))
@@ -468,7 +468,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   # Frame 0, ok and cancel buttons, and size grip
 
   frame0 <- ttkframe(tt, relief="flat")
-  
+
   frame0.but.1  <- ttkbutton(frame0, width=2, image=GetBitmapImage("top"),
                              command=function() ArrangePolygon("back"))
   frame0.but.2  <- ttkbutton(frame0, width=2, image=GetBitmapImage("up"),
@@ -479,7 +479,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
                              command=function() ArrangePolygon("front"))
   frame0.but.5  <- ttkbutton(frame0, width=2, image=GetBitmapImage("delete"),
                              command=ClearPolygon)
-  
+
   frame0.but.7  <- ttkbutton(frame0, width=12, text="OK",
                              command=function() SavePolygon("ok"))
   frame0.but.8  <- ttkbutton(frame0, width=12, text="Cancel",
@@ -493,7 +493,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   frame0.grp.11 <- ttksizegrip(frame0)
 
   tkgrid(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4, frame0.but.5,
-         "x", frame0.but.7, frame0.but.8, frame0.but.9, frame0.but.10, 
+         "x", frame0.but.7, frame0.but.8, frame0.but.9, frame0.but.10,
          frame0.grp.11)
 
   tkgrid.columnconfigure(frame0, 5, weight=1)

@@ -1,12 +1,13 @@
+# A GUI for specifying window geometry and universal plotting parameters.
+
 SetConfiguration <- function(parent=NULL) {
-  # A GUI for specifying window geometry and universal plotting parameters.
 
   # Additional functions (subroutines)
 
   UpdatePar <- function() {
     val <- as.numeric(tclvalue(width.var))
     Data("width", if (is.na(val)) NULL else val)
-    
+
     val <- as.integer(tclvalue(nlevels.var))
     Data("nlevels", if (is.na(val)) NULL else val)
 
@@ -128,7 +129,7 @@ SetConfiguration <- function(parent=NULL) {
                             command=function() {
                               print(help("SetConfiguration", package="RSurvey"))
                             })
-  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, 
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4,
          sticky="se", pady=10, padx=c(4, 0))
   tkgrid.columnconfigure(frame0, 0, weight=1)
   tkgrid.configure(frame0.but.4, padx=c(4, 10))
@@ -183,7 +184,7 @@ SetConfiguration <- function(parent=NULL) {
                    sticky="w")
   tkgrid.configure(frame1.ent.1.2, frame1.ent.2.2, frame1.ent.3.2,
                    frame1.ent.4.2, frame1.ent.5.2, frame1.ent.6.2,
-                   frame1.ent.7.2, frame1.ent.8.2, padx=c(2, 15), 
+                   frame1.ent.7.2, frame1.ent.8.2, padx=c(2, 15),
                    sticky="we")
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=6)

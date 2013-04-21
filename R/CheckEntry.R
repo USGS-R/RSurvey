@@ -1,5 +1,6 @@
+# Controls the character string content within a Tk entry widget.
+
 CheckEntry <- function (ent.typ, ent.str="") {
-  # Controls the character string content within a Tk entry widget.
 
   if (ent.str == "")
     return("")

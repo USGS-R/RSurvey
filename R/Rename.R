@@ -1,5 +1,6 @@
+# A GUI for renaming values in a vector of character strings.
+
 Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
-  # A GUI for renaming values in a vector of character strings.
 
   # Additional functions (subroutines)
 
@@ -65,8 +66,8 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
                             command=function() {
                               print(help("Rename", package="RSurvey"))
                             })
-  
-  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, 
+
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4,
          sticky="se", pady=c(15, 10), padx=c(4, 0))
   tkgrid.columnconfigure(frame0, 0, weight=1)
   tkgrid.configure(frame0.but.2, padx=c(40, 0))

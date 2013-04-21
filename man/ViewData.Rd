@@ -9,7 +9,7 @@ A \acronym{GUI} for viewing table formatted data.
 }
 
 \usage{
-ViewData(d, col.names = NULL, col.formats = NULL, read.only = FALSE, 
+ViewData(d, col.names = NULL, col.formats = NULL, read.only = FALSE,
          win.title = "View Data", parent = NULL)
 }
 
@@ -20,7 +20,7 @@ ViewData(d, col.names = NULL, col.formats = NULL, read.only = FALSE,
 \item{col.formats}{character; the conversion specification
   format (optional).}
 \item{read.only}{logical or integer; specifies whether the table is read only.
-  Alternatively, read only can be specified for individual columns using an 
+  Alternatively, read only can be specified for individual columns using an
   integer array of column indexes.}
 \item{win.title}{character; a string to display as the title of the dialog box.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}

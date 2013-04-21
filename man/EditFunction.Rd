@@ -9,7 +9,7 @@ A \acronym{GUI} for defining functions in the \R language.
 }
 
 \usage{
-EditFunction(cols, index = NULL, fun = NULL, value.length = NULL, 
+EditFunction(cols, index = NULL, fun = NULL, value.length = NULL,
              value.class = NULL, win.title = "Edit Function", parent = NULL)
 }
 
@@ -17,9 +17,9 @@ EditFunction(cols, index = NULL, fun = NULL, value.length = NULL,
 \item{cols}{list; see \code{\link{ManageVariables}}.}
 \item{index}{integer; an element index number in \code{cols}.}
 \item{fun}{character; existing function, only used if \code{index=NULL}.}
-\item{value.length}{integer; the required \code{\link{length}} for the 
+\item{value.length}{integer; the required \code{\link{length}} for the
   evaluated function.}
-\item{value.class}{character; the required \code{\link{class}} for the 
+\item{value.class}{character; the required \code{\link{class}} for the
   evaluated function.}
 \item{win.title}{character; a string to display as the title of the dialog box.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
@@ -31,7 +31,7 @@ pre-existing data frame or query building.
 }
 
 \value{
-Returns a list with two four components: 
+Returns a list with two four components:
 \code{fun}, the user defined function (when evaluated, this string must be parseable);
 \code{class}, the object class of the evaluated function;
 \code{summary}, a numeric summary; and

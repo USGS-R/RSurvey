@@ -1,5 +1,6 @@
+# A GUI for specify input parameters for the Autocrop function.
+
 AutocropRegion <- function(d, parent=NULL, ...) {
-  # A GUI for specify input parameters for the Autocrop function.
 
   # Additional functions (subroutines)
 
@@ -66,7 +67,7 @@ AutocropRegion <- function(d, parent=NULL, ...) {
 
 
   # Main program
-  
+
   is.pkg <- "tripack" %in% .packages(all.available=TRUE) &&
             require(tripack)
   if (!is.pkg)
@@ -116,7 +117,7 @@ AutocropRegion <- function(d, parent=NULL, ...) {
   # Frame 0 contains buttons
 
   frame0 <- ttkframe(tt, relief="flat")
-  
+
   frame0.but.2 <- ttkbutton(frame0, width=10, text="Build",
                             command=DrawPolygon)
   frame0.but.3 <- ttkbutton(frame0, width=10, text="Refresh",
@@ -130,9 +131,9 @@ AutocropRegion <- function(d, parent=NULL, ...) {
                               print(help("Autocrop", package="RSurvey"))
                             })
 
-  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, frame0.but.5, 
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, frame0.but.5,
          frame0.but.6, pady=c(15, 10), padx=c(4, 0))
-  
+
   tkgrid.columnconfigure(frame0, 0, weight=1)
   tkgrid.configure(frame0.but.2, padx=c(10, 0))
   tkgrid.configure(frame0.but.6, padx=c(4, 10))

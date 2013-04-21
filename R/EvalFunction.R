@@ -1,8 +1,8 @@
+# Evaluate an RSurvey expression.
 EvalFunction <- function(txt, cols) {
-  # Evaluate R expression
 
   d <- list()
-  
+
   ids <- vapply(cols, function(i) i$id, "")
 
   for (i in seq(along=ids)) {

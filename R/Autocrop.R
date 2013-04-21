@@ -1,5 +1,6 @@
+# Approximate the shape of an area defined by a set of points.
+
 Autocrop <- function(mesh, max.len, max.itr=10000) {
-  # Approximate the shape of an area defined by a set of points.
 
   # Additional functions (subroutines)
 
@@ -51,7 +52,7 @@ Autocrop <- function(mesh, max.len, max.itr=10000) {
 
 
   # Main program
-  
+
   require(tripack)
 
   elem.build <- matrix(c(2, 3, 3, 1, 1, 2), nrow=3, ncol=2, byrow=TRUE,

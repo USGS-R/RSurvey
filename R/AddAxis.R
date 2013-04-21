@@ -1,6 +1,6 @@
-AddAxis <- function(side, lim, ticks.inside=FALSE,
-                    minor.ticks=FALSE, ...) {
-  # Adds an axis to the current plot.
+# Adds an axis to the current plot.
+
+AddAxis <- function(side, lim, ticks.inside=FALSE, minor.ticks=FALSE, ...) {
 
   # Additional functions (subroutines)
 

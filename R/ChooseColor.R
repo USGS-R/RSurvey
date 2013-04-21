@@ -1,5 +1,6 @@
-ChooseColor <- function(col, parent=NULL) {
 # A GUI for selecting a graphic color.
+
+ChooseColor <- function(col, parent=NULL) {
 
   # Additional functions (subroutines)
 

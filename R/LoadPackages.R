@@ -1,7 +1,8 @@
+# This function loads R packages required by RSurvey. If a required
+# package is unavailable on the local computer an attempt is made to
+# acquire the package from CRAN using an existing network connection.
+
 LoadPackages <- function(repo="http://cran.r-project.org") {
-  # This function loads R packages required by RSurvey. If a required
-  # package is unavailable on the local computer an attempt is made to
-  # acquire the package from CRAN using an existing network connection.
 
   require.pkgs <- c("tcltk", "sp", "rgl", "MBA", "colorspace", "rgeos")
   suggest.pkgs <- c("rgdal", "dichromat", "tripack")

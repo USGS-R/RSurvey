@@ -1,9 +1,10 @@
+# A three-dimensional surface plot of the processed survey data is drawn.
+
 Plot3d <- function(x=NULL, y=NULL, z=NULL, px=NULL, py=NULL, pz=NULL,
                    xlim=NULL, ylim=NULL, zlim=NULL,
                    vasp=NA, hasp=NA, width=7, ppi=96, cex.pts=1,
                    nlevels=20, color.palette=terrain.colors,
                    mouse.mode=c("trackball", "zAxis", "zoom"), bg="white") {
-  # A three-dimensional surface plot of the processed survey data is drawn.
 
   # Account for missing arguments
 

@@ -1,6 +1,7 @@
-FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
-                           fmt=NULL, parent=NULL) {
-  # Build calendar date and time string formats.
+# Build calendar date and time string formats.
+
+FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
+                           parent=NULL) {
 
   # Additional functions (subroutines)
 
@@ -44,7 +45,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
     else
       img <- img.plus
     tclServiceMode(FALSE)
-    tkconfigure(frame0.but.1, image=img, 
+    tkconfigure(frame0.but.1, image=img,
                 command=function() ToggleTreeView(!open.nodes))
     tcl(frame1.tre, "item", id.dt, "-open", open.nodes)
     tcl(frame1.tre, "item", id.tm, "-open", open.nodes)
@@ -120,7 +121,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   # Frame 0, load and cancel buttons, and size grip
 
   frame0 <- ttkframe(tt, relief="flat")
-  
+
   frame0.but.1 <- ttkbutton(frame0, width=2, image=GetBitmapImage("plus"),
                             command=function() ToggleTreeView(TRUE))
   frame0.but.3 <- ttkbutton(frame0, width=12, text="OK", command=SaveFormat)
@@ -132,13 +133,13 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
                             })
   frame0.grp.6 <- ttksizegrip(frame0)
 
-  tkgrid(frame0.but.1, "x", frame0.but.3, frame0.but.4, frame0.but.5, 
+  tkgrid(frame0.but.1, "x", frame0.but.3, frame0.but.4, frame0.but.5,
          frame0.grp.6)
 
   tkgrid.columnconfigure(frame0, 1, weight=1)
 
   tkgrid.configure(frame0.but.1, padx=c(10, 0), pady=4, sticky="n")
-  tkgrid.configure(frame0.but.3, frame0.but.4, frame0.but.5, 
+  tkgrid.configure(frame0.but.3, frame0.but.4, frame0.but.5,
                    padx=c(0, 4), pady=c(15, 10))
   tkgrid.configure(frame0.but.5, columnspan=2, padx=c(0, 10))
   tkgrid.configure(frame0.grp.6, sticky="se")
@@ -254,7 +255,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"),
   # Frame 2
 
   frame2 <- ttkframe(pw, relief="flat")
-  
+
   frame2a <- ttklabelframe(frame2, relief="flat", borderwidth=5, padding=5,
                            text="Conversion specification format")
 

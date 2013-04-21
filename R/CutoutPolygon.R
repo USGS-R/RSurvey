@@ -1,5 +1,6 @@
+# This function excludes gridded data lying outside of a given polygon.
+
 CutoutPolygon <- function(dat, ply=NULL) {
-  # This function excludes gridded data lying outside of a given polygon.
 
   if (inherits(dat, "matrix")) {
     new.dat <- list(x=unique(dat[, 1]), y=unique(dat[, 2]), z=NULL)

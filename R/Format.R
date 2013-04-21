@@ -1,5 +1,6 @@
+# Build C-style string formats.
+
 Format <- function(sample=pi, fmt=NULL, parent=NULL) {
-  # Build C-style string formats.
 
   # Additional functions (subroutines)
 
@@ -24,7 +25,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
       tclvalue(tt.done.var) <- 1
     }
   }
-  
+
   # Translate format string, return TRUE if custom format
   TranslateFormat <- function() {
     if (nchar(fmt) < 2L)
@@ -297,7 +298,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
                             command=function() {
                               print(help("Format", package="RSurvey"))
                             })
-  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, 
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4,
          sticky="se", pady=10, padx=c(4, 0))
   tkgrid.columnconfigure(frame0, 0, weight=1)
   tkgrid.configure(frame0.but.4, padx=c(4, 10))
@@ -330,7 +331,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
                                    command=BuildFormat)
 
   if (is.numeric(sample) && !is.integer(sample)) {
-    tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.lab.1.3, frame1.ent.1.4, 
+    tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.lab.1.3, frame1.ent.1.4,
            pady=c(15, 10))
     tkgrid(frame1.chk.2.1, columnspan=4, sticky="w", padx=c(10, 0))
     tkgrid.configure(frame1.lab.1.3, padx=c(10, 2))
@@ -356,7 +357,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
                           text="Conversion specification format")
 
   frame2.ent.1 <- ttkentry(frame2, textvariable=fmt.var, width=30)
-  
+
   frame2a <- ttkframe(frame2, relief="flat", borderwidth=0, padding=0)
 
   frame2a.but.01 <- ttkbutton(frame2a, width=2, text="%",
@@ -384,8 +385,8 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
                              command=CopyFormat)
   frame2a.but.12 <- ttkbutton(frame2a, width=2, image=GetBitmapImage("paste"),
                              command=PasteFormat)
-  
-  frame2a.chk.13 <- ttkcheckbutton(frame2a, text="Custom\u2026", 
+
+  frame2a.chk.13 <- ttkcheckbutton(frame2a, text="Custom\u2026",
                                    variable=custom.var, command=ToggleState)
 
   if (is.numeric(sample)) {
@@ -405,7 +406,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     if (is.logical(sample))
       tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
              frame2a.but.05, frame2a.but.06, frame2a.but.09, frame2a.but.10,
-             frame2a.but.11, frame2a.but.12, frame2a.chk.13, 
+             frame2a.but.11, frame2a.but.12, frame2a.chk.13,
              pady=c(2, 0), padx=c(0, 2))
     else
       tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
@@ -417,7 +418,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   tkgrid(frame2a, "x", pady=c(2, 0), sticky="w")
   tkgrid.configure(frame2a.but.10, padx=c(0, 10))
   tkgrid.configure(frame2a.chk.13, padx=c(10, 0))
-  
+
   tkgrid.configure(frame2.ent.1, sticky="we", columnspan=2, padx=c(0, 2))
 
   tkgrid.columnconfigure(frame2, 1, weight=1)

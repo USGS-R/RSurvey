@@ -22,7 +22,7 @@ ProcessData(d, type = "p", coerce.rows = NULL, ply = NULL,
   output type. The following values are possible: "p" for points
   and "g" for interpolated grid.}
 \item{coerce.rows}{logical; a vector indicating rows in \code{d} to include
-  in the processed data set. \code{\link{NA}}} values are considered 
+  in the processed data set. \code{\link{NA}}} values are considered
   \code{FALSE}.
 \item{ply}{gpc.poly; if \code{type = "p"} a polygon that defines either the
   data limits, else if \code{type = "g"} a crop region for gridded data.}
@@ -35,7 +35,7 @@ ProcessData(d, type = "p", coerce.rows = NULL, ply = NULL,
 \details{
 Any row in the \code{d} data table with \code{\link{NA}} values for
 either \code{x} or \code{y} is removed. Rows are also removed
-where \code{coerce.rows} is \code{FALSE}. 
+where \code{coerce.rows} is \code{FALSE}.
 The spatial domain may be limited using a polygon defined in the xy-plane.
 Interpolated grid values corresponding to grid nodes located outside
 the polygon boundary are set to \code{\link{NA}}.

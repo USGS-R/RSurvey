@@ -23,8 +23,7 @@ Queries and sets the following components in \code{\link{Data}}:
   giving the initial size of the spline space in the hierarchical
   construction along the \code{x}- and \code{y}-axis, and the
   number of levels in the hierarchical construction;
-  its default is 11.
-}
+  its default is 11.}
 }
 
 \note{

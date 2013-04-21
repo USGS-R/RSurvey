@@ -1,7 +1,8 @@
+# A GUI for selecting files to open or save.
+
 GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
                     initialfile=NULL, defaultextension=NULL, win.title=cmd,
                     multi=FALSE, parent=NULL) {
-  # A GUI for selecting files to open or save.
 
   # Additional functions (subroutines)
 
@@ -15,23 +16,23 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
 
 
   # Main program
-  
+
   # Initialize file filters
   all.filters <- list(bmp  = "Windows Bitmap Files",
                       csv  = "Text Files",
-                      dat  = "Text Files",
                       eps  = "Encapsulated Postscript Files",
                       grd  = "Interpolated Grid Text Files",
                       gz   = "Compressed Text Files",
                       pdf  = "PDF Files",
                       ply  = "Polygon Text Files",
-                      png  = "Png Files",
+                      png  = "PNG Files",
                       jpg  = "Jpeg Files",
                       jpeg = "Jpeg Files",
                       ps   = "Postscript Files",
                       r    = "R Source Files",
                       rda  = "RSurvey Project Files",
                       shp  = "ESRI Shapefiles",
+                      tab  = "Text Files",
                       tif  = "TIFF Files",
                       tiff = "TIFF Files",
                       txt  = "Text Files"
@@ -51,11 +52,11 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
     Data("default.dir", attr(val, "directory"))
     return(val)
   }
-  
+
   # Establish initial directory
   if (is.null(initialdir))
     initialdir <- Data("default.dir")
-  
+
   # Build filters
   filters <- matrix(nrow=0, ncol=2)
   if (!is.null(exts)) {
@@ -90,7 +91,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
   res <- tclvalue(do.call(tcl, args))
   if (!nzchar(res))
     return()
-  
+
   # Account for mutiple files
   if (multi) {
     ans <- character()
@@ -104,12 +105,12 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
   } else {
     ans <- res
   }
-  
+
   # Package results
   n <- length(ans)
   if (n > 1)
     f <- list()
-  
+
   for (i in seq(along=ans)) {
     val <- ans[i]
     ext <- FileExt(val)
@@ -122,7 +123,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
     else
       f <- val
   }
-  
+
   # Set default directory
   if (!is.null(f))
     Data("default.dir", attr(val, "directory"))

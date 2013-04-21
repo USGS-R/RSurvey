@@ -9,7 +9,7 @@ A \acronym{GUI} for specifying polygon limits.
 }
 
 \usage{
-SetPolygonLimits(poly.names = NULL, data.poly = NULL, crop.poly = NULL, 
+SetPolygonLimits(poly.names = NULL, data.poly = NULL, crop.poly = NULL,
                  parent = NULL)
 }
 

@@ -16,8 +16,8 @@ A graphical user interface (\acronym{GUI}) is provided.
 
 \note{
 The \pkg{RSurvey} \acronym{GUI} requires \R operate as an \acronym{SDI}
-application, using multiple top-level windows for the console, graphics, 
-and pager. 
+application, using multiple top-level windows for the console, graphics,
+and pager.
 
 The set of standards used for coding \pkg{RSurvey} is documented in
 \href{http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html}{Google's R Style Guide}.

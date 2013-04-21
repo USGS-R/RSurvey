@@ -1,6 +1,7 @@
-SetPolygonLimits <- function(poly.names=NULL, data.poly=NULL, crop.poly=NULL, 
+# A GUI for specifying polygon limits.
+
+SetPolygonLimits <- function(poly.names=NULL, data.poly=NULL, crop.poly=NULL,
                              parent=NULL) {
-  # A GUI for specifying polygon limits.
 
   # Additional functions (subroutines)
 
@@ -64,7 +65,7 @@ SetPolygonLimits <- function(poly.names=NULL, data.poly=NULL, crop.poly=NULL,
                             command=function() {
                               print(help("SetPolygonLimits", package="RSurvey"))
                             })
-  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, 
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4,
          sticky="se", pady=10, padx=c(4, 0))
   tkgrid.columnconfigure(frame0, 0, weight=1)
   tkgrid.configure(frame0.but.4, padx=c(4, 10))

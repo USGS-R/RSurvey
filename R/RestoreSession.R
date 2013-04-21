@@ -1,5 +1,6 @@
+# This function restores local objects within the current R session.
+
 RestoreSession <- function(path, save.objs, fun.call) {
-  # This function restores local objects within the current R session.
 
   if (missing(path)) {
     if (exists("Data")) {

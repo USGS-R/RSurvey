@@ -1,3 +1,6 @@
+# Draws a scatter plot with arrows or contour plot with arrows. A key showing
+# how the colors map to state variable values is shown to the right of the plot.
+
 Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
                    xlim=NULL, ylim=NULL, zlim=NULL, xlab=NULL,
                    ylab=NULL, zlab=NULL, asp=NA, csi=NA, width=7,
@@ -6,9 +9,6 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
                    vxby=NULL, vyby=NULL, axis.side=1:2,
                    minor.ticks=FALSE, ticks.inside=FALSE,
                    add.contour.lines=FALSE, rm.pnt.line=FALSE) {
-  # Draws a scatter plot with arrows or contour plot with arrows. A key showing
-  # how the colors map to state variable values is shown to the right of the
-  # plot.
 
   # Account for missing arguments
 

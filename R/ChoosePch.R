@@ -1,5 +1,6 @@
+# A GUI for choosing point symbols.
+
 ChoosePch <- function(pch=NA, parent=NULL) {
-# ChoosePch(pch=21)
 
   # Additional functions (subroutines)
 

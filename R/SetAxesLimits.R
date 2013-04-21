@@ -1,5 +1,6 @@
+# A GUI for specifying data and axis limits.
+
 SetAxesLimits <- function(lim=NULL, parent=NULL) {
-  # A GUI for specifying data and axis limits.
 
   # Additional functions (subroutines)
 
@@ -116,7 +117,7 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
                             command=function() {
                               print(help("SetAxesLimits", package="RSurvey"))
                             })
-  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, 
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4,
          sticky="se", pady=10, padx=c(4, 0))
   tkgrid.columnconfigure(frame0, 0, weight=1)
   tkgrid.configure(frame0.but.4, padx=c(4, 10))

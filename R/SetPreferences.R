@@ -1,5 +1,6 @@
+# A GUI for specifying the interpolation parameters.
+
 SetPreferences <- function(parent=NULL) {
-  # A GUI for specifying the interpolation parameters.
 
   # Additional functions (subroutines)
 
@@ -82,12 +83,12 @@ SetPreferences <- function(parent=NULL) {
                             command=UpdatePar)
   frame0.but.3 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() tclvalue(tt.done.var) <- 1)
-  
+
   frame0.but.4 <- ttkbutton(frame0, width=12, text="Help",
                             command=function() {
                               print(help("SetPreferences", package="RSurvey"))
                             })
-  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, 
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4,
          pady=c(15, 10), padx=c(4, 0))
   tkgrid.columnconfigure(frame0, 0, weight=1)
   tkgrid.configure(frame0.but.4, padx=c(4, 10))
@@ -135,7 +136,7 @@ SetPreferences <- function(parent=NULL) {
   tkgrid(frame2.lab.2.1, frame2.ent.2.2, pady=c(0, 4))
   tkgrid(frame2.lab.3.1, frame2.ent.3.2)
 
-  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, frame2.lab.3.1, sticky="w", 
+  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, frame2.lab.3.1, sticky="w",
                    padx=c(0, 2))
   tkgrid.configure(frame2.ent.1.2, frame2.ent.2.2, frame2.ent.3.2, sticky="we")
 

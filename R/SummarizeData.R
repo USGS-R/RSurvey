@@ -1,5 +1,6 @@
+# Summarizes the descriptive statistics of an array object.
+
 SummarizeData <- function(obj, fmt=NULL) {
-  # Summarizes the descriptive statistics of an array object.
 
   # Additional functions (subroutines)
 
@@ -18,19 +19,19 @@ SummarizeData <- function(obj, fmt=NULL) {
     val <- gsub("(^ +)|( +$)", "", val)
     return(val)
   }
-  
+
   # Build text string
   BuildString <- function(s) {
     s.names <- names(s)
     s.names <- s.names[!s.names %in% c("Class", "String")]
-    descriptions <- paste(vapply(s.names, function(i) dic[[i]]$id, ""), 
+    descriptions <- paste(vapply(s.names, function(i) dic[[i]]$id, ""),
                           "  ", sep="")
     fmt <-  paste("%-", max(nchar(descriptions)), "s", sep="")
     descriptions <- sprintf(fmt, descriptions)
     values <- vapply(s.names, FormatValue, "")
     fmt <- paste("%", max(nchar(values)), "s", sep="")
     values <- sprintf(fmt, values)
-    string <- paste(paste(paste(descriptions, values, sep=""), collapse="\n"), 
+    string <- paste(paste(paste(descriptions, values, sep=""), collapse="\n"),
                     "\n", sep="")
     return(string)
   }
@@ -105,11 +106,11 @@ SummarizeData <- function(obj, fmt=NULL) {
       } else {
         s$"Time Per." <- format(s$"Max." - s$"Min.", units="auto")
       }
-      
+
     } else if (inherits(obj, "logical")) {
       s$"FALSE" <- length(which(!obj))
       s$"TRUE" <- length(which(obj))
-      
+
     } else if (inherits(obj, c("character", "factor"))) {
       if (inherits(obj, "character"))
         obj <- as.factor(obj)

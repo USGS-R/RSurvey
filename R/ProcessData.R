@@ -1,7 +1,8 @@
+# This function performs data processing on the state variables.
+
 ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
                         grid.res=list(x=NA, y=NA),
                         grid.mba=list(n=NA, m=NA, h=11)) {
-  # This function performs data processing on the state variables.
 
   # Process point data
 
