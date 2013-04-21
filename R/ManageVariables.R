@@ -189,7 +189,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     }
     if (!is.na(cols[[idx]]$index)) {
       msg <- paste("Variable \"", cols[[idx]]$id,
-                   "\" corresponds with imported data.\n\n",
+                   "\" corresponds with raw data.\n\n",
                    "Are you sure you want to remove it?", sep="")
       ans <- tkmessageBox(icon="question", message=msg, title="Question",
                           type="okcancel", parent=tt)
