@@ -21,7 +21,7 @@ This \acronym{GUI} is a wrapper for the \code{\link{read.table}} function.
 Data connections are defined as the path to the file to be opened, a
 complete \acronym{URL} (e.g. http://, ftp:// or file://), or windows clipboard.
 Files are limited to text format (\file{.txt} \file{.csv}, or
-\file{.dat}); however, they can be compressed by
+\file{.tab}); however, they can be compressed by
 \emph{\href{http://www.gzip.org/}{gzip}} with additional extension \file{.gz}.
 
 Conversion specification formats are the character representation of object

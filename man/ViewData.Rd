@@ -49,7 +49,7 @@ V4 <- sample(V1 * pi, n)
 d <- data.frame(V1, V2, V3, V4)
 col.names <- c("Integers", "Letters", "DateTime", "Numeric")
 col.formats <- c("\%d", "\%s", "\%m/\%d/\%Y \%H:\%M", "")
-ViewData(d, col.names, col.formats, read.only=1L)
+ViewData(d, col.names, col.formats, read.only = 1L)
 
 rownames(d) <- paste(sample(LETTERS, n, replace = TRUE), 1:n, sep="")
 ViewData(d)
