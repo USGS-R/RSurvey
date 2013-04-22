@@ -630,6 +630,9 @@ ImportData <- function(parent=NULL) {
   frame3.lab.2.6 <- ttklabel(frame3, text="Max lines")
   frame3.lab.3.1 <- ttklabel(frame3, text="Comment")
   frame3.lab.3.4 <- ttklabel(frame3, text="Encoding")
+  txt <- paste("Comments read before the data records will be saved;",
+               "all other comments will be discarded.")
+  frame3.lab.4.1 <- ttklabel(frame3, text=txt, foreground="#A40802")
 
   frame3.box.1.2 <- ttkcombobox(frame3, width=17, state="readonly", value=sep1)
   frame3.box.1.5 <- ttkcombobox(frame3, width=17, state="readonly", value=dec1)
@@ -654,6 +657,7 @@ ImportData <- function(parent=NULL) {
          pady=c(4, 0))
   tkgrid(frame3.lab.3.1, frame3.box.3.2, frame3.ent.3.3, frame3.lab.3.4,
          frame3.box.3.5, "x", "x", "x", pady=c(4, 0))
+  tkgrid(frame3.lab.4.1, "x", "x", "x", "x", "x", "x", "x", padx=0, pady=c(5, 0)) 
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.1.4, frame3.lab.1.6,
                    frame3.lab.2.1, frame3.lab.2.4, frame3.lab.2.6,
@@ -662,6 +666,7 @@ ImportData <- function(parent=NULL) {
   tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, frame3.lab.3.1, padx=c(0, 2))
   tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, frame3.ent.3.3, padx=c(2, 0))
   tkgrid.configure(frame3.but.2.8, padx=c(2, 0))
+  tkgrid.configure(frame3.lab.4.1, columnspan=8, sticky="w")
 
   tkpack(frame3, anchor="w", fill="x", padx=10, pady=c(0, 15))
 
