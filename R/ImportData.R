@@ -630,8 +630,8 @@ ImportData <- function(parent=NULL) {
   frame3.lab.2.6 <- ttklabel(frame3, text="Max lines")
   frame3.lab.3.1 <- ttklabel(frame3, text="Comment")
   frame3.lab.3.4 <- ttklabel(frame3, text="Encoding")
-  txt <- paste("Comments read before the data records will be saved;",
-               "all other comments will be discarded.")
+  txt <- paste("Comments read before the data records and header lines will be saved;",
+               "all other comments will not be preserved.")
   frame3.lab.4.1 <- ttklabel(frame3, text=txt, foreground="#A40802")
 
   frame3.box.1.2 <- ttkcombobox(frame3, width=17, state="readonly", value=sep1)
