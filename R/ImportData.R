@@ -532,7 +532,7 @@ ImportData <- function(parent=NULL) {
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
 
-  tktitle(tt) <- "Import Data"
+  tktitle(tt) <- "Import Data From Text File, URL, Or Clipboard"
 
   # Frame 0 contains load and cancel buttons, and size grip
 

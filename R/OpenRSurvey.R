@@ -99,8 +99,9 @@ OpenRSurvey <- function() {
 
   # Import survey data
 
-  CallImportData <- function() {
-    ImportData(tt)
+  CallImportData <- function(type) {
+    if (type == "textfile")
+      ImportData(tt)
     SetVars()
   }
 
@@ -232,11 +233,11 @@ OpenRSurvey <- function() {
       d <- Data("data.grd")
       if (is.null(d))
         return()
-      f <- GetFile(cmd="Save As", exts="grd", file=NULL,
-                   win.title="Save Data As", defaultextension="grd")
+      f <- GetFile(cmd="Save As", exts="rda", file=NULL,
+                   win.title="Save Grid Data As", defaultextension="rda")
       if (is.null(f))
         return()
-      dput(d, file=f)
+      save(d, file=f)
 
     } else {
       CallProcessData()
@@ -808,9 +809,11 @@ OpenRSurvey <- function() {
 
   menu.file.import <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.import, "command", label="Text file\u2026",
-        command=CallImportData)
-# tkadd(menu.file.import, "command", label="R data set\u2026",
-#       command=function() print("notyet"))
+        command=function() CallImportData("textfile"))
+  tkadd(menu.file.import, "command", label="R data file\u2026",
+        command=function() print("notyet"))
+  tkadd(menu.file.import, "command", label="R package\u2026",
+        command=function() print("notyet"))
   tkadd(menu.file, "cascade", label="Import point data from",
         menu=menu.file.import)
 
@@ -1048,7 +1051,7 @@ OpenRSurvey <- function() {
                             command=SaveProj)
   frame0.but.2  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=import.var,
-                            command=CallImportData)
+                            command=function() CallImportData("textfile"))
   frame0.but.3  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=data.var,
                             command=CallManageVariables)

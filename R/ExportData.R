@@ -299,7 +299,11 @@ ExportData <- function(file.type="text", parent=NULL) {
     tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
-  tktitle(tt) <- "Export Data"
+  
+  if (file.type == "text")
+    tktitle(tt) <- "Export Data As Text File"
+  else 
+    tktitle(tt) <- "Export Data As Shapefile"
 
   # Frame 0, export and cancel buttons
 
