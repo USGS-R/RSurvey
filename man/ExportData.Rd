@@ -29,4 +29,4 @@ ExportData(file.type = "text", parent = NULL)
 \donttest{ExportData(file.type = "text")}
 }
 
-\keyword{misc}
+\keyword{IO}

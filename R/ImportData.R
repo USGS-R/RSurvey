@@ -631,7 +631,7 @@ ImportData <- function(parent=NULL) {
   frame3.lab.3.1 <- ttklabel(frame3, text="Comment")
   frame3.lab.3.4 <- ttklabel(frame3, text="Encoding")
   txt <- paste("Comments located above data records and header lines will be",
-               "preserved; all other comments are ignored.")
+               "preserved; all other comments will be ignored.")
   frame3.lab.4.1 <- ttklabel(frame3, text=txt, foreground="#A40802")
 
   frame3.box.1.2 <- ttkcombobox(frame3, width=17, state="readonly", value=sep1)
