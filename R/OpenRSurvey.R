@@ -854,7 +854,7 @@ OpenRSurvey <- function() {
         command=BuildQuery)
   tkadd(menu.edit, "command", label="Clear query",
         command=ClearQuery)
-
+  tkadd(menu.edit, "separator")
 
   tkadd(menu.edit, "command", label="Set sort order\u2026",
         command=function() {
