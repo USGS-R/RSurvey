@@ -100,8 +100,21 @@ OpenRSurvey <- function() {
   # Import survey data
 
   CallImportData <- function(type) {
-    if (type == "textfile")
+    if (type == "text file") {
       ImportData(tt)
+    } else {
+      if (type == "R package")
+        ds <- ImportDataPkg(tt)
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     SetVars()
   }
 
@@ -809,11 +822,11 @@ OpenRSurvey <- function() {
 
   menu.file.import <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.import, "command", label="Text file\u2026",
-        command=function() CallImportData("textfile"))
+        command=function() CallImportData("text file"))
   tkadd(menu.file.import, "command", label="R data file\u2026",
         command=function() print("notyet"))
   tkadd(menu.file.import, "command", label="R package\u2026",
-        command=function() print("notyet"))
+        command=function() CallImportData("R package"))
   tkadd(menu.file, "cascade", label="Import point data from",
         menu=menu.file.import)
 
@@ -1051,7 +1064,7 @@ OpenRSurvey <- function() {
                             command=SaveProj)
   frame0.but.2  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=import.var,
-                            command=function() CallImportData("textfile"))
+                            command=function() CallImportData("text file"))
   frame0.but.3  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=data.var,
                             command=CallManageVariables)

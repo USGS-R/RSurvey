@@ -78,47 +78,47 @@ ImportDataPkg <- function(parent=NULL) {
   # GUI control for select package
   SelectPackage <- function() {
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
+    tclServiceMode(FALSE)
     pkg.name <- pkg.names[idx]
-    is.pkg.loaded <- IsPackageLoaded(pkg.name)
-    if (!is.pkg.loaded) {
+    if (IsPackageLoaded(pkg.name)) {
+      tkconfigure(frame1.but.4.2, state="disabled")
+      pkg.datasets <- ds.list[[pkg.name]]
+      all.pkg.items <- pkg.datasets[, "Item"]
+      idx <- as.integer(tcl(frame1.box.3.4, "current"))
+      if (idx > 0) 
+        valid.classes <- valid.classes[idx]
+      fun <- function(i) inherits(try(eval(parse(text=i)), silent=TRUE), 
+                                  valid.classes)
+      is.valid <- vapply(all.pkg.items, fun, TRUE)
+      pkg.items <- all.pkg.items[is.valid]
+      if (length(pkg.items) > 0)
+        pkg.items <- sort(pkg.items)
+      tkselection.clear(frame1.lst.2.4, 0, "end")
+      tclvalue(dataset.var) <- ""
+      for (i in seq(along=pkg.items))
+        tcl("lappend", dataset.var, pkg.items[i])
+      if (length(pkg.items) > 0) {
+        tkselection.set(frame1.lst.2.4, 0)
+        tkconfigure(frame0.but.1.2, state="normal")
+        tkconfigure(frame1.but.4.4, state="normal")
+      } else {
+        tkconfigure(frame0.but.1.2, state="disabled")
+        tkconfigure(frame1.but.4.4, state="disabled")
+      }
+    } else {
       tkconfigure(frame0.but.1.2, state="disabled")
       tkconfigure(frame1.but.4.2, state="normal")
       tkconfigure(frame1.but.4.4, state="disabled")
       tkselection.clear(frame1.lst.2.4, 0, "end")
       tclvalue(dataset.var) <- ""
-      return()
     }
-    tkconfigure(frame1.but.4.2, state="disabled")
-    pkg.datasets <- ds.list[[pkg.name]]
-    all.pkg.items <- pkg.datasets[, "Item"]
-    idx <- as.integer(tcl(frame1.box.3.4, "current"))
-    if (idx > 0) 
-      valid.classes <- valid.classes[idx]
-    is.valid <- vapply(all.pkg.items, 
-                       function(i) {
-                         inherits(try(eval(parse(text=i)), silent=TRUE), 
-                                  valid.classes)
-                       }, TRUE)
-    pkg.items <- all.pkg.items[is.valid]
-    if (length(pkg.items) > 0)
-      pkg.items <- sort(pkg.items)
-    tkselection.clear(frame1.lst.2.4, 0, "end")
-    tclvalue(dataset.var) <- ""
-    for (i in seq(along=pkg.items))
-      tcl("lappend", dataset.var, pkg.items[i])
-    if (length(pkg.items) > 0) {
-      tkselection.set(frame1.lst.2.4, 0)
-      tkconfigure(frame0.but.1.2, state="normal")
-      tkconfigure(frame1.but.4.4, state="normal")
-    } else {
-      tkconfigure(frame0.but.1.2, state="disabled")
-      tkconfigure(frame1.but.4.4, state="disabled")
-    }
+    tclServiceMode(TRUE)
   }
   
   # GUI control for select package type
   SelectPackageType <- function() {
     idx <- as.integer(tcl(frame1.box.3.1, "current"))
+    tclServiceMode(FALSE)
     if (idx == 0L) {
       pkg.names <<- all.pkgs
     } else {
@@ -133,6 +133,7 @@ ImportDataPkg <- function(parent=NULL) {
     for (i in seq(along=pkg.names))
       tcl("lappend", package.var, pkg.names[i])
     tkselection.set(frame1.lst.2.1, 0)
+    tclServiceMode(TRUE)
     SelectPackage()
   }
 
@@ -181,7 +182,7 @@ ImportDataPkg <- function(parent=NULL) {
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
 
-  tktitle(tt) <- "Import Data From R Package"
+  tktitle(tt) <- "Import Data From Package"
 
   # Frame 0 contains load, cancel, and help buttons, and size grip
 
@@ -193,8 +194,7 @@ ImportDataPkg <- function(parent=NULL) {
                               command=function() tclvalue(tt.done.var) <- 1)
   frame0.but.1.4 <- ttkbutton(frame0, width=12, text="Help",
                               command=function() {
-                                print(help("ImportPackageData", 
-                                           package="RSurvey"))
+                                print(help("ImportDataPkg", package="RSurvey"))
                               })
   frame0.grp.1.5 <- ttksizegrip(frame0)
 
@@ -243,11 +243,11 @@ ImportDataPkg <- function(parent=NULL) {
   frame1.box.3.1 <- ttkcombobox(frame1, state="readonly", value=pkg.type.vals)
   frame1.box.3.4 <- ttkcombobox(frame1, state="readonly", value=ds.class.vals)
   
-  frame1.but.4.1 <- ttkbutton(frame1, width=12, text="Description",
+  frame1.but.4.1 <- ttkbutton(frame1, width=12, text="Describe",
                               command=DescribePackage)
   frame1.but.4.2 <- ttkbutton(frame1, width=12, text="Load",
                               command=LoadPackage)
-  frame1.but.4.4 <- ttkbutton(frame1, width=12, text="Description",
+  frame1.but.4.4 <- ttkbutton(frame1, width=12, text="Describe",
                               command=DescribeDataset)
   
   tkgrid(frame1.lab.1.1, "x", "x", frame1.lab.1.4, "x", pady=c(10, 0))
