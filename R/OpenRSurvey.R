@@ -111,7 +111,7 @@ OpenRSurvey <- function() {
           return()
         ds <- local({ds.name <- load(file=f)
                      return(eval(parse(text=ds.name[1])))})
-        valid.classes <- c("matrix", "data.frame")
+        valid.classes <- c("data.frame", "matrix")
         if (!inherits(ds, valid.classes)) {
           msg <- "R data set is not a valid object class."
           tkmessageBox(icon="error", message=msg, title="Error", type="ok", 
@@ -121,7 +121,7 @@ OpenRSurvey <- function() {
         ds <- as.data.frame(ds)
       
       } else if (type == "R package data") {
-        ds <- ImportPackageData(tt)
+        ds <- ImportPackageData(parent=tt)
       }
       
       if (is.null(ds) || nrow(ds) == 0)

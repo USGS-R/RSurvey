@@ -1,6 +1,6 @@
 # A GUI for importing data sets from R packages.
 
-ImportPackageData <- function(parent=NULL) {
+ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
 
   # Additional functions (subroutines)
   
@@ -9,8 +9,11 @@ ImportPackageData <- function(parent=NULL) {
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
     idx <- as.integer(tkcurselection(frame1.lst.2.4))
-    pkg.item <- as.character(tkget(frame1.lst.2.4, idx))
-    rtn <<- eval(parse(text=paste(pkg.name, pkg.item, sep="::")))
+    pkg.item <- paste(as.character(tkget(frame1.lst.2.4, idx)), collapse=" ")
+    e <- environment(LoadDataset)
+    txt <- paste("data(", pkg.item, ", package=\"", pkg.name, "\", envir=e)", sep="")
+    ds.name <- eval(parse(text=txt))
+    rtn <<- eval(parse(text=paste("(", ds.name, ")")), envir=e)
     tclvalue(tt.done.var) <- 1
   }
   
@@ -66,7 +69,7 @@ ImportPackageData <- function(parent=NULL) {
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
     idx <- as.integer(tkcurselection(frame1.lst.2.4))
-    pkg.item <- as.character(tkget(frame1.lst.2.4, idx))
+    pkg.item <- paste(as.character(tkget(frame1.lst.2.4, idx)), collapse=" ")
     ans <- try(help(pkg.item, package=(pkg.name)), silent=TRUE)
     if (inherits(ans, "try-error"))
       tkmessageBox(icon="error", message="Problem with dataset documentation.", 
@@ -76,21 +79,33 @@ ImportPackageData <- function(parent=NULL) {
   }
   
   # GUI control for select package
+  
   SelectPackage <- function() {
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
     tclServiceMode(FALSE)
     pkg.name <- pkg.names[idx]
     if (IsPackageLoaded(pkg.name)) {
-      tkconfigure(frame1.but.4.2, state="disabled")
+      tkconfigure(frame1.but.4.2, state="disabled", default="disabled")
       pkg.datasets <- ds.list[[pkg.name]]
       all.pkg.items <- pkg.datasets[, "Item"]
       idx <- as.integer(tcl(frame1.box.3.4, "current"))
+      
+      if (is.null(ds.class[[pkg.name]])) {
+        Fun <- function(i) {
+          e <- environment(Fun)
+          txt <- paste("data(", i, ", package=\"", pkg.name, "\", envir=e)", sep="")
+          suppressWarnings(eval(parse(text=txt)))
+          txt <- paste("(", i, ")")
+          return(class(try(eval(parse(text=txt), envir=e), silent=TRUE))[1])
+        }
+        ds.class[[pkg.name]] <<- as.vector(vapply(all.pkg.items, Fun, ""))
+      }
+      
       if (idx > 0) 
-        valid.classes <- valid.classes[idx]
-      fun <- function(i) inherits(try(eval(parse(text=i)), silent=TRUE), 
-                                  valid.classes)
-      is.valid <- vapply(all.pkg.items, fun, TRUE)
-      pkg.items <- all.pkg.items[is.valid]
+        pkg.items <- all.pkg.items[ds.class[[pkg.name]] %in% classes[idx]]
+      else
+        pkg.items <- all.pkg.items[!ds.class[[pkg.name]] %in% "try-error"]
+      
       if (length(pkg.items) > 0)
         pkg.items <- sort(pkg.items)
       tkselection.clear(frame1.lst.2.4, 0, "end")
@@ -99,20 +114,38 @@ ImportPackageData <- function(parent=NULL) {
         tcl("lappend", dataset.var, pkg.items[i])
       if (length(pkg.items) > 0) {
         tkselection.set(frame1.lst.2.4, 0)
-        tkconfigure(frame0.but.1.2, state="normal")
         tkconfigure(frame1.but.4.4, state="normal")
       } else {
-        tkconfigure(frame0.but.1.2, state="disabled")
         tkconfigure(frame1.but.4.4, state="disabled")
       }
     } else {
       tkconfigure(frame0.but.1.2, state="disabled")
-      tkconfigure(frame1.but.4.2, state="normal")
+      tkconfigure(frame1.but.4.2, state="normal", default="active")
       tkconfigure(frame1.but.4.4, state="disabled")
       tkselection.clear(frame1.lst.2.4, 0, "end")
       tclvalue(dataset.var) <- ""
     }
     tclServiceMode(TRUE)
+    SelectDataset()
+  }
+  
+  # GUI control for select data set
+  SelectDataset <- function() {
+    idx <- as.integer(tkcurselection(frame1.lst.2.4))
+    if (length(idx) == 0) {
+      tkconfigure(frame0.but.1.2, state="disabled", default="disabled")
+      return()
+    }
+    pkg.item <- paste(as.character(tkget(frame1.lst.2.4, idx)), collapse=" ")
+    pkg.name <- pkg.names[as.integer(tkcurselection(frame1.lst.2.1)) + 1L]
+    
+    idx <- which(ds.list[[pkg.name]][, "Item"] %in% pkg.item)
+    is.valid <- ds.class[[pkg.name]][idx] %in% classes
+    
+    if (is.null(classes) | is.valid)
+      tkconfigure(frame0.but.1.2, state="normal", default="active")
+    else
+      tkconfigure(frame0.but.1.2, state="disabled", default="disabled")
   }
   
   # GUI control for select package type
@@ -152,11 +185,10 @@ ImportPackageData <- function(parent=NULL) {
                     function(i) all.ds[all.ds[, "Package"] == i, 
                                        c("Item", "Title"), drop=FALSE],
                     simplify=FALSE)
+  ds.class <- list()
   
-  pkg.type.vals <- c("All packages with data sets", "Loaded packages", 
-                     "Unloaded packages")
-  valid.classes <- c("matrix", "data.frame")
-  ds.class.vals <- c("All loadable data sets", "Matrices", "Data frames")
+  pkg.type.vals <- c("Show all packages", "loaded", "unloaded")
+  ds.class.vals <- c("Show all classes", classes)
   
   pkg.names <- NULL
   rtn <- NULL
@@ -276,7 +308,7 @@ ImportPackageData <- function(parent=NULL) {
   tkpack(frame1, fill="both", expand=TRUE, anchor="nw", padx=10)
   
   tkselection.set(frame1.lst.2.1, 0)
-  tcl(frame1.box.3.1, "current", 1)
+  tcl(frame1.box.3.1, "current", 0)
   tcl(frame1.box.3.4, "current", 0)
 
   # Bind events
@@ -284,6 +316,7 @@ ImportPackageData <- function(parent=NULL) {
   tclServiceMode(TRUE)
   
   tkbind(frame1.lst.2.1, "<<ListboxSelect>>", SelectPackage)
+  tkbind(frame1.lst.2.4, "<<ListboxSelect>>", SelectDataset)
   
   tkbind(frame1.box.3.1, "<<ComboboxSelected>>", SelectPackageType)
   tkbind(frame1.box.3.4, "<<ComboboxSelected>>", SelectPackage)
