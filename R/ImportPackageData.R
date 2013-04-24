@@ -200,10 +200,6 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
                     simplify=FALSE)
   
   ds.class <- list()
-  loaded.pkgs <- all.pkgs[IsPackageLoaded(all.pkgs)]
-  for (i in seq(along=loaded.pkgs))
-    ds.class[[i]] <- vapply(ds.list[[loaded.pkgs[i]]][, "Item"], 
-                            function(j) GetClass(loaded.pkgs[i], j), "")
   
   pkg.type.vals <- c("Show all packages", "loaded", "unloaded")
   ds.class.vals <- c("Show all classes", classes)
