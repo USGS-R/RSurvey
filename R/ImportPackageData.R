@@ -158,8 +158,7 @@ ImportPackageData <- function(parent=NULL) {
   valid.classes <- c("matrix", "data.frame")
   ds.class.vals <- c("All loadable data sets", "Matrices", "Data frames")
   
-  pkg.names <- all.pkgs
-  
+  pkg.names <- NULL
   rtn <- NULL
 
   # Assign variables linked to Tk widgets
@@ -277,7 +276,7 @@ ImportPackageData <- function(parent=NULL) {
   tkpack(frame1, fill="both", expand=TRUE, anchor="nw", padx=10)
   
   tkselection.set(frame1.lst.2.1, 0)
-  tcl(frame1.box.3.1, "current", 0)
+  tcl(frame1.box.3.1, "current", 1)
   tcl(frame1.box.3.4, "current", 0)
 
   # Bind events
