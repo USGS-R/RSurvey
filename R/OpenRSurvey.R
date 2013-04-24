@@ -103,18 +103,39 @@ OpenRSurvey <- function() {
     if (type == "text file") {
       ImportData(tt)
     } else {
-      if (type == "R package")
-        ds <- ImportDataPkg(tt)
+      if (type == "R data file") {
+        f <- GetFile(cmd="Open", exts="rda", win.title="Open R Data File", 
+                     parent=tt)
+        tkfocus(tt)
+        if (is.null(f))
+          return()
+        ds <- local({ds.name <- load(file=f)
+                     return(eval(parse(text=ds.name)))})
+        valid.classes <- c("matrix", "data.frame")
+        if (!inherits(ds, valid.classes)) {
+          msg <- "R data set is not a valid object class."
+          tkmessageBox(icon="error", message=msg, title="Error", type="ok", 
+                       parent=tt)
+          return()
+        }
+        ds <- as.data.frame(ds)
+      
+      } else if (type == "R package data") {
+        ds <- ImportPackageData(tt)
+      }
+      
+      if (is.null(ds) || nrow(ds) == 0)
+        return()
+      
+      
+      
+      
+      
+      
+      
+      
+      
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
     SetVars()
   }
 
@@ -824,9 +845,9 @@ OpenRSurvey <- function() {
   tkadd(menu.file.import, "command", label="Text file\u2026",
         command=function() CallImportData("text file"))
   tkadd(menu.file.import, "command", label="R data file\u2026",
-        command=function() print("notyet"))
+        command=function() CallImportData("R data file"))
   tkadd(menu.file.import, "command", label="R package\u2026",
-        command=function() CallImportData("R package"))
+        command=function() CallImportData("R package data"))
   tkadd(menu.file, "cascade", label="Import point data from",
         menu=menu.file.import)
 

@@ -1,6 +1,6 @@
 # A GUI for importing data sets from R packages.
 
-ImportDataPkg <- function(parent=NULL) {
+ImportPackageData <- function(parent=NULL) {
 
   # Additional functions (subroutines)
   
@@ -194,7 +194,8 @@ ImportDataPkg <- function(parent=NULL) {
                               command=function() tclvalue(tt.done.var) <- 1)
   frame0.but.1.4 <- ttkbutton(frame0, width=12, text="Help",
                               command=function() {
-                                print(help("ImportDataPkg", package="RSurvey"))
+                                print(help("ImportPackageData", 
+                                           package="RSurvey"))
                               })
   frame0.grp.1.5 <- ttksizegrip(frame0)
 
@@ -205,7 +206,7 @@ ImportDataPkg <- function(parent=NULL) {
   tkgrid.configure(frame0.but.1.4, padx=c(0, 10), columnspan=2)
   
   tkgrid.configure(frame0.but.1.2, frame0.but.1.3, frame0.but.1.4, 
-                   pady=c(20, 10))
+                   pady=c(15, 10))
   
   tkgrid.configure(frame0.grp.1.5, sticky="se")
   tkraise(frame0.but.1.4, frame0.grp.1.5)
@@ -243,11 +244,11 @@ ImportDataPkg <- function(parent=NULL) {
   frame1.box.3.1 <- ttkcombobox(frame1, state="readonly", value=pkg.type.vals)
   frame1.box.3.4 <- ttkcombobox(frame1, state="readonly", value=ds.class.vals)
   
-  frame1.but.4.1 <- ttkbutton(frame1, width=12, text="Describe",
+  frame1.but.4.1 <- ttkbutton(frame1, width=10, text="Describe",
                               command=DescribePackage)
-  frame1.but.4.2 <- ttkbutton(frame1, width=12, text="Load",
+  frame1.but.4.2 <- ttkbutton(frame1, width=10, text="Load",
                               command=LoadPackage)
-  frame1.but.4.4 <- ttkbutton(frame1, width=12, text="Describe",
+  frame1.but.4.4 <- ttkbutton(frame1, width=10, text="Describe",
                               command=DescribeDataset)
   
   tkgrid(frame1.lab.1.1, "x", "x", frame1.lab.1.4, "x", pady=c(10, 0))
