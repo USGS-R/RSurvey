@@ -1,6 +1,6 @@
-\name{ImportDataPkg}
+\name{ImportPackageData}
 
-\alias{ImportDataPkg}
+\alias{ImportPackageData}
 
 \title{Import Data from Package}
 
@@ -9,7 +9,7 @@ A \acronym{GUI} for loading selected data sets from R packages.
 }
 
 \usage{
-ImportDataPkg(parent = NULL)
+ImportPackageData(parent = NULL)
 }
 
 \arguments{
@@ -27,7 +27,7 @@ The data set object.
 }
 
 \examples{
-\donttest{ds <- ImportDataPkg()}
+\donttest{ds <- ImportPackageData()}
 }
 
 \keyword{IO}

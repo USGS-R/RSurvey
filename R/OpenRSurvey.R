@@ -110,7 +110,7 @@ OpenRSurvey <- function() {
         if (is.null(f))
           return()
         ds <- local({ds.name <- load(file=f)
-                     return(eval(parse(text=ds.name)))})
+                     return(eval(parse(text=ds.name[1])))})
         valid.classes <- c("matrix", "data.frame")
         if (!inherits(ds, valid.classes)) {
           msg <- "R data set is not a valid object class."
