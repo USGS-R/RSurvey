@@ -11,7 +11,8 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
     idx <- as.integer(tkcurselection(frame1.lst.2.4))
     pkg.item <- paste(as.character(tkget(frame1.lst.2.4, idx)), collapse=" ")
     e <- environment(LoadDataset)
-    txt <- paste("data(", pkg.item, ", package=\"", pkg.name, "\", envir=e)", sep="")
+    txt <- paste("data(", pkg.item, ", package=\"", pkg.name, "\", envir=e)",
+                 sep="")
     ds.name <- eval(parse(text=txt))
     rtn <<- eval(parse(text=paste("(", ds.name, ")")), envir=e)
     tclvalue(tt.done.var) <- 1
@@ -28,11 +29,13 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
     lib <- paste("package", pkg.name, sep=":")
-    tkconfigure(tt, cursor="watch")
-    if (!lib %in% search())
+    if (!lib %in% search()) {
+      tkconfigure(tt, cursor="watch")
       suppressPackageStartupMessages(require(pkg.name, quietly=TRUE,
                                              warn.conflicts=FALSE,
                                              character.only=TRUE))
+      tkconfigure(tt, cursor="arrow")
+    }
     if (lib %in% search()) {
       idx <- as.integer(tcl(frame1.box.3.1, "current"))
       if (idx == 2L) {
@@ -48,7 +51,6 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
       tkmessageBox(icon="error", message="Unable to load package.",
                    title="Error", type="ok", parent=tt)
     }
-    tkconfigure(tt, cursor="arrow")
     tkfocus(frame1.lst.2.1)
   }
 
@@ -97,6 +99,7 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
   # GUI control for select package
   SelectPackage <- function() {
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
+    tkconfigure(tt, cursor="watch")
     tclServiceMode(FALSE)
     pkg.name <- pkg.names[idx]
     if (IsPackageLoaded(pkg.name)) {
@@ -106,11 +109,32 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
       if (is.null(ds.class[[pkg.name]]))
         ds.class[[pkg.name]] <<- vapply(all.pkg.items,
                                         function(i) GetClass(pkg.name, i), "")
-      idx <- as.integer(tcl(frame1.box.3.4, "current"))
-      if (idx > 0)
-        pkg.items <- all.pkg.items[ds.class[[pkg.name]] %in% classes[idx]]
+
+      ds.classes <- vapply(ds.class[[pkg.name]],
+                           function(i) paste(i, collapse=" "), "")
+      ds.in.error <- ds.classes %in% "try-error"
+      ds.class.vals <- sort(unique(ds.classes[!ds.in.error]))
+
+      if (as.logical(as.integer(tclvalue(fit.for.loading.var))))
+        ds.class.vals <- ds.class.vals[ds.class.vals %in% classes]
+
+      if (length(ds.class.vals) > 0)
+        ds.class.vals <- c("Show all classes", ds.class.vals)
       else
-        pkg.items <- all.pkg.items[!ds.class[[pkg.name]] %in% "try-error"]
+        ds.class.vals <- "{Show all classes}"
+
+      old.class <- paste(as.character(tkget(frame1.box.3.4)), collapse=" ")
+      tkconfigure(frame1.box.3.4, value=ds.class.vals, state="readonly")
+
+      idx <- which(ds.class.vals %in% old.class)
+      idx <- if (length(idx) > 0) idx - 1L else 0L
+      tcl(frame1.box.3.4, "current", idx)
+
+      if (idx > 0)
+        pkg.items <- all.pkg.items[ds.classes %in% ds.class.vals[idx + 1L]]
+      else
+        pkg.items <- all.pkg.items[ds.classes %in% ds.class.vals]
+
       if (length(pkg.items) > 0)
         pkg.items <- sort(pkg.items)
       tkselection.clear(frame1.lst.2.4, 0, "end")
@@ -124,6 +148,10 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
         tkconfigure(frame1.but.4.4, state="disabled")
       }
     } else {
+      tkconfigure(frame1.box.3.4, value="{}")
+      tcl(frame1.box.3.4, "current", 0)
+      tkconfigure(frame1.box.3.4, state="disabled")
+
       tkconfigure(frame0.but.1.2, state="disabled")
       tkconfigure(frame1.but.4.2, state="normal", default="active")
       tkconfigure(frame1.but.4.4, state="disabled")
@@ -131,6 +159,7 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
       tclvalue(dataset.var) <- ""
     }
     tclServiceMode(TRUE)
+    tkconfigure(tt, cursor="arrow")
     SelectDataset()
   }
 
@@ -202,7 +231,7 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
   ds.class <- list()
 
   pkg.type.vals <- c("Show all packages", "loaded", "unloaded")
-  ds.class.vals <- c("Show all classes", classes)
+  ds.class.vals <- "{}"
 
   pkg.names <- NULL
   rtn <- NULL
@@ -211,6 +240,8 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
 
   package.var <- tclVar()
   dataset.var <- tclVar()
+
+  fit.for.loading.var <- tclVar(1)
 
   tt.done.var <- tclVar(0)
 
@@ -281,10 +312,10 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
                               relief="flat", borderwidth=5, width=30, height=8,
                               exportselection=FALSE, listvariable=dataset.var,
                               highlightthickness=0)
-  frame1.ysc.2.5 <- ttkscrollbar(frame1, orient="vertical")
+  frame1.ysc.2.6 <- ttkscrollbar(frame1, orient="vertical")
   tkconfigure(frame1.lst.2.4, background="white",
-              yscrollcommand=paste(.Tk.ID(frame1.ysc.2.5), "set"))
-  tkconfigure(frame1.ysc.2.5, command=paste(.Tk.ID(frame1.lst.2.4), "yview"))
+              yscrollcommand=paste(.Tk.ID(frame1.ysc.2.6), "set"))
+  tkconfigure(frame1.ysc.2.6, command=paste(.Tk.ID(frame1.lst.2.4), "yview"))
 
   frame1.box.3.1 <- ttkcombobox(frame1, state="readonly", value=pkg.type.vals)
   frame1.box.3.4 <- ttkcombobox(frame1, state="readonly", value=ds.class.vals)
@@ -296,34 +327,48 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
   frame1.but.4.4 <- ttkbutton(frame1, width=10, text="Describe",
                               command=DescribeDataset)
 
-  tkgrid(frame1.lab.1.1, "x", "x", frame1.lab.1.4, "x", pady=c(10, 0))
-  tkgrid(frame1.lst.2.1, "x", frame1.ysc.2.3, frame1.lst.2.4, frame1.ysc.2.5)
-  tkgrid(frame1.box.3.1, "x", "x", frame1.box.3.4, "x", pady=c(4, 4))
-  tkgrid(frame1.but.4.1, frame1.but.4.2, "x", frame1.but.4.4, "x")
+  if (is.null(classes))
+    frame1.chk.4.5 <- "x"
+  else
+    frame1.chk.4.5 <- ttkcheckbutton(frame1, text="Fit for loading",
+                                     variable=fit.for.loading.var,
+                                     command=function() {
+                                               SelectPackage()
+                                               tkfocus(frame1.lst.2.1)
+                                             })
+
+  tkgrid(frame1.lab.1.1, "x", "x", frame1.lab.1.4, "x", "x", pady=c(10, 0))
+  tkgrid(frame1.lst.2.1, "x", frame1.ysc.2.3, frame1.lst.2.4, "x",
+         frame1.ysc.2.6)
+  tkgrid(frame1.box.3.1, "x", "x", frame1.box.3.4, "x", "x", pady=c(4, 4))
+  tkgrid(frame1.but.4.1, frame1.but.4.2, "x", frame1.but.4.4, frame1.chk.4.5,
+         "x")
 
   tkgrid.configure(frame1.lab.1.1, columnspan=3)
-  tkgrid.configure(frame1.lab.1.4, columnspan=2)
+  tkgrid.configure(frame1.lab.1.4, columnspan=3)
   tkgrid.configure(frame1.lst.2.1, columnspan=2)
+  tkgrid.configure(frame1.lst.2.4, columnspan=2)
   tkgrid.configure(frame1.box.3.1, columnspan=2)
+  tkgrid.configure(frame1.box.3.4, columnspan=2)
 
   tkgrid.configure(frame1.lab.1.1, frame1.lab.1.4, sticky="w")
   tkgrid.configure(frame1.lst.2.1, frame1.lst.2.4, sticky="nswe")
-  tkgrid.configure(frame1.ysc.2.3, frame1.ysc.2.5, sticky="ns")
+  tkgrid.configure(frame1.ysc.2.3, frame1.ysc.2.6, sticky="ns")
   tkgrid.configure(frame1.box.3.1, frame1.box.3.4, sticky="we")
-  tkgrid.configure(frame1.but.4.2, frame1.but.4.4, sticky="w")
+  tkgrid.configure(frame1.but.4.2, frame1.but.4.4, frame1.chk.4.5, sticky="w")
 
   tkgrid.configure(frame1.ysc.2.3, padx=c(0, 25))
   tkgrid.configure(frame1.but.4.1, padx=c(0, 4))
+  tkgrid.configure(frame1.but.4.4, padx=c(0, 8))
 
   tkgrid.columnconfigure(frame1, 1, minsize=85, weight=1)
-  tkgrid.columnconfigure(frame1, 3, minsize=85, weight=1)
+  tkgrid.columnconfigure(frame1, 4, minsize=85, weight=1)
   tkgrid.rowconfigure(frame1, 1, weight=1)
 
   tkpack(frame1, fill="both", expand=TRUE, anchor="nw", padx=10)
 
   tkselection.set(frame1.lst.2.1, 0)
   tcl(frame1.box.3.1, "current", 0)
-  tcl(frame1.box.3.4, "current", 0)
 
   # Bind events
 
