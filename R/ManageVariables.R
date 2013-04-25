@@ -592,7 +592,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
   frame2.ent.2.2 <- ttkentry(frame2, textvariable=fmt.var)
   frame2.ent.3.2 <- ttkentry(frame2, textvariable=class.var)
 
-  fnt <- tkfont.create(family="Courier New", size=9)
+  fnt <- tkfont.create(family="Courier New", size=10)
   frame2.txt.4.2 <- tktext(frame2, padx=2, pady=2, width=45, height=6,
                            undo=1, wrap="none", foreground="black",
                            background="#ebebe4", borderwidth=1, font=fnt)
@@ -632,7 +632,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
 
   frame3.txt <- tktext(frame3, bg="white", padx=2, pady=2, width=25, height=8,
                 undo=1, wrap="none", foreground="black", relief="flat",
-                yscrollcommand=function(...) tkset(frame3.ysc,...))
+                yscrollcommand=function(...) tkset(frame3.ysc, ...))
 
   tkconfigure(frame3.ysc, command=paste(.Tk.ID(frame3.txt), "yview"))
 

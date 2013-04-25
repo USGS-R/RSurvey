@@ -1,0 +1,217 @@
+# A GUI for viewing text.
+
+ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
+
+  # Additional functions (subroutines)
+
+  # Close GUI and return edited text
+  SaveText <- function() {
+    rtn <<- as.character(tclvalue(tkget(frame1.txt.1.1, "1.0", "end-1c")))
+    tclvalue(tt.done.var) <- 1
+  }
+
+  # Save current text to file
+  SaveAs <- function() {
+    txt <- as.character(tclvalue(tkget(frame1.txt.1.1, "1.0", "end-1c")))
+    print(txt)
+  }
+
+  # Edit menu functions
+  EditUndo <- function() {
+    tkfocus(frame1.txt.1.1)
+    tcl(frame1.txt.1.1, "edit", "undo")
+  }
+  EditRedo <- function() {
+    tkfocus(frame1.txt.1.1)
+    tcl(frame1.txt.1.1, "edit", "redo")
+  }
+  EditCut <- function() {
+    tkfocus(frame1.txt.1.1)
+    tcl("tk_textCut", frame1.txt.1.1)
+  }
+  EditCopy <- function() {
+    tkfocus(frame1.txt.1.1)
+    tcl("tk_textCopy", frame1.txt.1.1)
+  }
+  EditPaste <- function() {
+    tkfocus(frame1.txt.1.1)
+    tcl("tk_textPaste", frame1.txt.1.1)
+  }
+  EditSelectAll <- function() {
+    tkfocus(frame1.txt.1.1)
+    tktag.add(frame1.txt.1.1, "sel", "1.0", "end")
+  }
+  ClearConsole <- function() {
+    tcl(frame1.txt.1.1, "delete", "1.0", "end")
+    tkfocus(frame1.txt.1.1)
+  }
+
+
+  # Main program
+
+  # Assign missing values
+  if (missing(txt))
+    txt <- ""
+  if (!is.character(txt) | length(txt) > 1)
+    stop("problem with input text argument")
+
+  # Assigin global variables
+  rtn <- txt
+
+  # Assign variables linked to Tk widgets
+  tt.done.var <- tclVar(0)
+
+  # Open GUI
+
+  tclServiceMode(FALSE)
+
+  tt <- tktoplevel()
+
+  if (!is.null(parent)) {
+    tkwm.transient(tt, parent)
+    geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
+    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
+                            "+", as.integer(geo[3]) + 25, sep=""))
+  }
+
+  tktitle(tt) <- win.title
+
+  # Start top menu
+  top.menu <- tkmenu(tt, tearoff=0)
+
+  # Edit menu
+
+  menu.file <- tkmenu(tt, tearoff=0, relief="flat")
+  menu.edit <- tkmenu(tt, tearoff=0, relief="flat")
+
+  tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
+  tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
+
+
+  if (read.only) {
+    tkadd(menu.file, "command", label="Save as\u2026", accelerator="Ctrl+s",
+          command=SaveAs)
+    tkadd(menu.edit, "command", label="Select all", accelerator="Ctrl+a",
+          command=EditSelectAll)
+    tkadd(menu.edit, "separator")
+    tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c",
+          command=EditCopy)
+  } else {
+    tkadd(menu.file, "command", label="Save as\u2026", accelerator="Ctrl+s",
+          command=SaveAs)
+
+    tkadd(menu.edit, "command", label="Undo", accelerator="Ctrl+z",
+          command=EditUndo)
+    tkadd(menu.edit, "command", label="Redo", accelerator="Ctrl+y",
+          command=EditRedo)
+    tkadd(menu.edit, "separator")
+    tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+x",
+          command=EditCut)
+    tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c",
+          command=EditCopy)
+    tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+v",
+          command=EditPaste)
+    tkadd(menu.edit, "separator")
+    tkadd(menu.edit, "command", label="Select all", accelerator="Ctrl+a",
+          command=EditSelectAll)
+    tkadd(menu.edit, "command", label="Clear console", accelerator="Ctrl+l",
+          command=ClearConsole)
+  }
+
+  # Finish top menu
+  tkconfigure(tt, menu=top.menu)
+
+  # Frame 0, ok and cancel buttons
+
+  frame0 <- tkframe(tt, relief="flat", padx=0, pady=0)
+
+  if (read.only) {
+    frame0.but.1.2 <- "x"
+    frame0.but.1.3 <- ttkbutton(frame0, width=12, text="Close",
+                            command=function() tkdestroy(tt))
+  } else {
+    frame0.but.1.2 <- ttkbutton(frame0, width=12, text="OK",
+                                command=SaveText)
+    frame0.but.1.3 <- ttkbutton(frame0, width=12, text="Cancel",
+                                command=function() tclvalue(tt.done.var) <- 1)
+  }
+  frame0.grp.1.4 <- ttksizegrip(frame0)
+
+  tkgrid("x", frame0.but.1.2, frame0.but.1.3, frame0.grp.1.4)
+
+  tkgrid.configure(frame0.but.1.3, columnspan=2, padx=c(4, 10), pady=10)
+  tkgrid.configure(frame0.grp.1.4, sticky="se")
+
+  tkraise(frame0.but.1.3, frame0.grp.1.4)
+
+  tkgrid.columnconfigure(frame0, 0, weight=1)
+
+  tkpack(frame0, fill="x", side="bottom", anchor="e")
+
+  # Frame 1, text window
+
+  frame1 <- tkframe(tt, relief="flat", padx=0, pady=0)
+
+  fnt <- tkfont.create(family="Courier New", size=10)
+  frame1.txt.1.1 <- tktext(frame1, bg="white", font=fnt, padx=2, pady=2,
+                           width=85, height=20, undo=1, wrap="none",
+                           foreground="black", relief="flat",
+                           yscrollcommand=function(...)
+                                            tkset(frame1.ysc.1.2, ...),
+                           xscrollcommand=function(...)
+                                            tkset(frame1.xsc.2.1, ...))
+
+  frame1.ysc.1.2 <- ttkscrollbar(frame1, orient="vertical")
+  frame1.xsc.2.1 <- ttkscrollbar(frame1, orient="horizontal")
+  tkconfigure(frame1.ysc.1.2, command=paste(.Tk.ID(frame1.txt.1.1), "yview"))
+  tkconfigure(frame1.xsc.2.1, command=paste(.Tk.ID(frame1.txt.1.1), "xview"))
+
+  tkgrid(frame1.txt.1.1, frame1.ysc.1.2)
+  tkgrid(frame1.xsc.2.1, "x")
+
+  tkgrid.configure(frame1.txt.1.1, padx=0, pady=0, sticky="nswe")
+  tkgrid.configure(frame1.ysc.1.2, sticky="ns")
+  tkgrid.configure(frame1.xsc.2.1, sticky="we")
+
+  tkgrid.columnconfigure(frame1, 0, weight=1)
+  tkgrid.rowconfigure(frame1, 0, weight=1)
+
+  tkpack(frame1, fill="both", expand="yes")
+
+  tkinsert(frame1.txt.1.1, "end", txt)
+  if (read.only)
+    tkconfigure(frame1.txt.1.1, state="disabled")
+
+  # Bind events
+
+  tclServiceMode(TRUE)
+
+  if (!read.only) {
+    tkbind("Text", "<Control-s>", SaveAs)
+    tkbind("Text", "<Control-z>", EditUndo)
+    tkbind("Text", "<Control-y>", EditRedo)
+    tkbind("Text", "<Control-v>", EditPaste)
+    tkbind("Text", "<Control-l>", ClearConsole)
+  }
+  tkbind("Text", "<Control-a>", EditSelectAll)
+
+  tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
+  # GUI control
+
+  tkfocus(frame1.txt.1.1)
+  if (read.only) {
+    invisible()
+  } else {
+    tkgrab(tt)
+    tkfocus(frame1.txt.1.1)
+    tkwait.variable(tt.done.var)
+
+    tclServiceMode(FALSE)
+    tkgrab.release(tt)
+    tkdestroy(tt)
+    tclServiceMode(TRUE)
+
+    invisible(rtn)
+  }
+}

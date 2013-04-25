@@ -39,4 +39,5 @@ export(AddAxis,
        SetPolygonLimits,
        SetPreferences,
        SummarizeData,
-       ViewData)
+       ViewData,
+       ViewText)

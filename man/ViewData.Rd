@@ -2,7 +2,7 @@
 
 \alias{ViewData}
 
-\title{View Data}
+\title{View Data Table}
 
 \description{
 A \acronym{GUI} for viewing table formatted data.

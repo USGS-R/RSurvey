@@ -156,8 +156,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     tktag.add(frame2.txt.2.1, "sel", "1.0", "end")
   }
 
-  # Clear all
-  ClearAll <- function() {
+  # Clear console
+  ClearConsole <- function() {
     tcl(frame2.txt.2.1, "delete", "1.0", "end")
     tkfocus(frame2.txt.2.1)
   }
@@ -314,8 +314,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Select all", accelerator="Ctrl+a",
         command=EditSelectAll)
-  tkadd(menu.edit, "command", label="Clear all",
-        command=ClearAll)
+  tkadd(menu.edit, "command", label="Clear console", accelerator="Ctrl+l",
+        command=ClearConsole)
 
   menu.class <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Class", menu=menu.class, underline=0)
@@ -406,7 +406,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=CallFormatDateTime)
 
   # Finalize top menu
-
   tkconfigure(tt, menu=top.menu)
 
   # Frame 0, ok and cancel buttons, and size grip
@@ -510,11 +509,11 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     txt <- paste(txt, " for \"", edit.fun.id, "\"", sep="")
   frame2.lab.1.1 <- ttklabel(frame2, text=txt, foreground="#414042")
 
-  fnt <- tkfont.create(family="Courier New", size=9)
+  fnt <- tkfont.create(family="Courier New", size=10)
   frame2.txt.2.1 <- tktext(frame2, bg="white", font=fnt, padx=2, pady=2,
                        width=50, height=12, undo=1, wrap="none",
                        foreground="black", relief="flat",
-                       yscrollcommand=function(...) tkset(frame2.ysc.2.2,...))
+                       yscrollcommand=function(...) tkset(frame2.ysc.2.2, ...))
 
   frame2.ysc.2.2 <- ttkscrollbar(frame2, orient="vertical")
   tkconfigure(frame2.ysc.2.2, command=paste(.Tk.ID(frame2.txt.2.1), "yview"))
@@ -596,6 +595,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkbind("Text", "<Control-y>", EditRedo)
   tkbind("Text", "<Control-v>", EditPaste)
   tkbind("Text", "<Control-a>", EditSelectAll)
+  tkbind("Text", "<Control-l>", ClearConsole)
 
   # GUI control
 

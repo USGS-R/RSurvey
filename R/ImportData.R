@@ -657,7 +657,7 @@ ImportData <- function(parent=NULL) {
          pady=c(4, 0))
   tkgrid(frame3.lab.3.1, frame3.box.3.2, frame3.ent.3.3, frame3.lab.3.4,
          frame3.box.3.5, "x", "x", "x", pady=c(4, 0))
-  tkgrid(frame3.lab.4.1, "x", "x", "x", "x", "x", "x", "x", padx=0, pady=c(5, 0)) 
+  tkgrid(frame3.lab.4.1, "x", "x", "x", "x", "x", "x", "x", padx=0, pady=c(5, 0))
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.1.4, frame3.lab.1.6,
                    frame3.lab.2.1, frame3.lab.2.4, frame3.lab.2.6,
@@ -734,13 +734,13 @@ ImportData <- function(parent=NULL) {
                          anchor="nw", drawmode="single", rowseparator="\n",
                          colseparator="\t", selectmode="extended",
                          insertofftime=0, highlightthickness=0,
-                         xscrollcommand=function(...) tkset(frame4.xsc,...),
-                         yscrollcommand=function(...) tkset(frame4.ysc,...))
+                         xscrollcommand=function(...) tkset(frame4.xsc, ...),
+                         yscrollcommand=function(...) tkset(frame4.ysc, ...))
 
   frame4.xsc <- tkscrollbar(frame4, orient="horizontal",
-                            command=function(...) tkxview(frame4.tbl,...))
+                            command=function(...) tkxview(frame4.tbl, ...))
   frame4.ysc <- tkscrollbar(frame4, orient="vertical",
-                            command=function(...) tkyview(frame4.tbl,...))
+                            command=function(...) tkyview(frame4.tbl, ...))
 
   tkgrid(frame4.tbl, frame4.ysc)
   tkgrid(frame4.xsc, "x")

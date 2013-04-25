@@ -238,8 +238,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   tktitle(tt) <- win.title
 
-  # Create menus
-
+  # Start top menu
   top.menu <- tkmenu(tt, tearoff=0)
 
   # Edit menu
@@ -377,6 +376,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
           menu=menu.nav.active)
   }
 
+  # Finish top menu
   tkconfigure(tt, menu=top.menu)
 
   # Frame 0, ok button and size grip
@@ -450,13 +450,13 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                          highlightthickness=0, cache=1,
                          command=function(r, c) GetCellValue(r, c),
                          coltagcommand=function(...) TagColumn(...),
-                         xscrollcommand=function(...) tkset(frame2.xsc,...),
-                         yscrollcommand=function(...) tkset(frame2.ysc,...))
+                         xscrollcommand=function(...) tkset(frame2.xsc, ...),
+                         yscrollcommand=function(...) tkset(frame2.ysc, ...))
 
   frame2.xsc <- tkscrollbar(frame2, orient="horizontal",
-                            command=function(...) tkxview(frame2.tbl,...))
+                            command=function(...) tkxview(frame2.tbl, ...))
   frame2.ysc <- tkscrollbar(frame2, orient="vertical",
-                            command=function(...) tkyview(frame2.tbl,...))
+                            command=function(...) tkyview(frame2.tbl, ...))
 
   tcl(frame2.tbl,  "width", 0, col.0.width)
   tcl(frame2.tbl, "height", 0, row.0.height)
