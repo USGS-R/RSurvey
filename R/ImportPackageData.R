@@ -3,7 +3,7 @@
 ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
 
   # Additional functions (subroutines)
-  
+
   # Load data set
   LoadDataset <- function() {
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
@@ -16,13 +16,13 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
     rtn <<- eval(parse(text=paste("(", ds.name, ")")), envir=e)
     tclvalue(tt.done.var) <- 1
   }
-  
+
   # Check if package(s) are loaded
   IsPackageLoaded <- function(pkg.names) {
-    vapply(pkg.names, function(i) paste("package", i, sep=":") %in% search(), 
+    vapply(pkg.names, function(i) paste("package", i, sep=":") %in% search(),
            TRUE)
   }
-  
+
   # Load package
   LoadPackage <- function(pkg.name) {
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
@@ -30,8 +30,8 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
     lib <- paste("package", pkg.name, sep=":")
     tkconfigure(tt, cursor="watch")
     if (!lib %in% search())
-      suppressPackageStartupMessages(require(pkg.name, quietly=TRUE, 
-                                             warn.conflicts=FALSE, 
+      suppressPackageStartupMessages(require(pkg.name, quietly=TRUE,
+                                             warn.conflicts=FALSE,
                                              character.only=TRUE))
     if (lib %in% search()) {
       idx <- as.integer(tcl(frame1.box.3.1, "current"))
@@ -45,29 +45,29 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
       }
       SelectPackage()
     } else {
-      tkmessageBox(icon="error", message="Unable to load package.", 
+      tkmessageBox(icon="error", message="Unable to load package.",
                    title="Error", type="ok", parent=tt)
     }
     tkconfigure(tt, cursor="arrow")
     tkfocus(frame1.lst.2.1)
   }
-  
+
   # Describe package
   DescribePackage <- function() {
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
     f <- system.file("DESCRIPTION", package=pkg.name)
     if (file.access(f, 0) < 0 || file.access(f, 4) < 0) {
-      tkmessageBox(icon="error", message="Problem with package documentation.", 
+      tkmessageBox(icon="error", message="Problem with package documentation.",
                    title="Error", type="ok", parent=tt)
     } else {
       msg <- paste(readLines(f, n=-1L), collapse="\n")
-      tkmessageBox(icon="info", message=msg, title="Package Description", 
+      tkmessageBox(icon="info", message=msg, title="Package Description",
                    parent=tt)
     }
     tkfocus(frame1.lst.2.1)
   }
-  
+
   # Describe data set
   DescribeDataset <- function() {
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
@@ -76,24 +76,24 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
     pkg.item <- paste(as.character(tkget(frame1.lst.2.4, idx)), collapse=" ")
     ans <- try(help(pkg.item, package=(pkg.name)), silent=TRUE)
     if (inherits(ans, "try-error"))
-      tkmessageBox(icon="error", message="Problem with dataset documentation.", 
+      tkmessageBox(icon="error", message="Problem with dataset documentation.",
                    title="Error", type="ok", parent=tt)
     else
       print(ans)
     tkfocus(frame1.lst.2.4)
   }
-  
+
   # Get class of data set
   GetClass <- function(pkg.name, pkg.item) {
     e <- environment(GetClass)
-    txt <- paste("data(", pkg.item, ", package=\"", pkg.name, "\", envir=e)", 
+    txt <- paste("data(", pkg.item, ", package=\"", pkg.name, "\", envir=e)",
                  sep="")
     suppressWarnings(eval(parse(text=txt)))
     txt <- paste("(", pkg.item, ")")
     pkg.item.class <- class(try(eval(parse(text=txt), envir=e), silent=TRUE))
     return(pkg.item.class[1])
   }
-  
+
   # GUI control for select package
   SelectPackage <- function() {
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
@@ -103,11 +103,11 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
       tkconfigure(frame1.but.4.2, state="disabled", default="disabled")
       pkg.datasets <- ds.list[[pkg.name]]
       all.pkg.items <- pkg.datasets[, "Item"]
-      if (is.null(ds.class[[pkg.name]])) 
-        ds.class[[pkg.name]] <<- vapply(all.pkg.items, 
+      if (is.null(ds.class[[pkg.name]]))
+        ds.class[[pkg.name]] <<- vapply(all.pkg.items,
                                         function(i) GetClass(pkg.name, i), "")
       idx <- as.integer(tcl(frame1.box.3.4, "current"))
-      if (idx > 0) 
+      if (idx > 0)
         pkg.items <- all.pkg.items[ds.class[[pkg.name]] %in% classes[idx]]
       else
         pkg.items <- all.pkg.items[!ds.class[[pkg.name]] %in% "try-error"]
@@ -133,7 +133,7 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
     tclServiceMode(TRUE)
     SelectDataset()
   }
-  
+
   # GUI control for select data set
   SelectDataset <- function() {
     idx <- as.integer(tkcurselection(frame1.lst.2.4))
@@ -150,7 +150,7 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
     else
       tkconfigure(frame0.but.1.2, state="disabled", default="disabled")
   }
-  
+
   # GUI control for select package type
   SelectPackageType <- function() {
     idx <- as.integer(tcl(frame1.box.3.1, "current"))
@@ -173,11 +173,11 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
     SelectPackage()
     tkfocus(frame1.lst.2.1)
   }
-  
+
   # GUI control for select class type
   SelectClassType <- function() {
     SelectPackage()
-    if (length(as.integer(tkcurselection(frame1.lst.2.4))) == 0) 
+    if (length(as.integer(tkcurselection(frame1.lst.2.4))) == 0)
       tkfocus(frame1.lst.2.1)
     else
       tkfocus(frame1.lst.2.4)
@@ -190,20 +190,20 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
 
   all.pkgs <- .packages(all.available=TRUE, lib.loc=.libPaths())
   all.pkgs <- all.pkgs[!all.pkgs %in% c("Rcmdr")]
-  
+
   all.ds <- suppressWarnings(data(package=all.pkgs)$results)
   all.pkgs <- sort(unique(all.ds[, "Package"]))
-  
-  ds.list <- sapply(all.pkgs, 
-                    function(i) all.ds[all.ds[, "Package"] == i, 
+
+  ds.list <- sapply(all.pkgs,
+                    function(i) all.ds[all.ds[, "Package"] == i,
                                        c("Item", "Title"), drop=FALSE],
                     simplify=FALSE)
-  
+
   ds.class <- list()
-  
+
   pkg.type.vals <- c("Show all packages", "loaded", "unloaded")
   ds.class.vals <- c("Show all classes", classes)
-  
+
   pkg.names <- NULL
   rtn <- NULL
 
@@ -239,7 +239,7 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
                               command=function() tclvalue(tt.done.var) <- 1)
   frame0.but.1.4 <- ttkbutton(frame0, width=12, text="Help",
                               command=function() {
-                                print(help("ImportPackageData", 
+                                print(help("ImportPackageData",
                                            package="RSurvey"))
                               })
   frame0.grp.1.5 <- ttksizegrip(frame0)
@@ -249,10 +249,10 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
   tkgrid.configure(frame0.but.1.2, padx=c(10, 0))
   tkgrid.configure(frame0.but.1.3, padx=4)
   tkgrid.configure(frame0.but.1.4, padx=c(0, 10), columnspan=2)
-  
-  tkgrid.configure(frame0.but.1.2, frame0.but.1.3, frame0.but.1.4, 
+
+  tkgrid.configure(frame0.but.1.2, frame0.but.1.3, frame0.but.1.4,
                    pady=c(15, 10))
-  
+
   tkgrid.configure(frame0.grp.1.5, sticky="se")
   tkraise(frame0.but.1.4, frame0.grp.1.5)
   tkgrid.columnconfigure(frame0, 0, weight=1)
@@ -267,7 +267,7 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
 
   frame1.lab.1.1 <- ttklabel(frame1, text="Package", foreground="#414042")
   frame1.lab.1.4 <- ttklabel(frame1, text="Data set", foreground="#414042")
-  
+
   frame1.lst.2.1 <- tklistbox(frame1, selectmode="browse", activestyle="none",
                               relief="flat", borderwidth=5, width=30, height=8,
                               exportselection=FALSE, listvariable=package.var,
@@ -276,7 +276,7 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
   tkconfigure(frame1.lst.2.1, background="white",
               yscrollcommand=paste(.Tk.ID(frame1.ysc.2.3), "set"))
   tkconfigure(frame1.ysc.2.3, command=paste(.Tk.ID(frame1.lst.2.1), "yview"))
-  
+
   frame1.lst.2.4 <- tklistbox(frame1, selectmode="browse", activestyle="none",
                               relief="flat", borderwidth=5, width=30, height=8,
                               exportselection=FALSE, listvariable=dataset.var,
@@ -285,42 +285,42 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
   tkconfigure(frame1.lst.2.4, background="white",
               yscrollcommand=paste(.Tk.ID(frame1.ysc.2.5), "set"))
   tkconfigure(frame1.ysc.2.5, command=paste(.Tk.ID(frame1.lst.2.4), "yview"))
-  
+
   frame1.box.3.1 <- ttkcombobox(frame1, state="readonly", value=pkg.type.vals)
   frame1.box.3.4 <- ttkcombobox(frame1, state="readonly", value=ds.class.vals)
-  
+
   frame1.but.4.1 <- ttkbutton(frame1, width=10, text="Describe",
                               command=DescribePackage)
   frame1.but.4.2 <- ttkbutton(frame1, width=10, text="Load",
                               command=LoadPackage)
   frame1.but.4.4 <- ttkbutton(frame1, width=10, text="Describe",
                               command=DescribeDataset)
-  
+
   tkgrid(frame1.lab.1.1, "x", "x", frame1.lab.1.4, "x", pady=c(10, 0))
   tkgrid(frame1.lst.2.1, "x", frame1.ysc.2.3, frame1.lst.2.4, frame1.ysc.2.5)
   tkgrid(frame1.box.3.1, "x", "x", frame1.box.3.4, "x", pady=c(4, 4))
   tkgrid(frame1.but.4.1, frame1.but.4.2, "x", frame1.but.4.4, "x")
-  
+
   tkgrid.configure(frame1.lab.1.1, columnspan=3)
   tkgrid.configure(frame1.lab.1.4, columnspan=2)
   tkgrid.configure(frame1.lst.2.1, columnspan=2)
   tkgrid.configure(frame1.box.3.1, columnspan=2)
-  
+
   tkgrid.configure(frame1.lab.1.1, frame1.lab.1.4, sticky="w")
   tkgrid.configure(frame1.lst.2.1, frame1.lst.2.4, sticky="nswe")
   tkgrid.configure(frame1.ysc.2.3, frame1.ysc.2.5, sticky="ns")
   tkgrid.configure(frame1.box.3.1, frame1.box.3.4, sticky="we")
   tkgrid.configure(frame1.but.4.2, frame1.but.4.4, sticky="w")
-  
+
   tkgrid.configure(frame1.ysc.2.3, padx=c(0, 25))
   tkgrid.configure(frame1.but.4.1, padx=c(0, 4))
-  
+
   tkgrid.columnconfigure(frame1, 1, minsize=85, weight=1)
   tkgrid.columnconfigure(frame1, 3, minsize=85, weight=1)
   tkgrid.rowconfigure(frame1, 1, weight=1)
 
   tkpack(frame1, fill="both", expand=TRUE, anchor="nw", padx=10)
-  
+
   tkselection.set(frame1.lst.2.1, 0)
   tcl(frame1.box.3.1, "current", 0)
   tcl(frame1.box.3.4, "current", 0)
@@ -328,10 +328,10 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
   # Bind events
 
   tclServiceMode(TRUE)
-  
+
   tkbind(frame1.lst.2.1, "<<ListboxSelect>>", SelectPackage)
   tkbind(frame1.lst.2.4, "<<ListboxSelect>>", SelectDataset)
-  
+
   tkbind(frame1.box.3.1, "<<ComboboxSelected>>", SelectPackageType)
   tkbind(frame1.box.3.4, "<<ComboboxSelected>>", SelectClassType)
 

@@ -104,7 +104,7 @@ OpenRSurvey <- function() {
       ImportData(tt)
     } else {
       if (type == "R data file") {
-        f <- GetFile(cmd="Open", exts="rda", win.title="Open R Data File", 
+        f <- GetFile(cmd="Open", exts="rda", win.title="Open R Data File",
                      parent=tt)
         tkfocus(tt)
         if (is.null(f))
@@ -114,29 +114,29 @@ OpenRSurvey <- function() {
         valid.classes <- c("data.frame", "matrix")
         if (!inherits(ds, valid.classes)) {
           msg <- "R data set is not a valid object class."
-          tkmessageBox(icon="error", message=msg, title="Error", type="ok", 
+          tkmessageBox(icon="error", message=msg, title="Error", type="ok",
                        parent=tt)
           return()
         }
         ds <- as.data.frame(ds)
-      
+
       } else if (type == "R package data") {
         ds <- ImportPackageData(parent=tt)
       }
-      
+
       if (is.null(ds) || nrow(ds) == 0)
         return()
-      
-      
-      
-      
-      
+
+
+
+
+
       print(str(ds))
-      
-      
-      
-      
-      
+
+
+
+
+
     }
     SetVars()
   }
@@ -844,7 +844,7 @@ OpenRSurvey <- function() {
   tkadd(menu.file, "separator")
 
   menu.file.import <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.import, "command", label="Text file\u2026",
+  tkadd(menu.file.import, "command", label="Text file, URL, or clipboard\u2026",
         command=function() CallImportData("text file"))
   tkadd(menu.file.import, "command", label="R data file\u2026",
         command=function() CallImportData("R data file"))
