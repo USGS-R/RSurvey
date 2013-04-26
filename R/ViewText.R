@@ -10,20 +10,46 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
     tclvalue(tt.done.var) <- 1
   }
 
+  # Open file in text console
+  OpenFile <- function(is.appended=FALSE) {
+    txt <- as.character(tclvalue(tkget(frame1.txt.1.1, "1.0", "end-1c")))
+    if (txt != "" & !is.appended) {
+      msg <- paste("This action will delete existing console text.",
+                   "Would you like to continue?", sep="\n")
+      ans <- as.character(tkmessageBox(icon="question", message=msg,
+                                       title="Warning", type="okcancel",
+                                       parent=tt))
+      if (ans == "ok")
+        ClearConsole()
+      else
+        return()
+    }
+    f <- GetFile(cmd="Open", exts="txt", win.title="Open Text File",
+                 parent=tt)
+    if (is.null(f))
+      return()
+    txt <- paste(readLines(f), collapse="\n")
+    tkinsert(frame1.txt.1.1, "end", txt)
+  }
+
   # Save current text to file
   SaveAs <- function() {
     txt <- as.character(tclvalue(tkget(frame1.txt.1.1, "1.0", "end-1c")))
-    print(txt)
+    f <- GetFile(cmd="Save As", exts="txt", win.title="Save Text As",
+                 defaultextension="txt", parent=tt)
+    if (is.null(f))
+      return()
+    cat(txt, file=f, sep="\n")
   }
 
   # Edit menu functions
   EditUndo <- function() {
     tkfocus(frame1.txt.1.1)
-    tcl(frame1.txt.1.1, "edit", "undo")
+    try(tcl(frame1.txt.1.1, "edit", "undo"), silent=TRUE)
   }
   EditRedo <- function() {
     tkfocus(frame1.txt.1.1)
-    tcl(frame1.txt.1.1, "edit", "redo")
+    try(tcl(frame1.txt.1.1, "edit", "redo"), silent=TRUE)
   }
   EditCut <- function() {
     tkfocus(frame1.txt.1.1)
@@ -97,6 +123,10 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
     tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c",
           command=EditCopy)
   } else {
+    tkadd(menu.file, "command", label="Open\u2026", accelerator="Ctrl+o",
+          command=function() OpenFile())
+    tkadd(menu.file, "command", label="Open and append\u2026",
+          command=function() OpenFile(is.appended=TRUE))
     tkadd(menu.file, "command", label="Save as\u2026", accelerator="Ctrl+s",
           command=SaveAs)
 
@@ -154,8 +184,8 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
 
   fnt <- tkfont.create(family="Courier New", size=10)
   frame1.txt.1.1 <- tktext(frame1, bg="white", font=fnt, padx=2, pady=2,
-                           width=85, height=20, undo=1, wrap="none",
-                           foreground="black", relief="flat",
+                           width=85, height=20, undo=1, autoseparators=1,
+                           wrap="none", foreground="black", relief="flat",
                            yscrollcommand=function(...)
                                             tkset(frame1.ysc.1.2, ...),
                            xscrollcommand=function(...)
@@ -179,6 +209,8 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
   tkpack(frame1, fill="both", expand="yes")
 
   tkinsert(frame1.txt.1.1, "end", txt)
+  tcl(frame1.txt.1.1, "edit", "reset")
+  tcl(frame1.txt.1.1, "edit", "separator")
   if (read.only)
     tkconfigure(frame1.txt.1.1, state="disabled")
 

@@ -26,21 +26,9 @@ Something
 \author{J.C. Fisher}
 
 \examples{\donttest{
-txt <- paste("Unicorns envy their cousin",
-             "horses a smooth forehead.",
-             "Horses weep for lack of horns.",
-             "",
-             "Hills cherish the ambition",
-             "to turn into partial",
-             "differential equations,",
-             "",
-             "which want to be poems, or dogs,",
-             "or the Pacific Ocean,",
-             "or whiskey, or a gold ring.",
-             "",
-             "The man wearing the noose",
-             "envies an other who fondles",
-             "a pistol in a motel room.",
+txt <- paste("\"Hills cherish the ambition",
+             "    to turn into partial",
+             "   differential equations\"",
              "",
              "-Donald Hall", sep="\n")
 ViewText(txt, read.only = TRUE)

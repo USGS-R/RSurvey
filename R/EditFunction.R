@@ -133,11 +133,11 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   # Text edit functions
   EditUndo <- function() {
     tkfocus(frame2.txt.2.1)
-    tcl(frame2.txt.2.1, "edit", "undo")
+    try(tcl(frame2.txt.2.1, "edit", "undo"), silent=TRUE)
   }
   EditRedo <- function() {
     tkfocus(frame2.txt.2.1)
-    tcl(frame2.txt.2.1, "edit", "redo")
+    try(tcl(frame2.txt.2.1, "edit", "redo"), silent=TRUE)
   }
   EditCut <- function() {
     tkfocus(frame2.txt.2.1)
@@ -511,9 +511,10 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   fnt <- tkfont.create(family="Courier New", size=10)
   frame2.txt.2.1 <- tktext(frame2, bg="white", font=fnt, padx=2, pady=2,
-                       width=50, height=12, undo=1, wrap="none",
-                       foreground="black", relief="flat",
-                       yscrollcommand=function(...) tkset(frame2.ysc.2.2, ...))
+                           width=50, height=12, undo=1, autoseparators=1,
+                           wrap="none", foreground="black", relief="flat",
+                           yscrollcommand=function(...)
+                                            tkset(frame2.ysc.2.2, ...))
 
   frame2.ysc.2.2 <- ttkscrollbar(frame2, orient="vertical")
   tkconfigure(frame2.ysc.2.2, command=paste(.Tk.ID(frame2.txt.2.1), "yview"))
