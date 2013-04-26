@@ -81,8 +81,15 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
   if (!is.character(txt) | length(txt) > 1)
     stop("problem with input text argument")
 
+  # Add end-of-line for vector of character strings
+  if (length(txt) > 0)
+    txt <- paste(txt, collapse="\n")
+
+  # Determine the maximum number of characters in a line
+  n <- max(vapply(strsplit(txt, split="\n", fixed=TRUE)[[1]], nchar, 0L))
+
   # Assigin global variables
-  rtn <- txt
+  rtn <- NULL
 
   # Assign variables linked to Tk widgets
   tt.done.var <- tclVar(0)
@@ -184,7 +191,7 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
 
   fnt <- tkfont.create(family="Courier New", size=10)
   frame1.txt.1.1 <- tktext(frame1, bg="white", font=fnt, padx=2, pady=2,
-                           width=85, height=20, undo=1, autoseparators=1,
+                           width=86, height=20, undo=1, autoseparators=1,
                            wrap="none", foreground="black", relief="flat",
                            yscrollcommand=function(...)
                                             tkset(frame1.ysc.1.2, ...),
@@ -193,15 +200,18 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
 
   frame1.ysc.1.2 <- ttkscrollbar(frame1, orient="vertical")
   frame1.xsc.2.1 <- ttkscrollbar(frame1, orient="horizontal")
+
   tkconfigure(frame1.ysc.1.2, command=paste(.Tk.ID(frame1.txt.1.1), "yview"))
-  tkconfigure(frame1.xsc.2.1, command=paste(.Tk.ID(frame1.txt.1.1), "xview"))
 
   tkgrid(frame1.txt.1.1, frame1.ysc.1.2)
-  tkgrid(frame1.xsc.2.1, "x")
-
   tkgrid.configure(frame1.txt.1.1, padx=0, pady=0, sticky="nswe")
   tkgrid.configure(frame1.ysc.1.2, sticky="ns")
-  tkgrid.configure(frame1.xsc.2.1, sticky="we")
+
+  if (!read.only || (read.only & n > 80)) {
+    tkconfigure(frame1.xsc.2.1, command=paste(.Tk.ID(frame1.txt.1.1), "xview"))
+    tkgrid(frame1.xsc.2.1, "x")
+    tkgrid.configure(frame1.xsc.2.1, sticky="we")
+  }
 
   tkgrid.columnconfigure(frame1, 0, weight=1)
   tkgrid.rowconfigure(frame1, 0, weight=1)

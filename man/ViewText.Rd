@@ -30,9 +30,9 @@ txt <- paste("\"Hills cherish the ambition",
              "    to turn into partial",
              "   differential equations\"",
              "",
-             "-Donald Hall", sep="\n")
-ViewText(txt, read.only = TRUE)
+             "        -Donald Hall", sep = "\n")
 new.txt <- ViewText(txt)
+ViewText(txt, read.only = TRUE)
 }}
 
 \keyword{misc}
