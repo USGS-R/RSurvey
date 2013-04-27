@@ -97,9 +97,9 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
 
   # Determine the width of the text window
   if (read.only) {
-    if (n > 80) {
-      txt.width <- 82
-    } else if (n < 48) {
+    if (n > 100) {
+      txt.width <- 100
+    } else if (n < 50) {
       txt.width <- 50
     } else {
       txt.width <- n + 2
