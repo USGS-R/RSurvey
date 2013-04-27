@@ -32,6 +32,10 @@ txt <- paste("\"Hills cherish the ambition",
              "",
              "        -Donald Hall", sep = "\n")
 new.txt <- ViewText(txt)
+
+txt <- strsplit(txt, split="\n", fixed=TRUE)[[1]]
+new.txt <- ViewText(txt)
+
 ViewText(txt, read.only = TRUE)
 }}
 

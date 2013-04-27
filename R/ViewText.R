@@ -6,7 +6,10 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
 
   # Close GUI and return edited text
   SaveText <- function() {
-    rtn <<- as.character(tclvalue(tkget(frame1.txt.1.1, "1.0", "end-1c")))
+    txt <- as.character(tclvalue(tkget(frame1.txt.1.1, "1.0", "end-1c")))
+    if (is.lines)
+      txt <- strsplit(txt, split="\n", fixed=TRUE)[[1]]
+    rtn <<- txt
     tclvalue(tt.done.var) <- 1
   }
 
@@ -78,15 +81,26 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
   # Assign missing values
   if (missing(txt))
     txt <- ""
-  if (!is.character(txt) | length(txt) > 1)
+  if (!is.character(txt))
     stop("problem with input text argument")
 
   # Add end-of-line for vector of character strings
-  if (length(txt) > 0)
+  if (length(txt) > 0) {
     txt <- paste(txt, collapse="\n")
+    is.lines <- TRUE
+  } else {
+    is.lines <- FALSE
+  }
 
-  # Determine the maximum number of characters in a line
+  # Determine the maximum number of characters in a line and text width
   n <- max(vapply(strsplit(txt, split="\n", fixed=TRUE)[[1]], nchar, 0L))
+  if (n > 80) {
+    txt.width <- 80
+  } else if (n < 40) {
+    txt.width <- 40
+  } else {
+    txt.width <- n + 1L
+  }
 
   # Assigin global variables
   rtn <- NULL
@@ -191,7 +205,7 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
 
   fnt <- tkfont.create(family="Courier New", size=10)
   frame1.txt.1.1 <- tktext(frame1, bg="white", font=fnt, padx=2, pady=2,
-                           width=86, height=20, undo=1, autoseparators=1,
+                           width=txt.width, height=20, undo=1, autoseparators=1,
                            wrap="none", foreground="black", relief="flat",
                            yscrollcommand=function(...)
                                             tkset(frame1.ysc.1.2, ...),
@@ -207,7 +221,7 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
   tkgrid.configure(frame1.txt.1.1, padx=0, pady=0, sticky="nswe")
   tkgrid.configure(frame1.ysc.1.2, sticky="ns")
 
-  if (!read.only || (read.only & n > 80)) {
+  if (!read.only || (read.only & n > 120)) {
     tkconfigure(frame1.xsc.2.1, command=paste(.Tk.ID(frame1.txt.1.1), "xview"))
     tkgrid(frame1.xsc.2.1, "x")
     tkgrid.configure(frame1.xsc.2.1, sticky="we")
@@ -241,19 +255,14 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
 
   # GUI control
 
+  tkgrab(tt)
   tkfocus(frame1.txt.1.1)
-  if (read.only) {
-    invisible()
-  } else {
-    tkgrab(tt)
-    tkfocus(frame1.txt.1.1)
-    tkwait.variable(tt.done.var)
+  tkwait.variable(tt.done.var)
 
-    tclServiceMode(FALSE)
-    tkgrab.release(tt)
-    tkdestroy(tt)
-    tclServiceMode(TRUE)
+  tclServiceMode(FALSE)
+  tkgrab.release(tt)
+  tkdestroy(tt)
+  tclServiceMode(TRUE)
 
-    invisible(rtn)
-  }
+  invisible(rtn)
 }

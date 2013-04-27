@@ -58,15 +58,15 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
   DescribePackage <- function() {
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
-    f <- system.file("DESCRIPTION", package=pkg.name)
-    if (file.access(f, 0) < 0 || file.access(f, 4) < 0) {
-      tkmessageBox(icon="error", message="Problem with package documentation.",
-                   title="Error", type="ok", parent=tt)
-    } else {
-      msg <- paste(readLines(f, n=-1L), collapse="\n")
-      tkmessageBox(icon="info", message=msg, title="Package Description",
-                   parent=tt)
-    }
+    pkg.datasets <- ds.list[[pkg.name]]
+    pkg.datasets <- pkg.datasets[order(pkg.datasets[, 1]), , drop=FALSE]
+    nmax <- max(nchar(pkg.datasets[, "Item"]))
+    if (nmax < 20)
+      nmax <- 20
+    items <- sprintf(paste0("%-", nmax, "s"), pkg.datasets[, "Item"])
+    txt <- paste0("Data sets in package ", sQuote(pkg.name), ":\n")
+    txt <- c(txt, paste(items, pkg.datasets[, "Title"]))
+    ViewText(txt, read.only=TRUE, win.title="Summary of Data Sets", parent=tt)
     tkfocus(frame1.lst.2.1)
   }
 
@@ -320,7 +320,7 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
   frame1.box.3.1 <- ttkcombobox(frame1, state="readonly", value=pkg.type.vals)
   frame1.box.3.4 <- ttkcombobox(frame1, state="readonly", value=ds.class.vals)
 
-  frame1.but.4.1 <- ttkbutton(frame1, width=10, text="Describe",
+  frame1.but.4.1 <- ttkbutton(frame1, width=10, text="Summary",
                               command=DescribePackage)
   frame1.but.4.2 <- ttkbutton(frame1, width=10, text="Load",
                               command=LoadPackage)
