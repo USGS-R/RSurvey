@@ -79,13 +79,13 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
   # Main program
 
   # Assign missing values
-  if (missing(txt))
+  if (missing(txt) || is.null(txt) || length(txt) == 0)
     txt <- ""
   if (!is.character(txt))
-    stop("problem with input text argument")
+    stop("input text argument is not of class character")
 
   # Add end-of-line for vector of character strings
-  if (length(txt) > 0) {
+  if (length(txt) > 1) {
     txt <- paste(txt, collapse="\n")
     is.lines <- TRUE
   } else {
@@ -94,13 +94,10 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
 
   # Determine the maximum number of characters in a line and text width
   n <- max(vapply(strsplit(txt, split="\n", fixed=TRUE)[[1]], nchar, 0L))
-  if (n > 80) {
-    txt.width <- 80
-  } else if (n < 40) {
-    txt.width <- 40
-  } else {
-    txt.width <- n + 1L
-  }
+  if (n > 50)
+    txt.width <- 100
+  else
+    txt.width <- 50
 
   # Assigin global variables
   rtn <- NULL
@@ -109,18 +106,14 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
   tt.done.var <- tclVar(0)
 
   # Open GUI
-
   tclServiceMode(FALSE)
-
   tt <- tktoplevel()
-
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
     tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
                             "+", as.integer(geo[3]) + 25, sep=""))
   }
-
   tktitle(tt) <- win.title
 
   # Start top menu

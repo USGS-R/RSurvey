@@ -19,7 +19,6 @@ OpenRSurvey <- function() {
   }
 
   # Open binary project file
-
   OpenProj <- function() {
     f <- GetFile(cmd="Open", exts="RData", win.title="Open Project File",
                  parent=tt)
@@ -27,7 +26,6 @@ OpenRSurvey <- function() {
       return()
     if (ClearObjs() == "cancel")
       return()
-
     project <- NULL
     ans <- try(load(file=f), silent=TRUE)
     if (inherits(ans, "try-error")) {
@@ -38,13 +36,11 @@ OpenRSurvey <- function() {
     }
     Data(replace.all=project)
     Data("proj.file", f)
-
     SetCsi()
     SetVars()
   }
 
   # Save binary project file
-
   SaveProj <- function() {
     if (!is.null(Data("proj.file"))) {
       if (file.access(Data("proj.file"), mode = 0) != 0)
@@ -64,13 +60,11 @@ OpenRSurvey <- function() {
 
       project <- Data()
       save(project, file=Data("proj.file"), compress=TRUE)
-
       Data("csi", csi)
     }
   }
 
   # Save a new binary project file
-
   SaveProjAs <- function() {
     Data("proj.file", NULL)
     SaveProj()
@@ -78,7 +72,6 @@ OpenRSurvey <- function() {
   }
 
   # Clear objects
-
   ClearObjs <- function() {
     msg <- "Save the existing project?"
     if (is.null(Data("proj.file")))
@@ -142,13 +135,11 @@ OpenRSurvey <- function() {
   }
 
   # Set button state
-
   ButtonState <- function(vars) {
     s <- "normal"
     if (is.null(vars$x) | is.null(vars$y))
       s <- "disabled"
     tkconfigure(frame2.but.1.1, state=s)
-
     s <- "normal"
     if (is.null(vars$x) | is.null(vars$y) | is.null(vars$z))
       s <- "disabled"
@@ -207,22 +198,16 @@ OpenRSurvey <- function() {
   }
 
   # Refresh variables
-
   RefreshVars <- function(item) {
     cols <- Data("cols")
-
     col.classes <- vapply(cols, function(i) i$class, "")
-
     idxs.n <- which(col.classes %in% c("numeric", "integer"))
-
     idx.x  <- as.integer(tcl(frame1.box.1.2, "current"))
     idx.y  <- as.integer(tcl(frame1.box.2.2, "current"))
     idx.z  <- as.integer(tcl(frame1.box.3.2, "current"))
     idx.vx <- as.integer(tcl(frame1.box.4.2, "current"))
     idx.vy <- as.integer(tcl(frame1.box.5.2, "current"))
-
     vars <- list()
-
     if (idx.x > 0)
       vars$x[1] <- idxs.n[idx.x]
     if (idx.y > 0)
@@ -233,7 +218,6 @@ OpenRSurvey <- function() {
       vars$vx[1] <- idxs.n[idx.vx]
     if (idx.vy > 0)
       vars$vy[1] <- idxs.n[idx.vy]
-
     if (!identical(vars, Data("vars"))) {
       Data("vars", vars)
       Data("data.pts", NULL)
@@ -243,7 +227,6 @@ OpenRSurvey <- function() {
   }
 
   # Manage variables
-
   CallManageVariables <- function() {
     ans <- ManageVariables(Data("cols"), Data("vars"), tt)
     if (!is.null(ans)) {
@@ -255,15 +238,12 @@ OpenRSurvey <- function() {
   }
 
   # Export data
-
   CallExportData <- function(file.type) {
     if (is.null(Data("cols")))
       return()
-
     is.coordinate <- !is.null(Data("vars")$x) & !is.null(Data("vars")$y)
     if (!is.coordinate & file.type %in% c("shape", "grid"))
       return()
-
     if (file.type == "grid") {
       CallProcessData(interpolate=TRUE)
       d <- Data("data.grd")
@@ -274,17 +254,14 @@ OpenRSurvey <- function() {
       if (is.null(f))
         return()
       save(d, file=f)
-
     } else {
       CallProcessData()
       ExportData(file.type=file.type, parent=tt)
     }
-
     tkfocus(tt)
   }
 
   # Close graphic devices
-
   CloseDevices <- function() {
     graphics.off()
     while (rgl.cur() != 0)
@@ -292,7 +269,6 @@ OpenRSurvey <- function() {
   }
 
   # Save R graphic devices
-
   SaveRDevice <- function() {
     if (is.null(dev.list()))
       return()
@@ -305,7 +281,6 @@ OpenRSurvey <- function() {
   }
 
   # Save RGL graphic devices
-
   SaveRGLDevice <- function() {
     if (rgl.cur() == 0)
       return()
@@ -314,7 +289,6 @@ OpenRSurvey <- function() {
                  parent=tt)
     if (is.null(f))
       return()
-
     if (attr(f, "extension") == "png")
       rgl.snapshot(filename=f, fmt=attr(f, "extension"))
     else
@@ -322,14 +296,12 @@ OpenRSurvey <- function() {
   }
 
   # About package
-
   AboutPackage <- function() {
     msg <- paste(readLines(about.path, n=-1L), collapse="\n")
     tkmessageBox(icon="info", message=msg, title="About", parent=tt)
   }
 
   # Manage polygons
-
   CallManagePolygons <- function() {
     old.polygons <- Data("polys")
     old.data.poly <- attr(old.polygons, "data.poly")
@@ -362,7 +334,6 @@ OpenRSurvey <- function() {
   }
 
   # Set polygon range and limit
-
   CallSetPolygonLimits <- function() {
     old.data.poly <- attr(Data("polys"), "data.poly")
     old.crop.poly <- attr(Data("polys"), "crop.poly")
@@ -382,7 +353,6 @@ OpenRSurvey <- function() {
   }
 
   # Construct polygon
-
   ConstructPolygon <- function(type) {
     if (is.null(Data("data.raw")))
       return()
@@ -400,29 +370,23 @@ OpenRSurvey <- function() {
   }
 
   # Autocrop polygon
-
   CallAutocropRegion <- function() {
     if (is.null(Data("data.raw")))
       return()
     CallProcessData()
-
-    d <- Data("data.pts")
-
-    xlab <- Data("cols")[[Data("vars")$x]]$id
-    ylab <- Data("cols")[[Data("vars")$y]]$id
-    zlab <- Data("cols")[[Data("vars")$z]]$id
-
+    d       <- Data("data.pts")
+    xlab    <- Data("cols")[[Data("vars")$x]]$id
+    ylab    <- Data("cols")[[Data("vars")$y]]$id
+    zlab    <- Data("cols")[[Data("vars")$z]]$id
     asp     <- Data("asp.yx")
     csi     <- Data("csi")
     width   <- Data("width")
     nlevels <- Data("nlevels")
     cex.pts <- Data("cex.pts")
     rkey    <- Data("rkey")
-
     ply.new <- AutocropRegion(d, tt, xlab=xlab, ylab=ylab, zlab=zlab,
                               asp=asp, csi=csi, width=width, nlevels=nlevels,
                               cex.pts=cex.pts, rkey=rkey)
-
     if (inherits(ply.new, "gpc.poly")) {
       ply <- list()
       if (!is.null(Data("polys")))
@@ -437,7 +401,6 @@ OpenRSurvey <- function() {
   }
 
   # Name polygon
-
   NamePolygon <- function(old=NULL, nam=NA){
     if (is.na(nam))
       nam <- "New Polygon"
@@ -734,7 +697,6 @@ OpenRSurvey <- function() {
     }
 
     # Process grid
-
     if (is.null(Data("data.grd")) && interpolate) {
       ply <- Data("polys", which.attr="crop.poly")
       if (!is.null(ply))
@@ -750,15 +712,12 @@ OpenRSurvey <- function() {
   }
 
   # Build query
-
   BuildQuery <- function() {
     if (is.null(Data("data.raw")))
       return()
-
     n <- nrow(Data("data.raw"))
     if (n == 0)
       return()
-
     cols <- Data("cols")
     old.fun <- Data("query.fun")
     f <- EditFunction(cols, fun=old.fun, value.length=n, value.class="logical",
@@ -774,13 +733,22 @@ OpenRSurvey <- function() {
   }
 
   # Clear query
-
   ClearQuery <- function() {
     if (!is.null(Data("query.fun"))) {
       Data("query.fun", NULL)
       Data("data.pts", NULL)
       Data("data.grd", NULL)
     }
+  }
+
+  # Edit comment
+  EditComment <- function() {
+    txt <- ViewText(Data("comment"), win.title="Comment", parent=tt)
+    if (is.null(txt))
+      return()
+    if (length(txt) == 0 || (length(txt) == 1 & txt == ""))
+      txt <- NULL
+    Data("comment", txt)
   }
 
 
@@ -842,7 +810,6 @@ OpenRSurvey <- function() {
         accelerator="Shift+Ctrl+s", command=SaveProjAs)
 
   tkadd(menu.file, "separator")
-
   menu.file.import <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.import, "command", label="Text file, URL, or clipboard\u2026",
         command=function() CallImportData("text file"))
@@ -852,7 +819,6 @@ OpenRSurvey <- function() {
         command=function() CallImportData("R package data"))
   tkadd(menu.file, "cascade", label="Import point data from",
         menu=menu.file.import)
-
   menu.file.export <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.export, "command", label="Text file\u2026",
         command=function() CallExportData("text"))
@@ -884,14 +850,16 @@ OpenRSurvey <- function() {
         command=function() CallViewData(read.only=FALSE))
   tkadd(menu.edit, "command", label="Manage variables\u2026",
         command=CallManageVariables)
+  tkadd(menu.edit, "command", label="Comment\u2026",
+        command=EditComment)
 
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Edit query\u2026",
         command=BuildQuery)
   tkadd(menu.edit, "command", label="Clear query",
         command=ClearQuery)
-  tkadd(menu.edit, "separator")
 
+  tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Set sort order\u2026",
         command=function() {
           col.ids <- vapply(Data("cols"), function(i) i$id, "")
