@@ -84,20 +84,29 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
   if (!is.character(txt))
     stop("input text argument is not of class character")
 
-  # Add end-of-line for vector of character strings
+  # Add end-of-line for vector of character strings and
+  # determine the maximum number of characters in a line
   if (length(txt) > 1) {
     txt <- paste(txt, collapse="\n")
     is.lines <- TRUE
+    n <- max(vapply(strsplit(txt, split="\n", fixed=TRUE)[[1]], nchar, 0L))
   } else {
     is.lines <- FALSE
+    n <- 0
   }
 
-  # Determine the maximum number of characters in a line and text width
-  n <- max(vapply(strsplit(txt, split="\n", fixed=TRUE)[[1]], nchar, 0L))
-  if (n > 50)
-    txt.width <- 100
-  else
-    txt.width <- 50
+  # Determine the width of the text window
+  if (read.only) {
+    if (n > 80) {
+      txt.width <- 82
+    } else if (n < 48) {
+      txt.width <- 50
+    } else {
+      txt.width <- n + 2
+    }
+  } else {
+    txt.width <- 82
+  }
 
   # Assigin global variables
   rtn <- NULL
