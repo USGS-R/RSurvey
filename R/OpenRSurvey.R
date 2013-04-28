@@ -110,25 +110,71 @@ OpenRSurvey <- function() {
                        parent=tt)
           return()
         }
-        ds <- as.data.frame(ds)
-
       } else if (type == "R package data") {
         ds <- ImportPackageData(parent=tt)
       }
 
-      if (is.null(ds) || nrow(ds) == 0)
+      if (is.null(ds) || nrow(ds) == 0 || ncol(ds) == 0)
         return()
+      if (!is.null(Data("cols"))) {
+        msg <- "This action will delete existing data?"
+        ans <- as.character(tkmessageBox(icon="question", message=msg,
+                                         title="Warning", type="okcancel",
+                                         parent=tt))
+        if (ans == "cancel")
+          return()
+      }
 
+      if (inherits(ds, "matrix"))
+        ds <- as.data.frame(ds, stringsAsFactors=FALSE)
+      m <- nrow(ds)
+      n <- ncol(ds)
+      if (!identical(row.names(ds), as.character(1:m))) {
+        ds <- cbind(row.name=row.names(ds), ds)
+        row.names(ds) <- 1:m
+      }
+      ids <- make.names(names(ds), unique=TRUE)
+      nms <- names(ds)
+      names(ds) <- paste0("V", 1:n)
+      cls <- vapply(1:n, function(i) class(ds[, i])[1], "")
+      cols <- list()
+      vars <- list()
 
-
-
-
-      print(str(ds))
-
-
-
-
-
+      for (i in 1:n) {
+        if (cls[i] %in% c("numeric", "integer")) {
+          if (is.null(vars$x)) {
+            vars$x <- i
+          } else if (is.null(vars$y)) {
+            vars$y <- i
+          } else if (is.null(vars$z)) {
+            vars$z <- i
+          }
+        }
+        if (cls[i] %in% c("character", "logical", "factor")) {
+          fmt <- "%s"
+        } else if (cls[i] == "numeric") {
+          fmt <- "%f"
+        } else if (cls[i] == "integer") {
+          fmt <- "%d"
+        } else if (cls[i] == c("POSIXlt", "POSIXct")) {
+          fmt <- "%d/%m/%Y %H:%M:%OS"
+        } else {
+          fmt <- ""
+        }
+        cols[[i]] <- list()
+        cols[[i]]$id      <- ids[i]
+        cols[[i]]$name    <- nms[i]
+        cols[[i]]$format  <- fmt
+        cols[[i]]$class   <- cls[i]
+        cols[[i]]$index   <- i
+        cols[[i]]$fun     <- paste0("\"", ids[i], "\"")
+        cols[[i]]$sample  <- na.omit(ds[, i])[1]
+        cols[[i]]$summary <- SummarizeData(ds[, i], fmt=fmt)
+      }
+      Data(clear.data=TRUE)
+      Data("data.raw", ds)
+      Data("cols", cols)
+      Data("vars", vars)
     }
     SetVars()
   }

@@ -114,13 +114,13 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     # Update format
     saved.fmt <- cols[[idx]]$format
     if (is.null(saved.fmt) || saved.fmt == "") {
-      if (saved.class %in% c("character", "logical")) {
+      if (saved.class %in% c("character", "logical", "factor")) {
         saved.fmt <- "%s"
       } else if (saved.class == "numeric") {
         saved.fmt <- "%f"
       } else if (saved.class == "integer") {
         saved.fmt <- "%d"
-      } else if (saved.class == "POSIXct") {
+      } else if (saved.class == c("POSIXlt", "POSIXct")) {
         saved.fmt <- "%d/%m/%Y %H:%M:%OS"
       } else {
         saved.fmt <- ""

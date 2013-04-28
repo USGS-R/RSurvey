@@ -111,7 +111,6 @@ ImportData <- function(parent=NULL) {
 
         # Determine default x-, y-, z-axis variables
         if (inherits(val, c("numeric", "integer"))) {
-          val[!is.finite(val)] <- NA
           if (is.null(vars$x)) {
             vars$x <- j
           } else if (is.null(vars$y)) {
@@ -126,7 +125,7 @@ ImportData <- function(parent=NULL) {
 
         # Set missing formats
         if (is.null(fmt)) {
-          if (cls %in% c("character", "logical")) {
+          if (cls %in% c("character", "logical", "factor")) {
             fmt <- "%s"
           } else if (cls == "numeric") {
             fmt <- "%f"
