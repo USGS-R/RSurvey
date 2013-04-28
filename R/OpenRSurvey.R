@@ -842,12 +842,12 @@ OpenRSurvey <- function() {
   menu.edit <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
 
+  tkadd(menu.edit, "command", label="Comment\u2026",
+        command=EditComment)
   tkadd(menu.edit, "command", label="Edit raw data\u2026",
         command=function() CallViewData(read.only=FALSE))
   tkadd(menu.edit, "command", label="Manage variables\u2026",
         command=CallManageVariables)
-  tkadd(menu.edit, "command", label="Comment\u2026",
-        command=EditComment)
 
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Edit query\u2026",

@@ -288,6 +288,9 @@ ManageVariables <- function(cols, vars, parent=NULL) {
       return()
     }
 
+    if (f$class != cols[[idx]]$class)
+      cols[[idx]]$format <<- NULL
+
     cols[[idx]]$fun     <<- f$fun
     cols[[idx]]$class   <<- f$class
     cols[[idx]]$summary <<- f$summary
