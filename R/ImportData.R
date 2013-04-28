@@ -2,7 +2,7 @@
 
 ImportData <- function(parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Read table
 
@@ -206,7 +206,7 @@ ImportData <- function(parent=NULL) {
     } else {
       con <- try(file(description=src, open="r", encoding=enc), silent=TRUE)
     }
-    con
+    return(con)
   }
 
   # Read data from file and populate example table
@@ -427,9 +427,10 @@ ImportData <- function(parent=NULL) {
     tcl(frame4.tbl, "clear", "all")
     tkselection.set(frame4.tbl, "origin")
     tkconfigure(frame4.tbl, state="disabled")
-    s <- "normal"
     if (tclvalue(source.var) == "" && is.null(cb))
       s <- "disabled"
+    else
+      s <- "normal"
     tkconfigure(frame0.but.4, state=s)
   }
 
@@ -453,8 +454,7 @@ ImportData <- function(parent=NULL) {
   GetEndRow <- function() as.numeric(tkindex(frame4.tbl, "end", "row"))
   GetEndCol <- function() as.numeric(tkindex(frame4.tbl, "end", "col"))
 
-
-  # Main program
+  ## Main program
 
   # GUI requires Tktable
   is.tktable <- !inherits(try(tcl("package", "present", "Tktable"),
@@ -560,11 +560,9 @@ ImportData <- function(parent=NULL) {
   tkgrid.configure(frame0.but.1, frame0.but.2,
                    sticky="n", padx=c(0, 4), pady=c(4, 0))
   tkgrid.configure(frame0.but.1, padx=c(10, 4))
-
   tkgrid.configure(frame0.but.4, frame0.but.5, frame0.but.6,
                    padx=c(0, 4), pady=c(15, 10))
   tkgrid.configure(frame0.but.6, columnspan=2, padx=c(0, 10))
-
   tkgrid.configure(frame0.grp.7, sticky="se")
 
   tkraise(frame0.but.6, frame0.grp.7)
@@ -657,7 +655,8 @@ ImportData <- function(parent=NULL) {
          pady=c(4, 0))
   tkgrid(frame3.lab.3.1, frame3.box.3.2, frame3.ent.3.3, frame3.lab.3.4,
          frame3.box.3.5, "x", "x", "x", pady=c(4, 0))
-  tkgrid(frame3.lab.4.1, "x", "x", "x", "x", "x", "x", "x", padx=0, pady=c(5, 0))
+  tkgrid(frame3.lab.4.1, "x", "x", "x", "x", "x", "x", "x", padx=0,
+         pady=c(5, 0))
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.1.4, frame3.lab.1.6,
                    frame3.lab.2.1, frame3.lab.2.4, frame3.lab.2.6,

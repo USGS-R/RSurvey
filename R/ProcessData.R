@@ -148,5 +148,5 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
     }
   }
 
-  d
+  return(d)
 }

@@ -2,7 +2,7 @@
 
 SetConfiguration <- function(parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   UpdatePar <- function() {
     val <- as.numeric(tclvalue(width.var))
@@ -43,7 +43,7 @@ SetConfiguration <- function(parent=NULL) {
     tclvalue(tt.done.var) <- 1
   }
 
-  # Main program
+  ## Main program
 
   # Assign variables linked to Tk widgets
 
@@ -227,7 +227,6 @@ SetConfiguration <- function(parent=NULL) {
   tkgrid(frame2.chk.10.1, sticky="w")
 
   # Final layout
-
   tkgrid(frame1, frame2, sticky="nswe")
   tkgrid.columnconfigure(pw, 0, weight=2)
   tkpack(pw, fill="x", expand=TRUE)

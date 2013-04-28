@@ -2,10 +2,9 @@
 
 Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Update entry
-
   UpdateEntry <- function() {
     if (tclvalue(cur.var) != "" && !(tclvalue(new.var) %in% new.names))
       new.names[names %in% tclvalue(cur.var)] <<- tclvalue(new.var)
@@ -14,15 +13,13 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
   }
 
   # Save renamed values
-
   SaveNames <- function() {
     UpdateEntry()
     rtn.names <<- new.names
     tclvalue(tt.done.var) <- 1
   }
 
-
-  # Main program
+  ## Main program
 
   if (is.null(names))
     return(NULL)
@@ -129,5 +126,5 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
 
   tclServiceMode(TRUE)
 
-  rtn.names
+  return(rtn.names)
 }

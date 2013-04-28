@@ -3,10 +3,9 @@
 ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
                            parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Save polygon
-
   SavePolygon <- function(type) {
     if (length(polys) > 0) {
       polys <- polys[vapply(polys, function(i) inherits(i, "gpc.poly"), TRUE)]
@@ -29,7 +28,6 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   PlotPolygon <- function() {
 
     # Draw polygon in canvas
-
     DrawPolygon <- function(contours, tag="", col.line="", col.fill="") {
       for (cnt in contours) {
         pts <- Xy2mn(cnt$x, cnt$y)
@@ -126,23 +124,20 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   }
 
   # Transform coordinates from real to canvas
-
   Xy2mn <- function(x, y) {
     m <- w * ((x - xran[1]) / diff(xran))
     n <- h - (h * ((y - yran[1]) / diff(yran)))
-    list(m=m, n=n)
+    return(list(m=m, n=n))
   }
 
   # Transform coordinates from canvas to real
-
   Mn2xy <- function(m, n) {
     x <- (m * diff(xran) + w * xran[1]) / w
     y <- (h * yran[1] - (n - h) * diff(yran)) / h
-    list(x=x, y=y)
+    return(list(x=x, y=y))
   }
 
   # Scale objects in canvas based on canvas size
-
   ScaleCanvas <- function() {
     w0 <- w
     h0 <- h
@@ -152,7 +147,6 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   }
 
   # Update pointer coordinates
-
   MouseMotion <- function(x, y) {
     if (!is.null(xran)) {
       pnt <- Mn2xy(as.numeric(x), as.numeric(y))
@@ -161,13 +155,11 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   }
 
   # Remove pointer coordinates after leaving canvas
-
   MouseLeave <- function() {
     tclvalue(xy.var) <- ""
   }
 
   # Name polygon
-
   NamePolygon <- function(old=NULL, nam=NA){
     if (is.na(nam))
       nam <- "New Polygon"
@@ -177,7 +169,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
       nam <- paste0(hold.nam, " (", i, ")")
       i <- i + 1
     }
-    nam
+    return(nam)
   }
 
   # Rename polygon
@@ -213,26 +205,20 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   }
 
   # Save new polygon
-
   SaveNewPolygon <- function() {
     if (is.null(polys.base))
       return()
-
     nam <- NamePolygon(old=names(polys))
     polys[[nam]] <<- polys.base
-
     tcl("lappend", list.var, nam)
-
     idx <- length(polys) - 1
     tkselection.clear(frame1.lst, 0, idx)
     tkselection.set(frame1.lst, idx, idx)
-
     tclvalue(rb.var) <- "add"
     PlotPolygon()
   }
 
   # Select polygon
-
   SelectPolygon <- function(type) {
     n <- length(polys)
     if (n == 0)
@@ -253,7 +239,6 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   }
 
   # Arrange polygon
-
   ArrangePolygon <- function(type) {
     idxs <- as.integer(tkcurselection(frame1.lst)) + 1
     if (length(idxs) == 0)
@@ -302,7 +287,6 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   }
 
   # Clear polygon
-
   ClearPolygon <- function() {
     idxs <- as.integer(tkcurselection(frame1.lst)) + 1
     if (length(idxs) == 0)
@@ -322,7 +306,6 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   }
 
   # Import polygon
-
   ImportPolygon <- function() {
     f <- GetFile(cmd="Open", exts=c("ply"), win.title="Open Polygon File(s)",
                  multi=TRUE, parent=tt)
@@ -348,15 +331,14 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   }
 
   # Export polygon
-
   ExportPolygon <- function() {
     idxs <- as.integer(tkcurselection(frame1.lst)) + 1
     if (length(idxs) == 0)
       return()
-
     for (i in idxs) {
       f <- GetFile(cmd="Save As", exts="ply", win.title="Save Polygon As",
-                   initialfile=names(polys)[i], defaultextension="ply", parent=tt)
+                   initialfile=names(polys)[i], defaultextension="ply",
+                   parent=tt)
       if (is.null(f))
         next
       write.polyfile(polys[[i]], f)
@@ -364,8 +346,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
     tkfocus(tt)
   }
 
-
-  # Main program
+  ## Main program
 
   rtn <- NULL
 
@@ -511,7 +492,6 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
   # Paned window
-
   pw <- ttkpanedwindow(tt, orient="horizontal")
 
   # Frame 1
@@ -671,5 +651,5 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  rtn
+  return(rtn)
 }

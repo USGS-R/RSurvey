@@ -3,7 +3,7 @@
 ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                      win.title="View Data", parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Select all cells
   SelectAll <- function() {
@@ -111,8 +111,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       return(as.tclObj("disabledcol"))
   }
 
-
-  # Main program
+  ## Main program
 
   # Check if Tktable is loaded
   is.tktable <- !inherits(try(tcl("package", "present", "Tktable"),

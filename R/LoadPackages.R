@@ -45,14 +45,14 @@ LoadPackages <- function(repo="http://cran.r-project.org") {
   }
 
   # Additional Tcl/Tk packages
-
   tcl.pkg <- tryCatch(tcl("package", "require", "Tktable"), error=identity)
   if (inherits(tcl.pkg, "error")) {
     msg <- paste("Tcl package Tktable is missing and is strongly recommended",
                  "for full functionality of RSurvey.\n ",
                  "http://tktable.sourceforge.net")
     if (is.tcl)
-      tkmessageBox(icon="warning", message=msg, title="Missing Tktable", type="ok")
+      tkmessageBox(icon="warning", message=msg, title="Missing Tktable",
+                   type="ok")
     else
       warning(msg, domain=NA)
   }

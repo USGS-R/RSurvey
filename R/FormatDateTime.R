@@ -3,7 +3,7 @@
 FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
                            parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Save format
   SaveFormat <- function() {
@@ -83,8 +83,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
     tkfocus(frame2a.ent)
   }
 
-
-  # Main program
+  ## Main program
 
   if (!inherits(sample, c("POSIXct", "POSIXlt")))
     stop("Sample object must be of class POSIXct or POSIXlt.")
@@ -149,7 +148,6 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
   # Paned window
-
   pw <- ttkpanedwindow(tt, orient="horizontal")
 
   # Frame 1, treeview for conversion specifications
@@ -351,5 +349,5 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  new.fmt
+  return(new.fmt)
 }

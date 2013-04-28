@@ -3,10 +3,9 @@
 SetPolygonLimits <- function(poly.names=NULL, data.poly=NULL, crop.poly=NULL,
                              parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Save new polygons
-
   SaveNames <- function() {
     box1 <- as.character(tclvalue(data.var))
     if(box1 == "")
@@ -18,8 +17,7 @@ SetPolygonLimits <- function(poly.names=NULL, data.poly=NULL, crop.poly=NULL,
     tclvalue(tt.done.var) <- 1
   }
 
-
-  # Main program
+  ## Main program
 
   poly.names <- c("", poly.names)
   if (!is.null(data.poly) && !data.poly %in% poly.names)
@@ -124,5 +122,5 @@ SetPolygonLimits <- function(poly.names=NULL, data.poly=NULL, crop.poly=NULL,
 
   tclServiceMode(TRUE)
 
-  rtn
+  return(rtn)
 }

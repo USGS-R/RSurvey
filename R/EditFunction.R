@@ -4,7 +4,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                          value.class=NULL, win.title="Edit Function",
                          parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Save function
   SaveFunction <- function() {
@@ -247,8 +247,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     InsertString(txt)
   }
 
-
-  # Main program
+  ## Main program
 
   if (is.null(index)) {
     old.fun <- fun
@@ -447,7 +446,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
   # Paned window
-
   pw <- ttkpanedwindow(tt, orient="horizontal")
 
   # Frame 1
@@ -576,7 +574,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkmark.set(frame2.txt.2.1, "insert", "end")
 
   # Pack frames into paned window
-
   tkadd(pw, frame1, weight=0)
   tkadd(pw, frame2, weight=1)
   tkpack(pw, fill="both", expand="yes")
@@ -610,5 +607,5 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  rtn
+  return(rtn)
 }

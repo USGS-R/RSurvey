@@ -2,7 +2,7 @@
 
 ManageVariables <- function(cols, vars, parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Save changes and close GUI
   SaveChanges <- function(type) {
@@ -430,8 +430,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     tkfocus(tt)
   }
 
-
-  # Main program
+  ## Main program
 
   # Assign variables
 
@@ -649,7 +648,6 @@ ManageVariables <- function(cols, vars, parent=NULL) {
   tkpack(pw, fill="both", expand="yes", padx=10, pady=c(10, 2))
 
   # Update Notebook
-
   UpdateNb()
 
   # Bind events
@@ -683,5 +681,5 @@ ManageVariables <- function(cols, vars, parent=NULL) {
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  rtn
+  return(rtn)
 }

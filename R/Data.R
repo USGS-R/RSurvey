@@ -26,13 +26,12 @@ Data <- local({
                   "color.palette" = colorspace::diverge_hcl
               )
 
+  ## Main program
 
-  # Main program
   function(option, value, which.attr=NULL, clear.proj=FALSE, clear.data=FALSE,
            replace.all=NULL) {
 
     # Replace all values
-
     if (is.list(replace.all)) {
       dat <<- replace.all
       return(invisible())
@@ -104,6 +103,7 @@ Data <- local({
         return(dat[[option.new]])
       else
         return(attr(dat[[option.new]], which.attr, exact=TRUE))
+
     # Set value
     } else {
       if (noption.new == noption || (noption.new == (noption - 1)

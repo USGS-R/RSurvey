@@ -43,5 +43,5 @@ CheckEntry <- function (ent.typ, ent.str="") {
     }
   }
 
-  rtn
+  return(rtn)
 }

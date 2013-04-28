@@ -2,17 +2,15 @@
 
 ChoosePch <- function(pch=NA, parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Save pch and quit
-
    SavePch <- function() {
      rtn.pch <<- TxtToPch(tclvalue(pch.var))
      tclvalue(tt.done.var) <- 1
    }
 
   # FFrame cell based on mouse selection
-
   MouseSelect <- function(x, y) {
     i <- ceiling(as.numeric(y) / dy)
     j <- ceiling(as.numeric(x) / dx)
@@ -32,7 +30,6 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   }
 
   # Draw polygon
-
   DrawPolygon <- function(i, j, fill, outline, tag) {
     x1 <- j * dx - dx - 0.5
     y1 <- i * dy - dy - 0.5
@@ -43,7 +40,6 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   }
 
   # Draw image
-
   DrawImage <- function() {
     tkcreate(frame1.cvs, "image", center, anchor="center", image=img.var)
     for (i in 1:nrow(x.lines))
@@ -53,7 +49,6 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   }
 
   # Pch to text string
-
   PchToTxt <- function(pch) {
     if (is.na(pch)) {
       txt <- "NA"
@@ -62,11 +57,10 @@ ChoosePch <- function(pch=NA, parent=NULL) {
     } else {
       txt <- paste0("\"", pch, "\"")
     }
-    txt
+    return(txt)
   }
 
   # Text string to pch
-
   TxtToPch <- function(txt) {
     txt <- as.character(txt)
     if (txt %in% c("NA", "\"\"", "")) {
@@ -82,11 +76,10 @@ ChoosePch <- function(pch=NA, parent=NULL) {
       else
         pch <- txt.1
     }
-    pch
+    return(pch)
   }
 
   # Draw pch image template (included for development purposes)
-
   DrawPchImageTemplate <- function() {
     m <- 15
     n <- 15
@@ -103,8 +96,7 @@ ChoosePch <- function(pch=NA, parent=NULL) {
     dev.off()
   }
 
-
-  # Main program
+  ## Main program
 
   if ("package:RSurvey" %in% search())
     image.path <- file.path(system.file("images", package="RSurvey"), "pch.gif")
@@ -130,7 +122,6 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   rtn.pch <- NULL
 
   # Assign variables linked to Tk widgets
-
   pch.var <- tclVar(PchToTxt(pch))
   img.var <- tclVar()
   tt.done.var <- tclVar(0)
@@ -150,7 +141,6 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   tktitle(tt) <- "Choose A Graphic Symbol"
 
   # Create image
-
   tkimage.create("photo", img.var, format="GIF", file=image.path)
 
   # Frame 0 contains ok and cancel buttons
@@ -180,7 +170,6 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
   # Canvas
-
   frame1 <- ttkframe(tt, relief="flat")
   frame1.cvs <- tkcanvas(frame1, relief="flat", width=w + 1, height=h + 1,
                          background="white", confine=TRUE, closeenough=0,
@@ -189,7 +178,6 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   tkpack(frame1)
 
   # Draw image and intial selection polyon
-
   DrawImage()
   if (pch %in% pch.show) {
     idx <- which(pch.show %in% pch)
@@ -220,5 +208,5 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  rtn.pch
+  invisible(rtn.pch)
 }

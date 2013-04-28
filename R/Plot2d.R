@@ -222,7 +222,6 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
   x11(width=width, height=height, pointsize=pointsize)
 
   # Set line width
-
   lwd <- 0.5 * (96 / (6 * 12))
 
   # Draw legend
@@ -280,7 +279,6 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
   title(ylab=ylab, cex.main=0.9, cex.lab=0.9, line=2.0)
 
   # Plot interpolated surface
-
   if (type == "l") {
     if (!is.double(z))
       storage.mode(z) <- "double"
@@ -291,7 +289,6 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
   }
 
   # Plot contour lines
-
   if (add.contour.lines && type %in% c("l", "g")) {
       lwd <- 0.5 * (96 / (6 * 12))
       contour(x=x, y=y, z=z, col="#999999", lty="solid",
@@ -362,7 +359,6 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
   }
 
   # Plot points
-
   if (type == "p") {
     if (is.null(z) | is.matrix(z)) {
       points(x, y, pch=21, cex=cex.pts, col="black", bg="white", lwd=lwd)

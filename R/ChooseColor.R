@@ -2,10 +2,9 @@
 
 ChooseColor <- function(col, parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Save color and quit
-
   SaveColor <- function() {
     col.hex <- Txt2hex(tclvalue(col.var))
     if (col.hex == "")
@@ -15,7 +14,6 @@ ChooseColor <- function(col, parent=NULL) {
   }
 
   # Draw polygon on color sample
-
   DrawSamplePolygon <- function(fill) {
     tcl(frame0.cvs.1, "delete", "col")
     pts <- .Tcl.args(c(0, 0, dx, 0, dx, dy, 0, dy))
@@ -23,7 +21,6 @@ ChooseColor <- function(col, parent=NULL) {
   }
 
   # Draw polygon on color chart
-
   DrawChartPolygon <- function(i, j, fill, outline, tag) {
     x1 <- j * dx - dx
     y1 <- i * dy - dy
@@ -34,7 +31,6 @@ ChooseColor <- function(col, parent=NULL) {
   }
 
   # Build color chart
-
   BuildColorChart <- function() {
     for (i in 1:m) {
       for (j in 1:n) {
@@ -44,7 +40,6 @@ ChooseColor <- function(col, parent=NULL) {
   }
 
   # Update color ramp
-
   UpdateColorRamp <- function(col.hex) {
     col.ramp <<- colorRampPalette(c("#FFFFFF", col.hex, "#000000"),
                                   space="Lab")(n + 4)[3:(n + 2)]
@@ -99,7 +94,6 @@ ChooseColor <- function(col, parent=NULL) {
   }
 
   # Select ramp color
-
   SelectRampColor <- function(x) {
     i <- ceiling((as.numeric(x)) / ((w - 1) / n))
     col.hex <- col.ramp[i]
@@ -107,7 +101,6 @@ ChooseColor <- function(col, parent=NULL) {
   }
 
   # Select chart color
-
   SelectChartColor <- function(x, y) {
     tcl(frame1.cvs, "delete", "browse")
     i <- ceiling((as.numeric(y)) / dy)
@@ -121,7 +114,6 @@ ChooseColor <- function(col, parent=NULL) {
   }
 
   # Coerce text string to hexadecimal color
-
   Txt2hex <- function(txt) {
     txt <- CheckColorStr(as.character(txt))
     if (substr(txt, 1, 1) != "#")
@@ -138,21 +130,19 @@ ChooseColor <- function(col, parent=NULL) {
       else
         txt <- "#000000"
     }
-    txt
+    return(txt)
   }
 
   # Coerce numeric HSV values to hexadecimal color
-
   Hsv2hex <- function() {
     if (is.transparent)
       col.hex <- hsv(h=nh, s=ns, v=nv, alpha=na)
     else
       col.hex <- hsv(h=nh, s=ns, v=nv)
-    col.hex
+    return(col.hex)
   }
 
   # Check range of numeric color attribute
-
   CheckColorNum <- function(...) {
     num <- suppressWarnings(as.numeric(...))
     if (is.na(num) || num < 0) {
@@ -160,11 +150,10 @@ ChooseColor <- function(col, parent=NULL) {
     } else if (num > 1) {
       num <- 1
     }
-    num
+    return(num)
   }
 
   # Check hexadecimal character string
-
   CheckColorStr <- function(txt) {
     txt <- as.character(txt)
     if (is.transparent)
@@ -174,7 +163,7 @@ ChooseColor <- function(col, parent=NULL) {
     sep.txt <- strsplit(txt, "")[[1]]
     idxs <- which(vapply(sep.txt, function(i) i %in% hex.digits, TRUE))
     txt <- paste(sep.txt[idxs], collapse="")
-    txt
+    return(txt)
   }
 
   # Update based on change in scales
@@ -261,11 +250,9 @@ ChooseColor <- function(col, parent=NULL) {
     ChangeColor(col.hex, is.color=TRUE)
   }
 
-
-  # Main program
+  ## Main program
 
   # Color chart information
-
   m <- 12
   dx <- dy <- 20
   d1 <- cbind(rainbow_hcl(m), heat_hcl(m), terrain_hcl(m),
@@ -313,37 +300,30 @@ ChooseColor <- function(col, parent=NULL) {
   h <- dy * m
 
   # All possible digits in color character string
-
   hex.digits <- list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
                      "a", "b", "c", "d", "e", "f",
                      "A", "B", "C", "D", "E", "F", "#")
 
   # Initialize return color
-
   rtn.col <- NULL
 
   # Initialize color ramp palette
-
   col.ramp <- NULL
 
   # Account for improper color argument
-
   if (missing(col) || !inherits(col, "character"))
     col <- "#000000"
 
  # Transparency status
-
   if (nchar(col) == 9)
     is.transparent <- TRUE
   else
     is.transparent <- FALSE
 
   # Color is intially required to be in hexadecimal format
-
   col.hex <- Txt2hex(col)
 
   # Initialize hue, saturation, value, and alpha color components
-
   col.rgb <- col2rgb(col.hex, alpha=TRUE)
   col.hsv <- rgb2hsv(col.rgb[1:3], maxColorValue=255)
   nh <- col.hsv[1]
@@ -390,7 +370,8 @@ ChooseColor <- function(col, parent=NULL) {
                            background="white", confine=TRUE, closeenough=0,
                            borderwidth=0, highlightthickness=0)
   frame0.ent.2 <- ttkentry(frame0, textvariable=col.var, width=12)
-  frame0.chk.3 <- ttkcheckbutton(frame0, variable=trans.var, text="Transparency",
+  frame0.chk.3 <- ttkcheckbutton(frame0, variable=trans.var,
+                                 text="Transparency",
                                  command=ToggleTransparency)
 
   frame0.but.5 <- ttkbutton(frame0, width=12, text="OK", command=SaveColor)
@@ -400,11 +381,11 @@ ChooseColor <- function(col, parent=NULL) {
                               tclvalue(tt.done.var) <- 1
                             })
 
-  tkgrid(frame0.cvs.1, frame0.ent.2,  frame0.chk.3, "x", frame0.but.5, frame0.but.6,
-         pady=c(10, 10))
+  tkgrid(frame0.cvs.1, frame0.ent.2,  frame0.chk.3, "x", frame0.but.5,
+         frame0.but.6, pady=c(10, 10))
   tkgrid.columnconfigure(frame0, 3, weight=1)
 
-  tkgrid.configure(frame0.cvs.1, sticky="w", padx=c(11, 1), pady=c(11, 11))
+  tkgrid.configure(frame0.cvs.1, sticky="w", padx=c(11, 1), pady=11)
   tkgrid.configure(frame0.ent.2, padx=c(4, 4))
 
   tkgrid.configure(frame0.but.5, sticky="e", padx=c(0, 4))
@@ -413,7 +394,6 @@ ChooseColor <- function(col, parent=NULL) {
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
   # Frame 1, color chart
-
   frame1 <- ttkframe(tt, relief="flat")
   frame1.cvs <- tkcanvas(frame1, relief="flat", width=w + 1, height=h + 1,
                          background="black", confine=TRUE, closeenough=0,
@@ -422,7 +402,6 @@ ChooseColor <- function(col, parent=NULL) {
   tkpack(frame1)
 
   # Frame 2, color ramp
-
   frame2 <- ttkframe(tt, relief="flat")
   frame2.cvs <- tkcanvas(frame2, relief="flat", width=w + 1, height=dy / 2 + 1,
                          background="black", confine=TRUE, closeenough=0,
@@ -477,7 +456,6 @@ ChooseColor <- function(col, parent=NULL) {
   tkpack(frame3, fill="x")
 
   # Initial commands
-
   BuildColorChart()
   ChangeColor(col.hex)
 

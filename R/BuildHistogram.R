@@ -2,7 +2,7 @@
 
 BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Calculate and plot histogram
 
@@ -64,7 +64,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   }
 
   # Adjust scale
-
   AdjustScale <- function(x) {
     idx <- as.integer(tcl(frame1.box.1.2, "current")) + 1L
     breaks <- as.integer(x * (maxs[idx] - 1) + 1)
@@ -75,7 +74,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   }
 
   # Plot Histogram
-
   PlotHist <- function() {
     if (dev.cur() > dev)
       CalcHist()
@@ -119,8 +117,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     PlotHist()
   }
 
-
-  # Main program
+  ## Main program
 
   # Check input arguments
 
@@ -144,7 +141,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     stop()
 
   # Set limits and default value
-
   maxs <- as.vector(apply(d, 2, function(i) length(unique(i))))
   maxs[maxs > 100] <- 100
   maxs[maxs <  10] <-  10
@@ -152,7 +148,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   xdef <- (defs[var.default] - 1) / (maxs[var.default] - 1)
 
   # Initialize device
-
   dev <- dev.cur()
 
   # Assign the variables linked to Tk widgets
@@ -263,11 +258,13 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   frame2.ent.10.2 <- ttkentry(frame2, width=10, textvariable=by.var)
 
   tkgrid(frame2.rbt.1.1, sticky="w", columnspan=3)
-  tkgrid(frame2.box.2.1, padx=c(20, 0), pady=c(0, 10), sticky="we", columnspan=3)
+  tkgrid(frame2.box.2.1, padx=c(20, 0), pady=c(0, 10), sticky="we",
+         columnspan=3)
   tkgrid(frame2.rbt.3.1, sticky="w", columnspan=3)
   tkgrid(frame2.scl.4.1, "x", frame2.ent.4.3, pady=c(0, 5), sticky="we")
   tkgrid(frame2.rbt.5.1, sticky="w", columnspan=3)
-  tkgrid(frame2.ent.6.1, padx=c(20, 0), pady=c(0, 10), sticky="we", columnspan=3)
+  tkgrid(frame2.ent.6.1, padx=c(20, 0), pady=c(0, 10), sticky="we",
+         columnspan=3)
   tkgrid(frame2.rbt.7.1, sticky="w", columnspan=3)
   tkgrid(frame2.lab.8.1, frame2.ent.8.2)
   tkgrid(frame2.lab.9.1, frame2.ent.9.2)

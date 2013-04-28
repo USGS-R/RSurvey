@@ -2,7 +2,7 @@
 
 SetPreferences <- function(parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Update parameter values
 
@@ -34,8 +34,7 @@ SetPreferences <- function(parent=NULL) {
     tclvalue(tt.done.var) <- 1
   }
 
-
-  # Main program
+  ## Main program
 
   # Assign the variables linked to Tk widgets
 

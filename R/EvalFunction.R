@@ -1,4 +1,5 @@
 # Evaluate an RSurvey expression.
+
 EvalFunction <- function(txt, cols) {
 
   d <- list()
@@ -32,5 +33,5 @@ EvalFunction <- function(txt, cols) {
   if (is.numeric(ans))
     ans[is.infinite(ans) | is.nan(ans)] <- NA
 
-  ans
+  return(ans)
 }

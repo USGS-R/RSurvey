@@ -2,7 +2,7 @@
 
 Autocrop <- function(mesh, max.len, max.itr=10000) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Return outer elements with arc lengths greater than max.len
 
@@ -50,8 +50,7 @@ Autocrop <- function(mesh, max.len, max.itr=10000) {
     new.tri
   }
 
-
-  # Main program
+  ## Main program
 
   require(tripack)
 
@@ -124,5 +123,5 @@ Autocrop <- function(mesh, max.len, max.itr=10000) {
   x <- mesh$x[sort.arcs]
   y <- mesh$y[sort.arcs]
 
-  as(structure(c(x, y), .Dim=c(length(x), 2)), "gpc.poly")
+  return(as(structure(c(x, y), .Dim=c(length(x), 2)), "gpc.poly"))
 }

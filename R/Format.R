@@ -2,7 +2,7 @@
 
 Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Save conversion specification format
   SaveFormat <- function() {
@@ -27,6 +27,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   }
 
   # Translate format string, return TRUE if custom format
+
   TranslateFormat <- function() {
     if (nchar(fmt) < 2L)
       return(TRUE)
@@ -115,7 +116,6 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   }
 
   # Add string to conversion format entry
-
   AddString <- function(txt) {
     if (as.logical(tcl(frame2.ent.1, "selection", "present")))
       tcl(frame2.ent.1, "delete", "sel.first", "sel.last")
@@ -241,8 +241,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     tkfocus(frame2.ent.1)
   }
 
-
-    # Main program
+  ## Main program
 
   if (!inherits(sample, c("numeric", "integer", "character",
                           "factor", "logical")))
@@ -460,5 +459,5 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  new.fmt
+  return(new.fmt)
 }

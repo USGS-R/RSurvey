@@ -62,5 +62,5 @@ CutoutPolygon <- function(dat, ply=NULL) {
   dat$y <- dat$y[!(cols %in% rm.cols)]
   dat$z <- dat$z[!(rows %in% rm.rows), !(cols %in% rm.cols)]
 
-  dat
+  return(dat)
 }

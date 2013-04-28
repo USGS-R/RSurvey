@@ -2,7 +2,7 @@
 
 SummarizeData <- function(obj, fmt=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Format value
   FormatValue <- function(i) {
@@ -34,8 +34,7 @@ SummarizeData <- function(obj, fmt=NULL) {
     return(string)
   }
 
-
-  # Main program
+  ## Main program
 
   # Account for missing values
   if (is.null(obj))

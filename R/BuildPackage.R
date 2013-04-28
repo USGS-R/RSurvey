@@ -1,12 +1,11 @@
 # Writes a series of commands for creating an R package to a Windows batch file.
+# Software requirements for building R packages in Windows XP Pro:
+#   Download and install the Rtools installer (choose to update Search Path)
+#     http://www.murdoch-sutherland.com/Rtools/installer.html
+#   Download and install the MiKTeX installation program
+#     http://www.miktex.org/setup.html
 
 BuildPackage <- function() {
-
-  # Software requirements for building R packages in Windows XP Pro:
-  #   Download and install the Rtools installer (choose to update Search Path)
-  #     http://www.murdoch-sutherland.com/Rtools/installer.html
-  #   Download and install the MiKTeX installation program
-  #     http://www.miktex.org/setup.html
 
   require(tcltk)
 

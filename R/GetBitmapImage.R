@@ -1,9 +1,8 @@
 # Create small bitmap icon images.
+# Bitmap editor: http://www.posoft.de/html/poBitmapMain.html
+# Size: width 11 pixel, height 11 pixel
 
 GetBitmapImage <- function(type) {
-
-  # Bitmap editor: http://www.posoft.de/html/poBitmapMain.html
-  # Size: width 11 pixel, height 11 pixel
 
   bits <- list()
 
@@ -104,5 +103,5 @@ GetBitmapImage <- function(type) {
                     "static unsigned char v_bits[] = { ",
                     paste0(bits[[type]], collapse=", "), " }; ")
 
-  tkimage.create("bitmap", data=as.tclObj(bits.str))
+  return(tkimage.create("bitmap", data=as.tclObj(bits.str)))
 }

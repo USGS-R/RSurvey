@@ -2,7 +2,7 @@
 
 ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Load data set
   LoadDataset <- function() {
@@ -210,8 +210,7 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
       tkfocus(frame1.lst.2.4)
   }
 
-
-  # Main program
+  ## Main program
 
   # Initialize values
 

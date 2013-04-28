@@ -2,7 +2,7 @@
 
 ExportData <- function(file.type="text", parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Final export of data to file
 
@@ -234,8 +234,7 @@ ExportData <- function(file.type="text", parent=NULL) {
     tkconfigure(frame0.but.2, state=s)
   }
 
-
-  # Main program
+  ## Main program
 
   # Check for required information
   col.ids <- vapply(Data("cols"), function(i) i$id, "")

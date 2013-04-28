@@ -2,7 +2,7 @@
 
 SetAxesLimits <- function(lim=NULL, parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Update limits
 
@@ -52,8 +52,7 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
     new <<- d
   }
 
-
-  # Main program
+  ## Main program
 
   new <- lim
 
@@ -306,5 +305,5 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  new
+  return(new)
 }

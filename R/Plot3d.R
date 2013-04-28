@@ -150,26 +150,21 @@ Plot3d <- function(x=NULL, y=NULL, z=NULL, px=NULL, py=NULL, pz=NULL,
   }
 
   # Color
-
   n <- length(pretty(zlim, nlevels)) - 1
   zran <- range(z, na.rm=TRUE)
   cols <- color.palette(n)[((z - zran[1]) / (zran[2] - zran[1])) * (n - 1) + 1]
 
   # Open RGL device
-
   open3d()
 
   # Size of plot window
-
   win.dim <- ppi + width * ppi
   win.rect <- c(ppi, ppi, win.dim, win.dim * 0.75)
 
   par3d(windowRect=win.rect, mouseMode=mouse.mode)
 
   # Add terrain surface shape
-
   bg3d(color=bg)
-
   surface3d(x, y, z, color=cols, back="fill")
   view3d(theta=0, phi=-55, fov=60, zoom=0.6)
 

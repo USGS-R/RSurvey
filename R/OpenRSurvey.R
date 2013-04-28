@@ -2,7 +2,7 @@
 
 OpenRSurvey <- function() {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Close GUI
   CloseGUI <- function() {
@@ -57,7 +57,6 @@ OpenRSurvey <- function() {
     if (!is.null(Data("proj.file"))) {
       csi <- Data("csi")
       Data("csi", NULL)
-
       project <- Data()
       save(project, file=Data("proj.file"), compress=TRUE)
       Data("csi", csi)
@@ -87,7 +86,7 @@ OpenRSurvey <- function() {
     }
     Data(clear.proj=TRUE)
     SetVars()
-    ans
+    return(ans)
   }
 
   # Import survey data
@@ -136,13 +135,15 @@ OpenRSurvey <- function() {
 
   # Set button state
   ButtonState <- function(vars) {
-    s <- "normal"
     if (is.null(vars$x) | is.null(vars$y))
       s <- "disabled"
+    else
+      s <- "normal"
     tkconfigure(frame2.but.1.1, state=s)
-    s <- "normal"
     if (is.null(vars$x) | is.null(vars$y) | is.null(vars$z))
       s <- "disabled"
+    else
+      s <- "normal"
     tkconfigure(frame2.but.1.2, state=s)
     tkconfigure(frame2.but.1.3, state=s)
   }
@@ -581,19 +582,15 @@ OpenRSurvey <- function() {
   }
 
   # Plot 3d surface data
-
   CallPlot3d <- function() {
     CallProcessData(interpolate=TRUE)
-
     if (is.null(Data("data.grd")))
       return()
-
     dat <- Data("data.grd")
     pts <- NULL
     if (Data("show.points"))
       pts <- Data("data.pts")
     lim <- Data("lim.axes")
-
     tkconfigure(tt, cursor="watch")
     Plot3d(x=dat, px=pts, xlim=lim$x, ylim=lim$y, zlim=lim$z,
            vasp=Data("asp.zx"), hasp=Data("asp.yx"),
@@ -751,8 +748,7 @@ OpenRSurvey <- function() {
     Data("comment", txt)
   }
 
-
-  # Main program
+  ## Main program
 
   # Warn if using Windows OS and running in MDI mode
   if (.Platform$OS.type == "windows" && getIdentification() == "RGui")
@@ -884,7 +880,9 @@ OpenRSurvey <- function() {
 
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="View processed data",
-        command=function() CallViewData(read.only=TRUE))
+        command=function() {
+          CallViewData(read.only=TRUE)
+        })
 
   # Polygon menu
 
@@ -1068,9 +1066,9 @@ OpenRSurvey <- function() {
   frame0.but.6  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=axes.var,
                             command=function() {
-                             lim <- SetAxesLimits(Data("lim.axes"), tt)
-                             Data("lim.axes", lim)
-                           })
+                              lim <- SetAxesLimits(Data("lim.axes"), tt)
+                              Data("lim.axes", lim)
+                            })
   frame0.but.7  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=close.var,
                             command=CloseDevices)
@@ -1139,11 +1137,10 @@ OpenRSurvey <- function() {
 
   tcl("grid", "anchor", frame2, "center")
 
-  tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE,
-         padx=10, pady=c(0, 10))
+  tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE, padx=10,
+         pady=c(0, 10))
 
   # Set variables
-
   SetVars()
 
   # Bind events

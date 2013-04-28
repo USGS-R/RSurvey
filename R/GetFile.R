@@ -4,18 +4,17 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
                     initialfile=NULL, defaultextension=NULL, win.title=cmd,
                     multi=FALSE, parent=NULL) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Determine file extension
   FileExt <- function(x) {
     ext <- tail(unlist(strsplit(basename(x), "\\."))[-1], 1)
     if (length(ext) == 0L)
       ext <- ""
-    ext
+    return(ext)
   }
 
-
-  # Main program
+  ## Main program
 
   # Initialize file filters
   all.filters <- list(bmp   = "Windows Bitmap Files",
@@ -128,5 +127,5 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
   if (!is.null(f))
     Data("default.dir", attr(val, "directory"))
 
-  f
+  return(f)
 }

@@ -2,7 +2,7 @@
 
 AutocropRegion <- function(d, parent=NULL, ...) {
 
-  # Additional functions (subroutines)
+  ## Additional functions (subroutines)
 
   # Save polygon and exit GUI
 
@@ -45,28 +45,23 @@ AutocropRegion <- function(d, parent=NULL, ...) {
   }
 
   # Draw base plot and points
-
   DrawBasePlot <- function() {
     do.call(Plot2d, append(list(x=d, type="p"), list(...)))
     dev <<- dev.cur()
   }
 
   # Refresh plot
-
   RefreshPlot <- function() {
     if (is.null(dev))
       return()
-
     dev.off(which=dev)
     DrawBasePlot()
-
     dev <<- dev.cur()
     ply <<- NULL
     old.ply <<- NULL
   }
 
-
-  # Main program
+  ## Main program
 
   is.pkg <- "tripack" %in% .packages(all.available=TRUE) &&
             require(tripack)
@@ -84,11 +79,9 @@ AutocropRegion <- function(d, parent=NULL, ...) {
   old.ply <- NULL
 
   # Construct mesh
-
   mesh <- tripack::tri.mesh(d$x, d$y, duplicate="remove")
 
   # Convex hull and maximum outer arc length
-
   hull <- convex.hull(mesh)
   x1 <- hull$x
   y1 <- hull$y
@@ -97,12 +90,10 @@ AutocropRegion <- function(d, parent=NULL, ...) {
   default.len <- max(sqrt((x2 - x1)^2 + (y2 - y1)^2))
 
   # Assign the variables linked to Tk widgets
-
   max.len.var <- tclVar(format(default.len))
   tt.done.var <- tclVar(0)
 
   # Open GUI
-
   tclServiceMode(FALSE)
   tt <- tktoplevel(padx=0, pady=0)
   if (!is.null(parent)) {
@@ -179,5 +170,5 @@ AutocropRegion <- function(d, parent=NULL, ...) {
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  rtn
+  return(rtn)
 }
