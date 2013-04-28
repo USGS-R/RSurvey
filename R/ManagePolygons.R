@@ -174,7 +174,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
     i <- 1
     hold.nam <- nam
     while (nam %in% old) {
-      nam <- paste(hold.nam, " (", i, ")", sep="")
+      nam <- paste0(hold.nam, " (", i, ")")
       i <- i + 1
     }
     nam
@@ -416,8 +416,8 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
 
   tktitle(tt) <- "Manage Polygons"

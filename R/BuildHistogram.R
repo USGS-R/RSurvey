@@ -132,7 +132,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   if (is.null(var.names)) {
     var.names <- colnames(d)
     if (is.null(var.names))
-      var.names <- paste("Unknown (", 1:ncol(d), ")", sep="")
+      var.names <- paste0("Unknown (", 1:ncol(d), ")")
   }
 
   if (is.character(var.default)) {
@@ -180,8 +180,8 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
   tktitle(tt) <- "Histogram"
   tkwm.resizable(tt, 1, 0)

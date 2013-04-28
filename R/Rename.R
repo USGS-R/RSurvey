@@ -45,8 +45,8 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
 
   if (!is.null(win.title))
@@ -82,7 +82,7 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
   frame1.lab.2 <- ttklabel(frame1, text="New name")
 
   if (length(names) == 1)
-    prep.names <- paste("{", names, "}", sep="")
+    prep.names <- paste0("{", names, "}")
   else
     prep.names <- names
 

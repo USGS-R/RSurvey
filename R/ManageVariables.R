@@ -33,7 +33,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     i <- 1
     hold.new.id <- new.id
     while (new.id %in% old.ids[-idx]) {
-      new.id <- paste(hold.new.id, " (", i, ")", sep="")
+      new.id <- paste0(hold.new.id, " (", i, ")")
       i <- i + 1
     }
     cols[[idx]]$id <<- new.id
@@ -43,8 +43,8 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     # Update functions
     if (!is.null(old.id)) {
       old.fun <- cols[[idx]]$fun
-      str.1 <- paste("\"", old.id, "\"", sep="")
-      str.2 <- paste("\"", new.id, "\"", sep="")
+      str.1 <- paste0("\"", old.id, "\"")
+      str.2 <- paste0("\"", new.id, "\"")
       funs <- sapply(cols, function(i) gsub(str.1, str.2, i$fun, fixed=TRUE))
       sapply(1:length(cols), function(i) cols[[i]]$fun <<- funs[[i]])
       new.fun <- cols[[idx]]$fun
@@ -173,24 +173,24 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     if (length(idx) == 0)
       return()
 
-    var.str <- paste("\"", cols[[idx]]$id, "\"", sep="")
+    var.str <- paste0("\"", cols[[idx]]$id, "\"")
     funs.with.var <- grep(var.str, sapply(cols, function(i) i$fun), fixed=TRUE)
     dependent.vars <- funs.with.var[!funs.with.var %in% idx]
 
     if (length(dependent.vars) > 0) {
       ids <- vapply(cols, function(i) i$id, "")[dependent.vars]
-      msg <- paste("Variables dependent on variable \"", cols[[idx]]$id,
-                   "\" include:\n\n  ", paste(ids, collapse=", "),
-                   "\n\nThese variables must first be removed before this ",
-                   "operation can be completed.", sep="")
+      msg <- paste0("Variables dependent on variable \"", cols[[idx]]$id,
+                    "\" include:\n\n  ", paste(ids, collapse=", "),
+                    "\n\nThese variables must first be removed before this ",
+                    "operation can be completed.")
       tkmessageBox(icon="error", message=msg, title="Deletion Prevented",
                    type="ok", parent=tt)
       return()
     }
     if (!is.na(cols[[idx]]$index)) {
-      msg <- paste("Variable \"", cols[[idx]]$id,
-                   "\" corresponds with raw data.\n\n",
-                   "Are you sure you want to remove it?", sep="")
+      msg <- paste0("Variable \"", cols[[idx]]$id,
+                    "\" corresponds with raw data.\n\n",
+                    "Are you sure you want to remove it?")
       ans <- tkmessageBox(icon="question", message=msg, title="Question",
                           type="okcancel", parent=tt)
       if (as.character(ans) == "cancel")
@@ -278,9 +278,8 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     if (is.null(f$fun))
       return()
     if (f$fun == "") {
-      msg <- paste("Nothing has been defined for this function; therefore,\n",
-                   "the variable '", cols[[idx]]$name, "' will be removed.",
-                   sep="")
+      msg <- paste0("Nothing has been defined for this function; therefore,\n",
+                    "the variable '", cols[[idx]]$name, "' will be removed.")
       ans <- as.character(tkmessageBox(icon="question", message=msg,
                                        title="Warning", type="okcancel",
                                        parent=tt))
@@ -464,8 +463,8 @@ ManageVariables <- function(cols, vars, parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
   tktitle(tt) <- "Manage Variables"
 

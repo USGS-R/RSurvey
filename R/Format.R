@@ -8,7 +8,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   SaveFormat <- function() {
     fmt <- as.character(tclvalue(fmt.var))
     if (as.character(tclvalue(sample.var)) == "") {
-      msg <- paste("Invalid format '", fmt, "'; please try again.", sep="")
+      msg <- paste0("Invalid format '", fmt, "'; please try again.")
       tkmessageBox(icon="error", message=msg, title="Error", type="ok",
                    parent=tt)
     } else {
@@ -213,10 +213,10 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
         is.scientific <- as.logical(as.integer(tclvalue(scientific.var)))
         letter <- if (is.scientific) "e" else "f"
       }
-      fmt <- paste("%", space, pad, left, sign, width, period, precision,
-                   letter, sep="")
+      fmt <- paste0("%", space, pad, left, sign, width, period, precision,
+                    letter)
     } else {
-      fmt <- paste("%", left, width, "s", sep="")
+      fmt <- paste0("%", left, width, "s")
     }
     tclvalue(fmt.var) <- fmt
     UpdateSample()
@@ -246,8 +246,8 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
   if (!inherits(sample, c("numeric", "integer", "character",
                           "factor", "logical")))
-    stop(paste("Class of sample object is not acceptable:",
-               class(sample), ".", sep=""))
+    stop(paste0("Class of sample object is not acceptable:",
+                class(sample), "."))
 
   new.fmt <- NULL
 
@@ -283,8 +283,8 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
   tktitle(tt) <- "Format"
 

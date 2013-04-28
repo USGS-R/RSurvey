@@ -13,11 +13,11 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       rtn <<- list(fun="")
     } else {
       fun <- txt
-      pattern <- paste("\"", ids, "\"", sep="")
-      replacement <- paste("DATA[[", 1:length(ids), "]]", sep="")
+      pattern <- paste0("\"", ids, "\"")
+      replacement <- paste0("DATA[[", 1:length(ids), "]]")
       for (i in seq(along=ids))
         fun <- gsub(pattern[i], replacement[i], fun, fixed=TRUE)
-      fun <- paste("function(DATA) {", fun, "}", sep="")
+      fun <- paste0("function(DATA) {", fun, "}")
 
       fun <- try(parse(text=fun), silent=TRUE)
       if (inherits(fun, "try-error")) {
@@ -35,19 +35,20 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       }
 
       if (!is.null(value.length) && length(obj) != value.length) {
-        msg <- paste("Evaluated function must be of length ", value.length,
-                     ", try revising.", sep="")
-        dtl <- paste("Resulting object is currently of length ", length(obj),
-                     ".", sep="")
+        msg <- paste0("Evaluated function must be of length ", value.length,
+                      ", try revising.")
+        dtl <- paste0("Resulting object is currently of length ", length(obj),
+                      ".")
         tkmessageBox(icon="error", message=msg, detail=dtl, title="Error",
                      type="ok", parent=tt)
         return()
       }
 
       if (!is.null(value.class) && !inherits(obj, value.class)) {
-        msg <- paste("A query must result in an object of class \"", value.class,
-                     "\". The evaluated function is an object of class \"",
-                     class(obj), "\", please revise.", sep="")
+        msg <- paste0("A query must result in an object of class \"",
+                      value.class,
+                      "\". The evaluated function is an object of class \"",
+                      class(obj), "\", please revise.")
         tkmessageBox(icon="error", message=msg, title="Error", type="ok",
                      parent=tt)
         return()
@@ -118,7 +119,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     if (length(idx) == 0)
       return()
     id <- as.character(tkget(frame1.lst.2.1, idx, idx))
-    txt <- paste("\"", id, "\"", sep="")
+    txt <- paste0("\"", id, "\"")
     InsertString(txt)
   }
 
@@ -235,12 +236,11 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     if (var.class == "factor" && is.na(suppressWarnings(as.numeric(val))))
       var.class <- "character"
     if (var.class == "POSIXct") {
-      txt <- paste("as.POSIXct(\"", val, "\", format = \"", var.fmt, "\")",
-                   sep="")
+      txt <- paste0("as.POSIXct(\"", val, "\", format = \"", var.fmt, "\")")
     } else if (var.class == "integer" && val != "NA") {
-      txt <- paste(val, "L", sep="")
+      txt <- paste0(val, "L")
     } else if (var.class == "character" && val != "NA") {
-      txt <- paste("\"", val, "\"", sep="")
+      txt <- paste0("\"", val, "\"")
     } else {
       txt <- val
     }
@@ -288,8 +288,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
   tktitle(tt) <- win.title
 
@@ -418,7 +418,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     txt <- paste("Resulting object must be of length", value.length)
     if (!is.null(value.class))
       txt <- paste(txt, "and class", value.class)
-    txt <- paste(txt, ".", sep="")
+    txt <- paste0(txt, ".")
   }
   frame0.lab.1 <- ttklabel(frame0, text=txt, foreground="#A40802")
   frame0.but.3 <- ttkbutton(frame0, width=12, text="OK",
@@ -506,7 +506,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   txt <- "Define function"
   if (!is.null(index) && edit.fun.id != "")
-    txt <- paste(txt, " for \"", edit.fun.id, "\"", sep="")
+    txt <- paste0(txt, " for \"", edit.fun.id, "\"")
   frame2.lab.1.1 <- ttklabel(frame2, text=txt, foreground="#414042")
 
   fnt <- tkfont.create(family="Courier New", size=10)

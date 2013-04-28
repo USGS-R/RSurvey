@@ -45,8 +45,8 @@ SetPolygonLimits <- function(poly.names=NULL, data.poly=NULL, crop.poly=NULL,
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
 
   tktitle(tt) <- "Polygon Limits"
@@ -80,7 +80,7 @@ SetPolygonLimits <- function(poly.names=NULL, data.poly=NULL, crop.poly=NULL,
 
   vals <- poly.names
   if (length(vals) == 1)
-    vals <- paste("{", vals, "}", sep="")
+    vals <- paste0("{", vals, "}")
 
   frame1.box.1.2 <- ttkcombobox(frame1, state="readonly",
                                 textvariable=data.var, values=vals)

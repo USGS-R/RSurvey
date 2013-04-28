@@ -60,7 +60,7 @@ ChoosePch <- function(pch=NA, parent=NULL) {
     } else if (is.numeric(pch)) {
       txt <- as.character(as.integer(pch))
     } else {
-      txt <- paste("\"", pch, "\"", sep="")
+      txt <- paste0("\"", pch, "\"")
     }
     txt
   }
@@ -143,8 +143,8 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
   tkwm.resizable(tt, 0, 0)
   tktitle(tt) <- "Choose A Graphic Symbol"

@@ -156,7 +156,7 @@ ExportData <- function(file.type="text", parent=NULL) {
 
       ext <- tolower(tail(unlist(strsplit(layer, "\\."))[-1], 1))
       if (length(ext) != 0)
-        layer <- sub(paste(".", ext, "$", sep=""), "", layer)
+        layer <- sub(paste0(".", ext, "$"), "", layer)
 
       rgdal::writeOGR(obj=d, dsn=dsn, layer=layer, driver="ESRI Shapefile",
                       verbose=TRUE, overwrite_layer=TRUE)
@@ -219,7 +219,7 @@ ExportData <- function(file.type="text", parent=NULL) {
     is.gzip <- as.logical(as.integer(tclvalue(compress.var)))
     f.new <- f
     if (is.gzip & !is.gz)
-      f.new <- paste(f, ".gz", sep="")
+      f.new <- paste0(f, ".gz")
     if (!is.gzip & is.gz)
       f.new <- substr(f, 1L, n - 3L)
     if (!identical(f, f.new))
@@ -296,13 +296,13 @@ ExportData <- function(file.type="text", parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
-  
+
   if (file.type == "text")
     tktitle(tt) <- "Export Data As Text File"
-  else 
+  else
     tktitle(tt) <- "Export Data As Shapefile"
 
   # Frame 0, export and cancel buttons

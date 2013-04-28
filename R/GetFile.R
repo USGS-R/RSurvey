@@ -47,7 +47,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
     ext <- FileExt(val)
     attr(val, "directory") <- dirname(val)
     attr(val, "extension") <- ext
-    attr(val, "name") <- sub(paste(".", ext, "$", sep=""), "", basename(val))
+    attr(val, "name") <- sub(paste0(".", ext, "$"), "", basename(val))
     attr(val, "type") <- all.filters[[ext]]
     Data("default.dir", attr(val, "directory"))
     return(val)
@@ -64,13 +64,13 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
       typ <- all.filters[[ext]]
       if (is.null(typ))
         typ <- toupper(ext)
-      filters <- rbind(filters, c(typ, paste(".", ext, sep="")))
+      filters <- rbind(filters, c(typ, paste0(".", ext)))
     }
   }
   filters   <- rbind(filters, c("All files", "*"))
-  filters[] <- paste("{", filters, "}", sep="")
+  filters[] <- paste0("{", filters, "}")
   filters   <- apply(filters, 1, paste, collapse=" ")
-  filters   <- paste(paste("{", filters, "}", sep=""), collapse=" ")
+  filters   <- paste(paste0("{", filters, "}"), collapse=" ")
 
   # Build arguments
   if (tolower(substr(cmd, 1, 4)) == "open")
@@ -116,7 +116,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
     ext <- FileExt(val)
     attr(val, "directory") <- dirname(val)
     attr(val, "extension") <- ext
-    attr(val, "name") <- sub(paste(".", ext, "$", sep=""), "", basename(val))
+    attr(val, "name") <- sub(paste0(".", ext, "$"), "", basename(val))
     attr(val, "type") <- all.filters[[ext]]
     if (n > 1)
       f[[i]] <- val

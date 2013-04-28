@@ -68,8 +68,8 @@ SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
 
   tktitle(tt) <- "Sort Order"
@@ -103,7 +103,7 @@ SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
 
   vals <- c("", col.ids)
   if (length(vals) == 1)
-    vals <- paste("{", vals, "}", sep="")
+    vals <- paste0("{", vals, "}")
   frame1.box.1.2 <- ttkcombobox(frame1, state="readonly",
                                 textvariable=col.id.var, values=vals)
   tcl(frame1.box.1.2, "current", idx)

@@ -20,28 +20,27 @@ BuildPackage <- function() {
   path.pkg <- shQuote(getwd())
   path.tmp <- shQuote(file.path("C:", pkg))
   path.git <- shQuote(file.path("C:", pkg, ".git"))
-  path.tar <- shQuote(paste("C:/", pkg, "_", ver, ".tar.gz", sep=""))
-  path.chk <- shQuote(paste("C:/", pkg, ".Rcheck", sep=""))
-  path.cmd <- paste(R.home(component="bin"), "/Rcmd", sep="")
-  file.zip <- shQuote(paste(pkg, "_*", sep=""))
+  path.tar <- shQuote(paste0("C:/", pkg, "_", ver, ".tar.gz"))
+  path.chk <- shQuote(paste0("C:/", pkg, ".Rcheck"))
+  path.cmd <- paste0(R.home(component="bin"), "/Rcmd")
+  file.zip <- shQuote(paste0(pkg, "_*"))
 
   cmd <- NULL
-  cmd <- append(cmd, paste("RM -f ", getwd(), "/", pkg, "*", sep=""))
-  cmd <- append(cmd, paste(path.cmd, "REMOVE", pkg, sep=" "))
-  cmd <- append(cmd, paste("CP -r", path.pkg, shQuote("C:/"), sep=" "))
-  cmd <- append(cmd, paste("RMDIR /S /Q", path.chk, sep=" "))
-  cmd <- append(cmd, paste("RMDIR /S /Q", path.git, sep=" "))
-  cmd <- append(cmd, paste(path.cmd, "build", path.tmp, "--resave-data",
-                           sep=" "))
-  cmd <- append(cmd, paste(path.cmd, "check", path.tar, sep=" "))
-  cmd <- append(cmd, paste(path.cmd, "INSTALL --build", path.tmp, sep=" "))
-  cmd <- append(cmd, paste("RMDIR /S /Q", path.tmp, sep=" "))
-  cmd <- append(cmd, paste("MOVE /Y", file.zip, path.pkg, sep=" "))
+  cmd <- append(cmd, paste0("RM -f ", getwd(), "/", pkg, "*"))
+  cmd <- append(cmd, paste(path.cmd, "REMOVE", pkg))
+  cmd <- append(cmd, paste("CP -r", path.pkg, shQuote("C:/")))
+  cmd <- append(cmd, paste("RMDIR /S /Q", path.chk))
+  cmd <- append(cmd, paste("RMDIR /S /Q", path.git))
+  cmd <- append(cmd, paste(path.cmd, "build", path.tmp, "--resave-data"))
+  cmd <- append(cmd, paste(path.cmd, "check", path.tar))
+  cmd <- append(cmd, paste(path.cmd, "INSTALL --build", path.tmp))
+  cmd <- append(cmd, paste("RMDIR /S /Q", path.tmp))
+  cmd <- append(cmd, paste("MOVE /Y", file.zip, path.pkg))
 
-  cmd <- paste(Sys.getenv("COMSPEC"), "/c", cmd, sep=" ")
+  cmd <- paste(Sys.getenv("COMSPEC"), "/c", cmd)
 
   f <- tcl("tk_getSaveFile", defaultextension=".bat",
-           title="Save Batch file As", initialfile=paste(pkg, ".bat", sep=""),
+           title="Save Batch file As", initialfile=paste0(pkg, ".bat"),
            initialdir=file.path(getwd(), ".."))
   f <- as.character(f)
 

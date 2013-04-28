@@ -11,8 +11,8 @@ OpenRSurvey <- function() {
       return()
     CloseDevices()
     geo <- unlist(strsplit(as.character(tkwm.geometry(tt)), "\\+"))
-    Data("win.loc", paste("+", as.integer(geo[2]),
-                          "+", as.integer(geo[3]), sep=""))
+    Data("win.loc", paste0("+", as.integer(geo[2]),
+                           "+", as.integer(geo[3])))
     tclvalue(tt.done.var) <- 1
     tkdestroy(tt)
     tclServiceMode(TRUE)
@@ -407,7 +407,7 @@ OpenRSurvey <- function() {
     idx <- 1
     chk <- nam
     while (chk %in% old) {
-      chk <- paste(nam, " (", idx, ")", sep="")
+      chk <- paste0(nam, " (", idx, ")")
       idx <- idx + 1
     }
     chk

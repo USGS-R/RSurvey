@@ -125,13 +125,13 @@ ChooseColor <- function(col, parent=NULL) {
   Txt2hex <- function(txt) {
     txt <- CheckColorStr(as.character(txt))
     if (substr(txt, 1, 1) != "#")
-      txt <- paste("#", txt, sep="")
+      txt <- paste0("#", txt)
     if (is.transparent)
       fmt <- "%08s"
     else
       fmt <- "%06s"
     fmt.txt <- gsub(" ", "0", sprintf(fmt, substr(txt, 2, nchar(txt))))
-    txt <- paste("#", fmt.txt, sep="")
+    txt <- paste0("#", fmt.txt)
     if (inherits(try(col2rgb(txt), silent=TRUE), "try-error")) {
       if (is.transparent)
         txt <- "#000000FF"
@@ -376,8 +376,8 @@ ChooseColor <- function(col, parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
   tkwm.resizable(tt, 0, 0)
   tktitle(tt) <- "Choose Color"

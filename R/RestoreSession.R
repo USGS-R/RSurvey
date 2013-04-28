@@ -44,7 +44,7 @@ RestoreSession <- function(path, save.objs, fun.call) {
     if (!obj %in% save.objs) {
       ans <- try(source(i), silent=TRUE)
       if (inherits(ans, "try-error"))
-        err.msg <- paste(err.msg, i, "\n", ans, sep="")
+        err.msg <- paste0(err.msg, i, "\n", ans)
       else
         cat(i, "\n")
     }

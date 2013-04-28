@@ -51,7 +51,7 @@ col.names <- c("Integers", "Letters", "DateTime", "Numeric")
 col.formats <- c("\%d", "\%s", "\%m/\%d/\%Y \%H:\%M", "")
 ViewData(d, col.names, col.formats, read.only = 1L)
 
-rownames(d) <- paste(sample(LETTERS, n, replace = TRUE), 1:n, sep="")
+rownames(d) <- paste0(sample(LETTERS, n, replace = TRUE), 1:n)
 ViewData(d)
 
 colnames(d) <- NULL

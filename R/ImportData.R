@@ -48,8 +48,8 @@ ImportData <- function(parent=NULL) {
             if (!is.error) {
               is.num <- !is.na(suppressWarnings(as.numeric(test)))
               if (is.num) {
-                s <- paste(substr(fmt, 1, 1),
-                           substr(fmt, nchar(fmt), nchar(fmt)), sep="")
+                s <- paste0(substr(fmt, 1, 1),
+                            substr(fmt, nchar(fmt), nchar(fmt)))
                 if (s %in% c("%d", "%i")) {
                   col.classes[j] <- "integer"
                 } else if (s %in% c("%f", "%e", "%E")) {
@@ -144,7 +144,7 @@ ImportData <- function(parent=NULL) {
         i <- 1L
         hold.id <- id
         while (id %in% ids) {
-          id <- paste(hold.id, " (", i, ")", sep="")
+          id <- paste0(hold.id, " (", i, ")")
           i <- i + 1L
         }
         ids <- c(ids, id)
@@ -155,7 +155,7 @@ ImportData <- function(parent=NULL) {
         cols[[j]]$format  <- fmt
         cols[[j]]$class   <- cls
         cols[[j]]$index   <- j
-        cols[[j]]$fun     <- paste("\"", id, "\"", sep="")
+        cols[[j]]$fun     <- paste0("\"", id, "\"")
         cols[[j]]$sample  <- na.omit(val)[1]
         cols[[j]]$summary <- SummarizeData(val, fmt=fmt)
 
@@ -528,8 +528,8 @@ ImportData <- function(parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
 
   tktitle(tt) <- "Import Data From Text File, URL, Or Clipboard"

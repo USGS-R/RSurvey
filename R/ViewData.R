@@ -26,7 +26,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                                        useBytes=FALSE, invert=FALSE))
 
       if (length(matched.idxs) == 0L) {
-        msg <- paste("Search string \'", pattern, "\' not found.", sep="")
+        msg <- paste0("Search string \'", pattern, "\' not found.")
         tkmessageBox(icon="info", message=msg, title="Find", type="ok",
                      parent=tt)
         return()
@@ -89,7 +89,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     idx <- which(row.names %in% rec)
     if (length(idx) > 0) {
       tkyview(frame2.tbl, idx[1] - 1L)
-      first.cell.str <- paste(idx, ",0", sep="")
+      first.cell.str <- paste0(idx, ",0")
       last.cell.str  <- paste(idx, n, sep=",")
       tkselection.clear(frame2.tbl, "all")
       tkselection.set(frame2.tbl, first.cell.str, last.cell.str)
@@ -156,7 +156,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
           to <- from[i] + 25
           if (to > n)
             to <- n
-          l <- paste(LETTERS[i], LETTERS[1:(to - from[i] + 1L)], sep="")
+          l <- paste0(LETTERS[i], LETTERS[1:(to - from[i] + 1L)])
           col.names[from[i]:to] <- l
         }
       }
@@ -232,8 +232,8 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
 
   tktitle(tt) <- win.title

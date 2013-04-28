@@ -97,15 +97,15 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
 
   # Determine the width of the text window
   if (read.only) {
-    if (n > 100) {
+    if (n > 98) {
       txt.width <- 100
-    } else if (n < 50) {
+    } else if (n < 48) {
       txt.width <- 50
     } else {
       txt.width <- n + 2
     }
   } else {
-    txt.width <- 82
+    txt.width <- 100
   }
 
   # Assigin global variables
@@ -120,8 +120,8 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
   tktitle(tt) <- win.title
 

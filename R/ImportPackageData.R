@@ -11,8 +11,7 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
     idx <- as.integer(tkcurselection(frame1.lst.2.4))
     pkg.item <- paste(as.character(tkget(frame1.lst.2.4, idx)), collapse=" ")
     e <- environment(LoadDataset)
-    txt <- paste("data(", pkg.item, ", package=\"", pkg.name, "\", envir=e)",
-                 sep="")
+    txt <- paste0("data(", pkg.item, ", package=\"", pkg.name, "\", envir=e)")
     ds.name <- eval(parse(text=txt))
     rtn <<- eval(parse(text=paste("(", ds.name, ")")), envir=e)
     tclvalue(tt.done.var) <- 1
@@ -54,8 +53,8 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
     tkfocus(frame1.lst.2.1)
   }
 
-  # Describe package
-  DescribePackage <- function() {
+  # Summarize data sets in package
+  SummarizePackage <- function() {
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
     pkg.datasets <- ds.list[[pkg.name]]
@@ -65,7 +64,7 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
       nmax <- 20
     items <- sprintf(paste0("%-", nmax, "s"), pkg.datasets[, "Item"])
     txt <- paste0("Data sets in package ", sQuote(pkg.name), ":\n")
-    txt <- c(txt, paste(items, pkg.datasets[, "Title"]))
+    txt <- c(txt, paste(items, pkg.datasets[, "Title"], sep="  "))
     ViewText(txt, read.only=TRUE, win.title="Summary of Data Sets", parent=tt)
     tkfocus(frame1.lst.2.1)
   }
@@ -88,8 +87,7 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
   # Get class of data set
   GetClass <- function(pkg.name, pkg.item) {
     e <- environment(GetClass)
-    txt <- paste("data(", pkg.item, ", package=\"", pkg.name, "\", envir=e)",
-                 sep="")
+    txt <- paste0("data(", pkg.item, ", package=\"", pkg.name, "\", envir=e)")
     suppressWarnings(eval(parse(text=txt)))
     txt <- paste("(", pkg.item, ")")
     pkg.item.class <- class(try(eval(parse(text=txt), envir=e), silent=TRUE))
@@ -254,8 +252,8 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste("+", as.integer(geo[2]) + 25,
-                            "+", as.integer(geo[3]) + 25, sep=""))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
   }
 
   tktitle(tt) <- "Import Data From Package"
@@ -321,7 +319,7 @@ ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
   frame1.box.3.4 <- ttkcombobox(frame1, state="readonly", value=ds.class.vals)
 
   frame1.but.4.1 <- ttkbutton(frame1, width=10, text="Summary",
-                              command=DescribePackage)
+                              command=SummarizePackage)
   frame1.but.4.2 <- ttkbutton(frame1, width=10, text="Load",
                               command=LoadPackage)
   frame1.but.4.4 <- ttkbutton(frame1, width=10, text="Describe",

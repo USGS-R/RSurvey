@@ -102,7 +102,7 @@ GetBitmapImage <- function(type) {
   n <- length(bits[[type]]) / 2L
   bits.str <- paste("#define v_width ", n, "\n#define v_height ", n, "\n",
                     "static unsigned char v_bits[] = { ",
-                    paste(bits[[type]], collapse=", "), " }; ", sep="")
+                    paste0(bits[[type]], collapse=", "), " }; ")
 
   tkimage.create("bitmap", data=as.tclObj(bits.str))
 }
