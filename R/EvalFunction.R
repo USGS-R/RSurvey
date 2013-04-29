@@ -3,7 +3,6 @@
 EvalFunction <- function(txt, cols) {
   d <- list()
   ids <- vapply(cols, function(i) i$id, "")
-
   for (i in seq(along=ids)) {
     if (regexpr(paste0("\"", ids[i], "\""), txt, fixed=TRUE)[1] >= 0) {
       if (is.na(cols[[i]]$index))
@@ -12,15 +11,11 @@ EvalFunction <- function(txt, cols) {
         d[[i]] <- Data("data.raw")[, cols[[i]]$index]
     }
   }
-
   fun <- txt
-  pattern <- paste0("\"", ids, "\"")
-  replacement <- paste0("DATA[[", 1:length(ids), "]]")
   for (i in seq(along=ids))
-    fun <- gsub(pattern[i], replacement[i], fun, fixed=TRUE)
-  fun <- paste0("function(DATA) {", fun, "}")
-  fun <- eval(parse(text=fun))
-
+    fun <- gsub(paste0("\"", ids[i], "\""), paste0("DATA[[", i, "]]"), fun,
+                fixed=TRUE)
+  fun <- eval(parse(text=paste0("function(DATA) {", fun, "}")))
   ans <- try(fun(d), silent=TRUE)
   return(ans)
 }
