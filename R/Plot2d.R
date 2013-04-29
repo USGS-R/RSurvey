@@ -76,7 +76,7 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
 
   if (is.null(csi) || is.na(csi)) {
     x11(pointsize=pointsize)
-    csi <- par("csi") # height of characters and width of margin line (in)
+    csi <- par("csi")  # height of characters and width of margin line (in)
     dev.off()
   }
 
@@ -207,16 +207,16 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
   } else {
     mar.plot   <- c(4, 3.75, 2, 0.75)
     mar.legend <- c(4, 0.00, 2, 4.25)
-    legend.width <- (1 + mar.legend[2] + mar.legend[4]) * csi # width (in)
+    legend.width <- (1 + mar.legend[2] + mar.legend[4]) * csi  # width (in)
   }
   if (is.na(asp)) {
     height <- width
   } else {
-    xmar <- (mar.plot[2] + mar.plot[4]) * csi # plot margin width (in)
-    ymar <- (mar.plot[1] + mar.plot[3]) * csi # plot margin height (in)
-    xin <- width - xmar - legend.width # plot width (in)
-    yin <- xin * diff(ylim) / diff(xlim) * asp # plot height (in)
-    height <- yin + ymar # canvas height (in)
+    xmar <- (mar.plot[2] + mar.plot[4]) * csi  # plot margin width (in)
+    ymar <- (mar.plot[1] + mar.plot[3]) * csi  # plot margin height (in)
+    xin <- width - xmar - legend.width  # plot width (in)
+    yin <- xin * diff(ylim) / diff(xlim) * asp  # plot height (in)
+    height <- yin + ymar  # canvas height (in)
   }
 
   x11(width=width, height=height, pointsize=pointsize)

@@ -237,9 +237,11 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       var.class <- "character"
     if (var.class == "POSIXct") {
       txt <- paste0("as.POSIXct(\"", val, "\", format = \"", var.fmt, "\")")
-    } else if (var.class == "integer" && val != "NA") {
+    } else if (var.class == "integer" &&
+               !val %in% c("NA", "NaN", "Inf", "-Inf")) {
       txt <- paste0(val, "L")
-    } else if (var.class == "character" && val != "NA") {
+    } else if (var.class == "character" &&
+               !val %in% c("NA", "NaN", "Inf", "-Inf")) {
       txt <- paste0("\"", val, "\"")
     } else {
       txt <- val
@@ -275,7 +277,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   # Assign variables linked to Tk widgets
   variable.var <- tclVar()
   for (i in seq(along=ids))
-    tcl("lappend", variable.var, ids[i]) # must be unique
+    tcl("lappend", variable.var, ids[i])  # must be unique
   value.var <- tclVar()
   tt.done.var <- tclVar(0)
 

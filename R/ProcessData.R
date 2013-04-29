@@ -23,14 +23,14 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
       d <- d[o, names(d) != "sort.on"]
     }
 
-    # Remove missing coordinate values
+    # Remove non-finite spatial coordinate values
     var.names <- names(d)
     is.x <- "x" %in% var.names
     is.y <- "y" %in% var.names
     if (is.x)
-      d <- d[!is.na(d[, "x"]), ]
+      d <- d[is.finite(d[, "x"]), ]
     if (is.y)
-      d <- d[!is.na(d[, "y"]), ]
+      d <- d[is.finite(d[, "y"]), ]
 
     # Incorporate polygon spatial domain
     is.ply <- !is.null(ply) && inherits(ply, "gpc.poly")
@@ -142,7 +142,7 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
       n <- length(d$y)
       area <- matrix(rep(GetArcLength(d$x), n), nrow=m, ncol=n, byrow=FALSE) *
               matrix(rep(GetArcLength(d$y), m), nrow=m, ncol=n, byrow=TRUE)
-      vol.flux <- sum(d$vz * area, na.rm=TRUE) # vol.flux = vel * area
+      vol.flux <- sum(d$vz * area, na.rm=TRUE)  # vol.flux = vel * area
       if (is.numeric(vol.flux))
         d$vf <- vol.flux
     }
