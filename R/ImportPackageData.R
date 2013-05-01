@@ -1,6 +1,6 @@
 # A GUI for importing data sets from R packages.
 
-ImportPackageData <- function(classes=c("data.frame", "matrix"), parent=NULL) {
+ImportPackageData <- function(classes=NULL, parent=NULL) {
 
   ## Additional functions (subroutines)
 

@@ -89,32 +89,33 @@ OpenRSurvey <- function() {
     return(ans)
   }
 
-  # Import survey data
+  # Load data
 
-  CallImportData <- function(type) {
+  LoadData <- function(type) {
     if (type == "text file") {
       ImportData(tt)
     } else {
+      classes <- c("data.frame", "matrix")
+
       if (type == "R data file") {
         f <- GetFile(cmd="Open", exts="rda", win.title="Open R Data File",
                      parent=tt)
-        tkfocus(tt)
         if (is.null(f))
           return()
-        ds <- local({ds.name <- load(file=f)
-                     return(eval(parse(text=ds.name[1])))})
-        valid.classes <- c("data.frame", "matrix")
-        if (!inherits(ds, valid.classes)) {
+        d <- local({d.name <- load(file=f)
+                    return(eval(parse(text=d.name[1])))})
+        if (!inherits(d, classes)) {
           msg <- "R data set is not a valid object class."
           tkmessageBox(icon="error", message=msg, title="Error", type="ok",
                        parent=tt)
           return()
         }
+
       } else if (type == "R package data") {
-        ds <- ImportPackageData(parent=tt)
+        d <- ImportPackageData(classes, parent=tt)
       }
 
-      if (is.null(ds) || nrow(ds) == 0 || ncol(ds) == 0)
+      if (is.null(d) || nrow(d) == 0 || ncol(d) == 0)
         return()
       if (!is.null(Data("cols"))) {
         msg <- "This action will delete existing data?"
@@ -125,18 +126,18 @@ OpenRSurvey <- function() {
           return()
       }
 
-      if (inherits(ds, "matrix"))
-        ds <- as.data.frame(ds, stringsAsFactors=FALSE)
-      m <- nrow(ds)
-      n <- ncol(ds)
-      if (!identical(row.names(ds), as.character(1:m))) {
-        ds <- cbind(row.name=row.names(ds), ds)
-        row.names(ds) <- 1:m
+      if (inherits(d, "matrix"))
+        d <- as.data.frame(d, stringsAsFactors=FALSE)
+      m <- nrow(d)
+      n <- ncol(d)
+      if (!identical(row.names(d), as.character(1:m))) {
+        d <- cbind(row.name=row.names(d), d)
+        row.names(d) <- 1:m
       }
-      ids <- make.names(names(ds), unique=TRUE)
-      nms <- names(ds)
-      names(ds) <- paste0("V", 1:n)
-      cls <- vapply(1:n, function(i) class(ds[, i])[1], "")
+      ids <- make.names(names(d), unique=TRUE)
+      nams <- names(d)
+      names(d) <- paste0("V", 1:n)
+      cls <- vapply(1:n, function(i) class(d[, i])[1], "")
       cols <- list()
       vars <- list()
 
@@ -163,16 +164,16 @@ OpenRSurvey <- function() {
         }
         cols[[i]] <- list()
         cols[[i]]$id      <- ids[i]
-        cols[[i]]$name    <- nms[i]
+        cols[[i]]$name    <- nams[i]
         cols[[i]]$format  <- fmt
         cols[[i]]$class   <- cls[i]
         cols[[i]]$index   <- i
         cols[[i]]$fun     <- paste0("\"", ids[i], "\"")
-        cols[[i]]$sample  <- na.omit(ds[, i])[1]
-        cols[[i]]$summary <- SummarizeData(ds[, i], fmt=fmt)
+        cols[[i]]$sample  <- na.omit(d[, i])[1]
+        cols[[i]]$summary <- SummarizeData(d[, i], fmt=fmt)
       }
       Data(clear.data=TRUE)
-      Data("data.raw", ds)
+      Data("data.raw", d)
       Data("cols", cols)
       Data("vars", vars)
     }
@@ -854,11 +855,11 @@ OpenRSurvey <- function() {
   tkadd(menu.file, "separator")
   menu.file.import <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.import, "command", label="Text file, URL, or clipboard\u2026",
-        command=function() CallImportData("text file"))
+        command=function() LoadData("text file"))
   tkadd(menu.file.import, "command", label="R data file\u2026",
-        command=function() CallImportData("R data file"))
+        command=function() LoadData("R data file"))
   tkadd(menu.file.import, "command", label="R package\u2026",
-        command=function() CallImportData("R package data"))
+        command=function() LoadData("R package data"))
   tkadd(menu.file, "cascade", label="Import point data from",
         menu=menu.file.import)
   menu.file.export <- tkmenu(tt, tearoff=0)
@@ -1099,7 +1100,7 @@ OpenRSurvey <- function() {
                             command=SaveProj)
   frame0.but.2  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=import.var,
-                            command=function() CallImportData("text file"))
+                            command=function() LoadData("text file"))
   frame0.but.3  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=data.var,
                             command=CallManageVariables)
