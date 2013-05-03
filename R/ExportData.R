@@ -1,14 +1,12 @@
 # Export data to file.
 
-ExportData <- function(file.type="text", parent=NULL) {
+ExportData <- function(file.type="txt", parent=NULL) {
 
   ## Additional functions (subroutines)
 
   # Final export of data to file
 
   ExportToFile <- function() {
-    tkconfigure(tt, cursor="watch")
-
     idxs <- as.integer(tkcurselection(frame1.lst.1.1)) + 1L
     col.ids <- col.ids[idxs]
     is.proc <- as.logical(as.integer(tclvalue(processed.var)))
@@ -19,7 +17,7 @@ ExportData <- function(file.type="text", parent=NULL) {
     cols <- Data("cols")
 
     all.col.ids <- vapply(1:length(cols), function(i) cols[[i]]$id, "")
-    if (file.type == "shape") {
+    if (file.type == "shp") {
       id.x <- all.col.ids[vars$x]
       id.y <- all.col.ids[vars$y]
       if (!id.x %in% col.ids)
@@ -45,7 +43,7 @@ ExportData <- function(file.type="text", parent=NULL) {
       obj <- EvalFunction(col.funs[i], cols)[row.idxs]
 
       # Format variables
-      if (file.type == "text") {
+      if (file.type == "txt") {
         fmt <- col.fmts[i]
         if (fmt == "") {
           obj <- format(obj, na.encode=FALSE)
@@ -69,7 +67,7 @@ ExportData <- function(file.type="text", parent=NULL) {
 
     # Write text file
 
-    if (file.type == "text") {
+    if (file.type == "txt") {
       is.fmts <- as.logical(as.integer(tclvalue(conv.fmts.var)))
       is.cols <- as.logical(as.integer(tclvalue(col.names.var)))
       is.rows <- as.logical(as.integer(tclvalue(row.names.var)))
@@ -123,7 +121,6 @@ ExportData <- function(file.type="text", parent=NULL) {
 
       # Update default values for GUI
       if (file.access(file.name, mode=0) == 0) {
-        Data("export.processed", is.proc)
         Data("export.fmts", is.fmts)
         Data("export.cols", is.cols)
         Data("export.rows", is.rows)
@@ -138,33 +135,32 @@ ExportData <- function(file.type="text", parent=NULL) {
       }
 
     # Write shapefile
-
-    } else if (file.type == "shape") {
-
+    } else if (file.type == "shp") {
       # Names are finicky for shapefiles, rules are convoluted,
       # that is, 8-bit names and no periods
       new.col.ids <- gsub("\\.", "", make.names(substr(col.ids, 1, 7),
                           unique=TRUE))
       colnames(d) <- new.col.ids
-
       idx.x <- which(col.ids %in% id.x)
       idx.y <- which(col.ids %in% id.y)
       coordinates(d) <- new.col.ids[c(idx.x, idx.y)]
-
       dsn <- dirname(file.name)
       layer <- basename(file.name)
-
       ext <- tolower(tail(unlist(strsplit(layer, "\\."))[-1], 1))
       if (length(ext) != 0)
         layer <- sub(paste0(".", ext, "$"), "", layer)
-
       rgdal::writeOGR(obj=d, dsn=dsn, layer=layer, driver="ESRI Shapefile",
                       verbose=TRUE, overwrite_layer=TRUE)
-
       Data("export.processed", is.proc)
-    }
 
-    tkconfigure(tt, cursor="arrow")
+    # Write R data file
+    } else if (file.type == "rda") {
+      names(d) <- make.names(names=col.ids, unique=TRUE)
+      comment(d) <- Data("comment")
+      save(d, file=file.name)
+    }
+    Data("export.processed", is.proc)
+    tclvalue(tt.done.var) <- 1
   }
 
   # Select all or none from variable list
@@ -187,7 +183,7 @@ ExportData <- function(file.type="text", parent=NULL) {
 
   # Get file
   GetDataFile <- function() {
-    if (file.type == "text") {
+    if (file.type == "txt") {
       default.ext <- "txt"
       exts <- c("txt", "csv", "tab")
       is.gzip <- as.logical(as.integer(tclvalue(compress.var)))
@@ -195,9 +191,12 @@ ExportData <- function(file.type="text", parent=NULL) {
         default.ext <- "gz"
         exts <- "gz"
       }
-    } else {
+    } else if (file.type == "shp") {
       default.ext <- "shp"
       exts <- "shp"
+    } else if (file.type == "rda") {
+      default.ext <- "rda"
+      exts <- "rda"
     }
     f <- GetFile(cmd="Save As", exts=exts, file=NULL, win.title="Save Data As",
                  defaultextension=default.ext)
@@ -240,9 +239,9 @@ ExportData <- function(file.type="text", parent=NULL) {
   col.ids <- vapply(Data("cols"), function(i) i$id, "")
   if (length(col.ids) == 0)
     return()
-  if (!file.type %in% c("text", "shape"))
+  if (!file.type %in% c("txt", "shp", "rda"))
     stop()
-  if (file.type == "shape") {
+  if (file.type == "shp") {
     is.pkg <- "rgdal" %in% .packages(all.available=TRUE) && require(rgdal)
     if (!is.pkg)
       stop("package rgdal required for shapefile support")
@@ -299,41 +298,33 @@ ExportData <- function(file.type="text", parent=NULL) {
                              "+", as.integer(geo[3]) + 25))
   }
 
-  if (file.type == "text")
-    tktitle(tt) <- "Export Data As Text File"
-  else
-    tktitle(tt) <- "Export Data As Shapefile"
+  tktitle(tt) <- "Export Data"
 
   # Frame 0, export and cancel buttons
 
   frame0 <- ttkframe(tt, relief="flat")
   frame0.but.2 <- ttkbutton(frame0, width=12, text="Export",
                             command=ExportToFile)
-  frame0.but.3 <- ttkbutton(frame0, width=12, text="Close",
-                            command=function() tclvalue(tt.done.var) <- 1)
-  frame0.but.4 <- ttkbutton(frame0, width=12, text="Help",
+  frame0.but.3 <- ttkbutton(frame0, width=12, text="Help",
                             command=function() {
                               print(help("ExportData", package="RSurvey"))
                             })
-  frame0.grp.5 <- ttksizegrip(frame0)
+  frame0.grp.4 <- ttksizegrip(frame0)
 
-  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, frame0.grp.5)
+  tkgrid("x", frame0.but.2, frame0.but.3, frame0.grp.4)
   tkgrid.columnconfigure(frame0, 0, weight=1)
-  tkgrid.configure(frame0.but.2, frame0.but.3, frame0.but.4,
+  tkgrid.configure(frame0.but.2, frame0.but.3,
                    padx=c(0, 4), pady=c(4, 10))
-  tkgrid.configure(frame0.but.4, columnspan=2, padx=c(0, 10))
-  tkgrid.configure(frame0.grp.5, sticky="se")
+  tkgrid.configure(frame0.but.3, columnspan=2, padx=c(0, 10))
+  tkgrid.configure(frame0.grp.4, sticky="se")
 
-  tkraise(frame0.but.4, frame0.grp.5)
+  tkraise(frame0.but.3, frame0.grp.4)
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
   # Frame 1, sample entry
 
-  if (file.type == "text")
-    txt <- "Select variables and data records"
-  else
-    txt <- "Select variables"
+  txt <- "Select variables and data records"
   frame1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text=txt)
 
   frame1.lst.1.1 <- tklistbox(frame1, selectmode="extended", activestyle="none",
@@ -375,7 +366,7 @@ ExportData <- function(file.type="text", parent=NULL) {
     tkconfigure(frame1.chk.2.4, state="disabled")
   }
 
-  if (file.type == "text") {
+  if (file.type == "txt") {
 
     # Frame 2, meta data
 
@@ -497,7 +488,7 @@ ExportData <- function(file.type="text", parent=NULL) {
   tkgrid(frame4.ent.1.1, "x", "x", "x", frame4.but.1.5)
   tkgrid.configure(frame4.ent.1.1, sticky="we", columnspan=4, padx=c(0, 2))
 
-  if (file.type == "text") {
+  if (file.type == "txt") {
     tkgrid(frame4.lab.2.1, frame4.box.2.2, frame4.chk.2.3, pady=c(4, 0),
            sticky="w")
     tkgrid(frame4.lab.3.1, frame4.box.3.2, pady=c(4, 4), sticky="w")
@@ -525,7 +516,7 @@ ExportData <- function(file.type="text", parent=NULL) {
   tkbind(frame1.lst.1.1, "<<ListboxSelect>>", ToggleExport)
   tkbind(frame4.ent.1.1, "<KeyRelease>", ToggleExport)
 
-  if (file.type == "text") {
+  if (file.type == "txt") {
     tkbind(frame3.box.1.2, "<<ComboboxSelected>>",
            function() {
              sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]

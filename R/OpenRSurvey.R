@@ -89,15 +89,39 @@ OpenRSurvey <- function() {
     return(ans)
   }
 
-  # Load data
+  # Write data
+  WriteData <- function(file.type) {
+    if (is.null(Data("cols")))
+      return()
+    is.coordinate <- !is.null(Data("vars")$x) & !is.null(Data("vars")$y)
+    if (!is.coordinate & file.type %in% c("shp", "grd"))
+      return()
+    if (file.type == "grd") {
+      CallProcessData(interpolate=TRUE)
+      d <- Data("data.grd")
+      if (is.null(d))
+        return()
+      f <- GetFile(cmd="Save As", exts="rda", file=NULL,
+                   win.title="Save Grid Data As", defaultextension="rda")
+      if (is.null(f))
+        return()
+      save(d, file=f)
+    } else {
+      CallProcessData()
+      ExportData(file.type=file.type, parent=tt)
+    }
+    tkfocus(tt)
+  }
 
-  LoadData <- function(type) {
-    if (type == "text file") {
+  # Read data
+
+  ReadData <- function(file.type) {
+    if (file.type == "txt") {
       ImportData(tt)
     } else {
       classes <- c("data.frame", "matrix")
 
-      if (type == "R data file") {
+      if (file.type == "rda") {
         f <- GetFile(cmd="Open", exts="rda", win.title="Open R Data File",
                      parent=tt)
         if (is.null(f))
@@ -111,7 +135,7 @@ OpenRSurvey <- function() {
           return()
         }
 
-      } else if (type == "R package data") {
+      } else if (file.type == "rpackage") {
         d <- ImportPackageData(classes, parent=tt)
       }
 
@@ -290,30 +314,6 @@ OpenRSurvey <- function() {
       Data("cols", ans$cols)
       Data("vars", ans$vars)
       SetVars()
-    }
-    tkfocus(tt)
-  }
-
-  # Export data
-  CallExportData <- function(file.type) {
-    if (is.null(Data("cols")))
-      return()
-    is.coordinate <- !is.null(Data("vars")$x) & !is.null(Data("vars")$y)
-    if (!is.coordinate & file.type %in% c("shape", "grid"))
-      return()
-    if (file.type == "grid") {
-      CallProcessData(interpolate=TRUE)
-      d <- Data("data.grd")
-      if (is.null(d))
-        return()
-      f <- GetFile(cmd="Save As", exts="rda", file=NULL,
-                   win.title="Save Grid Data As", defaultextension="rda")
-      if (is.null(f))
-        return()
-      save(d, file=f)
-    } else {
-      CallProcessData()
-      ExportData(file.type=file.type, parent=tt)
     }
     tkfocus(tt)
   }
@@ -864,26 +864,24 @@ OpenRSurvey <- function() {
   tkadd(menu.file, "separator")
   menu.file.import <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.import, "command", label="Text file, URL, or clipboard\u2026",
-        command=function() LoadData("text file"))
+        command=function() ReadData("txt"))
   tkadd(menu.file.import, "command", label="R data file\u2026",
-        command=function() LoadData("R data file"))
+        command=function() ReadData("rda"))
   tkadd(menu.file.import, "command", label="R package\u2026",
-        command=function() LoadData("R package data"))
+        command=function() ReadData("rpackage"))
   tkadd(menu.file, "cascade", label="Import point data from",
         menu=menu.file.import)
   menu.file.export <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.export, "command", label="Text file\u2026",
-        command=function() CallExportData("text"))
+        command=function() WriteData("txt"))
   tkadd(menu.file.export, "command", label="Shapefile\u2026",
-        command=function() CallExportData("shape"))
-
+        command=function() WriteData("shp"))
   tkadd(menu.file.export, "command", label="R data file\u2026",
-        command=function() print("notyet"))
-
+        command=function() WriteData("rda"))
   tkadd(menu.file, "cascade", label="Export point data as",
         menu=menu.file.export)
   tkadd(menu.file, "command", label="Export grid data as\u2026",
-        command=function() CallExportData("grid"))
+        command=function() WriteData("grd"))
 
   tkadd(menu.file, "separator")
   menu.file.save <- tkmenu(tt, tearoff=0)
@@ -1113,7 +1111,7 @@ OpenRSurvey <- function() {
                             command=SaveProj)
   frame0.but.2  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=import.var,
-                            command=function() LoadData("text file"))
+                            command=function() ReadData("txt"))
   frame0.but.3  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=data.var,
                             command=CallManageVariables)

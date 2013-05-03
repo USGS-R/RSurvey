@@ -195,7 +195,7 @@ ImportData <- function(parent=NULL) {
 
   # Read data from file and populate example table
 
-  ReadData <- function(summary.only=TRUE) {
+  ReadFile <- function(summary.only=TRUE) {
     sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
     dec <- dec0[as.integer(tcl(frame3.box.1.5, "current")) + 1]
     nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
@@ -307,7 +307,7 @@ ImportData <- function(parent=NULL) {
     if (tclvalue(source.var) == "" && is.null(cb))
       return()
 
-    d <- ReadData()
+    d <- ReadFile()
     if (is.null(d))
       return()
 
@@ -527,7 +527,7 @@ ImportData <- function(parent=NULL) {
   frame0.but.2 <- ttkbutton(frame0, width=8, text="Clear",
                             command=ClearData)
   frame0.but.4 <- ttkbutton(frame0, width=12, text="Load",
-                            command=function() ReadData(FALSE))
+                            command=function() ReadFile(FALSE))
   frame0.but.5 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() tclvalue(tt.done.var) <- 1)
   frame0.but.6 <- ttkbutton(frame0, width=12, text="Help",

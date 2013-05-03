@@ -9,24 +9,25 @@ A \acronym{GUI} for exporting data to text files or shapefiles.
 }
 
 \usage{
-ExportData(file.type = "text", parent = NULL)
+ExportData(file.type = "txt", parent = NULL)
 }
 
 \arguments{
 \item{file.type}{character; the output file type: either
-  \dQuote{text} for \emph{Text Files} or
-  \dQuote{shape} for \emph{ESRI Shapefiles}.}
+  \dQuote{txt} for \emph{Text Files},
+  \dQuote{rda} for \emph{R Data File}, or
+  \dQuote{shp} for \emph{ESRI Shapefiles}.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
 \seealso{
-\code{\link{write.table}}, \code{writeOGR}
+\code{\link{write.table}}, \code{\link{save}}, \code{writeOGR}
 }
 
 \author{J.C. Fisher}
 
 \examples{
-\donttest{ExportData(file.type = "text")}
+\donttest{ExportData(file.type = "txt")}
 }
 
 \keyword{IO}
