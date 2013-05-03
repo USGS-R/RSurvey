@@ -109,17 +109,6 @@ ImportData <- function(parent=NULL) {
             val <- type.convert(d[, j], as.is=TRUE)
         }
 
-        # Determine default x-, y-, z-axis variables
-        if (inherits(val, c("numeric", "integer"))) {
-          if (is.null(vars$x)) {
-            vars$x <- j
-          } else if (is.null(vars$y)) {
-            vars$y <- j
-          } else if (is.null(vars$z)) {
-            vars$z <- j
-          }
-        }
-
         # Set variable class
         cls <- class(val)[1]
 
@@ -164,7 +153,6 @@ ImportData <- function(parent=NULL) {
       # Save data
       Data("data.raw", d)
       Data("cols", cols)
-      Data("vars", vars)
     })
 
     ans <- paste("\nTime required to import data:",

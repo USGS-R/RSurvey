@@ -142,15 +142,6 @@ OpenRSurvey <- function() {
       vars <- list()
 
       for (i in 1:n) {
-        if (cls[i] %in% c("numeric", "integer")) {
-          if (is.null(vars$x)) {
-            vars$x <- i
-          } else if (is.null(vars$y)) {
-            vars$y <- i
-          } else if (is.null(vars$z)) {
-            vars$z <- i
-          }
-        }
         if (cls[i] %in% c("character", "logical", "factor")) {
           fmt <- "%s"
         } else if (cls[i] == "numeric") {
@@ -175,9 +166,27 @@ OpenRSurvey <- function() {
       Data(clear.data=TRUE)
       Data("data.raw", d)
       Data("cols", cols)
-      Data("vars", vars)
     }
+    SetDefaultVars()
     SetVars()
+  }
+
+  # Set defaults x-, y-, and z-coordinate variables
+  SetDefaultVars <- function() {
+    vars <- list()
+    col.class <- vapply(Data("cols"), function(i) i$class, "")
+    for (i in seq(along=col.class)) {
+      if (col.class[i] %in% c("numeric", "integer")) {
+        if (is.null(vars$x)) {
+          vars$x <- i
+        } else if (is.null(vars$y)) {
+          vars$y <- i
+        } else if (is.null(vars$z)) {
+          vars$z <- i
+        }
+      }
+    }
+    Data("vars", vars)
   }
 
   # Set button state

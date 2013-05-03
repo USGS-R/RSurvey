@@ -91,7 +91,7 @@ SetPolygonLimits <- function(poly.names=NULL, data.poly=NULL, crop.poly=NULL,
   if (!is.null(crop.poly))
     tcl(frame1.box.2.2, "current", match(crop.poly, poly.names) - 1)
 
-  tkgrid(frame1.lab.1.1, frame1.box.1.2, pady=c(20, 4))
+  tkgrid(frame1.lab.1.1, frame1.box.1.2, pady=c(20, 10))
   tkgrid(frame1.lab.2.1, frame1.box.2.2, pady=c(0, 10))
 
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, sticky="w")
