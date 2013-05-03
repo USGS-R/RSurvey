@@ -126,7 +126,6 @@ ImportData <- function(parent=NULL) {
         }
 
         # Organize metadata
-
         nam <- nams[j]
         id <- nam
         i <- 1L
@@ -136,7 +135,6 @@ ImportData <- function(parent=NULL) {
           i <- i + 1L
         }
         ids <- c(ids, id)
-
         cols[[j]] <- list()
         cols[[j]]$id      <- id
         cols[[j]]$name    <- nam
@@ -146,7 +144,6 @@ ImportData <- function(parent=NULL) {
         cols[[j]]$fun     <- paste0("\"", id, "\"")
         cols[[j]]$sample  <- na.omit(val)[1]
         cols[[j]]$summary <- SummarizeData(val, fmt=fmt)
-
         d[, j] <- val
       }
 

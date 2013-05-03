@@ -137,18 +137,17 @@ OpenRSurvey <- function() {
       ids <- make.names(names(d), unique=TRUE)
       nams <- names(d)
       names(d) <- paste0("V", 1:n)
-      cls <- vapply(1:n, function(i) class(d[, i])[1], "")
-      cols <- list()
-      vars <- list()
 
+      cols <- list()
       for (i in 1:n) {
-        if (cls[i] %in% c("character", "logical", "factor")) {
+        cls <- class(d[, i])[1]
+        if (cls %in% c("character", "logical", "factor")) {
           fmt <- "%s"
-        } else if (cls[i] == "numeric") {
+        } else if (cls == "numeric") {
           fmt <- "%f"
-        } else if (cls[i] == "integer") {
+        } else if (cls == "integer") {
           fmt <- "%d"
-        } else if (cls[i] == c("POSIXlt", "POSIXct")) {
+        } else if (cls == c("POSIXlt", "POSIXct")) {
           fmt <- "%d/%m/%Y %H:%M:%OS"
         } else {
           fmt <- ""
@@ -157,26 +156,27 @@ OpenRSurvey <- function() {
         cols[[i]]$id      <- ids[i]
         cols[[i]]$name    <- nams[i]
         cols[[i]]$format  <- fmt
-        cols[[i]]$class   <- cls[i]
+        cols[[i]]$class   <- cls
         cols[[i]]$index   <- i
         cols[[i]]$fun     <- paste0("\"", ids[i], "\"")
         cols[[i]]$sample  <- na.omit(d[, i])[1]
         cols[[i]]$summary <- SummarizeData(d[, i], fmt=fmt)
       }
       Data(clear.data=TRUE)
+      Data("comment", comment(d))
       Data("data.raw", d)
       Data("cols", cols)
     }
-    SetDefaultVars()
+    EstablishDefaultVars()
     SetVars()
   }
 
-  # Set defaults x-, y-, and z-coordinate variables
-  SetDefaultVars <- function() {
+  # Establish defaults for x-, y-, and z-coordinate variables
+  EstablishDefaultVars <- function() {
     vars <- list()
-    col.class <- vapply(Data("cols"), function(i) i$class, "")
-    for (i in seq(along=col.class)) {
-      if (col.class[i] %in% c("numeric", "integer")) {
+    col.classes <- vapply(Data("cols"), function(i) i$class, "")
+    for (i in seq(along=col.classes)) {
+      if (col.classes[i] %in% c("numeric", "integer")) {
         if (is.null(vars$x)) {
           vars$x <- i
         } else if (is.null(vars$y)) {
@@ -876,6 +876,10 @@ OpenRSurvey <- function() {
         command=function() CallExportData("text"))
   tkadd(menu.file.export, "command", label="Shapefile\u2026",
         command=function() CallExportData("shape"))
+
+  tkadd(menu.file.export, "command", label="R data file\u2026",
+        command=function() print("notyet"))
+
   tkadd(menu.file, "cascade", label="Export point data as",
         menu=menu.file.export)
   tkadd(menu.file, "command", label="Export grid data as\u2026",
