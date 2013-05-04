@@ -293,8 +293,8 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
 
   frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
-  frame1.lab.1.1 <- ttklabel(frame1, text="Package", foreground="#414042")
-  frame1.lab.1.4 <- ttklabel(frame1, text="Data set", foreground="#414042")
+  frame1.lab.1.1 <- ttklabel(frame1, text="Package", foreground="#006000")
+  frame1.lab.1.4 <- ttklabel(frame1, text="Data set", foreground="#006000")
 
   frame1.lst.2.1 <- tklistbox(frame1, selectmode="browse", activestyle="none",
                               relief="flat", borderwidth=5, width=30, height=8,
