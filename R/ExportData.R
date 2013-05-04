@@ -155,9 +155,10 @@ ExportData <- function(file.type="txt", parent=NULL) {
 
     # Write R data file
     } else if (file.type == "rda") {
+      ascii <- as.logical(as.integer(tclvalue(ascii.var)))
       names(d) <- make.names(names=col.ids, unique=TRUE)
       comment(d) <- Data("comment")
-      save(d, file=file.name)
+      save(d, file=file.name, ascii=ascii)
     }
     Data("export.processed", is.proc)
     tclvalue(tt.done.var) <- 1
@@ -282,6 +283,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
   quote.var     <- tclVar(0)
   file.var      <- tclVar()
   compress.var  <- tclVar(0)
+  ascii.var     <- tclVar(0)
   tt.done.var   <- tclVar(0)
 
   for (i in seq(along=col.ids))
@@ -506,6 +508,13 @@ ExportData <- function(file.type="txt", parent=NULL) {
       tcl(frame4.box.3.2, "current", match(Data("export.eol"), eol0) - 1)
     if (!is.null(Data("export.compress")))
       tclvalue(compress.var) <- Data("export.compress")
+  } else if (file.type == "rda") {
+    frame4.rbt.2.1 <- ttkradiobutton(frame4, variable=ascii.var,
+                                     value=0, text="Binary")
+    frame4.rbt.2.2 <- ttkradiobutton(frame4, variable=ascii.var,
+                                     value=1, text="ASCII")
+    tkgrid(frame4.rbt.2.1, frame4.rbt.2.2, "x", "x")
+    tkgrid.configure(frame4.rbt.2.1, padx=c(0, 4))
   }
 
   tkgrid.columnconfigure(frame4, 3, weight=1)
