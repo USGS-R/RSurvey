@@ -606,10 +606,10 @@ ImportData <- function(parent=NULL) {
 
   frame3.lab.1.1 <- ttklabel(frame3, text="Separator")
   frame3.lab.1.4 <- ttklabel(frame3, text="Decimal")
-  frame3.lab.1.6 <- ttklabel(frame3, text="Skip lines")
+  frame3.lab.1.6 <- ttklabel(frame3, text="Max lines")
   frame3.lab.2.1 <- ttklabel(frame3, text="NA string")
   frame3.lab.2.4 <- ttklabel(frame3, text="Quote")
-  frame3.lab.2.6 <- ttklabel(frame3, text="Max lines")
+  frame3.lab.2.6 <- ttklabel(frame3, text="Skip lines")
   frame3.lab.3.1 <- ttklabel(frame3, text="Comment")
   frame3.lab.3.4 <- ttklabel(frame3, text="Encoding")
   txt <- paste("Comments located above data records and header lines will be",
@@ -624,18 +624,18 @@ ImportData <- function(parent=NULL) {
   frame3.box.3.5 <- ttkcombobox(frame3, width=17, state="readonly", value=enc1)
 
   frame3.ent.1.3 <- ttkentry(frame3, width=12, textvariable=sep.var)
-  frame3.ent.1.7 <- ttkentry(frame3, width=12, textvariable=skip.var)
+  frame3.ent.2.7 <- ttkentry(frame3, width=12, textvariable=skip.var)
   frame3.ent.2.3 <- ttkentry(frame3, width=12, textvariable=nas.var)
-  frame3.ent.2.7 <- ttkentry(frame3, width=12, textvariable=nrow.var)
+  frame3.ent.1.7 <- ttkentry(frame3, width=12, textvariable=nrow.var)
   frame3.ent.3.3 <- ttkentry(frame3, width=12, textvariable=com.var)
 
-  frame3.but.2.8 <- ttkbutton(frame3, width=2, image=GetBitmapImage("find"),
+  frame3.but.1.8 <- ttkbutton(frame3, width=2, image=GetBitmapImage("find"),
                               command=NumLinesInFile)
 
   tkgrid(frame3.lab.1.1, frame3.box.1.2, frame3.ent.1.3, frame3.lab.1.4,
-         frame3.box.1.5, frame3.lab.1.6, frame3.ent.1.7, "x")
+         frame3.box.1.5, frame3.lab.1.6, frame3.ent.1.7, frame3.but.1.8)
   tkgrid(frame3.lab.2.1, frame3.box.2.2, frame3.ent.2.3, frame3.lab.2.4,
-         frame3.box.2.5, frame3.lab.2.6, frame3.ent.2.7, frame3.but.2.8,
+         frame3.box.2.5, frame3.lab.2.6, frame3.ent.2.7, "x",
          pady=c(4, 0))
   tkgrid(frame3.lab.3.1, frame3.box.3.2, frame3.ent.3.3, frame3.lab.3.4,
          frame3.box.3.5, "x", "x", "x", pady=c(4, 0))
@@ -648,7 +648,7 @@ ImportData <- function(parent=NULL) {
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, frame3.lab.3.1, padx=c(0, 2))
   tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, frame3.ent.3.3, padx=c(2, 0))
-  tkgrid.configure(frame3.but.2.8, padx=c(2, 0))
+  tkgrid.configure(frame3.but.1.8, padx=c(2, 0))
   tkgrid.configure(frame3.lab.4.1, columnspan=8, sticky="w")
 
   tkpack(frame3, anchor="w", fill="x", padx=10, pady=c(0, 15))
@@ -775,7 +775,7 @@ ImportData <- function(parent=NULL) {
   tkbind(frame3.ent.1.3, "<KeyRelease>", RebuildTable)
   tkbind(frame3.ent.2.3, "<KeyRelease>", RebuildTable)
   tkbind(frame3.ent.3.3, "<KeyRelease>", RebuildTable)
-  tkbind(frame3.ent.1.7, "<KeyRelease>",
+  tkbind(frame3.ent.2.7, "<KeyRelease>",
          function() {
            tclvalue(skip.var) <- CheckEntry("integer", tclvalue(skip.var))
            RebuildTable()
