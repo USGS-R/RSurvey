@@ -17,12 +17,14 @@ ImportData <- function(parent=NULL) {
     elapsed.time <- system.time({
 
       # Load comment
-      if (!is.na(sep) && sep != "") {
+      if (!is.na(comment.char) && comment.char != "") {
         comments <- NULL
+        pattern <- paste0("^", comment.char)
         while (TRUE) {
           read.line <- readLines(con, n=1)
-          if (length(grep("^#", read.line)) > 0) {
-            comments <- c(comments, sub("^#\\s+", "", read.line))
+          if (length(grep(pattern, read.line)) > 0) {
+            line <- sub("^\\s+", "", sub(pattern, "", read.line))
+            comments <- c(comments, line)
           } else if (length(read.line) == 0 || nchar(read.line) > 0) {
             break
           }
