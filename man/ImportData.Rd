@@ -36,6 +36,9 @@ defined by the ISO C99 / POSIX standard, see \code{\link{strftime}};
 for example, "02/26/2010 02:05:39 PM" is represented using
 "\%d/\%m/\%Y \%I:\%M:\%S \%p".
 
+Comments located above data records and header lines are preserved; all other
+comments are ignored. Requires the specification of a comment character.
+
 Performance issues associated with reading in large files can be alleviated
 by specifying formats in a header line, and giving the maximum number of
 rows to read in.
@@ -57,6 +60,7 @@ Sets the following components in \code{\link{Data}}:
 \item{import.comment}{character; comment character.}
 \item{import.encoding}{character; encoding that was assumed for input strings,
   see \code{\link{Encoding}}.}
+\item{comment}{character; a vector of comment strings.}
 \item{data.raw}{data.frame; the imported (or raw) data table.}
 \item{cols}{list; length equal to the current number of data variables.
   Each component in \code{cols} is linked to a specific variable,

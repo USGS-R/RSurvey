@@ -17,8 +17,8 @@ ImportData <- function(parent=NULL) {
     elapsed.time <- system.time({
 
       # Load comment
+      comments <- NULL
       if (!is.na(comment.char) && comment.char != "") {
-        comments <- NULL
         pattern <- paste0("^", comment.char)
         while (TRUE) {
           read.line <- readLines(con, n=1)
@@ -29,7 +29,6 @@ ImportData <- function(parent=NULL) {
             break
           }
         }
-        Data("comment", comments)
         invisible(seek(con, where=0, origin="start", rw="read"))
       }
 
@@ -165,6 +164,7 @@ ImportData <- function(parent=NULL) {
       }
 
       # Save data
+      Data("comment", comments)
       Data("data.raw", d)
       Data("cols", cols)
     })
