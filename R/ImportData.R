@@ -16,6 +16,21 @@ ImportData <- function(parent=NULL) {
     # Track computational time
     elapsed.time <- system.time({
 
+      # Load comment
+      if (!is.na(sep) && sep != "") {
+        comments <- NULL
+        while (TRUE) {
+          read.line <- readLines(con, n=1)
+          if (length(grep("^#", read.line)) > 0) {
+            comments <- c(comments, sub("^#\\s+", "", read.line))
+          } else if (length(read.line) == 0 || nchar(read.line) > 0) {
+            break
+          }
+        }
+        Data("comment", comments)
+        invisible(seek(con, where=0, origin="start", rw="read"))
+      }
+
       # Establish arguments to pass to read.table
       args <- list(file=con, header=FALSE, sep=sep, dec=dec, quote=quote,
                    row.names=NULL, na.strings=na.strings, check.names=TRUE,
@@ -341,20 +356,17 @@ ImportData <- function(parent=NULL) {
   }
 
   # Determine the number of lines in a file
-
   NumLinesInFile <- function() {
     src <- as.character(tclvalue(source.var))
     enc <- enc0[as.integer(tcl(frame3.box.3.5, "current")) + 1]
     con <- GetConnection(src, enc)
     if (inherits(con, "try-error"))
       return()
-
     tkconfigure(tt, cursor="watch")
     total.rows <- 0
-    while ((read.rows <- length(readLines(con, n=50000))) > 0)
+    while ((read.rows <- length(readLines(con))) > 0)
       total.rows <- total.rows + read.rows
     tkconfigure(tt, cursor="arrow")
-
     close(con)
     tclvalue(nrow.var) <- total.rows
   }
