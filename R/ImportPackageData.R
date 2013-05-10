@@ -227,7 +227,8 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
 
   ds.class <- list()
 
-  pkg.type.vals <- c("Show all packages", "loaded", "unloaded")
+  pkg.type.vals <- c("Show all packages", "Loaded packages",
+                     "Unloaded packages")
   ds.class.vals <- "{}"
 
   pkg.names <- NULL
