@@ -72,12 +72,15 @@ ExportData <- function(file.type="txt", parent=NULL) {
       is.cols <- as.logical(as.integer(tclvalue(col.names.var)))
       is.rows <- as.logical(as.integer(tclvalue(row.names.var)))
       is.quot <- as.logical(as.integer(tclvalue(quote.var)))
+      is.comm <- as.logical(as.integer(tclvalue(comment.var)))
       is.gzip <- as.logical(as.integer(tclvalue(compress.var)))
 
       sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
       dec <- dec0[as.integer(tcl(frame3.box.1.5, "current")) + 1]
       nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
       qme <- qme0[as.integer(tcl(frame3.box.2.5, "current")) + 1]
+      com <- com0[as.integer(tcl(frame3.box.3.2, "current")) + 1]
+
       enc <- enc0[as.integer(tcl(frame4.box.2.2, "current")) + 1]
       eol <- eol0[as.integer(tcl(frame4.box.3.2, "current")) + 1]
 
@@ -88,6 +91,8 @@ ExportData <- function(file.type="txt", parent=NULL) {
         if (nas == "")
           nas <- "NA"
       }
+      if (is.na(com))
+        com <- as.character(tclvalue(com.var))
 
       # Set file connection
       if (is.gzip)
@@ -101,7 +106,15 @@ ExportData <- function(file.type="txt", parent=NULL) {
       # Write headers
       headers <- c(is.fmts, is.cols)
       if (any(headers)) {
-        h <- as.data.frame(matrix(NA, nrow=sum(headers), ncol=ncol(d)))
+
+        if (is.rows) {
+          h <- as.data.frame(matrix(NA, nrow=sum(headers), ncol=ncol(d) + 1L))
+          col.fmts <- c("", col.fmts)
+          col.nams <- c("", col.nams)
+        } else {
+          h <- as.data.frame(matrix(NA, nrow=sum(headers), ncol=ncol(d)))
+        }
+
         i <- 1L
         if (headers[1]) {
           h[i, ] <- col.fmts
@@ -124,9 +137,11 @@ ExportData <- function(file.type="txt", parent=NULL) {
         Data("export.fmts", is.fmts)
         Data("export.cols", is.cols)
         Data("export.rows", is.rows)
+        Data("export.comment", is.comm)
         Data("export.sep", sep)
         Data("export.dec", dec)
         Data("export.na", nas)
+        Data("export.com", com)
         Data("export.qmethod", qme)
         Data("export.quote", is.quot)
         Data("export.encoding", enc)
@@ -265,6 +280,10 @@ ExportData <- function(file.type="txt", parent=NULL) {
   qme0 <- c("escape", "double")
   qme1 <- c("Escape quote", "Double quote")
 
+  com0 <- c("#", "!", "\\", "~", NA)
+  com1 <- c("Number sign ( # )", "Exclamation ( ! )",
+            "Backslash ( \\\\ )", "Tilde ( ~ )", "Custom\u2026")
+
   enc0 <- c("native.enc", iconvlist())
   enc1 <- c("Default", iconvlist())
 
@@ -278,8 +297,10 @@ ExportData <- function(file.type="txt", parent=NULL) {
   conv.fmts.var <- tclVar(0)
   col.names.var <- tclVar(0)
   row.names.var <- tclVar(0)
+  comment.var   <- tclVar(0)
   sep.var       <- tclVar()
   nas.var       <- tclVar()
+  com.var       <- tclVar()
   quote.var     <- tclVar(0)
   file.var      <- tclVar()
   compress.var  <- tclVar(0)
@@ -311,7 +332,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
                             command=function() {
                               print(help("ExportData", package="RSurvey"))
                             })
-  frame0.but.3 <- ttkbutton(frame0, width=12, text="Close",
+  frame0.but.3 <- ttkbutton(frame0, width=12, text="Cancel",
                             command=function() tclvalue(tt.done.var) <- 1)
   frame0.grp.5 <- ttksizegrip(frame0)
 
@@ -376,17 +397,19 @@ ExportData <- function(file.type="txt", parent=NULL) {
 
     frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                             text="Add metadata")
-    frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=conv.fmts.var,
-                                     text="Conversion specification formats")
-    frame2.chk.1.2 <- ttkcheckbutton(frame2, variable=col.names.var,
-                                     text="Variable names")
-    frame2.chk.1.3 <- ttkcheckbutton(frame2, variable=row.names.var,
-                                     text="Record numbers")
 
-    tkgrid(frame2.chk.1.1, frame2.chk.1.2, frame2.chk.1.3)
-    tkgrid.configure(frame2.chk.1.1, padx=c(0))
-    tkgrid.configure(frame2.chk.1.2, padx=10)
-    tkgrid.configure(frame2.chk.1.3, padx=c(0))
+    frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=comment.var,
+                                     text="Comment")
+    frame2.chk.1.2 <- ttkcheckbutton(frame2, variable=conv.fmts.var,
+                                     text="Conversion specification formats")
+    frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=row.names.var,
+                                     text="Record numbers")
+    frame2.chk.2.2 <- ttkcheckbutton(frame2, variable=col.names.var,
+                                     text="Variable (column) names")
+
+    tkgrid(frame2.chk.1.1, frame2.chk.1.2, sticky="w")
+    tkgrid(frame2.chk.2.1, frame2.chk.2.2, sticky="w")
+    tkgrid.configure(frame2.chk.1.2, frame2.chk.2.2, padx=c(40, 0))
 
     tkpack(frame2, fill="x", padx=10, pady=c(0, 10))
 
@@ -396,6 +419,8 @@ ExportData <- function(file.type="txt", parent=NULL) {
       tclvalue(col.names.var) <- Data("export.cols")
     if (!is.null(Data("export.rows")))
       tclvalue(row.names.var) <- Data("export.rows")
+    if (!is.null(Data("export.comment")))
+      tclvalue(comment.var) <- Data("export.comment")
 
     # Frame 3, export parmaters
 
@@ -406,6 +431,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
     frame3.lab.1.4 <- ttklabel(frame3, text="Decimal")
     frame3.lab.2.1 <- ttklabel(frame3, text="NA string")
     frame3.lab.2.4 <- ttklabel(frame3, text="Method")
+    frame3.lab.3.1 <- ttklabel(frame3, text="Comment")
 
     frame3.box.1.2 <- ttkcombobox(frame3, width=17, state="readonly",
                                   value=sep1)
@@ -415,27 +441,34 @@ ExportData <- function(file.type="txt", parent=NULL) {
                                   value=nas1)
     frame3.box.2.5 <- ttkcombobox(frame3, width=17, state="readonly",
                                   value=qme1)
+    frame3.box.3.2 <- ttkcombobox(frame3, width=17, state="readonly",
+                                  value=com1)
 
     frame3.ent.1.3 <- ttkentry(frame3, width=12, textvariable=sep.var,
                                state="disabled")
     frame3.ent.2.3 <- ttkentry(frame3, width=12, textvariable=nas.var,
                                state="disabled")
+    frame3.ent.3.3 <- ttkentry(frame3, width=12, textvariable=com.var,
+                               state="disabled")
 
     txt <- "Surround character variables by double quotes"
-    frame3.chk.3.1 <- ttkcheckbutton(frame3, variable=quote.var, text=txt)
+    frame3.chk.4.1 <- ttkcheckbutton(frame3, variable=quote.var, text=txt)
 
     tkgrid(frame3.lab.1.1, frame3.box.1.2, frame3.ent.1.3, frame3.lab.1.4,
            frame3.box.1.5)
     tkgrid(frame3.lab.2.1, frame3.box.2.2, frame3.ent.2.3, frame3.lab.2.4,
            frame3.box.2.5, pady=4)
-    tkgrid(frame3.chk.3.1)
+    tkgrid(frame3.lab.3.1, frame3.box.3.2, frame3.ent.3.3)
+    tkgrid(frame3.chk.4.1, pady=c(4, 0))
 
     tkgrid.configure(frame3.lab.1.1, frame3.lab.1.4, frame3.lab.2.1,
-                     frame3.lab.2.4, padx=c(10, 2), sticky="w")
+                     frame3.lab.2.4, frame3.lab.3.1, padx=c(10, 2), sticky="w")
 
-    tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, padx=c(0, 2))
-    tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, padx=c(2, 0))
-    tkgrid.configure(frame3.chk.3.1, columnspan=5, sticky="w", padx=0,
+    tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, frame3.lab.3.1,
+                     padx=c(0, 2))
+    tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, frame3.ent.3.3,
+                     padx=c(2, 0))
+    tkgrid.configure(frame3.chk.4.1, columnspan=5, sticky="w", padx=0,
                      pady=c(5, 0))
 
     tkpack(frame3, fill="x", padx=10, pady=c(0, 10))
@@ -444,6 +477,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
     tcl(frame3.box.1.5, "current", 0)
     tcl(frame3.box.2.2, "current", 0)
     tcl(frame3.box.2.5, "current", 0)
+    tcl(frame3.box.3.2, "current", 0)
 
     if (!is.null(Data("export.sep"))) {
       if (Data("export.sep") %in% sep0) {
@@ -465,6 +499,17 @@ ExportData <- function(file.type="txt", parent=NULL) {
         tclvalue(nas.var) <- Data("export.na")
       }
     }
+    if (!is.null(Data("export.com"))) {
+      if (Data("export.com") %in% com0) {
+        tcl(frame3.box.3.2, "current", match(Data("export.com"), com0) - 1)
+        tkconfigure(frame3.ent.3.3, state="disabled")
+      } else {
+        tcl(frame3.box.3.2, "current", match(NA, com0) - 1)
+        tkconfigure(frame3.ent.3.3, state="normal")
+        tclvalue(com.var) <- Data("export.com")
+      }
+    }
+
     if (!is.null(Data("export.dec")))
       tcl(frame3.box.1.5, "current", match(Data("export.dec"), dec0) - 1)
     if (!is.null(Data("export.qmethod")))
@@ -546,6 +591,16 @@ ExportData <- function(file.type="txt", parent=NULL) {
                tkfocus(frame3.ent.2.3)
              } else {
                tkconfigure(frame3.ent.2.3, state="disabled")
+             }
+           })
+    tkbind(frame3.box.3.2, "<<ComboboxSelected>>",
+           function() {
+             com <- com0[as.integer(tcl(frame3.box.3.2, "current")) + 1]
+             if (is.na(com)) {
+               tkconfigure(frame3.ent.3.3, state="normal")
+               tkfocus(frame3.ent.3.3)
+             } else {
+               tkconfigure(frame3.ent.3.3, state="disabled")
              }
            })
   }
