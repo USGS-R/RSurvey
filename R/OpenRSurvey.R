@@ -677,6 +677,7 @@ OpenRSurvey <- function() {
       lst <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate",
                   vx="x-vector", vy="y-vector")
       col.names <- names(Data("data.pts"))
+###   col.names <- col.names[col.names %in% name(vars)]
       nams <- vapply(col.names, function(i) lst[[i]], "")
       fmts <- vapply(col.names, function(i) cols[[vars[[i]]]]$format, "")
       ViewData(Data("data.pts"), col.names=nams, col.formats=fmts,
