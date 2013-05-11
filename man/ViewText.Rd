@@ -26,14 +26,11 @@ Something
 \author{J.C. Fisher}
 
 \examples{\donttest{
-txt <- paste("\"Hills cherish the ambition",
-             "    to turn into partial",
-             "   differential equations\"",
-             "",
-             "        -Donald Hall", sep = "\n")
-new.txt <- ViewText(txt)
-
-txt <- strsplit(txt, split="\n", fixed=TRUE)[[1]]
+txt <- c("\"Hills cherish the ambition",
+         "    to turn into partial",
+         "   differential equations\"",
+         "",
+         "        -Donald Hall")
 new.txt <- ViewText(txt)
 
 ViewText(txt, read.only = TRUE)

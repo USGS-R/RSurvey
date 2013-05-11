@@ -7,8 +7,7 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
   # Close GUI and return edited text
   SaveText <- function() {
     txt <- as.character(tclvalue(tkget(frame1.txt.1.1, "1.0", "end-1c")))
-    if (is.lines)
-      txt <- strsplit(txt, split="\n", fixed=TRUE)[[1]]
+    txt <- strsplit(txt, split="\n", fixed=TRUE)[[1]]
     rtn <<- txt
     tclvalue(tt.done.var) <- 1
   }
@@ -87,10 +86,8 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
   # determine the maximum number of characters in a line
   if (length(txt) > 1) {
     txt <- paste(txt, collapse="\n")
-    is.lines <- TRUE
     n <- max(vapply(strsplit(txt, split="\n", fixed=TRUE)[[1]], nchar, 0L))
   } else {
-    is.lines <- FALSE
     n <- 0
   }
 

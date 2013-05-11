@@ -103,6 +103,13 @@ ExportData <- function(file.type="txt", parent=NULL) {
         stop("Connection error")
       on.exit(close(con))
 
+      # Write comment
+      if (is.comm) {
+        txt <- Data("comment")
+        if (!is.null(txt) && length(txt) > 0 && is.character(txt))
+          writeLines(paste(com, txt), con=con, sep=eol)
+      }
+
       # Write headers
       headers <- c(is.fmts, is.cols)
       if (any(headers)) {
@@ -122,15 +129,15 @@ ExportData <- function(file.type="txt", parent=NULL) {
         }
         if (headers[2])
           h[i, ] <- col.nams
-        write.table(h, file=con, append=FALSE, quote=is.quot, sep=sep,
+        write.table(h, file=con, append=is.comm, quote=is.quot, sep=sep,
                     eol=eol, na=nas, dec=dec, row.names=FALSE, col.names=FALSE,
                     qmethod=qme, fileEncoding=enc)
       }
 
       # Write table
-      write.table(d, file=con, append=any(headers), quote=is.quot, sep=sep,
-                  eol=eol, na=nas, dec=dec, row.names=is.rows, col.names=FALSE,
-                  qmethod=qme, fileEncoding=enc)
+      write.table(d, file=con, append=(is.comm | any(headers)), quote=is.quot,
+                  sep=sep, eol=eol, na=nas, dec=dec, row.names=is.rows,
+                  col.names=FALSE, qmethod=qme, fileEncoding=enc)
 
       # Update default values for GUI
       if (file.access(file.name, mode=0) == 0) {
