@@ -809,15 +809,8 @@ OpenRSurvey <- function() {
 
 
 
-  # Toggle axes and color key
-  ToggleAxes <- function() {
-    print("notyet")
-  }
-
-
-
-  # Manage plotting device
-  ManageDevice <- function() {
+  # Toggle view on graphic device
+  ToggleView <- function() {
     print("notyet")
   }
 
@@ -1098,16 +1091,15 @@ OpenRSurvey <- function() {
 
   # Frame 0, toolbar with command buttons
 
-  import.var    <- tclVar()
-  save.var      <- tclVar()
-  data.var      <- tclVar()
-  polygon.var   <- tclVar()
-  globe.var     <- tclVar()
-  config.var    <- tclVar()
-  axes.var      <- tclVar()
-  hide.axes.var <- tclVar(0)
-  new.dev.var   <- tclVar(0)
-  close.var     <- tclVar()
+  import.var  <- tclVar()
+  save.var    <- tclVar()
+  data.var    <- tclVar()
+  polygon.var <- tclVar()
+  globe.var   <- tclVar()
+  config.var  <- tclVar()
+  axes.var    <- tclVar()
+  view.var    <- tclVar("layout")
+  close.var   <- tclVar()
 
   frame0 <- ttkframe(tt, relief="flat", borderwidth=2)
   tkpack(frame0, side="top", fill="x")
@@ -1212,12 +1204,14 @@ OpenRSurvey <- function() {
                               command=CallPlot3d)
 
   frame2a <- ttkframe(frame2, relief="flat", borderwidth=0, padding=0)
-  frame2a.chk.2.1 <- ttkcheckbutton(frame2a, variable=new.dev.var,
-                                    text="New window", command=ManageDevice)
-  frame2a.chk.2.2 <- ttkcheckbutton(frame2a, variable=hide.axes.var,
-                                    text="Hide axes", command=ToggleAxes)
-  tkgrid(frame2a.chk.2.1, frame2a.chk.2.2)
-  tkgrid.configure(frame2a.chk.2.1, padx=c(0, 6))
+  frame2a.rbt.1.2 <- ttkradiobutton(frame2a, variable=view.var,
+                                    command=ToggleView,
+                                    value="layout", text="Layout view")
+  frame2a.rbt.1.3 <- ttkradiobutton(frame2a, variable=view.var,
+                                    command=ToggleView,
+                                    value="data", text="Data view")
+  tkgrid(frame2a.rbt.1.2, frame2a.rbt.1.3)
+  tkgrid.configure(frame2a.rbt.1.2, padx=c(0, 4))
 
   tkgrid(frame2.but.1.1, frame2.but.1.2, frame2.but.1.3, pady=c(0, 8))
   tkgrid(frame2a, columnspan=3, sticky="w")
