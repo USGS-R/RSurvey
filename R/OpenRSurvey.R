@@ -807,6 +807,22 @@ OpenRSurvey <- function() {
     Data("comment", txt)
   }
 
+
+
+  # Toggle axes and color key
+  ToggleAxes <- function() {
+    print("notyet")
+  }
+
+
+
+  # Manage plotting device
+  ManageDevice <- function() {
+    print("notyet")
+  }
+
+
+
   ## Main program
 
   # Warn if using Windows OS and running in MDI mode
@@ -1082,14 +1098,16 @@ OpenRSurvey <- function() {
 
   # Frame 0, toolbar with command buttons
 
-  import.var  <- tclVar()
-  save.var    <- tclVar()
-  data.var    <- tclVar()
-  polygon.var <- tclVar()
-  globe.var   <- tclVar()
-  config.var  <- tclVar()
-  axes.var    <- tclVar()
-  close.var   <- tclVar()
+  import.var    <- tclVar()
+  save.var      <- tclVar()
+  data.var      <- tclVar()
+  polygon.var   <- tclVar()
+  globe.var     <- tclVar()
+  config.var    <- tclVar()
+  axes.var      <- tclVar()
+  hide.axes.var <- tclVar(0)
+  new.dev.var   <- tclVar(0)
+  close.var     <- tclVar()
 
   frame0 <- ttkframe(tt, relief="flat", borderwidth=2)
   tkpack(frame0, side="top", fill="x")
@@ -1193,10 +1211,18 @@ OpenRSurvey <- function() {
   frame2.but.1.3 <- ttkbutton(frame2, width=10, text="3D Map",
                               command=CallPlot3d)
 
-  tkgrid(frame2.but.1.1, frame2.but.1.2, frame2.but.1.3, pady=c(0, 4))
-  tkgrid.configure(frame2.but.1.2, padx=4)
+  frame2a <- ttkframe(frame2, relief="flat", borderwidth=0, padding=0)
+  frame2a.chk.2.1 <- ttkcheckbutton(frame2a, variable=new.dev.var,
+                                    text="New window", command=ManageDevice)
+  frame2a.chk.2.2 <- ttkcheckbutton(frame2a, variable=hide.axes.var,
+                                    text="Hide axes", command=ToggleAxes)
+  tkgrid(frame2a.chk.2.1, frame2a.chk.2.2)
+  tkgrid.configure(frame2a.chk.2.1, padx=c(0, 6))
 
-  tcl("grid", "anchor", frame2, "center")
+  tkgrid(frame2.but.1.1, frame2.but.1.2, frame2.but.1.3, pady=c(0, 8))
+  tkgrid(frame2a, columnspan=3, sticky="w")
+
+  tkgrid.configure(frame2.but.1.2, padx=4)
 
   tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE, padx=10,
          pady=c(0, 10))
