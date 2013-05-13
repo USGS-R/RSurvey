@@ -310,9 +310,12 @@ OpenRSurvey <- function() {
   # Manage variables
   CallManageVariables <- function() {
     ans <- ManageVariables(Data("cols"), Data("vars"), tt)
-    if (!is.null(ans)) {
+    if (!is.null(ans) && (!identical(ans$cols, Data("cols")) |
+                          !identical(ans$vars, Data("vars")))) {
       Data("cols", ans$cols)
       Data("vars", ans$vars)
+      Data("data.pts", NULL)
+      Data("data.grd", NULL)
       SetVars()
     }
     tkfocus(tt)

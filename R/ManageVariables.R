@@ -7,8 +7,10 @@ ManageVariables <- function(cols, vars, parent=NULL) {
   # Save changes and close GUI
   SaveChanges <- function(type) {
     SaveNb()
-    if (!identical(cols, old.cols))
+    if (!identical(cols, old.cols)) {
       rtn <<- list(cols=cols, vars=vars)
+      old.cols <<- cols
+    }
     if (type == "ok")
       tclvalue(tt.done.var) <- 1
   }
