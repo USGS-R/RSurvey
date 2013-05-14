@@ -1212,7 +1212,7 @@ OpenRSurvey <- function() {
                                     command=ToggleView,
                                     value="data", text="data")
   tkgrid(frame2a.lab.1.1, frame2a.rbt.1.2, frame2a.rbt.1.3)
-  tkgrid.configure(frame2a.rbt.1.2, padx=c(2, 4))
+  tkgrid.configure(frame2a.rbt.1.2, padx=c(4, 4))
 
   tkgrid(frame2.but.1.1, frame2.but.1.2, frame2.but.1.3, pady=c(0, 8))
   tkgrid(frame2a, columnspan=3, sticky="w")

@@ -18,9 +18,9 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       return()
 
     if (is.null(matched.cells)) {
-      n <- ncol(d) - 1L
+      n <- ncol(dd) - 1L
 
-      matched.idxs <- suppressWarnings(grep(pattern, t(d[-1L, -1L]),
+      matched.idxs <- suppressWarnings(grep(pattern, t(dd[-1L, -1L]),
                                        fixed=fixed, perl=perl,
                                        ignore.case=!match.case,
                                        useBytes=FALSE, invert=FALSE))
@@ -102,7 +102,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   # Get single cell value for table
   GetCellValue <- function(r, c) {
-    as.tclObj(d[as.integer(r) + 1L, as.integer(c) + 1L], drop=TRUE)
+    as.tclObj(dd[as.integer(r) + 1L, as.integer(c) + 1L], drop=TRUE)
   }
 
   # Tag column
@@ -110,6 +110,60 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     if (as.integer(...) %in% read.only)
       return(as.tclObj("disabledcol"))
   }
+
+  # Validate cell value
+  ValidateCellValue <- function(s, S) {
+    sep <- data.frame(time=Sys.time(),
+                      cell=as.character(tkindex(frame2.tbl, "active")),
+                      old=as.character(s), new=as.character(S),
+                      stringsAsFactors=FALSE)
+    undo.stack <<- rbind(undo.stack, sep)
+    redo.stack <<- NULL
+    return(as.tclObj(TRUE))
+  }
+
+  # Undo edit
+  UndoEdit <- function() {
+    if (is.null(undo.stack) || nrow(undo.stack) == 0)
+      return()
+    tclServiceMode(FALSE)
+
+    m <- nrow(undo.stack)
+    e <- undo.stack[m, , drop=FALSE]
+    cell <- as.integer(strsplit(e$cell, ",")[[1]])
+    dd[cell[1] + 1L, cell[2] + 1L] <<- e$old
+
+    undo.stack <<- undo.stack[-m, , drop=FALSE]
+    redo.stack <<- rbind(redo.stack, e)
+
+    tclServiceMode(TRUE)
+    tcl(frame2.tbl, "clear", "cache", e$cell)
+  }
+
+  # Redo edit
+  RedoEdit <- function() {
+    if (is.null(redo.stack) || nrow(redo.stack) == 0)
+      return()
+    tclServiceMode(FALSE)
+
+    m <- nrow(redo.stack)
+    e <- redo.stack[m, , drop=FALSE]
+    cell <- as.integer(strsplit(e$cell, ",")[[1]])
+    dd[cell[1] + 1L, cell[2] + 1L] <<- e$new
+
+    redo.stack <<- redo.stack[-m, , drop=FALSE]
+    undo.stack <<- rbind(undo.stack, e)
+
+    tclServiceMode(TRUE)
+    tcl(frame2.tbl, "clear", "cache", e$cell)
+  }
+
+
+
+
+
+
+
 
   ## Main program
 
@@ -184,24 +238,26 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   row.0.height <- max(vapply(strsplit(col.names, "\n"), length, 0L))
 
   # Format data table and determine column widths
+  dd <- d
   col.width <- NULL
   for (j in 1:n) {
     if (col.formats[j] == "") {
-      d[, j] <- format(d[, j], digits=15, scientific=FALSE, drop0trailing=TRUE)
-    } else if (inherits(d[, j], c("POSIXct", "POSIXlt"))) {
-      d[, j] <- format(d[, j], format=col.formats[j])
+      dd[, j] <- format(dd[, j], digits=15, scientific=FALSE,
+                        drop0trailing=TRUE)
+    } else if (inherits(dd[, j], c("POSIXct", "POSIXlt"))) {
+      dd[, j] <- format(dd[, j], format=col.formats[j])
     } else {
-      d[, j] <- try(sprintf(col.formats[j], d[, j]), silent=TRUE)
-      if (inherits(d[, j], "try-error"))
-        d[, j] <- format(d[, j])
+      dd[, j] <- try(sprintf(col.formats[j], dd[, j]), silent=TRUE)
+      if (inherits(dd[, j], "try-error"))
+        dd[, j] <- format(dd[, j])
     }
-    d[, j] <- gsub("(^ +)|( +$)", "", d[, j])
+    dd[, j] <- gsub("(^ +)|( +$)", "", dd[, j])
     if (col.names[j] == "")
       nchar.title <- 0
     else
       nchar.title <- max(vapply(strsplit(col.names[j], "\n"),
                                 function(i) nchar(i), 0L))
-    nchar.data <- max(nchar(d[,j]))
+    nchar.data <- max(nchar(dd[,j]))
     len <- max(c(nchar.title, nchar.data)) + 1
     if (len < 5)
       len <- if (n == 1) 10 else 5
@@ -209,12 +265,14 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
 
   # Add titles and row names to character data frame
-  d <- rbind(c("", col.names), cbind(row.names, as.matrix(d)))
+  dd <- rbind(c("", col.names), cbind(row.names, as.matrix(dd)))
 
   # Assigin global variables
   match.case <- TRUE
   perl <- FALSE
   fixed <- TRUE
+  undo.stack <- NULL
+  redo.stack <- NULL
 
   # Assign variables linked to Tk widgets
   table.var   <- tclArray()
@@ -243,6 +301,13 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   # Edit menu
   menu.edit <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
+  if (is.editable) {
+    tkadd(menu.edit, "command", label="Undo", accelerator="Ctrl+z",
+          command=UndoEdit)
+    tkadd(menu.edit, "command", label="Redo", accelerator="Ctrl+y",
+          command=RedoEdit)
+    tkadd(menu.edit, "separator")
+  }
   tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c",
         command=function() tcl("tk_tableCopy", frame2.tbl))
   if (is.editable) {
@@ -382,23 +447,23 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   frame0 <- ttkframe(tt, relief="flat")
 
-  frame0.but.2 <- ttkbutton(frame0, width=12, text="Close",
+  frame0.but.1.2 <- ttkbutton(frame0, width=12, text="Close",
                             command=function() tclvalue(tt.done.var) <- 1)
-  frame0.but.3 <- ttkbutton(frame0, width=12, text="Help",
+  frame0.but.1.3 <- ttkbutton(frame0, width=12, text="Help",
                             command=function() {
                               print(help("ViewData", package="RSurvey"))
                             })
-  frame0.grp.4 <- ttksizegrip(frame0)
+  frame0.grp.1.4 <- ttksizegrip(frame0)
 
-  tkgrid("x", frame0.but.2, frame0.but.3, frame0.grp.4)
+  tkgrid("x", frame0.but.1.2, frame0.but.1.3, frame0.grp.1.4)
 
   tkgrid.columnconfigure(frame0, 0, weight=1)
 
-  tkgrid.configure(frame0.but.2, frame0.but.3, pady=10)
-  tkgrid.configure(frame0.but.3, columnspan=2, padx=c(4, 10))
-  tkgrid.configure(frame0.grp.4, sticky="se")
+  tkgrid.configure(frame0.but.1.2, frame0.but.1.3, pady=10)
+  tkgrid.configure(frame0.but.1.3, columnspan=2, padx=c(4, 10))
+  tkgrid.configure(frame0.grp.1.4, sticky="se")
 
-  tkraise(frame0.but.3, frame0.grp.4)
+  tkraise(frame0.but.1.3, frame0.grp.1.4)
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
@@ -446,7 +511,8 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                          drawmode="single", flashmode=1, rowseparator="\n",
                          colseparator="\t", selectmode="extended",
                          selecttitle=1, insertofftime=0, anchor="nw",
-                         highlightthickness=0, cache=1,
+                         highlightthickness=0, cache=1, validate=1,
+                         validatecommand=function(s, S) ValidateCellValue(s, S),
                          command=function(r, c) GetCellValue(r, c),
                          coltagcommand=function(...) TagColumn(...),
                          xscrollcommand=function(...) tkset(frame2.xsc, ...),
@@ -496,6 +562,9 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
   tkbind(frame2.tbl, "<Return>", "break")
+
+  tkbind(frame2.tbl, "<Control-z>", UndoEdit)
+  tkbind(frame2.tbl, "<Control-y>", RedoEdit)
 
   tkbind(frame1.ent.1.2, "<KeyRelease>",
          function() {
