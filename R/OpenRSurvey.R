@@ -1204,14 +1204,15 @@ OpenRSurvey <- function() {
                               command=CallPlot3d)
 
   frame2a <- ttkframe(frame2, relief="flat", borderwidth=0, padding=0)
+  frame2a.lab.1.1 <- ttklabel(frame2a, text="View:")
   frame2a.rbt.1.2 <- ttkradiobutton(frame2a, variable=view.var,
                                     command=ToggleView,
-                                    value="layout", text="Layout view")
+                                    value="layout", text="layout")
   frame2a.rbt.1.3 <- ttkradiobutton(frame2a, variable=view.var,
                                     command=ToggleView,
-                                    value="data", text="Data view")
-  tkgrid(frame2a.rbt.1.2, frame2a.rbt.1.3)
-  tkgrid.configure(frame2a.rbt.1.2, padx=c(0, 4))
+                                    value="data", text="data")
+  tkgrid(frame2a.lab.1.1, frame2a.rbt.1.2, frame2a.rbt.1.3)
+  tkgrid.configure(frame2a.rbt.1.2, padx=c(2, 4))
 
   tkgrid(frame2.but.1.1, frame2.but.1.2, frame2.but.1.3, pady=c(0, 8))
   tkgrid(frame2a, columnspan=3, sticky="w")
