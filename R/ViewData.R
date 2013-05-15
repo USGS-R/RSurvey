@@ -148,7 +148,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     undo.stack <<- undo.stack[-m, , drop=FALSE]
     redo.stack <<- rbind(redo.stack, e)
 
-    tkactivate(frame2.tbl, "origin")
+    tkactivate(frame2.tbl, "0,0")
     tkselection.clear(frame2.tbl, "all")
     tksee(frame2.tbl, e$cell)
 
@@ -171,7 +171,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     redo.stack <<- redo.stack[-m, , drop=FALSE]
     undo.stack <<- rbind(undo.stack, e)
 
-    tkactivate(frame2.tbl, "origin")
+    tkactivate(frame2.tbl, "0,0")
     tkselection.clear(frame2.tbl, "all")
     tksee(frame2.tbl, e$cell)
 
@@ -210,13 +210,12 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       width <- apply(s, 2, function(i) max(nchar(i)) + 1L)
       justify <- c("left", rep("right", 4))
 
-      n <- ncol(s)
-      for (j in 1:n) {
+      for (j in 1:ncol(s)) {
         s[, j] <- format(s[, j], width=width[j], justify=justify[j])
       }
       txt <- apply(s, 1, function(i) paste(i, collapse=" "))
     }
-    ViewText(txt, read.only=TRUE, win.title="View ChangeLog", parent=tt)
+    ViewText(txt, read.only=TRUE, win.title="Changelog", parent=tt)
     tkfocus(frame2.tbl)
   }
 
