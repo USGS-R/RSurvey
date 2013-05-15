@@ -8,10 +8,14 @@ CheckEntry <- function (ent.typ, ent.str="") {
   chr <- unlist(strsplit(ent.str, split=""))
 
   if (ent.typ == "numeric") {
-    accept.vals <- c(as.character(0:9), ".", "-")
+    accept.vals <- c(as.character(0:9), "-", "e", "E", ".")
+  } else if (ent.typ %in% "integer") {
+    accept.vals <- c(as.character(0:9), "-", "e", "E")
+  } else if (ent.typ == "logical") {
+    accept.vals <- c("T", "R", "U", "E", "F", "A", "L", "S")
   } else if (ent.typ == "second") {
     accept.vals <- c(as.character(0:9), ".")
-  } else if (ent.typ %in% c("integer", "hour", "minute")) {
+  } else if (ent.typ %in% c("hour", "minute")) {
     accept.vals <- c(as.character(0:9))
   } else if (ent.typ == "date") {
     accept.vals <- c("a", "A", "b", "c", "C", "d", "D", "e", "E", "F", "g",

@@ -18,7 +18,7 @@ CheckEntry(ent.typ, ent.str = "")
 }
 
 \details{
-The entry types include: \var{real}, \var{integer},
+The entry types include: \var{real}, \var{integer}, \var{logical},
 \var{hour}, \var{minute}, \var{second}, and \var{date}.
 }
 

@@ -1,4 +1,4 @@
-# A GUI for viewing table formatted data.
+# A GUI for viewing and editing table formatted data.
 
 ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                      win.title="View Data", parent=NULL) {
@@ -90,7 +90,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     if (length(idx) > 0) {
       tkyview(frame2.tbl, idx[1] - 1L)
       first.cell.str <- paste0(idx, ",0")
-      last.cell.str  <- paste(idx, n, sep=",")
+      last.cell.str <- paste(idx, n, sep=",")
       tkselection.clear(frame2.tbl, "all")
       tkselection.set(frame2.tbl, first.cell.str, last.cell.str)
     } else {
@@ -113,13 +113,25 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   # Validate cell value
   ValidateCellValue <- function(s, S) {
-    sep <- data.frame(time=Sys.time(),
-                      cell=as.character(tkindex(frame2.tbl, "active")),
-                      old=as.character(s), new=as.character(S),
-                      stringsAsFactors=FALSE)
-    undo.stack <<- rbind(undo.stack, sep)
-    redo.stack <<- NULL
-    return(as.tclObj(TRUE))
+    tclServiceMode(FALSE)
+
+    e <- data.frame(time=Sys.time(),
+                    cell=as.character(tkindex(frame2.tbl, "active")),
+                    old=as.character(s), new=as.character(S),
+                    stringsAsFactors=FALSE)
+    cell <- as.integer(strsplit(e$cell, ",")[[1]])
+    obj <- d[cell[1], cell[2]]
+    if (inherits(obj, c("numeric", "integer", "logical")) &&
+        !identical(e$new, CheckEntry(class(obj)[1], e$new))) {
+      is.valid <- FALSE
+    } else {
+      undo.stack <<- rbind(undo.stack, e)
+      redo.stack <<- NULL
+      is.valid <- TRUE
+    }
+
+    tclServiceMode(TRUE)
+    return(as.tclObj(is.valid))
   }
 
   # Undo edit
@@ -136,8 +148,13 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     undo.stack <<- undo.stack[-m, , drop=FALSE]
     redo.stack <<- rbind(redo.stack, e)
 
+    tkactivate(frame2.tbl, "origin")
+    tkselection.clear(frame2.tbl, "all")
+    tksee(frame2.tbl, e$cell)
+
     tclServiceMode(TRUE)
     tcl(frame2.tbl, "clear", "cache", e$cell)
+    tkactivate(frame2.tbl, e$cell)
   }
 
   # Redo edit
@@ -154,16 +171,54 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     redo.stack <<- redo.stack[-m, , drop=FALSE]
     undo.stack <<- rbind(undo.stack, e)
 
+    tkactivate(frame2.tbl, "origin")
+    tkselection.clear(frame2.tbl, "all")
+    tksee(frame2.tbl, e$cell)
+
     tclServiceMode(TRUE)
     tcl(frame2.tbl, "clear", "cache", e$cell)
+    tkactivate(frame2.tbl, e$cell)
   }
 
+  # View changelog
 
+  ViewChangeLog <- function() {
+    if (is.null(undo.stack) || nrow(undo.stack) == 0) {
+      txt <- ""
+    } else {
+      s <- NULL
+      for (i in  unique(undo.stack$cell)) {
+        undo.stack.cell <- undo.stack[undo.stack$cell == i, , drop=FALSE]
+        undo.stack.cell <- undo.stack.cell[order(undo.stack.cell$time), ,
+                                           drop=FALSE]
+        m <- nrow(undo.stack.cell)
 
+        cell <- as.integer(strsplit(undo.stack.cell$cell, ",")[[1]]) + 1L
+        e <- data.frame(Variable=dd[1, cell[2]],
+                        Record=as.integer(dd[cell[1], 1]),
+                        Old=undo.stack.cell$old[1],
+                        New=undo.stack.cell$new[m],
+                        Time=format(undo.stack.cell$time[m]),
+                        stringsAsFactors=FALSE)
+        s <- rbind(s, e)
+      }
+      s <- s[order(s$Variable, s$Record), , drop=FALSE]
+      header <- names(s)
+      breaks <- vapply(names(s), function(i) paste(rep("-", nchar(i)), collapse=""), "")
+      s <- rbind(header, breaks, s)
 
+      width <- apply(s, 2, function(i) max(nchar(i)) + 1L)
+      justify <- c("left", rep("right", 4))
 
-
-
+      n <- ncol(s)
+      for (j in 1:n) {
+        s[, j] <- format(s[, j], width=width[j], justify=justify[j])
+      }
+      txt <- apply(s, 1, function(i) paste(i, collapse=" "))
+    }
+    ViewText(txt, read.only=TRUE, win.title="View ChangeLog", parent=tt)
+    tkfocus(frame2.tbl)
+  }
 
   ## Main program
 
@@ -297,6 +352,14 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   # Start top menu
   top.menu <- tkmenu(tt, tearoff=0)
+
+  # File menu
+  if (is.editable) {
+    menu.file <- tkmenu(tt, tearoff=0, relief="flat")
+    tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
+    tkadd(menu.file, "command", label="View changelog",
+          command=ViewChangeLog)
+  }
 
   # Edit menu
   menu.edit <- tkmenu(tt, tearoff=0, relief="flat")
@@ -554,7 +617,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkgrid.rowconfigure(frame2, 0, weight=1)
 
   tkpack(frame2, fill="both", expand=TRUE)
-
 
   # Bind events
 
