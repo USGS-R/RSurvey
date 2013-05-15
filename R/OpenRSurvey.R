@@ -690,8 +690,15 @@ OpenRSurvey <- function() {
       tkconfigure(tt, cursor="watch")
       idxs <- vapply(cols, function(i) i$index, 0L)
       nams <- vapply(cols, function(i) i$name, "")[!is.na(idxs)]
-      ViewData(Data("data.raw")[, na.omit(idxs)], col.names=nams,
-               read.only=FALSE, win.title="Raw Data", parent=tt)
+      lst <- ViewData(Data("data.raw")[, na.omit(idxs)], col.names=nams,
+                      read.only=FALSE, undo.stack=Data("undo.stack"),
+                      win.title="Raw Data", parent=tt)
+      if (!is.null(lst)) {
+        Data("data.raw", lst[["d"]])
+        Data("undo.stack", lst[["undo.stack"]])
+        Data("data.pts", NULL)
+        Data("data.grd", NULL)
+      }
     }
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)

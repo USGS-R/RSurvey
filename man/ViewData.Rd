@@ -10,7 +10,7 @@ A \acronym{GUI} for viewing table formatted data.
 
 \usage{
 ViewData(d, col.names = NULL, col.formats = NULL, read.only = FALSE,
-         win.title = "View Data", parent = NULL)
+         undo.stack = NULL, win.title = "View Data", parent = NULL)
 }
 
 \arguments{
@@ -22,6 +22,7 @@ ViewData(d, col.names = NULL, col.formats = NULL, read.only = FALSE,
 \item{read.only}{logical or integer; specifies whether the table is read only.
   Alternatively, read only can be specified for individual columns using an
   integer array of column indexes.}
+\item{undo.stack}{data.frame; undo stack documenting changes to data table.}
 \item{win.title}{character; a string to display as the title of the dialog box.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }

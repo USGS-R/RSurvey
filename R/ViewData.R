@@ -1,9 +1,34 @@
 # A GUI for viewing and editing table formatted data.
 
 ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
-                     win.title="View Data", parent=NULL) {
+                     undo.stack=NULL, win.title="View Data", parent=NULL) {
 
   ## Additional functions (subroutines)
+
+  # Save table and close
+  SaveTable <- function() {
+    s <- GetEdits()
+    if (!is.null(s)) {
+      s <- s[, c("Class", "New", "Row", "Col"), drop=FALSE]
+      for (i in unique(s$Class)) {
+        ss <- s[s$Class == i, ]
+        if (i %in% c("POSIXct", "POSIXlt")) {
+          new <- suppressWarnings(strptime(ss$New, "%Y-%m-%d %H:%M:%S"))
+        } else if (i == "integer") {
+          new <- suppressWarnings(as.integer(ss$New))
+        } else if (i == "numeric") {
+          new <- suppressWarnings(as.numeric(ss$New))
+        } else if (i == "logical") {
+          new <- suppressWarnings(as.logical(ss$New))
+        } else {
+          new <- ss$New
+        }
+        d[cbind(ss$Row, ss$Col)] <- new
+        rtn <<- list(d=d, undo.stack=undo.stack)
+      }
+    }
+    tclvalue(tt.done.var) <- 1
+  }
 
   # Select all cells
   SelectAll <- function() {
@@ -112,6 +137,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
 
   # Validate cell value
+
   ValidateCellValue <- function(s, S) {
     tclServiceMode(FALSE)
 
@@ -135,6 +161,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
 
   # Undo edit
+
   UndoEdit <- function() {
     if (is.null(undo.stack) || nrow(undo.stack) == 0)
       return()
@@ -181,35 +208,18 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
 
   # View changelog
-
   ViewChangeLog <- function() {
-    if (is.null(undo.stack) || nrow(undo.stack) == 0) {
+    s <- GetEdits()
+    if (is.null(s)) {
       txt <- ""
     } else {
-      s <- NULL
-      for (i in  unique(undo.stack$cell)) {
-        undo.stack.cell <- undo.stack[undo.stack$cell == i, , drop=FALSE]
-        undo.stack.cell <- undo.stack.cell[order(undo.stack.cell$time), ,
-                                           drop=FALSE]
-        m <- nrow(undo.stack.cell)
-
-        cell <- as.integer(strsplit(undo.stack.cell$cell, ",")[[1]]) + 1L
-        e <- data.frame(Variable=dd[1, cell[2]],
-                        Record=as.integer(dd[cell[1], 1]),
-                        Old=undo.stack.cell$old[1],
-                        New=undo.stack.cell$new[m],
-                        Time=format(undo.stack.cell$time[m]),
-                        stringsAsFactors=FALSE)
-        s <- rbind(s, e)
-      }
-      s <- s[order(s$Variable, s$Record), , drop=FALSE]
+      s <- s[order(s$Variable, s$Record),
+             c("Variable", "Record", "Old", "New", "Time"), drop=FALSE]
       header <- names(s)
-      breaks <- vapply(names(s), function(i) paste(rep("-", nchar(i)), collapse=""), "")
+      breaks <- vapply(header, function(i) paste(rep("-", nchar(i)), collapse=""), "")
       s <- rbind(header, breaks, s)
-
       width <- apply(s, 2, function(i) max(nchar(i)) + 1L)
       justify <- c("left", rep("right", 4))
-
       for (j in 1:ncol(s)) {
         s[, j] <- format(s[, j], width=width[j], justify=justify[j])
       }
@@ -217,6 +227,43 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     }
     ViewText(txt, read.only=TRUE, win.title="Changelog", parent=tt)
     tkfocus(frame2.tbl)
+  }
+
+  # Get edits
+  GetEdits <- function() {
+    s <- NULL
+    if (is.null(undo.stack) || nrow(undo.stack) == 0)
+      return(s)
+    for (i in unique(undo.stack$cell)) {
+      undo.stack.cell <- undo.stack[undo.stack$cell == i, , drop=FALSE]
+      undo.stack.cell <- undo.stack.cell[order(undo.stack.cell$time), ,
+                                         drop=FALSE]
+      m <- nrow(undo.stack.cell)
+      cell <- as.integer(strsplit(undo.stack.cell$cell, ",")[[1]])
+      obj <- d[cell[1], cell[2]]
+      old <- undo.stack.cell$old[1]
+      new <- undo.stack.cell$new[m]
+      if (inherits(obj, "POSIXt") &&
+          is.na(strptime(new, "%Y-%m-%d %H:%M:%S"))) {
+        new <- "NA"
+      } else if (inherits(obj, c("numeric", "integer")) &&
+                 is.na(suppressWarnings(as.numeric(new)))) {
+        new <- "NA"
+      } else if (inherits(obj, "logical") && is.na(as.logical(new))) {
+        new <- "NA"
+      }
+
+      if (identical(old, new))
+        next
+      e <- data.frame(Variable=dd[1, cell[2] + 1L],
+                      Record=as.integer(dd[cell[1] + 1L, 1]),
+                      Old=old, New=new,
+                      Time=format(undo.stack.cell$time[m]),
+                      Row=cell[1], Col=cell[2], Class=class(obj)[1],
+                      stringsAsFactors=FALSE)
+      s <- rbind(s, e)
+    }
+    return(s)
   }
 
   ## Main program
@@ -232,6 +279,11 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   n <- ncol(d)
   if (m == 0)
     return()
+
+  # Check validity of undo stack
+  if (is.null(undo.stack) || !is.data.frame(undo.stack) ||
+      !identical(names(undo.stack), c("time", "cell", "old", "new")))
+    undo.stack <- NULL
 
   # Set parameters based on whether the table is editable
 
@@ -325,8 +377,8 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   match.case <- TRUE
   perl <- FALSE
   fixed <- TRUE
-  undo.stack <- NULL
   redo.stack <- NULL
+  rtn <- NULL
 
   # Assign variables linked to Tk widgets
   table.var   <- tclArray()
@@ -509,23 +561,31 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   frame0 <- ttkframe(tt, relief="flat")
 
-  frame0.but.1.2 <- ttkbutton(frame0, width=12, text="Close",
-                            command=function() tclvalue(tt.done.var) <- 1)
-  frame0.but.1.3 <- ttkbutton(frame0, width=12, text="Help",
+  if (is.editable) {
+    frame0.but.1.2 <- ttkbutton(frame0, width=12, text="Save",
+                                command=SaveTable)
+    frame0.but.1.3 <- ttkbutton(frame0, width=12, text="Cancel",
+                                command=function() tclvalue(tt.done.var) <- 1)
+  } else {
+    frame0.but.1.2 <- "x"
+    frame0.but.1.3 <- ttkbutton(frame0, width=12, text="Close",
+                                command=function() tclvalue(tt.done.var) <- 1)
+  }
+  frame0.but.1.4 <- ttkbutton(frame0, width=12, text="Help",
                             command=function() {
                               print(help("ViewData", package="RSurvey"))
                             })
-  frame0.grp.1.4 <- ttksizegrip(frame0)
+  frame0.grp.1.5 <- ttksizegrip(frame0)
 
-  tkgrid("x", frame0.but.1.2, frame0.but.1.3, frame0.grp.1.4)
+  tkgrid("x", frame0.but.1.2, frame0.but.1.3, frame0.but.1.4, frame0.grp.1.5)
 
   tkgrid.columnconfigure(frame0, 0, weight=1)
 
-  tkgrid.configure(frame0.but.1.2, frame0.but.1.3, pady=10)
-  tkgrid.configure(frame0.but.1.3, columnspan=2, padx=c(4, 10))
-  tkgrid.configure(frame0.grp.1.4, sticky="se")
+  tkgrid.configure(frame0.but.1.3, padx=c(4, 0))
+  tkgrid.configure(frame0.but.1.4, pady=10, padx=c(4, 10), columnspan=2)
+  tkgrid.configure(frame0.grp.1.5, sticky="se")
 
-  tkraise(frame0.but.1.3, frame0.grp.1.4)
+  tkraise(frame0.but.1.4, frame0.grp.1.5)
 
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
@@ -650,5 +710,5 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  invisible()
+  invisible(rtn)
 }
