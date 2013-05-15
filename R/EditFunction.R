@@ -454,7 +454,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   frame1 <- tkframe(pw, relief="flat", padx=0, pady=0)
 
   txt <- "Double click to insert variable"
-  frame1.lab.1.1 <- ttklabel(frame1, text=txt, foreground="#006000")
+  frame1.lab.1.1 <- ttklabel(frame1, text=txt, foreground="#141414")
   frame1.lst.2.1 <- tklistbox(frame1, selectmode="browse", activestyle="none",
                               relief="flat", borderwidth=5, width=25, height=8,
                               exportselection=FALSE, listvariable=variable.var,
@@ -506,7 +506,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   txt <- "Define function"
   if (!is.null(index) && edit.fun.id != "")
     txt <- paste0(txt, " for \"", edit.fun.id, "\"")
-  frame2.lab.1.1 <- ttklabel(frame2, text=txt, foreground="#006000")
+  frame2.lab.1.1 <- ttklabel(frame2, text=txt, foreground="#141414")
 
   fnt <- tkfont.create(family="Courier New", size=10)
   frame2.txt.2.1 <- tktext(frame2, bg="white", font=fnt, padx=2, pady=2,
