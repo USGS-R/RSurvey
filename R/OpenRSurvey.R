@@ -691,11 +691,11 @@ OpenRSurvey <- function() {
       idxs <- vapply(cols, function(i) i$index, 0L)
       nams <- vapply(cols, function(i) i$name, "")[!is.na(idxs)]
       lst <- ViewData(Data("data.raw")[, na.omit(idxs)], col.names=nams,
-                      read.only=FALSE, undo.stack=Data("undo.stack"),
+                      read.only=FALSE, changelog=Data("changelog"),
                       win.title="Raw Data", parent=tt)
       if (!is.null(lst)) {
         Data("data.raw", lst[["d"]])
-        Data("undo.stack", lst[["undo.stack"]])
+        Data("changelog", lst[["changelog"]])
         Data("data.pts", NULL)
         Data("data.grd", NULL)
       }

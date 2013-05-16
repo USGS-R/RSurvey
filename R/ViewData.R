@@ -1,13 +1,16 @@
 # A GUI for viewing and editing table formatted data.
 
 ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
-                     undo.stack=NULL, win.title="View Data", parent=NULL) {
+                     changelog=NULL, win.title="View Data", parent=NULL) {
 
   ## Additional functions (subroutines)
 
   # Save table and close
   SaveTable <- function() {
     s <- GetEdits()
+    tclServiceMode(FALSE)
+
+    changelog <- s
     if (!is.null(s)) {
       s <- s[, c("Class", "New", "Row", "Col"), drop=FALSE]
       for (i in unique(s$Class)) {
@@ -23,16 +26,18 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
         } else {
           new <- ss$New
         }
-        d[cbind(ss$Row, ss$Col)] <- new
-        rtn <<- list(d=d, undo.stack=undo.stack)
+        d[cbind(ss$Row, ss$Col)] <<- new
       }
     }
+    rtn <<- list(d=d, changelog=changelog)
+
+    tclServiceMode(TRUE)
     tclvalue(tt.done.var) <- 1
   }
 
   # Select all cells
   SelectAll <- function() {
-    tkselection.set(frame2.tbl, "origin", "end")
+    tkselection.set(frame2.tbl, "0,0", "end")
   }
 
   # Find value in table
@@ -213,13 +218,14 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     if (is.null(s)) {
       txt <- ""
     } else {
-      s <- s[order(s$Variable, s$Record),
-             c("Variable", "Record", "Old", "New", "Time"), drop=FALSE]
+      s <- s[order(s$Record, s$Variable),
+             c("Record", "Variable", "Old", "New", "Class", "Time"), drop=FALSE]
       header <- names(s)
-      breaks <- vapply(header, function(i) paste(rep("-", nchar(i)), collapse=""), "")
+      breaks <- vapply(header, function(i) paste(rep("-", nchar(i)),
+                                                 collapse=""), "")
       s <- rbind(header, breaks, s)
       width <- apply(s, 2, function(i) max(nchar(i)) + 1L)
-      justify <- c("left", rep("right", 4))
+      justify <- c("right", "left", "right", "right", "left", "left")
       for (j in 1:ncol(s)) {
         s[, j] <- format(s[, j], width=width[j], justify=justify[j])
       }
@@ -230,10 +236,19 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
 
   # Get edits
+
   GetEdits <- function() {
     s <- NULL
-    if (is.null(undo.stack) || nrow(undo.stack) == 0)
+    if (is.null(changelog) & (is.null(undo.stack) || nrow(undo.stack) == 0))
       return(s)
+
+    if (!is.null(changelog)) {
+      changelog$Cell <- paste(changelog[, "Row"], changelog[, "Col"], sep=",")
+      changelog <- changelog[, c("Time", "Cell", "Old", "New")]
+      names(changelog) <- c("time", "cell", "old", "new")
+      undo.stack <- rbind(undo.stack, changelog)
+    }
+
     for (i in unique(undo.stack$cell)) {
       undo.stack.cell <- undo.stack[undo.stack$cell == i, , drop=FALSE]
       undo.stack.cell <- undo.stack.cell[order(undo.stack.cell$time), ,
@@ -255,14 +270,15 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
       if (identical(old, new))
         next
-      e <- data.frame(Variable=dd[1, cell[2] + 1L],
-                      Record=as.integer(dd[cell[1] + 1L, 1]),
+      e <- data.frame(Record=as.integer(dd[cell[1] + 1L, 1]),
+                      Variable=dd[1, cell[2] + 1L],
                       Old=old, New=new,
                       Time=format(undo.stack.cell$time[m]),
                       Row=cell[1], Col=cell[2], Class=class(obj)[1],
                       stringsAsFactors=FALSE)
       s <- rbind(s, e)
     }
+
     return(s)
   }
 
@@ -280,10 +296,9 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   if (m == 0)
     return()
 
-  # Check validity of undo stack
-  if (is.null(undo.stack) || !is.data.frame(undo.stack) ||
-      !identical(names(undo.stack), c("time", "cell", "old", "new")))
-    undo.stack <- NULL
+  # Check validity of changelog
+  if (is.null(changelog) || !is.data.frame(changelog))
+    changelog <- NULL
 
   # Set parameters based on whether the table is editable
 
@@ -377,6 +392,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   match.case <- TRUE
   perl <- FALSE
   fixed <- TRUE
+  undo.stack <- NULL
   redo.stack <- NULL
   rtn <- NULL
 
