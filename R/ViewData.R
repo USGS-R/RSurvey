@@ -213,7 +213,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
 
   # View changelog
-  ViewChangeLog <- function() {
+  ViewChangelog <- function() {
     s <- GetEdits()
     if (is.null(s)) {
       txt <- ""
@@ -310,7 +310,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
   if (!inherits(read.only, c("NULL", "integer")))
     stop("problem with read.only argument")
-  is.editable <- is.null(read.only) || read.only != 1:n
+  is.editable <- is.null(read.only) || !identical(read.only, (1:n))
 
   # Initialize search results
   matched.cells <- NULL
@@ -380,8 +380,8 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                                 function(i) nchar(i), 0L))
     nchar.data <- max(nchar(dd[,j]))
     len <- max(c(nchar.title, nchar.data)) + 1
-    if (len < 5)
-      len <- if (n == 1) 10 else 5
+    if (len < 10)
+      len <- if (n == 1) 20 else 10
     col.width[j] <- len
   }
 
@@ -425,7 +425,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     menu.file <- tkmenu(tt, tearoff=0, relief="flat")
     tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
     tkadd(menu.file, "command", label="View changelog",
-          command=ViewChangeLog)
+          command=ViewChangelog)
   }
 
   # Edit menu

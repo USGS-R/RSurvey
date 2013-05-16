@@ -38,6 +38,6 @@ export(AddAxis,
        SetConfiguration,
        SetPolygonLimits,
        SetPreferences,
-       SummarizeData,
+       SummarizeVariable,
        ViewData,
        ViewText)

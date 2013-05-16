@@ -159,7 +159,7 @@ ImportData <- function(parent=NULL) {
         cols[[j]]$index   <- j
         cols[[j]]$fun     <- paste0("\"", id, "\"")
         cols[[j]]$sample  <- na.omit(val)[1]
-        cols[[j]]$summary <- SummarizeData(val, fmt=fmt)
+        cols[[j]]$summary <- SummarizeVariable(val, fmt=fmt)
         d[, j] <- val
       }
 
@@ -341,7 +341,7 @@ ImportData <- function(parent=NULL) {
     if (insert.cols > 0)
       tkinsert(frame4.tbl, "cols", "end", insert.cols)
 
-    for(j in 1:ncol(d))
+    for (j in 1:ncol(d))
       sapply(1:nrow(d), function(i)
         table.var[[i - 1, j - 1]] <- as.tclObj(d[i, j], drop=TRUE))
 

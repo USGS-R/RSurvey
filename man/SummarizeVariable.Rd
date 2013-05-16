@@ -1,15 +1,15 @@
-\name{SummarizeData}
+\name{SummarizeVariable}
 
-\alias{SummarizeData}
+\alias{SummarizeVariable}
 
-\title{Summarize Object}
+\title{Summarize Variable}
 
 \description{
 A summary of the descriptive statistics of an array object.
 }
 
 \usage{
-SummarizeData(obj, fmt = NULL)
+SummarizeVariable(obj, fmt = NULL)
 }
 
 \arguments{
@@ -46,8 +46,8 @@ following components:
 
 \examples{
 summary(attenu$dist, digits = 4)
-SummarizeData(attenu$dist, fmt = "\%.2f")
-SummarizeData(as.POSIXct(Sys.time() + 1:10), fmt = "\%a \%H:\%M:\%S")
+SummarizeVariable(attenu$dist, fmt = "\%.2f")
+SummarizeVariable(as.POSIXct(Sys.time() + 1:10), fmt = "\%a \%H:\%M:\%S")
 }
 
 \keyword{misc}

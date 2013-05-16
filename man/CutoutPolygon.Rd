@@ -2,7 +2,7 @@
 
 \alias{CutoutPolygon}
 
-\title{Determine Grid Points within Polygon}
+\title{Exclude Gridded Data Outside Polygon}
 
 \description{
 This function excludes gridded data located outside a given polygon.

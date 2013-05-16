@@ -2,7 +2,7 @@
 
 \alias{SetPreferences}
 
-\title{Set Data Preferences}
+\title{Set Preferences}
 
 \description{
 A \acronym{GUI} for specifying the interpolation algorithms input parameters.

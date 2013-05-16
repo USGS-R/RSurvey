@@ -2,7 +2,7 @@
 
 \alias{GetFile}
 
-\title{Select a File to Open or Save As}
+\title{Select File to Open or Save As}
 
 \description{
 A \acronym{GUI} for selecting files to open or save.

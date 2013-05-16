@@ -5,7 +5,7 @@
 \title{View Text}
 
 \description{
-A \acronym{GUI} for viewing text.
+A \acronym{GUI} for viewing and editing text.
 }
 
 \usage{

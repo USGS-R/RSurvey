@@ -2,7 +2,7 @@
 
 \alias{CheckEntry}
 
-\title{Content Control within Entry Widget}
+\title{Control Content in Entry Widget}
 
 \description{
 Content control for character strings based on an expected data type.

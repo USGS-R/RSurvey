@@ -184,7 +184,7 @@ OpenRSurvey <- function() {
         cols[[i]]$index   <- i
         cols[[i]]$fun     <- paste0("\"", ids[i], "\"")
         cols[[i]]$sample  <- na.omit(d[, i])[1]
-        cols[[i]]$summary <- SummarizeData(d[, i], fmt=fmt)
+        cols[[i]]$summary <- SummarizeVariable(d[, i], fmt=fmt)
       }
       Data(clear.data=TRUE)
       Data("comment", comment(d))
@@ -668,12 +668,12 @@ OpenRSurvey <- function() {
     }
   }
 
-  # Call view data for state variable data
+  # Call view data
   CallViewData <- function(read.only) {
     CallProcessData()
     cols <- Data("cols")
     vars <- Data("vars")
-    if (read.only) {
+    if (read.only) {  # view processed data
       if (is.null(Data("data.pts")))
         return()
       tkconfigure(tt, cursor="watch")
@@ -684,7 +684,7 @@ OpenRSurvey <- function() {
       fmts <- vapply(col.names, function(i) cols[[vars[[i]]]]$format, "")
       ViewData(Data("data.pts"), col.names=nams, col.formats=fmts,
                read.only=TRUE, win.title="Processed Data", parent=tt)
-    } else {
+    } else {  # edit raw data
       if (is.null(Data("data.raw")))
         return()
       tkconfigure(tt, cursor="watch")
@@ -695,6 +695,12 @@ OpenRSurvey <- function() {
                       win.title="Raw Data", parent=tt)
       if (!is.null(lst)) {
         Data("data.raw", lst[["d"]])
+        for (i in seq(along=cols)) {
+          obj <- EvalFunction(cols[[i]]$fun, cols)
+          cols[[i]]$summary <- SummarizeVariable(obj, fmt=cols[[i]]$format)
+          cols[[i]]$sample <- na.omit(obj)[1]
+        }
+        Data("cols", cols)
         Data("changelog", lst[["changelog"]])
         Data("data.pts", NULL)
         Data("data.grd", NULL)

@@ -2,7 +2,7 @@
 
 \alias{GetBitmapImage}
 
-\title{Icon Bitmap Image}
+\title{Create Icon Bitmap Image}
 
 \description{
 Create a small \acronym{Tk} bitmap image.

@@ -1,6 +1,6 @@
 # Summarizes the descriptive statistics of an array object.
 
-SummarizeData <- function(obj, fmt=NULL) {
+SummarizeVariable <- function(obj, fmt=NULL) {
 
   ## Additional functions (subroutines)
 

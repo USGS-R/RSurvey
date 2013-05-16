@@ -74,6 +74,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
       is.quot <- as.logical(as.integer(tclvalue(quote.var)))
       is.comm <- as.logical(as.integer(tclvalue(comment.var)))
       is.gzip <- as.logical(as.integer(tclvalue(compress.var)))
+      is.clog <- as.logical(as.integer(tclvalue(changelog.var)))
 
       sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
       dec <- dec0[as.integer(tcl(frame3.box.1.5, "current")) + 1]
@@ -94,7 +95,28 @@ ExportData <- function(file.type="txt", parent=NULL) {
       if (is.na(com))
         com <- as.character(tclvalue(com.var))
 
-      # Set file connection
+      # Write changelog
+      if (is.clog) {
+        dir.name <- dirname(file.name)
+        base.name <- sub(".gz$", "", basename(file.name))
+        base.name <- unlist(strsplit(base.name, "\\."))
+        if (length(base.name) > 1)
+          base.name <- base.name[-length(base.name)]
+        base.name <- paste0(base.name, ".log")
+        f.log <- file.path(dir.name, base.name)
+        if (file.access(f.log, mode=0) == 0) {
+          msg <- paste(base.name, "already exists.\nDo you want to replace it?")
+          ans <- tkmessageBox(icon="info", message=msg, title="Confirm Save As",
+                              type="yesno", parent=tt)
+          if (as.character(ans) == "no")
+            return()
+        }
+        write.table(Data("changelog"), file=f.log, quote=is.quot, sep=sep,
+                    eol=eol, na=nas, dec=dec, row.names=FALSE, col.names=TRUE,
+                    qmethod=qme, fileEncoding=enc)
+      }
+
+      # Set data file connection
       if (is.gzip)
         con <- gzfile(description=file.name, open="w", encoding=enc)
       else
@@ -154,6 +176,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
         Data("export.encoding", enc)
         Data("export.eol", eol)
         Data("export.compressed", is.gzip)
+        Data("export.changelog", is.clog)
       }
 
     # Write shapefile
@@ -312,6 +335,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
   file.var      <- tclVar()
   compress.var  <- tclVar(0)
   ascii.var     <- tclVar(0)
+  changelog.var <- tclVar(0)
   tt.done.var   <- tclVar(0)
 
   for (i in seq(along=col.ids))
@@ -540,6 +564,8 @@ ExportData <- function(file.type="txt", parent=NULL) {
   txt <- "Compress using gzip"
   frame4.chk.2.3 <- ttkcheckbutton(frame4, variable=compress.var, text=txt,
                                    command=ToggleExtension)
+  txt <- "Include changelog ( *.log )"
+  frame4.chk.3.3 <- ttkcheckbutton(frame4, variable=changelog.var, text=txt)
 
   tkgrid(frame4.ent.1.1, "x", "x", "x", frame4.but.1.5)
   tkgrid.configure(frame4.ent.1.1, sticky="we", columnspan=4, padx=c(0, 2))
@@ -547,9 +573,10 @@ ExportData <- function(file.type="txt", parent=NULL) {
   if (file.type == "txt") {
     tkgrid(frame4.lab.2.1, frame4.box.2.2, frame4.chk.2.3, pady=c(4, 0),
            sticky="w")
-    tkgrid(frame4.lab.3.1, frame4.box.3.2, pady=c(4, 4), sticky="w")
+    tkgrid(frame4.lab.3.1, frame4.box.3.2, frame4.chk.3.3, pady=c(4, 4),
+           sticky="w")
     tkgrid.configure(frame4.lab.2.1, frame4.lab.3.1, padx=c(0, 2))
-    tkgrid.configure(frame4.chk.2.3, padx=c(10, 0))
+    tkgrid.configure(frame4.chk.2.3, frame4.chk.3.3, padx=c(10, 0))
 
     tcl(frame4.box.2.2, "current", 0)
     tcl(frame4.box.3.2, "current", 0)
@@ -560,6 +587,14 @@ ExportData <- function(file.type="txt", parent=NULL) {
       tcl(frame4.box.3.2, "current", match(Data("export.eol"), eol0) - 1)
     if (!is.null(Data("export.compress")))
       tclvalue(compress.var) <- Data("export.compress")
+
+    if (is.null(Data("changelog"))) {
+      tkconfigure(frame4.chk.3.3, state="disabled")
+    } else {
+      if (!is.null(Data("export.changelog")))
+        tclvalue(changelog.var) <- Data("export.changelog")
+    }
+
   } else if (file.type == "rda") {
     frame4.rbt.2.1 <- ttkradiobutton(frame4, variable=ascii.var,
                                      value=0, text="Binary")

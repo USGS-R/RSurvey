@@ -2,7 +2,7 @@
 
 \alias{LoadPackages}
 
-\title{Load Required Packages for RSurvey}
+\title{Load Required and Suggested Packages for RSurvey}
 
 \description{
 This function installs \R packages required by \pkg{RSurvey}.

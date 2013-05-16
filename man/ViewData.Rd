@@ -2,10 +2,10 @@
 
 \alias{ViewData}
 
-\title{View Data Table}
+\title{View Data}
 
 \description{
-A \acronym{GUI} for viewing table formatted data.
+A \acronym{GUI} for viewing and editing table formatted data.
 }
 
 \usage{
@@ -42,7 +42,7 @@ Requires the Tcl package
 \examples{\donttest{
 tclRequire("Tktable", warn = TRUE)
 
-n <- 1000
+n <- 1000L
 V1 <- sample(c(1:9, NA), n, replace = TRUE)
 V2 <- sample(LETTERS, n, replace = TRUE)
 V3 <- as.POSIXct(rnorm(n, mean = 0, sd = 1e6), origin = "2010-01-01")
@@ -50,7 +50,8 @@ V4 <- sample(V1 * pi, n)
 d <- data.frame(V1, V2, V3, V4)
 col.names <- c("Integers", "Letters", "DateTime", "Numeric")
 col.formats <- c("\%d", "\%s", "\%m/\%d/\%Y \%H:\%M", "")
-ViewData(d, col.names, col.formats, read.only = 1L)
+lst <- ViewData(d, col.names, col.formats, read.only = 1L)
+str(lst)
 
 rownames(d) <- paste0(sample(LETTERS, n, replace = TRUE), 1:n)
 ViewData(d)

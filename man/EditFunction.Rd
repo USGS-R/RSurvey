@@ -2,7 +2,7 @@
 
 \alias{EditFunction}
 
-\title{Function Editor for Table Data}
+\title{Edit Function}
 
 \description{
 A \acronym{GUI} for defining functions in the \R language.

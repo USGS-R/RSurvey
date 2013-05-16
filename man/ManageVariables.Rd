@@ -42,7 +42,7 @@ to a specific variable, and contains the following components:
   for variables directly linked to data columns in \code{data.raw}.}
 \item{class}{character; the data class of the vector object.}
 \item{summary}{list; a summary of the variables descriptive statistics (see
-  \code{\link{SummarizeData}}).}
+  \code{\link{SummarizeVariable}}).}
 \item{comments}{character; user comments.}
 The \code{vars} object is a list with components:
 \item{x, y, z, vx, vy, sort.on}{integer; the index number of the corresponding

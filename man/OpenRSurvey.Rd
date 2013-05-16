@@ -2,7 +2,7 @@
 
 \alias{OpenRSurvey}
 
-\title{RSurvey}
+\title{Open RSurvey}
 
 \description{
 Opens the main graphical user interface (\acronym{GUI}) for \pkg{RSurvey}.

@@ -2,7 +2,7 @@
 
 \alias{Plot3d}
 
-\title{Plot Surface using OpenGL}
+\title{Plot 3D Surface using OpenGL}
 
 \description{
 Draws a three-dimensional (\acronym{3D}) surface plot.

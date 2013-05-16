@@ -85,10 +85,11 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     is.fmt <- !identical(old.fmt, new.fmt)
     if (is.fun) {
       obj <- EvalFunction(new.fun, cols)
-      cols[[idx]]$summary <<- SummarizeData(obj, fmt=new.fmt)
+      cols[[idx]]$summary <<- SummarizeVariable(obj, fmt=new.fmt)
       cols[[idx]]$sample <<- na.omit(obj)[1]
     } else if (is.fmt) {
-      cols[[idx]]$summary <<- SummarizeData(cols[[idx]]$summary, fmt=new.fmt)
+      cols[[idx]]$summary <<- SummarizeVariable(cols[[idx]]$summary,
+                                                fmt=new.fmt)
     }
 
     # Save name
