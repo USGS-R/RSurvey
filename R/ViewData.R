@@ -12,21 +12,21 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
     changelog <- s
     if (!is.null(s)) {
-      s <- s[, c("Class", "New", "Row", "Col"), drop=FALSE]
-      for (i in unique(s$Class)) {
-        ss <- s[s$Class == i, ]
+      s <- s[, c("class", "new", "row", "col"), drop=FALSE]
+      for (i in unique(s$class)) {
+        ss <- s[s$class == i, ]
         if (i %in% c("POSIXct", "POSIXlt")) {
-          new <- suppressWarnings(strptime(ss$New, "%Y-%m-%d %H:%M:%S"))
+          new <- suppressWarnings(strptime(ss$new, "%Y-%m-%d %H:%M:%S"))
         } else if (i == "integer") {
-          new <- suppressWarnings(as.integer(ss$New))
+          new <- suppressWarnings(as.integer(ss$new))
         } else if (i == "numeric") {
-          new <- suppressWarnings(as.numeric(ss$New))
+          new <- suppressWarnings(as.numeric(ss$new))
         } else if (i == "logical") {
-          new <- suppressWarnings(as.logical(ss$New))
+          new <- suppressWarnings(as.logical(ss$new))
         } else {
-          new <- ss$New
+          new <- ss$new
         }
-        d[cbind(ss$Row, ss$Col)] <<- new
+        d[cbind(ss$row, ss$col)] <<- new
       }
     }
     rtn <<- list(d=d, changelog=changelog)
@@ -218,18 +218,20 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     if (is.null(s)) {
       txt <- ""
     } else {
-      s <- s[order(s$Record, s$Variable),
-             c("Record", "Variable", "Old", "New", "Class", "Time"), drop=FALSE]
-      header <- names(s)
+      s <- s[order(s$record, s$variable),
+             c("record", "variable", "old", "new", "time", "class"), drop=FALSE]
+      header <- c("Record", "Variable Name", "Old Value", "New Value",
+                  "Timestamp", "Class")
+      justify <- c("right", "left", "right", "right", "left", "left")
       breaks <- vapply(header, function(i) paste(rep("-", nchar(i)),
                                                  collapse=""), "")
       s <- rbind(header, breaks, s)
-      width <- apply(s, 2, function(i) max(nchar(i)) + 1L)
-      justify <- c("right", "left", "right", "right", "left", "left")
+      width <- apply(s, 2, function(i) max(nchar(i)))
+
       for (j in 1:ncol(s)) {
         s[, j] <- format(s[, j], width=width[j], justify=justify[j])
       }
-      txt <- apply(s, 1, function(i) paste(i, collapse=" "))
+      txt <- apply(s, 1, function(i) paste(i, collapse="  "))
     }
     ViewText(txt, read.only=TRUE, win.title="Changelog", parent=tt)
     tkfocus(frame2.tbl)
@@ -243,9 +245,8 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       return(s)
 
     if (!is.null(changelog)) {
-      changelog$Cell <- paste(changelog[, "Row"], changelog[, "Col"], sep=",")
-      changelog <- changelog[, c("Time", "Cell", "Old", "New")]
-      names(changelog) <- c("time", "cell", "old", "new")
+      changelog$cell <- paste(changelog[, "row"], changelog[, "col"], sep=",")
+      changelog <- changelog[, c("time", "cell", "old", "new")]
       undo.stack <- rbind(undo.stack, changelog)
     }
 
@@ -270,11 +271,11 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
       if (identical(old, new))
         next
-      e <- data.frame(Record=as.integer(dd[cell[1] + 1L, 1]),
-                      Variable=dd[1, cell[2] + 1L],
-                      Old=old, New=new,
-                      Time=format(undo.stack.cell$time[m]),
-                      Row=cell[1], Col=cell[2], Class=class(obj)[1],
+      e <- data.frame(record=as.integer(dd[cell[1] + 1L, 1]),
+                      variable=dd[1, cell[2] + 1L],
+                      old=old, new=new,
+                      time=format(undo.stack.cell$time[m]),
+                      class=class(obj)[1], row=cell[1], col=cell[2],
                       stringsAsFactors=FALSE)
       s <- rbind(s, e)
     }

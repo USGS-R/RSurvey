@@ -105,7 +105,8 @@ ExportData <- function(file.type="txt", parent=NULL) {
         base.name <- paste0(base.name, ".log")
         f.log <- file.path(dir.name, base.name)
         if (file.access(f.log, mode=0) == 0) {
-          msg <- paste(base.name, "already exists.\nDo you want to replace it?")
+          msg <- paste0("\'", base.name, "\' already exists.\n\n",
+                        "Do you want to replace it?")
           ans <- tkmessageBox(icon="info", message=msg, title="Confirm Save As",
                               type="yesno", parent=tt)
           if (as.character(ans) == "no")
