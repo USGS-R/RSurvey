@@ -535,7 +535,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
           command=function() tkevent.generate(frame2.tbl, "<Prior>"))
     tkadd(menu.nav.active, "command", label="Next page", accelerator="PageDown",
           command=function() tkevent.generate(frame2.tbl, "<Next>"))
-    tkadd(menu.nav, "cascade", label="Move activate cell to",
+    tkadd(menu.nav, "cascade", label="Move active cell to",
           menu=menu.nav.active)
     tkadd(menu.nav, "separator")
     menu.nav.in <- tkmenu(tt, tearoff=0)
