@@ -18,8 +18,10 @@ LoadPackages <- function(repo="http://cran.r-project.org") {
 
   if (any(is.missing)) {
     missing.pkgs <- pkgs[is.missing]
+    missing.pkgs.str <- paste("  ", paste(paste0("\'", missing.pkgs, "\'"),
+                                          collapse=", "))
     msg <- paste("The following package(s) used by RSurvey are missing:",
-                 paste(" ", paste(missing.pkgs, collapse=", ")),
+                 "", missing.pkgs.str, "",
                  "Some features will not be available without these packages.",
                  "Install these packages from CRAN?", sep="\n")
     if (is.tcl)
