@@ -118,14 +118,14 @@ ImportData <- function(parent=NULL) {
           if (!is.null(fmt) && fmt != "" && !all(is.na(val))) {
             sys.time.str <- format(Sys.time(), format=fmt)
             if (!sys.time.str %in% c("", fmt)) {
-              date.time <- try(as.POSIXlt(val, format=fmt),
-                               silent=TRUE)  # round-off error using POSIXct
+              date.time <- try(as.POSIXlt(val, format=fmt), silent=TRUE)
               if (!inherits(date.time, "try-error")) {
                 date.time.str <- format(date.time, format=fmt)
                 is.time <- identical(val, date.time.str)
               }
             }
           }
+
           if (is.time)
             val <- as.POSIXct(val, format=fmt)
           else

@@ -855,7 +855,7 @@ OpenRSurvey <- function() {
 
   # Set options
   SetCsi()
-  options(digits.secs=3)
+  options(digits.secs=6)  # TODO(jfisher): causing problems
   options(help_type="html")
   shown.construct.polygon.msgbox <- TRUE
 
