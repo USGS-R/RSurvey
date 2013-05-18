@@ -112,17 +112,24 @@ ImportData <- function(parent=NULL) {
         val <- d[, j]
         fmt <- if (is.na(fmts[j])) NULL else fmts[j]
 
-        # Try to determine class of character variables
+        # Try to determine if character variables are POSIXct class
         if (inherits(val, "character")) {
-          is.date <- FALSE
-          if (!is.null(fmt) && !all(is.na(val))) {
-            date.time <- as.POSIXct(val, format=fmt)
-            is.date <- all(!is.na(date.time[!is.na(val)]))
+          is.time <- FALSE
+          if (!is.null(fmt) && fmt != "" && !all(is.na(val))) {
+            sys.time.str <- format(Sys.time(), format=fmt)
+            if (!sys.time.str %in% c("", fmt)) {
+              date.time <- try(as.POSIXlt(val, format=fmt),
+                               silent=TRUE)  # round-off error using POSIXct
+              if (!inherits(date.time, "try-error")) {
+                date.time.str <- format(date.time, format=fmt)
+                is.time <- identical(val, date.time.str)
+              }
+            }
           }
-          if (is.date)
-            val <- date.time
+          if (is.time)
+            val <- as.POSIXct(val, format=fmt)
           else
-            val <- type.convert(d[, j], as.is=TRUE)
+            val <- type.convert(val, as.is=TRUE)
         }
 
         # Set variable class
