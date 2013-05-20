@@ -161,8 +161,8 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
   tkconfigure(frame1.tre, yscrollcommand=paste(.Tk.ID(frame1.ysc), "set"))
   tkconfigure(frame1.ysc, command=paste(.Tk.ID(frame1.tre), "yview"))
 
-  tcl(frame1.tre, "column", "#0", width=200, anchor="center")
-  tcl(frame1.tre, "column", "spec", width=80, minwidth=80, anchor="center")
+  tcl(frame1.tre, "column", "#0",   width=230, anchor="center")
+  tcl(frame1.tre, "column", "spec", width=80,  minwidth=80, anchor="center")
   tcl(frame1.tre, "column", "exam", width=100, minwidth=80, anchor="center")
 
   tcl(frame1.tre, "heading", "#0", text="Select", anchor="w")
@@ -194,8 +194,8 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
 
   tkinsert(frame1.tre, id.tm, "end", tags="bg", text="hour minute second",
            values=c("%H:%M:%S", format(sample, format="%H:%M:%S")))
-  tkinsert(frame1.tre, id.tm, "end", tags="bg", text="hour minute second",
-           values=c("%H:%M:%OS", format(sample, format="%H:%M:%OS")))
+  tkinsert(frame1.tre, id.tm, "end", tags="bg", text="hour minute fractional-second",
+           values=c("%H:%M:%OS3", format(sample, format="%H:%M:%OS3")))
   tkinsert(frame1.tre, id.tm, "end", tags="bg", text="hour minute",
            values=c("%I:%M %p", format(sample, format="%I:%M %p")))
 
@@ -238,8 +238,14 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
   tkinsert(frame1.tre, id.sc, "end", tags="bg", text="second (00-61)",
            values=c("%S", format(sample, format="%S")))
   tkinsert(frame1.tre, id.sc, "end",  tags="bg",
-           text="second with decimal places",
-           values=c("%OS", format(sample, format="%OS")))
+           text="second with decisecond precision",
+           values=c("%OS1", format(sample, format="%OS1")))
+  tkinsert(frame1.tre, id.sc, "end",  tags="bg",
+           text="second with centisecond precision",
+           values=c("%OS2", format(sample, format="%OS2")))
+  tkinsert(frame1.tre, id.sc, "end",  tags="bg",
+           text="second with millisecond precision",
+           values=c("%OS3", format(sample, format="%OS3")))
 
   tkinsert(frame1.tre, id.wk, "end", tags="bg",
            text="week of the year (00-53), US",

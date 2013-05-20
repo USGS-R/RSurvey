@@ -118,16 +118,16 @@ ImportData <- function(parent=NULL) {
           if (!is.null(fmt) && fmt != "" && !all(is.na(val))) {
             sys.time.str <- format(Sys.time(), format=fmt)
             if (!sys.time.str %in% c("", fmt)) {
-              date.time <- try(as.POSIXlt(val, format=fmt), silent=TRUE)
+              posix.fmt <- gsub("%OS[[:digit:]]+", "%OS", fmt)
+              date.time <- try(as.POSIXlt(val, format=posix.fmt), silent=TRUE)
               if (!inherits(date.time, "try-error")) {
-                date.time.str <- format(date.time, format=fmt)
+                date.time.str <- POSIXct2Character(date.time, fmt)
                 is.time <- identical(val, date.time.str)
               }
             }
           }
-
           if (is.time)
-            val <- as.POSIXct(val, format=fmt)
+            val <- as.POSIXct(date.time)
           else
             val <- type.convert(val, as.is=TRUE)
         }
