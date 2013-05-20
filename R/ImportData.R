@@ -122,7 +122,7 @@ ImportData <- function(parent=NULL) {
               date.time <- try(as.POSIXlt(val, format=posix.fmt), silent=TRUE)
               if (!inherits(date.time, "try-error")) {
                 date.time.str <- POSIXct2Character(date.time, fmt)
-                is.time <- identical(val, date.time.str)
+                is.time <- TRUE
               }
             }
           }
