@@ -577,7 +577,8 @@ ExportData <- function(file.type="txt", parent=NULL) {
     tkgrid(frame4.lab.3.1, frame4.box.3.2, frame4.chk.3.3, pady=c(4, 4),
            sticky="w")
     tkgrid.configure(frame4.lab.2.1, frame4.lab.3.1, padx=c(0, 2))
-    tkgrid.configure(frame4.chk.2.3, frame4.chk.3.3, padx=c(10, 0))
+    tkgrid.configure(frame4.chk.2.3, frame4.chk.3.3, padx=c(40, 0),
+                     columnspan=2)
 
     tcl(frame4.box.2.2, "current", 0)
     tcl(frame4.box.3.2, "current", 0)

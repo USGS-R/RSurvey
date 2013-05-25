@@ -859,6 +859,16 @@ OpenRSurvey <- function() {
   shown.construct.polygon.msgbox <- TRUE
 
   # Assign variables linked to Tk entry widgets
+  import.var  <- tclVar()
+  save.var    <- tclVar()
+  data.var    <- tclVar()
+  polygon.var <- tclVar()
+  globe.var   <- tclVar()
+  config.var  <- tclVar()
+  axes.var    <- tclVar()
+  view.var    <- tclVar("layout")
+  close.var   <- tclVar()
+  new.win.var <- tclVar(0)
   tt.done.var <- tclVar(0)
 
   # Open GUI
@@ -1004,6 +1014,16 @@ OpenRSurvey <- function() {
   menu.graph <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
 
+  menu.graph.view <- tkmenu(tt, tearoff=0)
+  tkadd(menu.graph.view, "radiobutton", label="Layout", value="layout",
+        variable=view.var, command=ToggleView)
+  tkadd(menu.graph.view, "radiobutton", label="Data", value="data",
+        variable=view.var, command=ToggleView)
+  tkadd(menu.graph, "cascade", label="View", menu=menu.graph.view)
+  tkadd(menu.graph, "checkbutton", label="Open in new window",
+        variable=new.win.var)
+  tkadd(menu.graph, "separator")
+
   tkadd(menu.graph, "command", label="Histogram\u2026",
         command=function() {
           CallProcessData()
@@ -1102,16 +1122,6 @@ OpenRSurvey <- function() {
   tkconfigure(tt, menu=top.menu)
 
   # Frame 0, toolbar with command buttons
-
-  import.var  <- tclVar()
-  save.var    <- tclVar()
-  data.var    <- tclVar()
-  polygon.var <- tclVar()
-  globe.var   <- tclVar()
-  config.var  <- tclVar()
-  axes.var    <- tclVar()
-  view.var    <- tclVar("layout")
-  close.var   <- tclVar()
 
   frame0 <- ttkframe(tt, relief="flat", borderwidth=2)
   tkpack(frame0, side="top", fill="x")
@@ -1215,19 +1225,7 @@ OpenRSurvey <- function() {
   frame2.but.1.3 <- ttkbutton(frame2, width=10, text="3D Map",
                               command=CallPlot3d)
 
-  frame2a <- ttkframe(frame2, relief="flat", borderwidth=0, padding=0)
-  frame2a.lab.1.1 <- ttklabel(frame2a, text="View:")
-  frame2a.rbt.1.2 <- ttkradiobutton(frame2a, variable=view.var,
-                                    command=ToggleView,
-                                    value="layout", text="layout")
-  frame2a.rbt.1.3 <- ttkradiobutton(frame2a, variable=view.var,
-                                    command=ToggleView,
-                                    value="data", text="data")
-  tkgrid(frame2a.lab.1.1, frame2a.rbt.1.2, frame2a.rbt.1.3)
-  tkgrid.configure(frame2a.rbt.1.2, padx=c(4, 4))
-
-  tkgrid(frame2.but.1.1, frame2.but.1.2, frame2.but.1.3, pady=c(0, 8))
-  tkgrid(frame2a, columnspan=3, sticky="w")
+  tkgrid(frame2.but.1.1, frame2.but.1.2, frame2.but.1.3)
 
   tkgrid.configure(frame2.but.1.2, padx=4)
 
