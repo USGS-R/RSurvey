@@ -1019,7 +1019,7 @@ OpenRSurvey <- function() {
         variable=view.var, command=ToggleView)
   tkadd(menu.graph.view, "radiobutton", label="Data", value="data",
         variable=view.var, command=ToggleView)
-  tkadd(menu.graph, "cascade", label="View", menu=menu.graph.view)
+  tkadd(menu.graph, "cascade", label="View mode", menu=menu.graph.view)
   tkadd(menu.graph, "checkbutton", label="Open in new window",
         variable=new.win.var)
   tkadd(menu.graph, "separator")
