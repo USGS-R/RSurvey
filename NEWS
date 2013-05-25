@@ -1,9 +1,12 @@
 Changes in Version 0.7-5
 
+  o  Calendar date and time variables are accurately converted to character
+     strings using the POSIXct2Character function.
+
   o  Added ability to import, edit, and export comment string.
 
-  o  Added ability to edit raw data in a spreadsheet. Final edits may be saved
-     to a changelog file.
+  o  Added ability to edit raw data in a spreadsheet. Final edits are saved in
+     a changelog.
 
   o  Added GUI for importing data from a package. R data sets may also be
      imported from a file.
