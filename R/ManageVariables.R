@@ -393,10 +393,12 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     fmts <- vapply(cols, function(i) i$format, "")
     funs <- vapply(cols, function(i) i$fun, "")
 
-    d <- lapply(idxs, function(i) EvalFunction(funs[i], cols))
+    d <- as.data.frame(lapply(idxs, function(i) EvalFunction(funs[i], cols)),
+                       stringsAsFactors=FALSE)
+    row.names(d) <- row.names(Data("data.raw"))
 
-    ViewData(as.data.frame(d), nams[idxs], fmts[idxs], read.only=TRUE,
-             win.title="Raw Data", parent=tt)
+    ViewData(d, nams[idxs], fmts[idxs], read.only=TRUE, win.title="Raw Data",
+             parent=tt)
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }

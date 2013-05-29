@@ -154,10 +154,7 @@ OpenRSurvey <- function() {
         d <- as.data.frame(d, stringsAsFactors=FALSE)
       m <- nrow(d)
       n <- ncol(d)
-      if (!identical(row.names(d), as.character(1:m))) {
-        d <- cbind(row.name=row.names(d), d)
-        row.names(d) <- 1:m
-      }
+
       ids <- make.names(names(d), unique=TRUE)
       nams <- names(d)
       names(d) <- paste0("V", 1:n)
@@ -739,6 +736,7 @@ OpenRSurvey <- function() {
       names(d) <- var.names
       for (i in seq(along=lst))
         d[[i]] <- c(lst[[i]], rep(NA, max.len - len[i]))
+      row.names(d) <- row.names(Data("data.raw"))
 
       query.fun <- Data("query.fun")
       if (is.null(query.fun)) {

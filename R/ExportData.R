@@ -32,13 +32,20 @@ ExportData <- function(file.type="txt", parent=NULL) {
     col.fmts <- vapply(col.idxs, function(i) cols[[i]]$format, "")
 
     # Identify data set and records
-    if (is.proc)
-      row.idxs <- as.integer(row.names(Data("data.pts")))
-    else
-      row.idxs <- 1:length(EvalFunction(col.funs[1], cols))
+
+    if (is.proc) {
+      row.nams <- row.names(Data("data.pts"))
+      row.idxs <- which(row.nams %in% row.names(Data("data.raw")))
+      if (length(row.nams) != length(row.idxs))
+        stop("length of row names different from length of row indexes")
+    } else {
+      row.nams <- row.names(Data("data.raw"))
+      row.idxs <- 1:length(row.nams)
+    }
     n <- length(col.idxs)
     m <- length(row.idxs)
     d <- as.data.frame(matrix(NA, nrow=m, ncol=n))
+
     for (i in 1:n) {
       obj <- EvalFunction(col.funs[i], cols)[row.idxs]
 
@@ -61,9 +68,10 @@ ExportData <- function(file.type="txt", parent=NULL) {
           }
         }
       }
-
       d[, i] <- obj
     }
+
+    row.names(d) <- row.nams
 
     # Write text file
 

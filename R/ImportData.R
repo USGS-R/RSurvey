@@ -112,15 +112,16 @@ ImportData <- function(parent=NULL) {
         val <- d[, j]
         fmt <- if (is.na(fmts[j])) NULL else fmts[j]
 
-        # Try to determine if character variables are POSIXct class
+        # Determine if character variables are POSIXct class
+        # TODO(jfisher): ensure variable is date-time
         if (inherits(val, "character")) {
           is.time <- FALSE
           if (!is.null(fmt) && fmt != "" && !all(is.na(val))) {
             sys.time.str <- format(Sys.time(), format=fmt)
-            if (!sys.time.str %in% c("", fmt)) {
+            if (!sys.time.str %in% c("", gsub("%%", "%", fmt))) {
               posix.fmt <- gsub("%OS[[:digit:]]+", "%OS", fmt)
               date.time <- try(as.POSIXlt(val, format=posix.fmt), silent=TRUE)
-              if (!inherits(date.time, "try-error")) {
+              if (!inherits(date.time, "try-error") && !all(is.na(date.time))) {
                 date.time.str <- POSIXct2Character(date.time, fmt)
                 is.time <- TRUE
               }
