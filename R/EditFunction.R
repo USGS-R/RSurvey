@@ -249,6 +249,14 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     InsertString(txt)
   }
 
+  # Insert trigonometric function
+  InsertTrigFunction <- function(fun) {
+    if (as.character(tclvalue(angles.var)) == "deg")
+      InsertString(paste0(fun, "(<variable> * pi / 180)"))
+    else
+      InsertString(paste0(fun, "(<variable>)"))
+  }
+
   ## Main program
 
   if (is.null(index)) {
@@ -279,6 +287,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   for (i in seq(along=ids))
     tcl("lappend", variable.var, ids[i])  # must be unique
   value.var <- tclVar()
+  angles.var <- tclVar("rad")
   tt.done.var <- tclVar(0)
 
   # Open GUI
@@ -345,6 +354,39 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertString("exp(<variable>)"))
   tkadd(menu.math, "command", label="Logarithm",
         command=function() InsertString("log(<variable>, base = exp(1))"))
+  tkadd(menu.math, "separator")
+  tkadd(menu.math, "command", label="Floor",
+        command=function() InsertString("floor(<variable>)"))
+  tkadd(menu.math, "command", label="Ceiling",
+        command=function() InsertString("ceiling(<variable>)"))
+  tkadd(menu.math, "command", label="Truncation",
+        command=function() InsertString("trunc(<variable>)"))
+  menu.math.round <- tkmenu(tt, tearoff=0)
+  tkadd(menu.math.round, "command", label="Decimal places",
+        command=function() InsertString("round(<variable>, digits = 0)"))
+  tkadd(menu.math.round, "command", label="Significant digits",
+        command=function() InsertString("signif(<variable>, digits = 6)"))
+  tkadd(menu.math, "cascade", label="Round to", menu=menu.math.round)
+  tkadd(menu.math, "separator")
+  tkadd(menu.math, "command", label="Sine",
+        command=function() InsertTrigFunction("sin"))
+  tkadd(menu.math, "command", label="Cosine",
+        command=function() InsertTrigFunction("cos"))
+  tkadd(menu.math, "command", label="Tangent",
+        command=function() InsertTrigFunction("tan"))
+  tkadd(menu.math, "command", label="Arc sine",
+        command=function() InsertTrigFunction("asin"))
+  tkadd(menu.math, "command", label="Arc cosine",
+        command=function() InsertTrigFunction("acos"))
+  tkadd(menu.math, "command", label="Arc tangent",
+        command=function() InsertTrigFunction("atan"))
+  tkadd(menu.math, "separator")
+  menu.math.angle <- tkmenu(tt, tearoff=0)
+  tkadd(menu.math.angle, "radiobutton", label="Radians", value="rad",
+        variable=angles.var)
+  tkadd(menu.math.angle, "radiobutton", label="Degrees", value="deg",
+        variable=angles.var)
+  tkadd(menu.math, "cascade", label="Angles are in", menu=menu.math.angle)
 
   menu.summary <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Summary", menu=menu.summary, underline=0)
@@ -416,7 +458,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   if (is.null(value.length)) {
     txt <- ""
   } else {
-    txt <- paste("Resulting object must be of length", value.length)
+    txt <- paste("Result must be of length", format(value.length, big.mark=","))
     if (!is.null(value.class))
       txt <- paste(txt, "and class", value.class)
   }
