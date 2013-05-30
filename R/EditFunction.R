@@ -346,21 +346,15 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   menu.math <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Math", menu=menu.math, underline=0)
-  tkadd(menu.math, "command", label="Absolute value",
-        command=function() InsertString("abs(<variable>)"))
   tkadd(menu.math, "command", label="Square root",
         command=function() InsertString("sqrt(<variable>)"))
-  tkadd(menu.math, "command", label="Exponential",
-        command=function() InsertString("exp(<variable>)"))
-  tkadd(menu.math, "command", label="Logarithm",
-        command=function() InsertString("log(<variable>, base = exp(1))"))
+  tkadd(menu.math, "command", label="Absolute value",
+        command=function() InsertString("abs(<variable>)"))
   tkadd(menu.math, "separator")
   tkadd(menu.math, "command", label="Floor",
         command=function() InsertString("floor(<variable>)"))
   tkadd(menu.math, "command", label="Ceiling",
         command=function() InsertString("ceiling(<variable>)"))
-  tkadd(menu.math, "command", label="Truncation",
-        command=function() InsertString("trunc(<variable>)"))
   menu.math.round <- tkmenu(tt, tearoff=0)
   tkadd(menu.math.round, "command", label="Decimal places",
         command=function() InsertString("round(<variable>, digits = 0)"))
@@ -368,40 +362,61 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertString("signif(<variable>, digits = 6)"))
   tkadd(menu.math, "cascade", label="Round to", menu=menu.math.round)
   tkadd(menu.math, "separator")
+  tkadd(menu.math, "command", label="Exponential",
+        command=function() InsertString("exp(<variable>)"))
+  tkadd(menu.math, "command", label="Logarithm",
+        command=function() InsertString("log(<variable>, base = exp(1))"))
+  tkadd(menu.math, "separator")
+  tkadd(menu.math, "radiobutton", label="Radians", value="rad",
+        variable=angles.var)
+  tkadd(menu.math, "radiobutton", label="Degrees", value="deg",
+        variable=angles.var)
+  tkadd(menu.math, "separator")
   tkadd(menu.math, "command", label="Sine",
         command=function() InsertTrigFunction("sin"))
   tkadd(menu.math, "command", label="Cosine",
         command=function() InsertTrigFunction("cos"))
   tkadd(menu.math, "command", label="Tangent",
         command=function() InsertTrigFunction("tan"))
-  tkadd(menu.math, "command", label="Arc sine",
+  menu.math.arc <- tkmenu(tt, tearoff=0)
+  tkadd(menu.math.arc, "command", label="Sine",
         command=function() InsertTrigFunction("asin"))
-  tkadd(menu.math, "command", label="Arc cosine",
+  tkadd(menu.math.arc, "command", label="Cosine",
         command=function() InsertTrigFunction("acos"))
-  tkadd(menu.math, "command", label="Arc tangent",
+  tkadd(menu.math.arc, "command", label="Tangent",
         command=function() InsertTrigFunction("atan"))
+  tkadd(menu.math, "cascade", label="Inverse", menu=menu.math.arc)
   tkadd(menu.math, "separator")
-  menu.math.angle <- tkmenu(tt, tearoff=0)
-  tkadd(menu.math.angle, "radiobutton", label="Radians", value="rad",
-        variable=angles.var)
-  tkadd(menu.math.angle, "radiobutton", label="Degrees", value="deg",
-        variable=angles.var)
-  tkadd(menu.math, "cascade", label="Angles are in", menu=menu.math.angle)
+  menu.math.cum <- tkmenu(tt, tearoff=0)
+  tkadd(menu.math.cum, "command", label="Sum",
+        command=function() InsertString("cumsum(<variable>)"))
+  tkadd(menu.math.cum, "command", label="Product",
+        command=function() InsertString("cumprod(<variable>)"))
+  tkadd(menu.math, "cascade", label="Cumulative", menu=menu.math.cum)
 
   menu.summary <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Summary", menu=menu.summary, underline=0)
+  tkadd(menu.summary, "command", label="Are all values true ?",
+        command=function() InsertString("all(<variable>, na.rm = FALSE)"))
+  tkadd(menu.summary, "command", label="Are any values true ?",
+        command=function() InsertString("any(<variable>, na.rm = FALSE)"))
+  tkadd(menu.summary, "separator")
   tkadd(menu.summary, "command", label="Sum",
         command=function() InsertString("sum(<variable>, na.rm = TRUE)"))
   tkadd(menu.summary, "command", label="Product",
         command=function() InsertString("prod(<variable>, na.rm = TRUE)"))
+  tkadd(menu.summary, "separator")
   tkadd(menu.summary, "command", label="Minimum",
         command=function() InsertString("min(<variable>, na.rm = TRUE)"))
   tkadd(menu.summary, "command", label="Maximum",
         command=function() InsertString("max(<variable>, na.rm = TRUE)"))
-  tkadd(menu.summary, "command", label="Median",
-        command=function() InsertString("median(<variable>, na.rm = TRUE)"))
+  tkadd(menu.summary, "separator")
   tkadd(menu.summary, "command", label="Mean",
         command=function() InsertString("mean(<variable>, na.rm = TRUE)"))
+  tkadd(menu.summary, "command", label="Median",
+        command=function() InsertString("median(<variable>, na.rm = TRUE)"))
+  tkadd(menu.summary, "command", label="Standard deviation",
+        command=function() InsertString("sd(<variable>, na.rm = TRUE)"))
 
   menu.operator <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Operator", menu=menu.operator, underline=0)
@@ -411,25 +426,55 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertString(" | "))
   tkadd(menu.operator, "command", label="Not",
         command=function() InsertString("!"))
+  tkadd(menu.operator, "separator")
   tkadd(menu.operator, "command", label="In",
         command=function() InsertString(" %in% "))
   tkadd(menu.operator, "command", label="Match",
         command=function() {
           InsertString("match(<variable>, <values>, nomatch = NA)")
         })
+  tkadd(menu.operator, "separator")
   tkadd(menu.operator, "command", label="Exponentiation",
         command=function() InsertString("<variable>^<power>"))
 
   menu.const <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Constant", menu=menu.const, underline=0)
+  tkadd(menu.const, "command", label="\u03C0",
+        command=function() InsertString("pi"))
+  tkadd(menu.const, "command", label="\u0065",
+        command=function() InsertString("e(1)"))
+  tkadd(menu.const, "separator")
   tkadd(menu.const, "command", label="True",
         command=function() InsertString("TRUE"))
   tkadd(menu.const, "command", label="False",
         command=function() InsertString("FALSE"))
+  tkadd(menu.const, "separator")
   tkadd(menu.const, "command", label="Not available",
         command=function() InsertString("NA"))
-  tkadd(menu.const, "command", label="Pi",
-        command=function() InsertString("pi"))
+  tkadd(menu.const, "command", label="Not a number",
+        command=function() InsertString("NaN"))
+  tkadd(menu.const, "separator")
+  tkadd(menu.const, "command", label="Positive infinity",
+        command=function() InsertString("Inf"))
+  tkadd(menu.const, "command", label="Negative infinity",
+        command=function() InsertString("-Inf"))
+  tkadd(menu.const, "separator")
+
+
+  menu.const.is <- tkmenu(tt, tearoff=0)
+  tkadd(menu.const.is, "command", label="Not available",
+        command=function() InsertString("is.na(<variable>)"))
+  tkadd(menu.const.is, "command", label="Not a number",
+        command=function() InsertString("is.nan(<variable>)"))
+  tkadd(menu.const.is, "separator")
+  tkadd(menu.const.is, "command", label="Finite (not infinite and not missing)",
+        command=function() InsertString("is.finite(<variable>)"))
+  tkadd(menu.const.is, "command", label="Infinite",
+        command=function() InsertString("is.infinite(<variable>)"))
+  tkadd(menu.const, "cascade", label="Which elements are", menu=menu.const.is)
+
+
+
 
   menu.string <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="String", menu=menu.string, underline=0)

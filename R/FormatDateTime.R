@@ -163,7 +163,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
 
   tcl(frame1.tre, "column", "#0",   width=230, anchor="center")
   tcl(frame1.tre, "column", "spec", width=80,  minwidth=80, anchor="center")
-  tcl(frame1.tre, "column", "exam", width=100, minwidth=80, anchor="center")
+  tcl(frame1.tre, "column", "exam", width=120, minwidth=80, anchor="center")
 
   tcl(frame1.tre, "heading", "#0", text="Select", anchor="w")
   tcl(frame1.tre, "heading", "spec", text="Specification")
@@ -238,13 +238,13 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
   tkinsert(frame1.tre, id.sc, "end", tags="bg", text="second (00-61)",
            values=c("%S", format(sample, format="%S")))
   tkinsert(frame1.tre, id.sc, "end",  tags="bg",
-           text="second with decisecond precision",
+           text="decisecond precision",
            values=c("%OS1", format(sample, format="%OS1")))
   tkinsert(frame1.tre, id.sc, "end",  tags="bg",
-           text="second with centisecond precision",
+           text="centisecond precision",
            values=c("%OS2", format(sample, format="%OS2")))
   tkinsert(frame1.tre, id.sc, "end",  tags="bg",
-           text="second with millisecond precision",
+           text="millisecond precision",
            values=c("%OS3", format(sample, format="%OS3")))
 
   tkinsert(frame1.tre, id.wk, "end", tags="bg",
