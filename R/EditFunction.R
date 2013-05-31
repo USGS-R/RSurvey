@@ -355,6 +355,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertString("floor(<variable>)"))
   tkadd(menu.math, "command", label="Ceiling",
         command=function() InsertString("ceiling(<variable>)"))
+  tkadd(menu.math, "command", label="Truncation",
+        command=function() InsertString("trunc(<variable>)"))
   menu.math.round <- tkmenu(tt, tearoff=0)
   tkadd(menu.math.round, "command", label="Decimal places",
         command=function() InsertString("round(<variable>, digits = 0)"))
@@ -364,8 +366,14 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkadd(menu.math, "separator")
   tkadd(menu.math, "command", label="Exponential",
         command=function() InsertString("exp(<variable>)"))
-  tkadd(menu.math, "command", label="Logarithm",
+  menu.math.log <- tkmenu(tt, tearoff=0)
+  tkadd(menu.math.log, "command", label="Common (base 10)",
+        command=function() InsertString("log10(<variable>)"))
+  tkadd(menu.math.log, "command", label="Natural (base \u0065)",
         command=function() InsertString("log(<variable>, base = exp(1))"))
+  tkadd(menu.math.log, "command", label="Binary (base 2)",
+        command=function() InsertString("log2(<variable>)"))
+  tkadd(menu.math, "cascade", label="Logarithm", menu=menu.math.log)
   tkadd(menu.math, "separator")
   tkadd(menu.math, "radiobutton", label="Radians", value="rad",
         variable=angles.var)
@@ -459,7 +467,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkadd(menu.const, "command", label="Negative infinity",
         command=function() InsertString("-Inf"))
   tkadd(menu.const, "separator")
-
   menu.const.is <- tkmenu(tt, tearoff=0)
   tkadd(menu.const.is, "command", label="Not available",
         command=function() InsertString("is.na(<variable>)"))
