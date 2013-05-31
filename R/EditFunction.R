@@ -442,7 +442,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkadd(menu.const, "command", label="\u03C0",
         command=function() InsertString("pi"))
   tkadd(menu.const, "command", label="\u0065",
-        command=function() InsertString("e(1)"))
+        command=function() InsertString("exp(1)"))
   tkadd(menu.const, "separator")
   tkadd(menu.const, "command", label="True",
         command=function() InsertString("TRUE"))
@@ -460,7 +460,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertString("-Inf"))
   tkadd(menu.const, "separator")
 
-
   menu.const.is <- tkmenu(tt, tearoff=0)
   tkadd(menu.const.is, "command", label="Not available",
         command=function() InsertString("is.na(<variable>)"))
@@ -472,9 +471,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkadd(menu.const.is, "command", label="Infinite",
         command=function() InsertString("is.infinite(<variable>)"))
   tkadd(menu.const, "cascade", label="Which elements are", menu=menu.const.is)
-
-
-
 
   menu.string <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="String", menu=menu.string, underline=0)
