@@ -329,20 +329,21 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   menu.class <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Class", menu=menu.class, underline=0)
-  tkadd(menu.class, "command", label="As numeric",
-        command=function() InsertString("as.numeric(<variable>)"))
-  tkadd(menu.class, "command", label="As integer",
-        command=function() InsertString("as.integer(<variable>)"))
-  tkadd(menu.class, "command", label="As POSIXct",
-        command=function() {
-          InsertString("as.POSIXct(<variable>, format = \"<format>\")")
-        })
-  tkadd(menu.class, "command", label="As logical",
-        command=function()  InsertString("as.logical(<variable>)"))
+
   tkadd(menu.class, "command", label="As character",
         command=function() InsertString("as.character(<variable>)"))
   tkadd(menu.class, "command", label="As factor",
         command=function() InsertString("as.factor(<variable>)"))
+  tkadd(menu.class, "command", label="As integer",
+        command=function() InsertString("as.integer(<variable>)"))
+  tkadd(menu.class, "command", label="As logical",
+        command=function()  InsertString("as.logical(<variable>)"))
+  tkadd(menu.class, "command", label="As numeric",
+        command=function() InsertString("as.numeric(<variable>)"))
+  tkadd(menu.class, "command", label="As POSIXct",
+        command=function() {
+          InsertString("as.POSIXct(<variable>, format = \"<format>\")")
+        })
 
   menu.math <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Math", menu=menu.math, underline=0)
@@ -386,6 +387,14 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertTrigFunction("cos"))
   tkadd(menu.math, "command", label="Tangent",
         command=function() InsertTrigFunction("tan"))
+  menu.math.h <- tkmenu(tt, tearoff=0)
+  tkadd(menu.math.h, "command", label="Sine",
+        command=function() InsertTrigFunction("sinh"))
+  tkadd(menu.math.h, "command", label="Cosine",
+        command=function() InsertTrigFunction("cosh"))
+  tkadd(menu.math.h, "command", label="Tangent",
+        command=function() InsertTrigFunction("tanh"))
+  tkadd(menu.math, "cascade", label="Hyperbolic", menu=menu.math.h)
   menu.math.arc <- tkmenu(tt, tearoff=0)
   tkadd(menu.math.arc, "command", label="Sine",
         command=function() InsertTrigFunction("asin"))
@@ -394,6 +403,14 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkadd(menu.math.arc, "command", label="Tangent",
         command=function() InsertTrigFunction("atan"))
   tkadd(menu.math, "cascade", label="Inverse", menu=menu.math.arc)
+  menu.math.arc.h <- tkmenu(tt, tearoff=0)
+  tkadd(menu.math.arc.h, "command", label="Sine",
+        command=function() InsertTrigFunction("asinh"))
+  tkadd(menu.math.arc.h, "command", label="Cosine",
+        command=function() InsertTrigFunction("acosh"))
+  tkadd(menu.math.arc.h, "command", label="Tangent",
+        command=function() InsertTrigFunction("atanh"))
+  tkadd(menu.math.arc, "cascade", label="Hyperbolic ", menu=menu.math.arc.h)
   tkadd(menu.math, "separator")
   menu.math.cum <- tkmenu(tt, tearoff=0)
   tkadd(menu.math.cum, "command", label="Sum",
@@ -404,9 +421,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   menu.summary <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Summary", menu=menu.summary, underline=0)
-  tkadd(menu.summary, "command", label="Are all values true ?",
+  tkadd(menu.summary, "command", label="Are all values true",
         command=function() InsertString("all(<variable>, na.rm = FALSE)"))
-  tkadd(menu.summary, "command", label="Are any values true ?",
+  tkadd(menu.summary, "command", label="Are any values true",
         command=function() InsertString("any(<variable>, na.rm = FALSE)"))
   tkadd(menu.summary, "separator")
   tkadd(menu.summary, "command", label="Sum",
@@ -477,7 +494,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertString("is.finite(<variable>)"))
   tkadd(menu.const.is, "command", label="Infinite",
         command=function() InsertString("is.infinite(<variable>)"))
-  tkadd(menu.const, "cascade", label="Which elements are", menu=menu.const.is)
+  tkadd(menu.const, "cascade", label="Which elements are ", menu=menu.const.is)
 
   menu.string <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="String", menu=menu.string, underline=0)
@@ -491,9 +508,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                              "stop = <last element>)"))
         })
 
-  menu.tool <- tkmenu(tt, tearoff=0)
-  tkadd(top.menu, "cascade", label="Tool", menu=menu.tool, underline=0)
-  tkadd(menu.tool, "command", label="Build format for date-time object\u2026",
+  menu.tools <- tkmenu(tt, tearoff=0)
+  tkadd(top.menu, "cascade", label="Tools", menu=menu.tools, underline=0)
+  tkadd(menu.tools, "command", label="Build format for date-time variable\u2026",
         command=CallFormatDateTime)
 
   # Finalize top menu
@@ -635,15 +652,17 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                               command=function() InsertString("()"))
   frame2a.but.13 <- ttkbutton(frame2a, width=3, text="[ ]",
                               command=function() InsertString("[]"))
+  frame2a.but.14 <- ttkbutton(frame2a, width=3, text="\u25C0\u2212",
+                              command=function() InsertString(" <- "))
 
   tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
          frame2a.but.05, frame2a.but.06, frame2a.but.07, frame2a.but.08,
          frame2a.but.09, frame2a.but.10, frame2a.but.11, frame2a.but.12,
-         frame2a.but.13, padx=c(0, 2), pady=c(4, 0))
+         frame2a.but.13, frame2a.but.14, padx=c(0, 2), pady=c(4, 0))
 
   tkgrid.configure(frame2a.but.01, padx=c(2, 2))
   tkgrid.configure(frame2a.but.05, frame2a.but.12, padx=c(12, 2))
-  tkgrid.configure(frame2a.but.13, padx=c(2, 0))
+  tkgrid.configure(frame2a.but.14, padx=c(2, 0))
 
   tkgrid(frame2.lab.1.1, "x")
   tkgrid(frame2.txt.2.1, frame2.ysc.2.2)
