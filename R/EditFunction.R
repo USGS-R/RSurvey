@@ -251,7 +251,14 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   # Insert trigonometric function
   InsertTrigFunction <- function(fun) {
-    if (as.character(tclvalue(angles.var)) == "deg")
+    is.inverse <- as.logical(as.integer(tclvalue(inverse.var)))
+    is.hyperbolic <- as.logical(as.integer(tclvalue(hyperbolic.var)))
+    angles <- as.character(tclvalue(angles.var))
+    if (is.inverse)
+      fun <- paste0("a", fun)
+    if (is.hyperbolic)
+      fun <- paste0(fun, "h")
+    if (angles == "deg")
       InsertString(paste0(fun, "(<variable> * pi / 180)"))
     else
       InsertString(paste0(fun, "(<variable>)"))
@@ -287,7 +294,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   for (i in seq(along=ids))
     tcl("lappend", variable.var, ids[i])  # must be unique
   value.var <- tclVar()
-  angles.var <- tclVar("rad")
+  inverse.var <- tclVar(0)
+  hyperbolic.var <- tclVar(0)
+  angles.var <- tclVar("deg")
   tt.done.var <- tclVar(0)
 
   # Open GUI
@@ -376,41 +385,12 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertString("log2(<variable>)"))
   tkadd(menu.math, "cascade", label="Logarithm", menu=menu.math.log)
   tkadd(menu.math, "separator")
-  tkadd(menu.math, "radiobutton", label="Radians", value="rad",
-        variable=angles.var)
-  tkadd(menu.math, "radiobutton", label="Degrees", value="deg",
-        variable=angles.var)
-  tkadd(menu.math, "separator")
   tkadd(menu.math, "command", label="Sine",
         command=function() InsertTrigFunction("sin"))
   tkadd(menu.math, "command", label="Cosine",
         command=function() InsertTrigFunction("cos"))
   tkadd(menu.math, "command", label="Tangent",
         command=function() InsertTrigFunction("tan"))
-  menu.math.h <- tkmenu(tt, tearoff=0)
-  tkadd(menu.math.h, "command", label="Sine",
-        command=function() InsertTrigFunction("sinh"))
-  tkadd(menu.math.h, "command", label="Cosine",
-        command=function() InsertTrigFunction("cosh"))
-  tkadd(menu.math.h, "command", label="Tangent",
-        command=function() InsertTrigFunction("tanh"))
-  tkadd(menu.math, "cascade", label="Hyperbolic", menu=menu.math.h)
-  menu.math.arc <- tkmenu(tt, tearoff=0)
-  tkadd(menu.math.arc, "command", label="Sine",
-        command=function() InsertTrigFunction("asin"))
-  tkadd(menu.math.arc, "command", label="Cosine",
-        command=function() InsertTrigFunction("acos"))
-  tkadd(menu.math.arc, "command", label="Tangent",
-        command=function() InsertTrigFunction("atan"))
-  tkadd(menu.math, "cascade", label="Inverse", menu=menu.math.arc)
-  menu.math.arc.h <- tkmenu(tt, tearoff=0)
-  tkadd(menu.math.arc.h, "command", label="Sine",
-        command=function() InsertTrigFunction("asinh"))
-  tkadd(menu.math.arc.h, "command", label="Cosine",
-        command=function() InsertTrigFunction("acosh"))
-  tkadd(menu.math.arc.h, "command", label="Tangent",
-        command=function() InsertTrigFunction("atanh"))
-  tkadd(menu.math.arc, "cascade", label="Hyperbolic ", menu=menu.math.arc.h)
   tkadd(menu.math, "separator")
   menu.math.cum <- tkmenu(tt, tearoff=0)
   tkadd(menu.math.cum, "command", label="Sum",
@@ -520,14 +500,18 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   frame0 <- tkframe(tt, relief="flat", padx=0, pady=0)
 
-  if (is.null(value.length)) {
-    txt <- ""
-  } else {
-    txt <- paste("Result must be of length", format(value.length, big.mark=","))
-    if (!is.null(value.class))
-      txt <- paste(txt, "and class", value.class)
-  }
-  frame0.lab.1 <- ttklabel(frame0, text=txt, foreground="#A40802")
+  frame0a <- tkframe(frame0, relief="flat", padx=0, pady=0)
+  frame0a.chk.1 <- ttkcheckbutton(frame0a, text="Inverse", variable=inverse.var)
+  frame0a.chk.2 <- ttkcheckbutton(frame0a, text="Hyperbolic",
+                                  variable=hyperbolic.var)
+  frame0a.rad.3 <- ttkradiobutton(frame0a, variable=angles.var, value="deg",
+                                  text="Degrees")
+  frame0a.rad.4 <- ttkradiobutton(frame0a, variable=angles.var, value="rad",
+                                  text="Radians")
+  tkgrid(frame0a.chk.1, frame0a.chk.2, frame0a.rad.3, frame0a.rad.4)
+  tkgrid.configure(frame0a.chk.2, padx=c(2, 12))
+  tkgrid.configure(frame0a.rad.3, padx=c(0, 2))
+
   frame0.but.3 <- ttkbutton(frame0, width=12, text="OK",
                             command=SaveFunction)
   frame0.but.4 <- ttkbutton(frame0, width=12, text="Cancel",
@@ -538,12 +522,12 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                             })
   frame0.grp.6 <- ttksizegrip(frame0)
 
-  tkgrid(frame0.lab.1, "x", frame0.but.3, frame0.but.4, frame0.but.5,
+  tkgrid(frame0a, "x", frame0.but.3, frame0.but.4, frame0.but.5,
          frame0.grp.6)
 
   tkgrid.columnconfigure(frame0, 1, weight=1)
 
-  tkgrid.configure(frame0.lab.1, padx=10, pady=c(0, 10), sticky="sw")
+  tkgrid.configure(frame0a, padx=10, pady=c(0, 10), sticky="sw")
   tkgrid.configure(frame0.but.3, frame0.but.4, frame0.but.5,
                    padx=c(0, 4), pady=c(15, 10))
   tkgrid.configure(frame0.but.5, columnspan=2, padx=c(0, 10))
@@ -615,6 +599,16 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     txt <- paste0(txt, " for \"", edit.fun.id, "\"")
   frame2.lab.1.1 <- ttklabel(frame2, text=txt, foreground="#141414")
 
+  if (is.null(value.length)) {
+    txt <- ""
+  } else {
+    txt <- paste("(result must be of length", format(value.length, big.mark=","))
+    if (!is.null(value.class))
+      txt <- paste(txt, "and class", value.class)
+    txt <- paste0(txt, ")")
+  }
+  frame2.lab.1.2 <- ttklabel(frame2, text=txt, foreground="#A40802")
+
   fnt <- tkfont.create(family="Courier New", size=10)
   frame2.txt.2.1 <- tktext(frame2, bg="white", font=fnt, padx=2, pady=2,
                            width=50, height=12, undo=1, autoseparators=1,
@@ -664,17 +658,20 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkgrid.configure(frame2a.but.05, frame2a.but.12, padx=c(12, 2))
   tkgrid.configure(frame2a.but.14, padx=c(2, 0))
 
-  tkgrid(frame2.lab.1.1, "x")
-  tkgrid(frame2.txt.2.1, frame2.ysc.2.2)
-  tkgrid(frame2a, "x")
+  tkgrid(frame2.lab.1.1, frame2.lab.1.2, "x")
+  tkgrid(frame2.txt.2.1, "x", frame2.ysc.2.2)
+  tkgrid(frame2a, "x", "x")
 
-  tkgrid.configure(frame2.lab.1.1, padx=c(2, 0),  pady=c(10, 0), sticky="w")
-  tkgrid.configure(frame2.txt.2.1, padx=c(2, 0),  pady=c(2, 0),  sticky="nsew")
-  tkgrid.configure(frame2.ysc.2.2, padx=c(0, 10), pady=c(2, 0),  sticky="ns")
-  tkgrid.configure(frame2a, pady=c(0, 0), sticky="we")
+  tkgrid.configure(frame2.lab.1.1, frame2.lab.1.2, padx=c(2, 0), pady=c(10, 0),
+                   sticky="w")
+  tkgrid.configure(frame2.txt.2.1, padx=c(2, 0),  pady=c(2, 0), columnspan=2,
+                   sticky="nsew")
+  tkgrid.configure(frame2.ysc.2.2, padx=c(0, 10), pady=c(2, 0), columnspan=2,
+                   sticky="ns")
+  tkgrid.configure(frame2a, pady=0, columnspan=2, sticky="we")
 
   tkgrid.rowconfigure(frame2, 1, weight=1)
-  tkgrid.columnconfigure(frame2, 0, weight=1, minsize=20)
+  tkgrid.columnconfigure(frame2, 1, weight=1, minsize=20)
 
   if (!is.null(old.fun) && old.fun != "")
     tkinsert(frame2.txt.2.1, "end", old.fun)
