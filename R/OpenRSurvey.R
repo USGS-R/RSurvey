@@ -1012,16 +1012,6 @@ OpenRSurvey <- function() {
   menu.graph <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
 
-  menu.graph.view <- tkmenu(tt, tearoff=0)
-  tkadd(menu.graph.view, "radiobutton", label="Layout", value="layout",
-        variable=view.var, command=ToggleView)
-  tkadd(menu.graph.view, "radiobutton", label="Data", value="data",
-        variable=view.var, command=ToggleView)
-  tkadd(menu.graph, "cascade", label="View mode", menu=menu.graph.view)
-  tkadd(menu.graph, "checkbutton", label="Open in new window",
-        variable=new.win.var)
-  tkadd(menu.graph, "separator")
-
   tkadd(menu.graph, "command", label="Histogram\u2026",
         command=function() {
           CallProcessData()
@@ -1227,8 +1217,27 @@ OpenRSurvey <- function() {
 
   tkgrid.configure(frame2.but.1.2, padx=4)
 
-  tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE, padx=10,
-         pady=c(0, 10))
+  tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE, padx=10, pady=0)
+
+
+
+  # Frame 3, graphics device control
+
+  frame3 <- tkframe(tt, relief="flat", padx=0, pady=0)
+
+  frame3.lab.1.1 <- ttklabel(frame3, text="View:")
+  frame3.rad.1.2 <- ttkradiobutton(frame3, variable=view.var, value="layout",
+                                   text="layout")
+  frame3.rad.1.3 <- ttkradiobutton(frame3, variable=view.var, value="data",
+                                   text="data")
+  frame3.chk.1.4 <- ttkcheckbutton(frame3, text="New window",
+                                   variable=new.win.var)
+  tkgrid(frame3.lab.1.1, frame3.rad.1.2, frame3.rad.1.3, frame3.chk.1.4)
+
+  tkgrid.configure(frame3.lab.1.1, padx=c(0, 2))
+  tkgrid.configure(frame3.rad.1.3, padx=c(2, 12))
+
+  tkpack(frame3, anchor="w", pady=c(2, 10), padx=10)
 
   # Set variables
   SetVars()
