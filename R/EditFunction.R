@@ -648,15 +648,17 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                               command=function() InsertString("[]"))
   frame2a.but.14 <- ttkbutton(frame2a, width=3, text="\u25C0\u2212",
                               command=function() InsertString(" <- "))
+  frame2a.but.15 <- ttkbutton(frame2a, width=3, text="\u0078\u207F",
+                              command=function() InsertString("^"))
 
   tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
          frame2a.but.05, frame2a.but.06, frame2a.but.07, frame2a.but.08,
          frame2a.but.09, frame2a.but.10, frame2a.but.11, frame2a.but.12,
-         frame2a.but.13, frame2a.but.14, padx=c(0, 2), pady=c(4, 0))
+         frame2a.but.13, frame2a.but.14, frame2a.but.15, padx=c(0, 2), pady=c(4, 0))
 
   tkgrid.configure(frame2a.but.01, padx=c(2, 2))
   tkgrid.configure(frame2a.but.05, frame2a.but.12, padx=c(12, 2))
-  tkgrid.configure(frame2a.but.14, padx=c(2, 0))
+  tkgrid.configure(frame2a.but.15, padx=c(2, 0))
 
   tkgrid(frame2.lab.1.1, frame2.lab.1.2, "x")
   tkgrid(frame2.txt.2.1, "x", frame2.ysc.2.2)
