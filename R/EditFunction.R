@@ -296,7 +296,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   value.var <- tclVar()
   inverse.var <- tclVar(0)
   hyperbolic.var <- tclVar(0)
-  angles.var <- tclVar("deg")
+  angles.var <- tclVar("rad")
   tt.done.var <- tclVar(0)
 
   # Open GUI
@@ -504,10 +504,10 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   frame0a.chk.1 <- ttkcheckbutton(frame0a, text="Inverse", variable=inverse.var)
   frame0a.chk.2 <- ttkcheckbutton(frame0a, text="Hyperbolic",
                                   variable=hyperbolic.var)
-  frame0a.rad.3 <- ttkradiobutton(frame0a, variable=angles.var, value="deg",
-                                  text="Degrees")
-  frame0a.rad.4 <- ttkradiobutton(frame0a, variable=angles.var, value="rad",
+  frame0a.rad.3 <- ttkradiobutton(frame0a, variable=angles.var, value="rad",
                                   text="Radians")
+  frame0a.rad.4 <- ttkradiobutton(frame0a, variable=angles.var, value="deg",
+                                  text="Degrees")
   tkgrid(frame0a.chk.1, frame0a.chk.2, frame0a.rad.3, frame0a.rad.4)
   tkgrid.configure(frame0a.chk.2, padx=c(2, 12))
   tkgrid.configure(frame0a.rad.3, padx=c(0, 2))
