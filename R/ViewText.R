@@ -201,10 +201,10 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
 
   frame1 <- tkframe(tt, relief="flat", padx=0, pady=0)
 
-  fnt <- tkfont.create(family="Courier New", size=10)
-  frame1.txt.1.1 <- tktext(frame1, bg="white", font=fnt, padx=2, pady=2,
-                           width=txt.width, height=20, undo=1, autoseparators=1,
-                           wrap="none", foreground="black", relief="flat",
+  frame1.txt.1.1 <- tktext(frame1, bg="white", font="TkTextFont", padx=2,
+                           pady=2, width=txt.width, height=20, undo=1,
+                           autoseparators=1, wrap="none", foreground="black",
+                           relief="flat",
                            yscrollcommand=function(...)
                                             tkset(frame1.ysc.1.2, ...),
                            xscrollcommand=function(...)

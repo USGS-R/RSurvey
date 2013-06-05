@@ -624,7 +624,7 @@ ImportData <- function(parent=NULL) {
   # Frame 3, import parameters
 
   frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Import parameters")
+                          text="Options")
 
   frame3.lab.1.1 <- ttklabel(frame3, text="Separator")
   frame3.lab.1.4 <- ttklabel(frame3, text="Decimal")
@@ -727,7 +727,6 @@ ImportData <- function(parent=NULL) {
 
   frame4 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
-  .Tcl("option add *Table.font {CourierNew 9}")
   frame4.tbl <- tkwidget(frame4, "table", rows=1, cols=1, variable=table.var,
                          state="disabled", colwidth=13, rowheight=1, width=1,
                          height=5, ipadx=3, ipady=1, wrap=0,
@@ -739,6 +738,7 @@ ImportData <- function(parent=NULL) {
                          anchor="nw", drawmode="single", rowseparator="\n",
                          colseparator="\t", selectmode="extended",
                          insertofftime=0, highlightthickness=0,
+                         font="TkFixedFont",
                          xscrollcommand=function(...) tkset(frame4.xsc, ...),
                          yscrollcommand=function(...) tkset(frame4.ysc, ...))
 

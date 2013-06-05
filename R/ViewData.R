@@ -5,6 +5,33 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   ## Additional functions (subroutines)
 
+  # Search data table
+
+  CallSearch <- function(is.replace=FALSE) {
+
+
+
+
+
+    x <- Search(is.replace, parent=tt)
+
+
+
+
+
+
+
+  }
+
+
+
+
+
+
+
+
+
+
   # Save table and close
   SaveTable <- function() {
     s <- GetEdits()
@@ -302,7 +329,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     changelog <- NULL
 
   # Set parameters based on whether the table is editable
-
   if (inherits(read.only, "logical")) {
     if (read.only)
       read.only <- 1:n
@@ -466,6 +492,20 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkadd(menu.edit.width, "command", label="Decrease", accelerator="Ctrl+\u2212",
         command=function() tkevent.generate(frame2.tbl, "<Control-minus>"))
   tkadd(menu.edit, "cascade", label="Column width", menu=menu.edit.width)
+
+  # Search menu
+  if (is.editable) {
+    menu.search <- tkmenu(tt, tearoff=0, relief="flat")
+    tkadd(top.menu, "cascade", label="Search", menu=menu.search, underline=0)
+    tkadd(menu.search, "command", label="Find\u2026", accelerator="Ctrl+f",
+          command=function() CallSearch())
+    tkadd(menu.search, "command", label="Find next",
+          command=function() Find("next"))
+    tkadd(menu.search, "command", label="Find previous",
+          command=function() Find("prev"))
+    tkadd(menu.search, "command", label="Replace\u2026", accelerator="Ctrl+r",
+          command=function() CallSearch(is.replace=TRUE))
+  }
 
   # Selection menu
   menu.sel <- tkmenu(tt, tearoff=0, relief="flat")
@@ -637,7 +677,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   frame2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
-  .Tcl("option add *Table.font {CourierNew 9}")
   frame2.tbl <- tkwidget(frame2, "table", rows=m + 1, cols=n + 1,
                          colwidth=-2, rowheight=1, state="normal",
                          height=nrows + 1, width=ncols + 1,
@@ -651,6 +690,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                          colseparator="\t", selectmode="extended",
                          selecttitle=1, insertofftime=0, anchor="nw",
                          highlightthickness=0, cache=1, validate=1,
+                         font="TkFixedFont",
                          validatecommand=function(s, S) ValidateCellValue(s, S),
                          command=function(r, c) GetCellValue(r, c),
                          coltagcommand=function(...) TagColumn(...),

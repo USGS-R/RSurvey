@@ -436,7 +436,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
     # Frame 2, meta data
 
     frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                            text="Add metadata")
+                            text="Metadata")
 
     frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=comment.var,
                                      text="Comment")
@@ -465,7 +465,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
     # Frame 3, export parmaters
 
     frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                            text="Export parameters")
+                            text="Options")
 
     frame3.lab.1.1 <- ttklabel(frame3, text="Separator")
     frame3.lab.1.4 <- ttklabel(frame3, text="Decimal")
