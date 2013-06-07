@@ -37,7 +37,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       if (!is.null(value.length) && length(obj) != value.length) {
         msg <- paste0("Evaluated function must be of length ", value.length,
                       ", try revising.")
-        dtl <- paste0("Resulting object is currently of length ", length(obj),
+        dtl <- paste0("Resulting vector is currently of length ", length(obj),
                       ".")
         tkmessageBox(icon="error", message=msg, detail=dtl, title="Error",
                      type="ok", parent=tt)
@@ -45,9 +45,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       }
 
       if (!is.null(value.class) && !inherits(obj, value.class)) {
-        msg <- paste0("A query must result in an object of class \"",
+        msg <- paste0("A query must result in a vector of class \"",
                       value.class,
-                      "\". The evaluated function is an object of class \"",
+                      "\". The evaluated function is a vector of class \"",
                       class(obj), "\", please revise.")
         tkmessageBox(icon="error", message=msg, title="Error", type="ok",
                      parent=tt)
@@ -602,7 +602,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   if (is.null(value.length)) {
     txt <- ""
   } else {
-    txt <- paste("(result must be of length", format(value.length, big.mark=","))
+    txt <- paste("(resulting vector must be of length", format(value.length,
+                                                               big.mark=","))
     if (!is.null(value.class))
       txt <- paste(txt, "and class", value.class)
     txt <- paste0(txt, ")")
@@ -654,11 +655,14 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkgrid(frame2a.but.01, frame2a.but.02, frame2a.but.03, frame2a.but.04,
          frame2a.but.05, frame2a.but.06, frame2a.but.07, frame2a.but.08,
          frame2a.but.09, frame2a.but.10, frame2a.but.11, frame2a.but.12,
-         frame2a.but.13, frame2a.but.14, frame2a.but.15, padx=c(0, 2), pady=c(4, 0))
+         frame2a.but.13, frame2a.but.14, frame2a.but.15, pady=c(4, 0))
 
-  tkgrid.configure(frame2a.but.01, padx=c(2, 2))
-  tkgrid.configure(frame2a.but.05, frame2a.but.12, padx=c(12, 2))
-  tkgrid.configure(frame2a.but.15, padx=c(2, 0))
+  tkgrid.configure(frame2a.but.01, frame2a.but.02, frame2a.but.03,
+                   frame2a.but.04, frame2a.but.06, frame2a.but.07,
+                   frame2a.but.08, frame2a.but.09, frame2a.but.10,
+                   frame2a.but.11, frame2a.but.13, frame2a.but.14,
+                   frame2a.but.15, padx=c(2, 0))
+  tkgrid.configure(frame2a.but.05, frame2a.but.12, padx=c(12, 0))
 
   tkgrid(frame2.lab.1.1, frame2.lab.1.2, "x")
   tkgrid(frame2.txt.2.1, "x", frame2.ysc.2.2)
