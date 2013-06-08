@@ -447,14 +447,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   # Start top menu
   top.menu <- tkmenu(tt, tearoff=0)
 
-  # File menu
-  if (is.editable) {
-    menu.file <- tkmenu(tt, tearoff=0, relief="flat")
-    tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
-    tkadd(menu.file, "command", label="View changelog",
-          command=ViewChangelog)
-  }
-
   # Edit menu
   menu.edit <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
@@ -492,6 +484,11 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkadd(menu.edit.width, "command", label="Decrease", accelerator="Ctrl+\u2212",
         command=function() tkevent.generate(frame2.tbl, "<Control-minus>"))
   tkadd(menu.edit, "cascade", label="Column width", menu=menu.edit.width)
+  if (is.editable) {
+    tkadd(menu.edit, "separator")
+    tkadd(menu.edit, "command", label="View changelog",
+          command=ViewChangelog)
+  }
 
   # Search menu
   if (is.editable) {
