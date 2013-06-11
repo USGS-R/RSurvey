@@ -40,10 +40,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tkselection.set(frame2.tbl, "0,0", "end")
   }
 
-
-
-
-
   # Search data table
 
   CallSearch <- function(is.replace=FALSE) {
@@ -63,39 +59,36 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     Find()
 
     if (is.replace & (!is.null(matched.cells) && nrow(matched.cells) > 0)) {
+      tclServiceMode(FALSE)
       cells <- paste0(matched.cells[, 1], ",", matched.cells[, 2])
 
-      timestamp <- Sys.time()
+      ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
+                     c(0, 0)))
+
+      old.values <- dd[ij + 1L]
+      new.values <- sub(ans$find.what, ans$replace.with, old.values,
+                        ignore.case=!ans$is.match.case, perl=ans$is.perl,
+                        fixed=!ans$is.reg.exps, useBytes=FALSE)
+
+      dd[ij + 1L] <<- new.values
+
+      e <- data.frame(time=Sys.time(), cell=cells, old=old.values, new=new.values,
+                      stringsAsFactors=FALSE)
+
+      undo.stack <<- rbind(undo.stack, e)
+      redo.stack <<- NULL
+
+      tkactivate(frame2.tbl, "0,0")
+      tkselection.clear(frame2.tbl, "all")
 
       for (i in cells) {
-        old.value <- as.character(tkget(frame2.tbl, i))
-        new.value <- sub(ans$find.what, ans$replace.with, old.value,
-                         ignore.case=!ans$is.match.case, perl=ans$is.perl,
-                         fixed=!ans$is.reg.exps, useBytes=FALSE)
-
-        cell <- as.integer(strsplit(i, ",")[[1]]) + 1L
-        dd[cell[1], cell[2]] <<- new.value
-        tkset(frame2.tbl, i, new.value)
-
-        e <- data.frame(time=timestamp, cell=i, old=old.value, new=new.value,
-                        stringsAsFactors=FALSE)
-        undo.stack <<- rbind(undo.stack, e)
+        tcl(frame2.tbl, "clear", "cache", i)
       }
-
-      redo.stack <<- NULL
+      tclServiceMode(TRUE)
     }
   }
 
-
-
-
-
-
-
-
-
-
-  # Find value in table
+  # Find value in data table
 
   Find <- function(direction="next") {
     pattern <- as.character(tclvalue(pattern.var))
@@ -251,21 +244,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     return(as.tclObj(is.valid))
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   # Undo edit
 
   UndoEdit <- function() {
@@ -274,20 +252,25 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tclServiceMode(FALSE)
 
     m <- nrow(undo.stack)
-    e <- undo.stack[m, , drop=FALSE]
-    cell <- as.integer(strsplit(e$cell, ",")[[1]])
-    dd[cell[1] + 1L, cell[2] + 1L] <<- e$old
 
-    undo.stack <<- undo.stack[-m, , drop=FALSE]
-    redo.stack <<- rbind(redo.stack, e)
+    idxs <- which(undo.stack$time == undo.stack$time[m])
+    cells <- undo.stack[idxs, "cell"]
+    ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
+                   c(0, 0)))
+
+    dd[ij + 1L] <<- undo.stack[idxs, "old"]
+
+    redo.stack <<- rbind(redo.stack, undo.stack[idxs, , drop=FALSE])
+    undo.stack <<- undo.stack[-idxs, , drop=FALSE]
 
     tkactivate(frame2.tbl, "0,0")
     tkselection.clear(frame2.tbl, "all")
-    tksee(frame2.tbl, e$cell)
+
+    for (i in cells) {
+      tcl(frame2.tbl, "clear", "cache", i)
+    }
 
     tclServiceMode(TRUE)
-    tcl(frame2.tbl, "clear", "cache", e$cell)
-    tkactivate(frame2.tbl, e$cell)
   }
 
   # Redo edit
@@ -298,20 +281,25 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tclServiceMode(FALSE)
 
     m <- nrow(redo.stack)
-    e <- redo.stack[m, , drop=FALSE]
-    cell <- as.integer(strsplit(e$cell, ",")[[1]])
-    dd[cell[1] + 1L, cell[2] + 1L] <<- e$new
 
-    redo.stack <<- redo.stack[-m, , drop=FALSE]
-    undo.stack <<- rbind(undo.stack, e)
+    idxs <- which(redo.stack$time == redo.stack$time[m])
+    cells <- redo.stack[idxs, "cell"]
+    ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
+                   c(0, 0)))
+
+    dd[ij + 1L] <<- redo.stack[idxs, "new"]
+
+    undo.stack <<- rbind(undo.stack, redo.stack[idxs, , drop=FALSE])
+    redo.stack <<- redo.stack[-idxs, , drop=FALSE]
 
     tkactivate(frame2.tbl, "0,0")
     tkselection.clear(frame2.tbl, "all")
-    tksee(frame2.tbl, e$cell)
+
+    for (i in cells) {
+      tcl(frame2.tbl, "clear", "cache", i)
+    }
 
     tclServiceMode(TRUE)
-    tcl(frame2.tbl, "clear", "cache", e$cell)
-    tkactivate(frame2.tbl, e$cell)
   }
 
   # View changelog
