@@ -1,6 +1,7 @@
 # A GUI for viewing text.
 
-ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
+ViewText <- function(txt, read.only=FALSE, win.title="View Text",
+                     is.fixed.width.font=FALSE, parent=NULL) {
 
   ## Additional functions (subroutines)
 
@@ -104,6 +105,12 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
     txt.width <- 90
   }
 
+  # Determine font type
+  if (is.fixed.width.font)
+    font.type <- "TkFixedFont"
+  else
+    font.type <- "TkTextFont"
+
   # Assigin global variables
   rtn <- NULL
 
@@ -201,7 +208,7 @@ ViewText <- function(txt, read.only=FALSE, win.title="View Text", parent=NULL) {
 
   frame1 <- tkframe(tt, relief="flat", padx=0, pady=0)
 
-  frame1.txt.1.1 <- tktext(frame1, bg="white", font="TkTextFont", padx=2,
+  frame1.txt.1.1 <- tktext(frame1, bg="white", font=font.type, padx=2,
                            pady=2, width=txt.width, height=20, undo=1,
                            autoseparators=1, wrap="none", foreground="black",
                            relief="flat",

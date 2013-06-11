@@ -9,13 +9,15 @@ A \acronym{GUI} for viewing and editing text.
 }
 
 \usage{
-ViewText(txt, read.only = FALSE, win.title = "View Text", parent = NULL)
+ViewText(txt, read.only = FALSE, win.title = "View Text",
+         is.fixed.width.font = FALSE, parent = NULL)
 }
 
 \arguments{
 \item{txt}{character; the data used to populate the table.}
 \item{read.only}{logical; specifies whether the text is read only.}
 \item{win.title}{character; a string to display as the title of the dialog box.}
+\item{is.fixed.width.font}{logical; should a fixed-width font be used?}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 

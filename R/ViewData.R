@@ -5,33 +5,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   ## Additional functions (subroutines)
 
-  # Search data table
-
-  CallSearch <- function(is.replace=FALSE) {
-
-
-
-
-
-    x <- Search(is.replace, parent=tt)
-
-
-
-
-
-
-
-  }
-
-
-
-
-
-
-
-
-
-
   # Save table and close
   SaveTable <- function() {
     s <- GetEdits()
@@ -67,6 +40,61 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tkselection.set(frame2.tbl, "0,0", "end")
   }
 
+
+
+
+
+  # Search data table
+
+  CallSearch <- function(is.replace=FALSE) {
+
+    search.defaults$find.what <- as.character(tclvalue(pattern.var))
+
+    ans <- Search(is.replace, defaults=search.defaults, col.names=col.names,
+                  parent=tt)
+    if (is.null(ans))
+      return()
+
+    tclvalue(pattern.var) <- ans$find.what
+
+    search.defaults <<- ans
+    matched.cells <<- NULL
+
+    Find()
+
+    if (is.replace & (!is.null(matched.cells) && nrow(matched.cells) > 0)) {
+      cells <- paste0(matched.cells[, 1], ",", matched.cells[, 2])
+
+      timestamp <- Sys.time()
+
+      for (i in cells) {
+        old.value <- as.character(tkget(frame2.tbl, i))
+        new.value <- sub(ans$find.what, ans$replace.with, old.value,
+                         ignore.case=!ans$is.match.case, perl=ans$is.perl,
+                         fixed=!ans$is.reg.exps, useBytes=FALSE)
+
+        cell <- as.integer(strsplit(i, ",")[[1]]) + 1L
+        dd[cell[1], cell[2]] <<- new.value
+        tkset(frame2.tbl, i, new.value)
+
+        e <- data.frame(time=timestamp, cell=i, old=old.value, new=new.value,
+                        stringsAsFactors=FALSE)
+        undo.stack <<- rbind(undo.stack, e)
+      }
+
+      redo.stack <<- NULL
+    }
+  }
+
+
+
+
+
+
+
+
+
+
   # Find value in table
 
   Find <- function(direction="next") {
@@ -77,10 +105,38 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     if (is.null(matched.cells)) {
       n <- ncol(dd) - 1L
 
-      matched.idxs <- suppressWarnings(grep(pattern, t(dd[-1L, -1L]),
-                                       fixed=fixed, perl=perl,
-                                       ignore.case=!match.case,
-                                       useBytes=FALSE, invert=FALSE))
+      is.match.word <- search.defaults$is.match.word
+
+      if (search.defaults$is.match.case)
+        ignore.case <- FALSE
+      else
+        ignore.case <- TRUE
+      if (search.defaults$is.reg.exps)
+        fixed <- FALSE
+      else
+        fixed <- TRUE
+      perl <- search.defaults$is.perl
+
+      is.all.data <- !search.defaults$is.search.col ||
+                     is.null(search.defaults$col.name)
+
+      if (is.all.data)
+        columns <- 2L:ncol(dd)
+      else
+        columns <- which(col.names == search.defaults$col.name)[1]
+
+      x <- as.character(t(dd[-1L, columns, drop=FALSE]))
+      if (is.match.word) {
+        if (ignore.case)
+          matched.idxs <- which(tolower(x) == tolower(pattern))
+        else
+          matched.idxs <- which(x == pattern)
+      } else {
+        matched.idxs <- suppressWarnings(grep(pattern, x,
+                                              fixed=fixed, perl=perl,
+                                              ignore.case=ignore.case,
+                                              useBytes=FALSE, invert=FALSE))
+      }
 
       if (length(matched.idxs) == 0L) {
         msg <- paste0("Search string \'", pattern, "\' not found.")
@@ -88,10 +144,17 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                      parent=tt)
         return()
       }
-      col.div <- matched.idxs / n
-      i <- as.integer(ceiling(col.div))
-      j <- as.integer(round(n * (col.div - trunc(col.div))))
-      j[j == 0L] <- n
+
+      if (is.all.data) {
+        col.div <- matched.idxs / n
+        i <- as.integer(ceiling(col.div))
+        j <- as.integer(round(n * (col.div - trunc(col.div))))
+        j[j == 0L] <- n
+      } else {
+        i <- matched.idxs
+        j <- columns[1]
+      }
+
       matched.cells <<- cbind(i, j)
     }
 
@@ -169,10 +232,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
 
   # Validate cell value
-
   ValidateCellValue <- function(s, S) {
-    tclServiceMode(FALSE)
-
     e <- data.frame(time=Sys.time(),
                     cell=as.character(tkindex(frame2.tbl, "active")),
                     old=as.character(s), new=as.character(S),
@@ -186,11 +246,25 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       undo.stack <<- rbind(undo.stack, e)
       redo.stack <<- NULL
       is.valid <- TRUE
+      dd[cell[1] + 1L, cell[2] + 1L] <<- S
     }
-
-    tclServiceMode(TRUE)
     return(as.tclObj(is.valid))
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   # Undo edit
 
@@ -217,6 +291,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
 
   # Redo edit
+
   RedoEdit <- function() {
     if (is.null(redo.stack) || nrow(redo.stack) == 0)
       return()
@@ -240,6 +315,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
 
   # View changelog
+
   ViewChangelog <- function() {
     s <- GetEdits()
     if (is.null(s)) {
@@ -260,7 +336,8 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       }
       txt <- apply(s, 1, function(i) paste(i, collapse="  "))
     }
-    ViewText(txt, read.only=TRUE, win.title="Changelog", parent=tt)
+    ViewText(txt, read.only=TRUE, win.title="Changelog",
+             is.fixed.width.font=TRUE, parent=tt)
     tkfocus(frame2.tbl)
   }
 
@@ -416,12 +493,12 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   dd <- rbind(c("", col.names), cbind(row.names, as.matrix(dd)))
 
   # Assigin global variables
-  match.case <- TRUE
-  perl <- FALSE
-  fixed <- TRUE
   undo.stack <- NULL
   redo.stack <- NULL
   rtn <- NULL
+  search.defaults <- list(is.match.word=FALSE, is.match.case=TRUE,
+                          is.reg.exps=FALSE, is.search.col=FALSE,
+                          is.perl=FALSE)
 
   # Assign variables linked to Tk widgets
   table.var   <- tclArray()
@@ -486,8 +563,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkadd(menu.edit, "cascade", label="Column width", menu=menu.edit.width)
   if (is.editable) {
     tkadd(menu.edit, "separator")
-    tkadd(menu.edit, "command", label="View changelog",
-          command=ViewChangelog)
+    tkadd(menu.edit, "command", label="View changelog", command=ViewChangelog)
   }
 
   # Search menu
@@ -650,8 +726,10 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   frame1.lab.1.1 <- ttklabel(frame1, text="Find")
   frame1.lab.2.1 <- ttklabel(frame1, text="Record")
 
-  frame1.ent.1.2 <- ttkentry(frame1, width=15, textvariable=pattern.var)
-  frame1.ent.2.2 <- ttkentry(frame1, width=15, textvariable=record.var)
+  frame1.ent.1.2 <- ttkentry(frame1, width=15, font="TkFixedFont",
+                             textvariable=pattern.var)
+  frame1.ent.2.2 <- ttkentry(frame1, width=15, font="TkFixedFont",
+                             textvariable=record.var)
 
   frame1.but.1.3 <- ttkbutton(frame1, width=2, image=GetBitmapImage("previous"),
                               command=function() Find("prev"))

@@ -1,38 +1,32 @@
-# Search
+# A GUI for establishing find and replace arguments.
 
-Search <- function(is.replace=FALSE, parent=NULL) {
+Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
+                   parent=NULL) {
 
   ## Additional functions (subroutines)
 
   # Return find and replace parameters
   ReturnParameters <- function(is.all=FALSE) {
-
     find.what <- as.character(tclvalue(tkget(frame1.txt.2.1, "1.0", "end-1c")))
     if (is.replace)
       replace.with <- as.character(tclvalue(tkget(frame1.txt.4.1, "1.0",
                                                   "end-1c")))
     else
       replace.with <- NULL
-
     is.match.word <- as.logical(as.integer(tclvalue(match.word.var)))
     is.match.case <- as.logical(as.integer(tclvalue(match.case.var)))
     is.reg.exps   <- as.logical(as.integer(tclvalue(reg.exps.var)))
     is.search.col <- as.logical(as.integer(tclvalue(search.col.var)))
-
     is.perl <- as.logical(as.integer(tclvalue(perl.var)))
     col.name <- as.character(tclvalue(col.name.var))
     if (col.name == "")
       col.name <- NULL
-
     rtn <<- list(find.what=find.what, replace.with=replace.with,
                  is.match.word=is.match.word, is.match.case=is.match.case,
                  is.reg.exps=is.reg.exps, is.search.col=is.search.col,
                  is.perl=is.perl, col.name=col.name)
-
     tclvalue(tt.done.var) <- 1
   }
-
-
 
   # Toggle state of regular expression radio buttons
   ToggleRegExps <- function() {
@@ -56,31 +50,45 @@ Search <- function(is.replace=FALSE, parent=NULL) {
     }
   }
 
-
-
   ## Main program
 
   # Assigin global variables
   rtn <- NULL
 
   # Variable names
-  col.names <- c("dog", "cat")
-
-
-
-
+  if (is.null(col.names) || !is.character(col.names))
+    col.names <- ""
 
   # Assign variables linked to Tk widgets
-
   match.word.var <- tclVar(0)
   match.case.var <- tclVar(0)
   reg.exps.var <- tclVar(0)
   search.col.var <- tclVar(0)
   perl.var <- tclVar(0)
   col.name.var <- tclVar()
-
   tt.done.var <- tclVar(0)
 
+  # Set default values
+  find.what <- ""
+  replace.with <- ""
+  if (!is.null(defaults) && is.list(defaults)) {
+    if (!is.null(defaults$find.what) && is.character(defaults$find.what))
+      find.what <- defaults$find.what
+    if (!is.null(defaults$replace.with) && is.character(defaults$replace.with))
+      replace.with <- defaults$replace.with
+    if (!is.null(defaults$is.match.word) && is.logical(defaults$is.match.word))
+      tclvalue(match.word.var) <- defaults$is.match.word
+    if (!is.null(defaults$is.match.case) && is.logical(defaults$is.match.case))
+      tclvalue(match.case.var) <- defaults$is.match.case
+    if (!is.null(defaults$is.reg.exps) && is.logical(defaults$is.reg.exps))
+      tclvalue(reg.exps.var) <- defaults$is.reg.exps
+    if (!is.null(defaults$is.search.col) && is.logical(defaults$is.search.col))
+      tclvalue(search.col.var) <- defaults$is.search.col
+    if (!is.null(defaults$is.perl) && is.logical(defaults$is.perl))
+      tclvalue(perl.var) <- defaults$is.perl
+    if (!is.null(defaults$col.name) && is.character(defaults$col.name))
+      tclvalue(col.name.var) <- defaults$col.name
+  }
 
   # Open GUI
   tclServiceMode(FALSE)
@@ -145,7 +153,7 @@ Search <- function(is.replace=FALSE, parent=NULL) {
 
   frame1.lab.1.1 <- ttklabel(frame1, text="Find what:", foreground="#141414")
 
-  frame1.txt.2.1 <- tktext(frame1, bg="white", font="TkTextFont", padx=2,
+  frame1.txt.2.1 <- tktext(frame1, bg="white", font="TkFixedFont", padx=2,
                            pady=2, width=40, height=1, undo=1, autoseparators=1,
                            wrap="none", foreground="black", relief="flat",
                            yscrollcommand=function(...)
@@ -161,14 +169,14 @@ Search <- function(is.replace=FALSE, parent=NULL) {
   tkgrid.columnconfigure(frame1, 0, weight=1)
   tkgrid.rowconfigure(frame1, 1, weight=1)
 
-  tkinsert(frame1.txt.2.1, "end", "notyet")
+  tkinsert(frame1.txt.2.1, "end", find.what)
   tcl(frame1.txt.2.1, "edit", "reset")
   tcl(frame1.txt.2.1, "edit", "separator")
 
   if (is.replace) {
     frame1.lab.3.1 <- ttklabel(frame1, text="Replace with:",
                                foreground="#141414")
-    frame1.txt.4.1 <- tktext(frame1, bg="white", font="TkTextFont", padx=2,
+    frame1.txt.4.1 <- tktext(frame1, bg="white", font="TkFixedFont", padx=2,
                              pady=2, width=40, height=1, undo=1,
                              autoseparators=1, wrap="none", foreground="black",
                              relief="flat",
@@ -183,6 +191,10 @@ Search <- function(is.replace=FALSE, parent=NULL) {
     tkgrid.configure(frame1.ysc.4.2, sticky="ns")
 
     tkgrid.rowconfigure(frame1, 3, weight=1)
+
+    tkinsert(frame1.txt.4.1, "end", replace.with)
+    tcl(frame1.txt.4.1, "edit", "reset")
+    tcl(frame1.txt.4.1, "edit", "separator")
   }
 
   tkpack(frame1, fill="both", expand="yes", padx=10, pady=10)
@@ -209,7 +221,6 @@ Search <- function(is.replace=FALSE, parent=NULL) {
 
   frame3.box.3.2 <- ttkcombobox(frame3, state="readonly",
                                 textvariable=col.name.var, values=col.names)
-
 
   tkgrid(frame3.chk.1.1, "x", "x", sticky="w")
   tkgrid(frame3.chk.2.1, "x", "x", sticky="w", pady=2)
