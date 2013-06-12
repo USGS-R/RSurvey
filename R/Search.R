@@ -29,7 +29,19 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
     tclvalue(tt.done.var) <- 1
   }
 
-  # Toggle state of regular expression radio buttons
+  # Toggle match word
+  ToggleMatchWord <- function() {
+    is.match.word <- as.logical(as.integer(tclvalue(match.word.var)))
+    if (is.match.word) {
+      tclvalue(reg.exps.var) <- FALSE
+      tkconfigure(frame3.chk.3.1, state="disabled")
+    } else {
+      tkconfigure(frame3.chk.3.1, state="normal")
+    }
+    ToggleRegExps()
+  }
+
+  # Toggle regular expression
   ToggleRegExps <- function() {
     is.reg.exps <- as.logical(as.integer(tclvalue(reg.exps.var)))
     if (is.reg.exps) {
@@ -41,7 +53,7 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
     }
   }
 
-  # Toggle state of search variable combobox
+  # Toggle search in variable
   ToggleSearchCol <- function() {
     is.search.col <- as.logical(as.integer(tclvalue(search.col.var)))
     if (is.search.col) {
@@ -205,7 +217,8 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
   frame3 <- ttkframe(tt, relief="flat")
 
   frame3.chk.1.1 <- ttkcheckbutton(frame3, text="Match whole word only",
-                                   variable=match.word.var)
+                                   variable=match.word.var,
+                                   command=function() ToggleMatchWord())
   frame3.chk.2.1 <- ttkcheckbutton(frame3, text="Match case",
                                    variable=match.case.var)
   frame3.chk.3.1 <- ttkcheckbutton(frame3, text="Regular expressions:",

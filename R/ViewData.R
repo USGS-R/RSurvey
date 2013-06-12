@@ -203,7 +203,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tkxview(frame2.tbl, cell[1, 2] - 1L)
   }
 
-  # Goto data record
+  # Go to data record
   GotoRecord <- function() {
     rec <- as.character(tclvalue(record.var))
     if (is.na(rec))
@@ -384,6 +384,65 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     return(s)
   }
 
+  # Add edit to undo stack prior to cut command
+
+  RunPreCutCmd <- function() {
+    cells <- as.character(tkcurselection(frame2.tbl))
+    old <- vapply(cells,
+                  function(i) {
+                    paste(as.character(tkget(frame2.tbl, i)), collapse=" ")
+                  }, "")
+    new <- "NA"
+    e <- data.frame(time=Sys.time(), cell=cells, old=old, new=new,
+                    stringsAsFactors=FALSE)
+    undo.stack <<- rbind(undo.stack, e)
+    redo.stack <<- NULL
+
+    ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
+                   c(0, 0)))
+    dd[ij + 1L] <<- "NA"
+  }
+
+  # Add edit to undo stack prior to paste command
+
+  RunPrePasteCmd <- function() {
+    active.cell <- as.character(tkindex(frame2.tbl, "active"))
+    new <- try(scan(file="clipboard", what="character", sep="\n", quiet=TRUE),
+               silent=TRUE)
+    if (inherits(new, "try-error"))
+      return()
+
+    match.length <- attr(regexpr("\t", new, fixed=TRUE), "match.length")
+    is.multi.sel <- !all(match.length == match.length[1])
+
+    if (is.multi.sel) {
+      msg <- paste("Clipboard contains text string copied from multiple",
+                   "selections and is unsuitable for pasting.")
+      tkmessageBox(icon="error", message=msg, title="Paste Error", type="ok",
+                   parent=tt)
+      return()
+    }
+    tclServiceMode(FALSE)
+
+    ncells <- length(new)
+    active.ij <- as.integer(strsplit(active.cell, ",")[[1]])
+    ij <- cbind(active.ij[1]:(active.ij[1] + ncells - 1L),
+                rep(active.ij[2], ncells))
+    cells <- paste(ij[, 1], ij[, 2], sep=",")
+    old <- vapply(cells,
+                  function(i) {
+                    paste(as.character(tkget(frame2.tbl, i)), collapse=" ")
+                  }, "")
+    e <- data.frame(time=Sys.time(), cell=cells, old=old, new=new,
+                    stringsAsFactors=FALSE)
+    undo.stack <<- rbind(undo.stack, e)
+    redo.stack <<- NULL
+    dd[ij + 1L] <<- new
+
+    tclServiceMode(TRUE)
+    tcl("tk_tablePaste", frame2.tbl)
+  }
+
   ## Main program
 
   # Check if Tktable is loaded
@@ -535,9 +594,12 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
         command=function() tcl("tk_tableCopy", frame2.tbl))
   if (is.editable) {
     tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+x",
-          command=function() tcl("tk_tableCut", frame2.tbl))
+          command=function() {
+            RunPreCutCmd()
+            tcl("tk_tableCut", frame2.tbl)
+          })
     tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+v",
-          command=function() tcl("tk_tablePaste", frame2.tbl))
+          command=RunPrePasteCmd)
     tkadd(menu.edit, "separator")
     menu.edit.del <- tkmenu(tt, tearoff=0)
     tkadd(menu.edit.del, "command", label="Character after cursor",
@@ -774,7 +836,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   frame2.ysc <- tkscrollbar(frame2, orient="vertical",
                             command=function(...) tkyview(frame2.tbl, ...))
 
-  tcl(frame2.tbl,  "width", 0, col.0.width)
+  tcl(frame2.tbl, "width",  0, col.0.width)
   tcl(frame2.tbl, "height", 0, row.0.height)
   for (j in 1:n)
     tcl(frame2.tbl, "width", j, col.width[j])
@@ -811,7 +873,15 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tclServiceMode(TRUE)
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
+
+  tkbind(tt, "<Control-f>", function() CallSearch(is.replace=FALSE))
+  tkbind(tt, "<Control-r>", function() CallSearch(is.replace=TRUE))
+
   tkbind(frame2.tbl, "<Return>", "break")
+
+  tkbind(frame2.tbl, "<Control-x>", RunPreCutCmd)
+  tkbind(frame2.tbl, "<Control-v>",
+         paste(.Tcl.callback(RunPrePasteCmd), "break", sep="; "))
 
   tkbind(frame2.tbl, "<Control-z>", UndoEdit)
   tkbind(frame2.tbl, "<Control-y>", RedoEdit)
@@ -821,8 +891,8 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
            matched.cells <<- NULL
          })
   tkbind(frame1.ent.1.2, "<Return>", function() Find("next"))
-  tkbind(frame1.ent.1.2, "<Up>", function() Find("prev"))
-  tkbind(frame1.ent.1.2, "<Down>", function() Find("next"))
+  tkbind(frame1.ent.1.2, "<Up>",     function() Find("prev"))
+  tkbind(frame1.ent.1.2, "<Down>",   function() Find("next"))
   tkbind(frame1.ent.2.2, "<Return>", function() GotoRecord())
 
   # GUI control
