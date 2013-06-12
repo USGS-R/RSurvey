@@ -6,7 +6,7 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
   ## Additional functions (subroutines)
 
   # Return find and replace parameters
-  ReturnParameters <- function(is.all=FALSE) {
+  ReturnParameters <- function(is.replace.first=FALSE) {
     find.what <- as.character(tclvalue(tkget(frame1.txt.2.1, "1.0", "end-1c")))
     if (is.replace)
       replace.with <- as.character(tclvalue(tkget(frame1.txt.4.1, "1.0",
@@ -24,7 +24,8 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
     rtn <<- list(find.what=find.what, replace.with=replace.with,
                  is.match.word=is.match.word, is.match.case=is.match.case,
                  is.reg.exps=is.reg.exps, is.search.col=is.search.col,
-                 is.perl=is.perl, col.name=col.name)
+                 is.perl=is.perl, col.name=col.name,
+                 is.replace.first=is.replace.first)
     tclvalue(tt.done.var) <- 1
   }
 
@@ -110,9 +111,9 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
 
   if (is.replace) {
     frame0.but.1.2 <- ttkbutton(frame0, width=12, text="Replace First",
-                                command=function() ReturnParameters())
+                                command=function() ReturnParameters(TRUE))
     frame0.but.1.3 <- ttkbutton(frame0, width=12, text="Replace All",
-                                command=function() ReturnParameters(is.all=TRUE))
+                                command=function() ReturnParameters(FALSE))
     frame0.but.1.4 <- ttkbutton(frame0, width=12, text="Cancel",
                                 command=function() tclvalue(tt.done.var) <- 1)
   } else {

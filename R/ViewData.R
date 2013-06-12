@@ -60,23 +60,28 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
     if (is.replace & (!is.null(matched.cells) && nrow(matched.cells) > 0)) {
       tclServiceMode(FALSE)
+
+      if (ans$is.replace.first)
+        matched.cells <<- matched.cells[1, , drop=FALSE]
+
       cells <- paste0(matched.cells[, 1], ",", matched.cells[, 2])
 
       ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
                      c(0, 0)))
 
       old.values <- dd[ij + 1L]
-      new.values <- sub(ans$find.what, ans$replace.with, old.values,
-                        ignore.case=!ans$is.match.case, perl=ans$is.perl,
-                        fixed=!ans$is.reg.exps, useBytes=FALSE)
+      new.values <- gsub(ans$find.what, ans$replace.with, old.values,
+                         ignore.case=!ans$is.match.case, perl=ans$is.perl,
+                         fixed=!ans$is.reg.exps, useBytes=FALSE)
 
       dd[ij + 1L] <<- new.values
 
-      e <- data.frame(time=Sys.time(), cell=cells, old=old.values, new=new.values,
-                      stringsAsFactors=FALSE)
+      e <- data.frame(time=Sys.time(), cell=cells, old=old.values,
+                      new=new.values, stringsAsFactors=FALSE)
 
       undo.stack <<- rbind(undo.stack, e)
       redo.stack <<- NULL
+      matched.cells <<- NULL
 
       tkactivate(frame2.tbl, "0,0")
       tkselection.clear(frame2.tbl, "all")
@@ -84,6 +89,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       for (i in cells) {
         tcl(frame2.tbl, "clear", "cache", i)
       }
+
       tclServiceMode(TRUE)
     }
   }
@@ -116,7 +122,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       if (is.all.data)
         columns <- 2L:ncol(dd)
       else
-        columns <- which(col.names == search.defaults$col.name)[1]
+        columns <- which(col.names == search.defaults$col.name)[1] + 1L
 
       x <- as.character(t(dd[-1L, columns, drop=FALSE]))
       if (is.match.word) {
@@ -132,7 +138,10 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       }
 
       if (length(matched.idxs) == 0L) {
-        msg <- paste0("Search string \'", pattern, "\' not found.")
+        msg <- paste0("Search string \'", pattern, "\' not found")
+        if (!is.all.data)
+          msg <- paste0(msg, " in column \'", search.defaults$col.name, "\'")
+        msg <- paste0(msg, ".")
         tkmessageBox(icon="info", message=msg, title="Find", type="ok",
                      parent=tt)
         return()
@@ -145,7 +154,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
         j[j == 0L] <- n
       } else {
         i <- matched.idxs
-        j <- columns[1]
+        j <- columns[1] - 1L
       }
 
       matched.cells <<- cbind(i, j)
@@ -353,12 +362,12 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       new <- undo.stack.cell$new[m]
       if (inherits(obj, "POSIXt") &&
           is.na(strptime(new, "%Y-%m-%d %H:%M:%S"))) {
-        new <- "NA"
+        new <- "NaN"
       } else if (inherits(obj, c("numeric", "integer")) &&
                  is.na(suppressWarnings(as.numeric(new)))) {
-        new <- "NA"
+        new <- "NaN"
       } else if (inherits(obj, "logical") && is.na(as.logical(new))) {
-        new <- "NA"
+        new <- "NaN"
       }
 
       if (identical(old, new))

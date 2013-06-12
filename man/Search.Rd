@@ -37,6 +37,7 @@ A \code{list} with the following components:
   \item{is.perl}{logical; should Perl style regular expressions be used?.}
   \item{col.name}{character; variable (column) name which the search will be
     restricted to.}
+  \item{is.replace.first}{logical; replace only the first instance?}
 }
 
 \author{J.C. Fisher}
