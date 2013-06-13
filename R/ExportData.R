@@ -297,9 +297,8 @@ ExportData <- function(file.type="txt", parent=NULL) {
   if (!file.type %in% c("txt", "shp", "rda"))
     stop()
   if (file.type == "shp") {
-    is.pkg <- "rgdal" %in% .packages(all.available=TRUE) && require(rgdal)
-    if (!is.pkg)
-      stop("package rgdal required for shapefile support")
+    if (!require(rgdal))
+      stop()
     if (is.null(Data(c("vars", "x"))) | is.null(Data(c("vars", "y"))))
       stop("shapefiles require x,y coordinate values")
   }

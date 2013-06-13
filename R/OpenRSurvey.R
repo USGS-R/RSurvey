@@ -906,8 +906,13 @@ OpenRSurvey <- function() {
   menu.file.export <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.export, "command", label="Text file\u2026",
         command=function() WriteData("txt"))
-  tkadd(menu.file.export, "command", label="Shapefile\u2026",
+
+  is.pkg <- "rgdal" %in% .packages(all.available=TRUE) &&
+            require(rgdal, warn.conflicts=FALSE, quietly=TRUE)
+  state <- if (is.pkg) "normal" else "disabled"
+  tkadd(menu.file.export, "command", state=state, label="Shapefile\u2026",
         command=function() WriteData("shp"))
+
   tkadd(menu.file.export, "command", label="R data file\u2026",
         command=function() WriteData("rda"))
   tkadd(menu.file, "cascade", label="Export point data as",
@@ -1004,7 +1009,11 @@ OpenRSurvey <- function() {
           ConstructPolygon(type="l")
         })
   tkadd(menu.poly, "cascade", label="Build", menu=menu.poly.con)
-  tkadd(menu.poly, "command", label="Autocrop region\u2026",
+
+  is.pkg <- "tripack" %in% .packages(all.available=TRUE) &&
+            require(tripack, warn.conflicts=FALSE, quietly=TRUE)
+  state <- if (is.pkg) "normal" else "disabled"
+  tkadd(menu.poly, "command", state=state, label="Autocrop region\u2026",
         command=CallAutocropRegion)
 
   # Graph menu
@@ -1053,7 +1062,10 @@ OpenRSurvey <- function() {
           SetConfiguration(tt)
         })
 
-  tkadd(menu.graph, "command", label="Choose color palette\u2026",
+  is.pkg <- "colorspace" %in% .packages(all.available=TRUE) &&
+            require(colorspace, warn.conflicts=FALSE, quietly=TRUE)
+  state <- if (is.pkg) "normal" else "disabled"
+  tkadd(menu.graph, "command", state=state, label="Choose color palette\u2026",
         command=function() {
           pal <- colorspace::choose_palette(pal=Data("color.palette"),
                                             n=Data("nlevels"), parent=tt)

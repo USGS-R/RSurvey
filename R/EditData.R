@@ -628,7 +628,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tkadd(menu.edit, "separator")
   }
   tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c",
-        command=function() tcl("tk_tableCopy", frame2.tbl))
+        command=BypassCopyCmd)
   if (is.editable) {
     tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+x",
           command=function() {

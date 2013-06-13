@@ -23,7 +23,7 @@ Data <- local({
                   "rm.pnt.line"   = 0,
                   "grid.res"      = list(x=NA, y=NA),
                   "grid.mba"      = list(n=NA, m=NA, h=11),
-                  "color.palette" = colorspace::diverge_hcl
+                  "color.palette" = terrain.colors
               )
 
   ## Main program

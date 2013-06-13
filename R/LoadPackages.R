@@ -2,10 +2,10 @@
 # package is unavailable on the local computer an attempt is made to
 # acquire the package from CRAN using an existing network connection.
 
-LoadPackages <- function(repo="http://cran.r-project.org") {
+LoadPackages <- function() {
 
-  require.pkgs <- c("tcltk", "sp", "rgl", "MBA", "colorspace", "rgeos")
-  suggest.pkgs <- c("rgdal", "dichromat", "tripack")
+  require.pkgs <- c("tcltk", "sp", "rgl", "rgeos", "MBA")
+  suggest.pkgs <- c("rgdal", "tripack", "colorspace", "dichromat")
 
   pkgs <- c(require.pkgs, suggest.pkgs)
 
@@ -24,26 +24,100 @@ LoadPackages <- function(repo="http://cran.r-project.org") {
                  "", missing.pkgs.str, "",
                  "Some features will not be available without these packages.",
                  "Install these packages from CRAN?", sep="\n")
-    if (is.tcl)
-      ans <- as.character(tkmessageBox(icon="question", message=msg,
-                                       title="Missing Packages", type="yesno"))
-    else
+
+    if (is.tcl) {
+      is.install <- FALSE
+      repo <- NULL
+      InstallPackages <- function() {
+        is.install <<- TRUE
+        idx <- which(cran.mirrors$Name %in% as.character(tclvalue(repo.var)))
+        repo <<- cran.mirrors$URL[idx]
+        tclvalue(tt.done.var) <- 1
+      }
+
+      repo.var <- tclVar()
+      tt.done.var <- tclVar(0)
+
+      cran.mirrors <- getCRANmirrors(all=FALSE, local.only=FALSE)
+      default.repo <- getOption("repos")
+      idx <- which(sub("/$", "", cran.mirrors$URL) %in%
+                   sub("/$", "", default.repo["CRAN"]))
+      if (length(idx) > 0)
+        tclvalue(repo.var) <- cran.mirrors$Name[idx[1]]
+      else
+        tclvalue(repo.var) <- cran.mirrors$Name[1]
+
+      tclServiceMode(FALSE)
+
+      tt <- tktoplevel()
+      tktitle(tt) <- "Missing Packages"
+      tkwm.resizable(tt, 0, 0)
+
+      frame0 <- tkframe(tt, relief="flat")
+      frame0.but.2 <- ttkbutton(frame0, width=12, text="Yes", default="active",
+                                command=InstallPackages)
+      frame0.but.3 <- ttkbutton(frame0, width=12, text="No",
+                                command=function() tclvalue(tt.done.var) <- 1)
+      tkgrid("x", frame0.but.2, frame0.but.3, sticky="se", pady=10)
+      tkgrid.columnconfigure(frame0, 0, weight=1)
+      tkgrid.configure(frame0.but.2, padx=c(10, 2))
+      tkgrid.configure(frame0.but.3, padx=c(2, 10))
+      tkpack(frame0, fill="x", side="bottom", anchor="e")
+
+      frame1 <- tkframe(tt, relief="flat", background="white")
+      frame1.lab.1.1 <- ttklabel(frame1, text=msg, justify="left",
+                                 background="white")
+      frame1.lab.2.1 <- ttklabel(frame1, text="Set CRAN mirror",
+                                 justify="left", background="white")
+      frame1.box.2.2 <- ttkcombobox(frame1, state="readonly",
+                                    textvariable=repo.var,
+                                    values=cran.mirrors$Name)
+      tkgrid(frame1.lab.1.1, "x", pady=c(30, 20))
+      tkgrid(frame1.lab.2.1, frame1.box.2.2, pady=c(0, 30))
+      tkgrid.configure(frame1.lab.1.1, columnspan=2, padx=40)
+      tkgrid.configure(frame1.lab.2.1, padx=c(40, 4), sticky="e")
+      tkgrid.configure(frame1.box.2.2, padx=c(0, 40), sticky="w")
+      tkpack(frame1)
+
+      tclServiceMode(TRUE)
+
+      tkbind(tt, "<Return>", InstallPackages)
+      tkbind(tt, "<Key-space>", InstallPackages)
+
+      tkfocus(tt)
+      tkgrab(tt)
+      tkwait.variable(tt.done.var)
+
+      tclServiceMode(FALSE)
+      tkgrab.release(tt)
+      tkdestroy(tt)
+      tclServiceMode(TRUE)
+
+    } else {
       ans <- readline(paste(msg, " (yes/no)  "))
-    is.install <- tolower(substr(ans, 1, 1)) == "y"
+      is.install <- tolower(substr(ans, 1, 1)) == "y"
+      if (is.install) {
+        chooseCRANmirror(graphics=FALSE)
+        repo <- getOption("repos")
+      }
+    }
 
     if (is.install) {
       contriburl <- contrib.url(repos=repo, type=getOption("pkgType"))
       cran.pkgs <- available.packages(contriburl)
       if (!all(missing.pkgs %in% cran.pkgs))
-        repo <- NULL
+        stop("missing package(s) not available at CRAN mirror")
       install.packages(missing.pkgs, repos=repo, quiet=TRUE)
     }
   }
 
   for (pkg in pkgs) {
-    is.pkg <- require(pkg, character.only=TRUE, quietly=FALSE)
-    if (!is.pkg && pkg %in% require.pkgs)
-      stop(paste("package", pkg, "is required"))
+    is.suggested <- pkg %in% suggest.pkgs
+    is.pkg <- suppressWarnings(require(pkg, character.only=TRUE,
+                                       warn.conflicts=!is.suggested,
+                                       quietly=is.suggested))
+    if (!is.pkg && !is.suggested)
+      stop("package required")
   }
 
   # Additional Tcl/Tk packages

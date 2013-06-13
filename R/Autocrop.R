@@ -52,7 +52,8 @@ Autocrop <- function(mesh, max.len, max.itr=10000) {
 
   ## Main program
 
-  require(tripack)
+  if (!require(tripack))
+    stop()
 
   elem.build <- matrix(c(2, 3, 3, 1, 1, 2), nrow=3, ncol=2, byrow=TRUE,
                        dimnames=list(c("arc1", "arc2", "arc3"),
