@@ -65,7 +65,7 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
     items <- sprintf(paste0("%-", nmax, "s"), pkg.datasets[, "Item"])
     txt <- paste0("Data sets in package ", sQuote(pkg.name), ":\n")
     txt <- c(txt, paste(items, pkg.datasets[, "Title"], sep="  "))
-    ViewText(txt, read.only=TRUE, win.title="Summary of Data Sets",
+    EditText(txt, read.only=TRUE, win.title="Summary of Data Sets",
              is.fixed.width.font=TRUE, parent=tt)
     tkfocus(frame1.lst.2.1)
   }

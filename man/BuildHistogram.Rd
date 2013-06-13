@@ -33,7 +33,7 @@ Does not return any value.
 \author{J.C. Fisher}
 
 \seealso{
-\code{\link{hist}}, \code{\link{plot.histogram}}, \code{\link{ViewData}}
+\code{\link{hist}}, \code{\link{plot.histogram}}, \code{\link{EditData}}
 }
 
 \examples{

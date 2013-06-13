@@ -1,6 +1,6 @@
-# A GUI for viewing text.
+# A GUI for viewing or editing text.
 
-ViewText <- function(txt, read.only=FALSE, win.title="View Text",
+EditText <- function(txt, read.only=FALSE, win.title="View Text",
                      is.fixed.width.font=FALSE, parent=NULL) {
 
   ## Additional functions (subroutines)

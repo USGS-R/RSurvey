@@ -665,8 +665,8 @@ OpenRSurvey <- function() {
     }
   }
 
-  # Call view data
-  CallViewData <- function(read.only) {
+  # Call edit data
+  CallEditData <- function(read.only) {
     CallProcessData()
     cols <- Data("cols")
     vars <- Data("vars")
@@ -679,7 +679,7 @@ OpenRSurvey <- function() {
       col.names <- names(Data("data.pts"))
       nams <- vapply(col.names, function(i) lst[[i]], "")
       fmts <- vapply(col.names, function(i) cols[[vars[[i]]]]$format, "")
-      ViewData(Data("data.pts"), col.names=nams, col.formats=fmts,
+      EditData(Data("data.pts"), col.names=nams, col.formats=fmts,
                read.only=TRUE, win.title="Processed Data", parent=tt)
     } else {  # edit raw data
       if (is.null(Data("data.raw")))
@@ -687,7 +687,7 @@ OpenRSurvey <- function() {
       tkconfigure(tt, cursor="watch")
       idxs <- vapply(cols, function(i) i$index, 0L)
       nams <- vapply(cols, function(i) i$name, "")[!is.na(idxs)]
-      lst <- ViewData(Data("data.raw")[, na.omit(idxs)], col.names=nams,
+      lst <- EditData(Data("data.raw")[, na.omit(idxs)], col.names=nams,
                       read.only=FALSE, changelog=Data("changelog"),
                       win.title="Raw Data", parent=tt)
       if (!is.null(lst)) {
@@ -810,7 +810,7 @@ OpenRSurvey <- function() {
 
   # Edit comment
   EditComment <- function() {
-    txt <- ViewText(Data("comment"), win.title="Comment", parent=tt)
+    txt <- EditText(Data("comment"), win.title="Comment", parent=tt)
     if (is.null(txt))
       return()
     if (length(txt) == 0 || (length(txt) == 1 & txt == ""))
@@ -935,7 +935,7 @@ OpenRSurvey <- function() {
   tkadd(menu.edit, "command", label="Comment\u2026",
         command=EditComment)
   tkadd(menu.edit, "command", label="Edit raw data\u2026",
-        command=function() CallViewData(read.only=FALSE))
+        command=function() CallEditData(read.only=FALSE))
   tkadd(menu.edit, "command", label="Manage variables\u2026",
         command=CallManageVariables)
 
@@ -971,7 +971,7 @@ OpenRSurvey <- function() {
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="View processed data",
         command=function() {
-          CallViewData(read.only=TRUE)
+          CallEditData(read.only=TRUE)
         })
 
   # Polygon menu

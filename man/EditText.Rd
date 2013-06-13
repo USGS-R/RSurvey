@@ -1,15 +1,15 @@
-\name{ViewText}
+\name{EditText}
 
-\alias{ViewText}
+\alias{EditText}
 
-\title{View Text}
+\title{Edit Text}
 
 \description{
 A \acronym{GUI} for viewing and editing text.
 }
 
 \usage{
-ViewText(txt, read.only = FALSE, win.title = "View Text",
+EditText(txt, read.only = FALSE, win.title = "View Text",
          is.fixed.width.font = FALSE, parent = NULL)
 }
 
@@ -33,9 +33,9 @@ txt <- c("\"Hills cherish the ambition",
          "   differential equations\"",
          "",
          "        -Donald Hall")
-new.txt <- ViewText(txt)
+new.txt <- EditText(txt)
 
-ViewText(txt, read.only = TRUE)
+EditText(txt, read.only = TRUE)
 }}
 
 \keyword{misc}

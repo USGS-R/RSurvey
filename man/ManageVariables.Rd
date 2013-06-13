@@ -23,7 +23,7 @@ This \acronym{GUI} lets you:
 (1) specify the names and format of variables;
 (2) add new variables based on user defined functions,
     see \code{\link{EditFunction}};
-(3) display data in a spreadsheat, see \code{\link{ViewData}}; and
+(3) display data in a spreadsheat, see \code{\link{EditData}}; and
 (4) remove and (or) reorder variables in the data table.
 }
 

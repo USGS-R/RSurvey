@@ -376,7 +376,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
 
   # View data for selected variable
 
-  CallViewData <- function(type="dataframe") {
+  CallEditData <- function(type="dataframe") {
     idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0)
       return()
@@ -397,7 +397,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
                        stringsAsFactors=FALSE)
     row.names(d) <- row.names(Data("data.raw"))
 
-    ViewData(d, nams[idxs], fmts[idxs], read.only=TRUE, win.title="Raw Data",
+    EditData(d, nams[idxs], fmts[idxs], read.only=TRUE, win.title="Raw Data",
              parent=tt)
     tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
@@ -486,9 +486,9 @@ ManageVariables <- function(cols, vars, parent=NULL) {
   tkadd(menu.edit, "command", label="Delete", command=DeleteVar)
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="View data",
-        command=function() CallViewData("data"))
+        command=function() CallEditData("data"))
   tkadd(menu.edit, "command", label="View data frame",
-        command=function() CallViewData())
+        command=function() CallEditData())
 
   menu.arrange <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Arrange", menu=menu.arrange, underline=0)
@@ -520,7 +520,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
   frame0.but.4 <- ttkbutton(frame0, width=2, image=GetBitmapImage("bottom"),
                             command=function() Arrange("front"))
   frame0.but.5 <- ttkbutton(frame0, width=2, image=GetBitmapImage("view"),
-                            command=function() CallViewData("data"))
+                            command=function() CallEditData("data"))
   frame0.but.6 <- ttkbutton(frame0, width=2, image=GetBitmapImage("plus"),
                             command=SaveNewVar)
   frame0.but.7 <- ttkbutton(frame0, width=2, image=GetBitmapImage("delete"),

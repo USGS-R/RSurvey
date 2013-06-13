@@ -1,6 +1,6 @@
 # A GUI for viewing and editing table formatted data.
 
-ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
+EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                      changelog=NULL, win.title="View Data", parent=NULL) {
 
   ## Additional functions (subroutines)
@@ -333,7 +333,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       }
       txt <- apply(s, 1, function(i) paste(i, collapse="  "))
     }
-    ViewText(txt, read.only=TRUE, win.title="Changelog",
+    EditText(txt, read.only=TRUE, win.title="Changelog",
              is.fixed.width.font=TRUE, parent=tt)
     tkfocus(frame2.tbl)
   }
@@ -663,7 +663,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
 
   # Search menu
-
   menu.search <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Search", menu=menu.search, underline=0)
   tkadd(menu.search, "command", label="Find\u2026", accelerator="Ctrl+f",
@@ -799,7 +798,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
   frame0.but.1.4 <- ttkbutton(frame0, width=12, text="Help",
                             command=function() {
-                              print(help("ViewData", package="RSurvey"))
+                              print(help("EditData", package="RSurvey"))
                             })
   frame0.grp.1.5 <- ttksizegrip(frame0)
 

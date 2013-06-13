@@ -1,15 +1,15 @@
-\name{ViewData}
+\name{EditData}
 
-\alias{ViewData}
+\alias{EditData}
 
-\title{View Data}
+\title{Edit Data}
 
 \description{
 A \acronym{GUI} for viewing and editing table formatted data.
 }
 
 \usage{
-ViewData(d, col.names = NULL, col.formats = NULL, read.only = FALSE,
+EditData(d, col.names = NULL, col.formats = NULL, read.only = FALSE,
          changelog = NULL, win.title = "View Data", parent = NULL)
 }
 
@@ -50,15 +50,15 @@ V4 <- sample(V1 * pi, n)
 d <- data.frame(V1, V2, V3, V4)
 col.names <- c("Integers", "Letters", "DateTime", "Numeric")
 col.formats <- c("\%d", "\%s", "\%m/\%d/\%Y \%H:\%M", "")
-lst <- ViewData(d, col.names, col.formats, read.only = 1L)
+lst <- EditData(d, col.names, col.formats, read.only = 1L)
 str(lst)
 
 rownames(d) <- paste0(sample(LETTERS, n, replace = TRUE), 1:n)
-ViewData(d)
+EditData(d)
 
 colnames(d) <- NULL
 rownames(d) <- NULL
-ViewData(d)
+EditData(d)
 }}
 
 \keyword{misc}
