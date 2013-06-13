@@ -198,9 +198,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
     tkactivate(frame2.tbl, cell.str)
     tkselection.set(frame2.tbl, cell.str)
-
-    tkyview(frame2.tbl, cell[1, 1] - 1L)
-    tkxview(frame2.tbl, cell[1, 2] - 1L)
+    tksee(frame2.tbl, cell.str)
   }
 
   # Go to data record
@@ -210,10 +208,10 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       return()
     idx <- which(row.names %in% rec)
     if (length(idx) > 0) {
+      tkselection.clear(frame2.tbl, "all")
       tkyview(frame2.tbl, idx[1] - 1L)
       first.cell.str <- paste0(idx, ",0")
       last.cell.str <- paste(idx, n, sep=",")
-      tkselection.clear(frame2.tbl, "all")
       tkselection.set(frame2.tbl, first.cell.str, last.cell.str)
     } else {
       msg <- "Row name (or record number) not found."
@@ -403,9 +401,9 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     dd[ij + 1L] <<- "NA"
   }
 
-  # Add edit to undo stack prior to paste command
+  # Bypass paste command
 
-  RunPrePasteCmd <- function() {
+  BypassPasteCmd <- function() {
     active.cell <- as.character(tkindex(frame2.tbl, "active"))
     new <- try(scan(file="clipboard", what="character", sep="\n", quiet=TRUE),
                silent=TRUE)
@@ -441,6 +439,22 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
     tclServiceMode(TRUE)
     tcl("tk_tablePaste", frame2.tbl)
+  }
+
+  # Bypass return command
+  BypassReturnCmd <- function() {
+    active.cell <- as.character(tkindex(frame2.tbl, "active"))
+    old.ij <- as.integer(strsplit(active.cell, ",")[[1]])
+    i <- old.ij[1]
+    if (i > 0 & i < nrow(dd))
+      i <- i + 1L
+    j <- old.ij[2]
+    if (i == 0 | j == 0)
+      return()
+    new.ij <- paste(i, j, sep=",")
+    tkselection.clear(frame2.tbl, "all")
+    tkactivate(frame2.tbl, new.ij)
+    tksee(frame2.tbl, new.ij)
   }
 
   ## Main program
@@ -599,7 +613,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
             tcl("tk_tableCut", frame2.tbl)
           })
     tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+v",
-          command=RunPrePasteCmd)
+          command=BypassPasteCmd)
     tkadd(menu.edit, "separator")
     menu.edit.del <- tkmenu(tt, tearoff=0)
     tkadd(menu.edit.del, "command", label="Character after cursor",
@@ -877,11 +891,12 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkbind(tt, "<Control-f>", function() CallSearch(is.replace=FALSE))
   tkbind(tt, "<Control-r>", function() CallSearch(is.replace=TRUE))
 
-  tkbind(frame2.tbl, "<Return>", "break")
-
   tkbind(frame2.tbl, "<Control-x>", RunPreCutCmd)
   tkbind(frame2.tbl, "<Control-v>",
-         paste(.Tcl.callback(RunPrePasteCmd), "break", sep="; "))
+         paste(.Tcl.callback(BypassPasteCmd), "break", sep="; "))
+
+  tkbind(frame2.tbl, "<Return>",
+         paste(.Tcl.callback(BypassReturnCmd), "break", sep="; "))
 
   tkbind(frame2.tbl, "<Control-z>", UndoEdit)
   tkbind(frame2.tbl, "<Control-y>", RedoEdit)
