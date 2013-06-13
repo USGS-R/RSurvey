@@ -208,6 +208,8 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       return()
     idx <- which(row.names %in% rec)
     if (length(idx) > 0) {
+      if (is.editable)
+        tkactivate(frame2.tbl, paste0(idx, ",1"))
       tkselection.clear(frame2.tbl, "all")
       tkyview(frame2.tbl, idx[1] - 1L)
       first.cell.str <- paste0(idx, ",0")
@@ -383,7 +385,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
 
   # Add edit to undo stack prior to cut command
-
   RunPreCutCmd <- function() {
     cells <- as.character(tkcurselection(frame2.tbl))
     old <- vapply(cells,
@@ -395,7 +396,6 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                     stringsAsFactors=FALSE)
     undo.stack <<- rbind(undo.stack, e)
     redo.stack <<- NULL
-
     ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
                    c(0, 0)))
     dd[ij + 1L] <<- "NA"
@@ -416,7 +416,7 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     if (is.multi.sel) {
       msg <- paste("Clipboard contains text string copied from multiple",
                    "selections and is unsuitable for pasting.")
-      tkmessageBox(icon="error", message=msg, title="Paste Error", type="ok",
+      tkmessageBox(icon="info", message=msg, title="Paste", type="ok",
                    parent=tt)
       return()
     }
@@ -443,6 +443,8 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   # Bypass return command
   BypassReturnCmd <- function() {
+    if (!is.editable)
+      return()
     active.cell <- as.character(tkindex(frame2.tbl, "active"))
     old.ij <- as.integer(strsplit(active.cell, ",")[[1]])
     i <- old.ij[1]
@@ -455,6 +457,27 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tkselection.clear(frame2.tbl, "all")
     tkactivate(frame2.tbl, new.ij)
     tksee(frame2.tbl, new.ij)
+  }
+
+  # Bypass copy command
+  BypassCopyCmd <- function() {
+    cells <- as.character(tkcurselection(frame2.tbl))
+    ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
+                   c(0, 0)))
+    ilim <- range(ij[, 1])
+    jlim <- range(ij[, 2])
+    ni <- ilim[2] - ilim[1] + 1L
+    nj <- jlim[2] - jlim[1] + 1L
+    ij.all <- cbind(rep(ilim[1]:ilim[2], nj), rep(jlim[1]:jlim[2], each=ni))
+    cells.all <- paste(ij.all[, 1], ij.all[, 2], sep=",")
+    is.multi.sel <- !all(cells.all %in% cells)
+    if (is.multi.sel) {
+      msg <- "The copy command cannot be used on multiple selections."
+      tkmessageBox(icon="info", message=msg, title="Copy", type="ok",
+                   parent=tt)
+      return()
+    }
+    tcl("tk_tableCopy", frame2.tbl)
   }
 
   ## Main program
@@ -894,12 +917,19 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkbind(frame2.tbl, "<Control-x>", RunPreCutCmd)
   tkbind(frame2.tbl, "<Control-v>",
          paste(.Tcl.callback(BypassPasteCmd), "break", sep="; "))
-
   tkbind(frame2.tbl, "<Return>",
          paste(.Tcl.callback(BypassReturnCmd), "break", sep="; "))
-
+  tkbind(frame2.tbl, "<Control-c>",
+         paste(.Tcl.callback(BypassCopyCmd), "break", sep="; "))
   tkbind(frame2.tbl, "<Control-z>", UndoEdit)
   tkbind(frame2.tbl, "<Control-y>", RedoEdit)
+
+  D <- ""  # force 'D' to be something other than a function
+  tkbind(frame2.tbl, "<MouseWheel>",
+         function(D) {
+           number <- as.integer((-as.integer(D) / 120)^3)
+           tkyview(frame2.tbl, "scroll", number, "units")
+         })
 
   tkbind(frame1.ent.1.2, "<KeyRelease>",
          function() {

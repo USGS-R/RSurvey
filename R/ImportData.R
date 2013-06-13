@@ -812,6 +812,13 @@ ImportData <- function(parent=NULL) {
 
   tkbind(frame4.tbl, "<<Paste>>", PasteData)
 
+  D <- ""  # force 'D' to be something other than a function
+  tkbind(frame4.tbl, "<MouseWheel>",
+         function(D) {
+           number <- as.integer((-as.integer(D) / 120)^3)
+           tkyview(frame4.tbl, "scroll", number, "units")
+         })
+
   # GUI control
 
   RebuildTable()
