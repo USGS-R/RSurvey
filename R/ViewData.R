@@ -626,18 +626,18 @@ ViewData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
 
   # Search menu
-  if (is.editable) {
-    menu.search <- tkmenu(tt, tearoff=0, relief="flat")
-    tkadd(top.menu, "cascade", label="Search", menu=menu.search, underline=0)
-    tkadd(menu.search, "command", label="Find\u2026", accelerator="Ctrl+f",
-          command=function() CallSearch())
-    tkadd(menu.search, "command", label="Find next",
-          command=function() Find("next"))
-    tkadd(menu.search, "command", label="Find previous",
-          command=function() Find("prev"))
+
+  menu.search <- tkmenu(tt, tearoff=0, relief="flat")
+  tkadd(top.menu, "cascade", label="Search", menu=menu.search, underline=0)
+  tkadd(menu.search, "command", label="Find\u2026", accelerator="Ctrl+f",
+        command=function() CallSearch())
+  tkadd(menu.search, "command", label="Find next",
+        command=function() Find("next"))
+  tkadd(menu.search, "command", label="Find previous",
+        command=function() Find("prev"))
+  if (is.editable)
     tkadd(menu.search, "command", label="Replace\u2026", accelerator="Ctrl+r",
           command=function() CallSearch(is.replace=TRUE))
-  }
 
   # Selection menu
   menu.sel <- tkmenu(tt, tearoff=0, relief="flat")
