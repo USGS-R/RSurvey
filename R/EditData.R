@@ -867,10 +867,10 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                          xscrollcommand=function(...) tkset(frame2.xsc, ...),
                          yscrollcommand=function(...) tkset(frame2.ysc, ...))
 
-  frame2.xsc <- tkscrollbar(frame2, orient="horizontal",
-                            command=function(...) tkxview(frame2.tbl, ...))
-  frame2.ysc <- tkscrollbar(frame2, orient="vertical",
-                            command=function(...) tkyview(frame2.tbl, ...))
+  frame2.xsc <- ttkscrollbar(frame2, orient="horizontal",
+                             command=function(...) tkxview(frame2.tbl, ...))
+  frame2.ysc <- ttkscrollbar(frame2, orient="vertical",
+                             command=function(...) tkyview(frame2.tbl, ...))
 
   tcl(frame2.tbl, "width",  0, col.0.width)
   tcl(frame2.tbl, "height", 0, row.0.height)

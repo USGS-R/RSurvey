@@ -742,10 +742,10 @@ ImportData <- function(parent=NULL) {
                          xscrollcommand=function(...) tkset(frame4.xsc, ...),
                          yscrollcommand=function(...) tkset(frame4.ysc, ...))
 
-  frame4.xsc <- tkscrollbar(frame4, orient="horizontal",
-                            command=function(...) tkxview(frame4.tbl, ...))
-  frame4.ysc <- tkscrollbar(frame4, orient="vertical",
-                            command=function(...) tkyview(frame4.tbl, ...))
+  frame4.xsc <- ttkscrollbar(frame4, orient="horizontal",
+                             command=function(...) tkxview(frame4.tbl, ...))
+  frame4.ysc <- ttkscrollbar(frame4, orient="vertical",
+                             command=function(...) tkyview(frame4.tbl, ...))
 
   tkgrid(frame4.tbl, frame4.ysc)
   tkgrid(frame4.xsc, "x")
