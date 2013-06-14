@@ -610,7 +610,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   }
   frame2.lab.1.2 <- ttklabel(frame2, text=txt, foreground="#A40802")
 
-  frame2.txt.2.1 <- tktext(frame2, bg="white", font="TkTextFont",
+  frame2.txt.2.1 <- tktext(frame2, bg="white", font="TkFixedFont",
                            padx=2, pady=2, width=50, height=12, undo=1,
                            autoseparators=1, wrap="none", foreground="black",
                            relief="flat",

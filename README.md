@@ -9,7 +9,7 @@ polygon clipping. A graphical user interface (GUI) is provided and
 requires R operate as an SDI application, using multiple
 top-level windows for the console, graphics, and pager.
 
-The set of standards used for coding RSurvey is documented in
+The set of standards used for coding **RSurvey** is documented in
 [Google's R Style Guide](http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html "Google's R Style Guide").
 
 Install
@@ -30,6 +30,8 @@ In addition to the required packages, **RSurvey** uses functions in a number of
 recommended packages:
 [**rgdal**](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal")
 for shapefile support,
+[**colorspace**](http://cran.r-project.org/web/packages/colorspace/index.html "colorspace")
+for color palettes based on HCL colors,
 [**dichromat**](http://cran.r-project.org/web/packages/dichromat/index.html "dichromat")
 for color-blind safe palettes, and
 [**tripack**](http://cran.r-project.org/web/packages/tripack/index.html "tripack")
@@ -48,7 +50,7 @@ A call to `tclRequire` will indicate whether tktable is available for use:
 Run
 ---
 
-Load **RSurvey** in the current R session and activate the main GUI:
+Load **RSurvey** in the current R session to activate the main GUI:
 
     > library(RSurvey)
 

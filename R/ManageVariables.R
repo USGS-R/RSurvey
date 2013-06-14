@@ -601,7 +601,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
   frame2.txt.4.2 <- tktext(frame2, padx=2, pady=2, width=45, height=6,
                            undo=1, wrap="none", foreground="black",
                            background="#ebebe4", borderwidth=1,
-                           font="TkTextFont")
+                           font="TkFixedFont")
 
   frame2.but.2.3 <- ttkbutton(frame2, text="Edit", width=5,
                               command=CallFormat)
