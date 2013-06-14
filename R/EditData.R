@@ -896,7 +896,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tcl(frame2.tbl, "tag", "col", "rowtitles", 0)
 
   tktag.configure(frame2.tbl, "coltitles", justify="center", anchor="n")
-  tktag.configure(frame2.tbl, "rowtitles", justify="right", anchor="ne")
+  tktag.configure(frame2.tbl, "rowtitles", justify="center", anchor="n")
   tktag.configure(frame2.tbl, "disabledcol", state="disabled", anchor="ne")
 
   tkgrid.columnconfigure(frame2, 0, weight=1)
