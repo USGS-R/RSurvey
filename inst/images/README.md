@@ -9,13 +9,13 @@ Image files in this directory are covered by the following public licenses:
 
 - - -
 
-**Images:** axes.gif, polygon.gif, pch.gif  
+**Image:** axes.gif, polygon.gif, pch.gif  
 **Designer:** Jason C. Fisher  
 **License:** GNU General Public License ([GPL][gpl])
 
 - - -
 
-**Images:** config.gif, save.gif  
+**Image:** config.gif, save.gif  
 **Icon set:** Crystal Clear  
 **Designer:** Everaldo Coelho  
 **Site:** <http://www.everaldo.com>  
@@ -24,7 +24,7 @@ Image files in this directory are covered by the following public licenses:
 
 - - -
 
-**Images:** import.gif  
+**Image:** import.gif  
 **Designer:** David Vignoni  
 **Icon set:** Nuvola  
 **Site:** <http://www.icon-king.com>  
@@ -50,7 +50,7 @@ Image files in this directory are covered by the following public licenses:
 
 - - -
 
-**Images:** rlogo.gif (remixed)  
+**Image:** rlogo.gif (remixed)  
 **Designer:** Tobias Wolf  
 **Site:** <http://developer.r-project.org/Logo>  
 **Contact:** <towolf@gmail.com></code>  
