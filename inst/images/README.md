@@ -5,7 +5,7 @@ Image files in this directory are covered by the following public licenses:
 
 [gpl]: http://www.gnu.org/copyleft/gpl.html "GPL"
 [lgpl]: http://www.gnu.org/licenses/lgpl.html "LGPL"
-[cc]: http://creativecommons.org/licenses/by-nc/3.0 "Creative Commons"
+[cc]: http://creativecommons.org/ "Creative Commons"
 
 - - -
 
@@ -47,3 +47,11 @@ Image files in this directory are covered by the following public licenses:
 **Designer:** Gnome Project  
 **Site:** <http://art.gnome.org/themes/icon>  
 **License:** [GPL][gpl]
+
+- - -
+
+**Images:** rlogo.gif (remixed)  
+**Designer:** Tobias Wolf  
+**Site:** <http://developer.r-project.org/Logo>  
+**Contact:** <towolf@gmail.com></code>  
+**License:** Creative Commons Attribution ShareAlike License ([cc])

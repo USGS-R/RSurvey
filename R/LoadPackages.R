@@ -57,6 +57,7 @@ LoadPackages <- function() {
                  sub("/$", "", default.repo["CRAN"]))
     idx <- if (length(idx) > 0) idx[1] else 1
     repo.var <- tclVar(cran.mirrors$Name[idx])
+    rlogo.var <- tclVar()
     tt.done.var <- tclVar(0)
 
     # Open GUI
@@ -79,22 +80,28 @@ LoadPackages <- function() {
 
     # Frame 1, message and mirror selection
     frame1 <- tkframe(tt, relief="flat", background="white")
+    if ("RSurvey" %in% .packages(all.available=TRUE))
+      f <- system.file("images/rlogo.gif", package="RSurvey")
+    else
+      f <- file.path(getwd(), "inst", "images", "rlogo.gif")
+    tkimage.create("photo", rlogo.var, format="GIF", file=f)
     txt <- paste("The following package(s) used by RSurvey are missing:\n",
                  paste(paste0("\'", missing.pkgs, "\'"), collapse=", "), "",
                  "Some features will not be available without these packages.",
                  "Install these packages from CRAN?", sep="\n")
-    frame1.lab.1.1 <- ttklabel(frame1, text=txt, justify="left",
+    frame1.lab.1.1 <- ttklabel(frame1, image=rlogo.var, background="white")
+    frame1.lab.1.2 <- ttklabel(frame1, text=txt, justify="left",
                                background="white")
-    frame1.lab.2.1 <- ttklabel(frame1, text="Set CRAN mirror",
+    frame1.lab.2.2 <- ttklabel(frame1, text="Set CRAN mirror",
                                justify="left", background="white")
-    frame1.box.2.2 <- ttkcombobox(frame1, state="readonly",
-                                  textvariable=repo.var,
-                                  values=cran.mirrors$Name)
-    tkgrid(frame1.lab.1.1, "x", pady=c(30, 20))
-    tkgrid(frame1.lab.2.1, frame1.box.2.2, pady=c(0, 30))
-    tkgrid.configure(frame1.lab.1.1, columnspan=2, padx=40)
-    tkgrid.configure(frame1.lab.2.1, padx=c(40, 4), sticky="e")
-    tkgrid.configure(frame1.box.2.2, padx=c(0, 40), sticky="w")
+    frame1.box.2.3 <- ttkcombobox(frame1, textvariable=repo.var,
+                                  values=cran.mirrors$Name, state="readonly")
+    tkgrid(frame1.lab.1.1, frame1.lab.1.2, "x", pady=c(30, 20))
+    tkgrid("x", frame1.lab.2.2, frame1.box.2.3, pady=c( 0, 30))
+    tkgrid.configure(frame1.lab.1.1, padx=c(40, 20), sticky="n")
+    tkgrid.configure(frame1.lab.1.2, padx=c( 0, 40), columnspan=2)
+    tkgrid.configure(frame1.lab.2.2, padx=c( 0,  4), sticky="e")
+    tkgrid.configure(frame1.box.2.3, padx=c( 0, 40), sticky="w")
     tkpack(frame1)
 
     # Binds events

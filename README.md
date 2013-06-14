@@ -35,7 +35,7 @@ for color palettes based on HCL colors,
 [**dichromat**](http://cran.r-project.org/web/packages/dichromat/index.html "dichromat")
 for color-blind safe palettes, and
 [**tripack**](http://cran.r-project.org/web/packages/tripack/index.html "tripack")
-for auto-cropping. Note that the licence for **tripack** explicitly forbids
+for auto-cropping. Note that the license for **tripack** explicitly forbids
 commercial use. If any of these recommended packages are missing, **RSurvey**
 will offer to install them when it first starts up.
 
