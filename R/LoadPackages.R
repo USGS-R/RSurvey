@@ -29,7 +29,6 @@ LoadPackages <- function() {
       if (tolower(substr(ans, 1, 1)) == "y")
         return()
     }
-
     if (length(available.pkgs) > 0) {
       tkconfigure(tt, cursor="watch")
       tclServiceMode(FALSE)
@@ -43,11 +42,11 @@ LoadPackages <- function() {
 
   ## Main program
 
-  require.pkgs <- c("tcltk", "sp", "rgeos", "rgl", "MBA")
-  suggest.pkgs <- c("rgdal", "tripack", "colorspace", "dichromat")
-
   if (!require("tcltk"))
     stop("tcltk required")
+
+  require.pkgs <- c("sp", "rgeos", "rgl", "MBA")
+  suggest.pkgs <- c("rgdal", "tripack", "colorspace", "dichromat")
 
   pkgs <- c(require.pkgs, suggest.pkgs)
   is.pkg.missing <- !pkgs %in% .packages(all.available=TRUE)
