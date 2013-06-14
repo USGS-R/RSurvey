@@ -6,19 +6,16 @@ LoadPackages <- function() {
 
   ## Additional functions (subroutines)
 
-  # Install missing packages
-
+  # Install missing packages from CRAN mirror
   InstallPackages <- function() {
+    tkconfigure(tt, cursor="watch")
     idx <- which(cran.mirrors$Name %in% as.character(tclvalue(repo.var)))
     repo <- cran.mirrors$URL[idx]
-
     contriburl <- contrib.url(repos=repo, type=getOption("pkgType"))
     cran.pkgs <- available.packages(contriburl)
-
     idxs <- which(missing.pkgs %in% cran.pkgs)
-    available.pkgs   <- missing.pkgs[idxs]
+    available.pkgs <- missing.pkgs[idxs]
     unavailable.pkgs <- missing.pkgs[!idxs]
-
     if (length(unavailable.pkgs) > 0) {
       msg <- paste0("The following package(s) are unavailable on this ",
                     "CRAN mirror:\n\n",
@@ -26,17 +23,16 @@ LoadPackages <- function() {
                     "\n\nWould you like to try a different CRAN mirror?")
       ans <- tkmessageBox(icon="question", message=msg, title="CRAN",
                           type="yesno", parent=tt)
-      if (tolower(substr(ans, 1, 1)) == "y")
+      if (tolower(substr(ans, 1, 1)) == "y") {
+        tkconfigure(tt, cursor="arrow")
         return()
+      }
     }
     if (length(available.pkgs) > 0) {
-      tkconfigure(tt, cursor="watch")
       tclServiceMode(FALSE)
       install.packages(available.pkgs, repos=repo, quiet=TRUE)
       tclServiceMode(TRUE)
-      tkconfigure(tt, cursor="arrow")
     }
-
     tclvalue(tt.done.var) <- 1
   }
 
@@ -45,35 +41,31 @@ LoadPackages <- function() {
   if (!require("tcltk"))
     stop("tcltk required")
 
+  # Establish required and suggested packages
   require.pkgs <- c("sp", "rgeos", "rgl", "MBA")
   suggest.pkgs <- c("rgdal", "tripack", "colorspace", "dichromat")
-
   pkgs <- c(require.pkgs, suggest.pkgs)
-  is.pkg.missing <- !pkgs %in% .packages(all.available=TRUE)
 
+  # Account for missing packages
+
+  is.pkg.missing <- !pkgs %in% .packages(all.available=TRUE)
   if (any(is.pkg.missing)) {
     missing.pkgs <- pkgs[is.pkg.missing]
-    msg <- paste("The following package(s) used by RSurvey are missing:\n",
-                 paste(paste0("\'", missing.pkgs, "\'"), collapse=", "), "",
-                 "Some features will not be available without these packages.",
-                 "Install these packages from CRAN?", sep="\n")
-
-    repo.var    <- tclVar()
-    tt.done.var <- tclVar(0)
-
     cran.mirrors <- getCRANmirrors(all=FALSE, local.only=FALSE)
     default.repo <- getOption("repos")
     idx <- which(sub("/$", "", cran.mirrors$URL) %in%
                  sub("/$", "", default.repo["CRAN"]))
     idx <- if (length(idx) > 0) idx[1] else 1
-    tclvalue(repo.var) <- cran.mirrors$Name[idx]
+    repo.var <- tclVar(cran.mirrors$Name[idx])
+    tt.done.var <- tclVar(0)
 
+    # Open GUI
     tclServiceMode(FALSE)
-
     tt <- tktoplevel()
     tktitle(tt) <- "Missing Packages"
     tkwm.resizable(tt, 0, 0)
 
+    # Frame 0, yes and no buttons
     frame0 <- tkframe(tt, relief="flat")
     frame0.but.2 <- ttkbutton(frame0, width=12, text="Yes", default="active",
                               command=InstallPackages)
@@ -85,8 +77,13 @@ LoadPackages <- function() {
     tkgrid.configure(frame0.but.3, padx=c(2, 10))
     tkpack(frame0, fill="x", side="bottom", anchor="e")
 
+    # Frame 1, message and mirror selection
     frame1 <- tkframe(tt, relief="flat", background="white")
-    frame1.lab.1.1 <- ttklabel(frame1, text=msg, justify="left",
+    txt <- paste("The following package(s) used by RSurvey are missing:\n",
+                 paste(paste0("\'", missing.pkgs, "\'"), collapse=", "), "",
+                 "Some features will not be available without these packages.",
+                 "Install these packages from CRAN?", sep="\n")
+    frame1.lab.1.1 <- ttklabel(frame1, text=txt, justify="left",
                                background="white")
     frame1.lab.2.1 <- ttklabel(frame1, text="Set CRAN mirror",
                                justify="left", background="white")
@@ -100,15 +97,15 @@ LoadPackages <- function() {
     tkgrid.configure(frame1.box.2.2, padx=c(0, 40), sticky="w")
     tkpack(frame1)
 
+    # Binds events
     tclServiceMode(TRUE)
-
     tkbind(tt, "<Return>", InstallPackages)
     tkbind(tt, "<Key-space>", InstallPackages)
 
+    # GUI control
     tkfocus(tt)
     tkgrab(tt)
     tkwait.variable(tt.done.var)
-
     tclServiceMode(FALSE)
     tkgrab.release(tt)
     tkdestroy(tt)
@@ -118,18 +115,18 @@ LoadPackages <- function() {
   # Load packages into current session
   for (pkg in pkgs) {
     is.pkg.suggested <- pkg %in% suggest.pkgs
-    is.pkg <- suppressWarnings(require(pkg, character.only=TRUE,
-                                       warn.conflicts=!is.pkg.suggested,
-                                       quietly=is.pkg.suggested))
-    if (!is.pkg) {
-      if (is.pkg.suggested)
-        warning(paste("unable to load the suggested package:", pkg))
-      else
-        stop(paste("unable to load the required package:", pkg))
-    }
+    is.pkg.loaded <- suppressWarnings(require(pkg, character.only=TRUE,
+                                      warn.conflicts=!is.pkg.suggested,
+                                      quietly=is.pkg.suggested))
+    if (is.pkg.loaded)
+      next
+    if (is.pkg.suggested)
+      warning(paste("unable to load suggested package:", pkg))
+    else
+      stop(paste("unable to load required package:", pkg))
   }
 
-  # Additional Tcl/Tk packages
+  # Warn if Tktable is unavailable
   tcl.pkg <- tryCatch(tcl("package", "require", "Tktable"), error=identity)
   if (inherits(tcl.pkg, "error")) {
     msg <- paste("Tcl package Tktable is missing and is strongly recommended",
