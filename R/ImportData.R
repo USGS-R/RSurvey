@@ -823,8 +823,8 @@ ImportData <- function(parent=NULL) {
 
   RebuildTable()
 
-  tkgrab(tt)
   tkfocus(tt)
+  tkgrab(tt)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

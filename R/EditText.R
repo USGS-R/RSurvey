@@ -260,8 +260,8 @@ EditText <- function(txt, read.only=FALSE, win.title="View Text",
 
   # GUI control
 
-  tkgrab(tt)
   tkfocus(frame1.txt.1.1)
+  tkgrab(tt)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

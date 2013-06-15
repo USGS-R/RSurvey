@@ -120,10 +120,6 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
   tclServiceMode(FALSE)
   tkgrab.release(tt)
   tkdestroy(tt)
-
-  if (!is.null(parent))
-    tkfocus(parent)
-
   tclServiceMode(TRUE)
 
   return(rtn.names)

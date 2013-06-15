@@ -385,8 +385,8 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
 
   SelectPackageType()
 
-  tkgrab(tt)
   tkfocus(frame1.lst.2.1)
+  tkgrab(tt)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

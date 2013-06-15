@@ -638,12 +638,10 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   # GUI control
 
   ScaleCanvas()
+  PlotPolygon()
 
   tkfocus(tt)
   tkgrab(tt)
-
-  PlotPolygon()
-
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

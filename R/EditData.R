@@ -941,11 +941,12 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   # GUI control
 
-  tkgrab(tt)
   tkfocus(frame2.tbl)
   tkactivate(frame2.tbl, "origin")
   tkselection.set(frame2.tbl, "active")
   tksee(frame2.tbl, "active")
+
+  tkgrab(tt)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

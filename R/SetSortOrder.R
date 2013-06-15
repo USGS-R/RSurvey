@@ -144,10 +144,6 @@ SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
   tclServiceMode(FALSE)
   tkgrab.release(tt)
   tkdestroy(tt)
-
-  if (!is.null(parent))
-    tkfocus(parent)
-
   tclServiceMode(TRUE)
 
   return(rtn)

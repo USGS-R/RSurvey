@@ -254,8 +254,8 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
   ToggleRegExps()
   ToggleSearchCol()
 
-  tkgrab(tt)
   tkfocus(frame1.txt.2.1)
+  tkgrab(tt)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

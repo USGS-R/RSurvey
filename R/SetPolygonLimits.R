@@ -116,10 +116,6 @@ SetPolygonLimits <- function(poly.names=NULL, data.poly=NULL, crop.poly=NULL,
   tclServiceMode(FALSE)
   tkgrab.release(tt)
   tkdestroy(tt)
-
-  if (!is.null(parent))
-    tkfocus(parent)
-
   tclServiceMode(TRUE)
 
   return(rtn)

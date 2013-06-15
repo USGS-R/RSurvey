@@ -711,8 +711,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   # GUI control
 
   tkfocus(frame2.txt.2.1)
-  tkgrab(tt)
 
+  tkgrab(tt)
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

@@ -200,7 +200,6 @@ ChoosePch <- function(pch=NA, parent=NULL) {
 
   tkfocus(tt)
   tkgrab(tt)
-
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)

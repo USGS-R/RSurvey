@@ -1237,7 +1237,7 @@ OpenRSurvey <- function() {
 
   frame3 <- tkframe(tt, relief="flat", padx=0, pady=0)
 
-  frame3.lab.1.1 <- ttklabel(frame3, text="View:")
+  frame3.lab.1.1 <- ttklabel(frame3, text="View")
   frame3.rad.1.2 <- ttkradiobutton(frame3, variable=view.var, value="layout",
                                    text="layout")
   frame3.rad.1.3 <- ttkradiobutton(frame3, variable=view.var, value="data",
