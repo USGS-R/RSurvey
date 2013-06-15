@@ -609,10 +609,10 @@ ImportData <- function(parent=NULL) {
                           text="Header lines")
 
   txt <- paste("Conversion specification formats of the variables,",
-               "for example, '%10.6f' or '%Y-%m-%d %H:%M'.")
+               "for example, '%10.6f' or '%Y-%m-%d %H:%M'")
   frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=conv.fmts.var,
                                    command=SetTags, text=txt)
-  txt <- "Names of the variables, that is, column names in the data table."
+  txt <- "Names of the variables, that is, column names in the data table"
   frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=col.names.var,
                                    command=SetTags, text=txt)
 

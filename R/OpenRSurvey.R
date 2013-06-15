@@ -865,6 +865,7 @@ OpenRSurvey <- function() {
   config.var  <- tclVar()
   axes.var    <- tclVar()
   view.var    <- tclVar("layout")
+  space.var   <- tclVar("2d")
   close.var   <- tclVar()
   new.win.var <- tclVar(0)
   tt.done.var <- tclVar(0)
@@ -1021,7 +1022,7 @@ OpenRSurvey <- function() {
   menu.graph <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
 
-  tkadd(menu.graph, "command", label="Histogram\u2026",
+  tkadd(menu.graph, "command", label="Plot histogram\u2026",
         command=function() {
           CallProcessData()
           if (is.null(Data("data.pts")))
@@ -1033,16 +1034,16 @@ OpenRSurvey <- function() {
           var.names <- vapply(names(d), function(i) lst[[i]], "")
           BuildHistogram(d, var.names=var.names, parent=tt)
         })
-  tkadd(menu.graph, "command", label="Scatterplot",
+  tkadd(menu.graph, "command", label="Plot scatterplot",
         command=function() {
           CallPlot2d(type="p")
         })
-  tkadd(menu.graph, "command", label="2D interpolated map",
+  tkadd(menu.graph, "command", label="Plot 2D-interpolated map",
         command=function() {
           type <- if (Data("img.contour")) "g" else "l"
           CallPlot2d(type=type)
         })
-  tkadd(menu.graph, "command", label="3D interpolated map",
+  tkadd(menu.graph, "command", label="Plot 3D-interpolated map",
         command=CallPlot3d)
 
   tkadd(menu.graph, "separator")
@@ -1211,7 +1212,7 @@ OpenRSurvey <- function() {
   # Frame 2, plotting buttons
 
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Graph variables")
+                          text="Plot variables")
 
   frame2.but.1.1 <- ttkbutton(frame2, width=10, text="Scatter",
                               command=function() {
@@ -1231,8 +1232,6 @@ OpenRSurvey <- function() {
 
   tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE, padx=10, pady=0)
 
-
-
   # Frame 3, graphics device control
 
   frame3 <- tkframe(tt, relief="flat", padx=0, pady=0)
@@ -1242,14 +1241,20 @@ OpenRSurvey <- function() {
                                    text="layout")
   frame3.rad.1.3 <- ttkradiobutton(frame3, variable=view.var, value="data",
                                    text="data")
-  frame3.chk.1.4 <- ttkcheckbutton(frame3, text="New window",
-                                   variable=new.win.var)
-  tkgrid(frame3.lab.1.1, frame3.rad.1.2, frame3.rad.1.3, frame3.chk.1.4)
+  frame3.rad.1.4 <- ttkradiobutton(frame3, variable=space.var, value="2d",
+                                   text="2D")
+  frame3.rad.1.5 <- ttkradiobutton(frame3, variable=space.var, value="3d",
+                                   text="3D")
+
+  tkgrid(frame3.lab.1.1, frame3.rad.1.2, frame3.rad.1.3, frame3.rad.1.4,
+         frame3.rad.1.5, pady=c(5, 10), sticky="w")
 
   tkgrid.configure(frame3.lab.1.1, padx=c(0, 2))
-  tkgrid.configure(frame3.rad.1.3, padx=c(2, 12))
+  tkgrid.configure(frame3.rad.1.2, padx=c(0, 2))
+  tkgrid.configure(frame3.rad.1.3, padx=c(0, 15))
+  tkgrid.configure(frame3.rad.1.4, padx=c(0, 2))
 
-  tkpack(frame3, anchor="w", pady=c(2, 10), padx=10)
+  tkpack(frame3, anchor="w", padx=10)
 
   # Set variables
   SetVars()
