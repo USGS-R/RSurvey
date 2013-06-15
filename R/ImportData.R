@@ -581,7 +581,7 @@ ImportData <- function(parent=NULL) {
 
   frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
-  frame1.lab.1.1 <- ttklabel(frame1, text="Import data from")
+  frame1.lab.1.1 <- ttklabel(frame1, text="Import from")
   txt <- paste("or transfer data from clipboard via a copy and paste",
                "operation.  The first part of the data table will be",
                "shown below.")
