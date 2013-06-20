@@ -122,7 +122,7 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
   frame0 <- ttkframe(tt, relief="flat")
 
   if (is.replace) {
-    frame0.but.1.2 <- ttkbutton(frame0, width=12, text="Replace First",
+    frame0.but.1.2 <- ttkbutton(frame0, width=12, text="Replace",
                                 command=function() ReturnParameters(TRUE))
     frame0.but.1.3 <- ttkbutton(frame0, width=12, text="Replace All",
                                 command=function() ReturnParameters(FALSE))
@@ -216,15 +216,15 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
 
   frame3 <- ttkframe(tt, relief="flat")
 
-  frame3.chk.1.1 <- ttkcheckbutton(frame3, text="Match whole word only",
+  frame3.chk.1.1 <- ttkcheckbutton(frame3, text="Match case",
+                                   variable=match.case.var)
+  frame3.chk.2.1 <- ttkcheckbutton(frame3, text="Match entire cell contents",
                                    variable=match.word.var,
                                    command=function() ToggleMatchWord())
-  frame3.chk.2.1 <- ttkcheckbutton(frame3, text="Match case",
-                                   variable=match.case.var)
-  frame3.chk.3.1 <- ttkcheckbutton(frame3, text="Regular expressions:",
+  frame3.chk.3.1 <- ttkcheckbutton(frame3, text="Use regular expressions",
                                    variable=reg.exps.var,
                                    command=function() ToggleRegExps())
-  frame3.chk.4.1 <- ttkcheckbutton(frame3, text="Search in variable:",
+  frame3.chk.4.1 <- ttkcheckbutton(frame3, text="Search in column\u2026",
                                    variable=search.col.var,
                                    command=function() ToggleSearchCol())
 
