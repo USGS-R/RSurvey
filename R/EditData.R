@@ -884,7 +884,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkgrid.configure(frame2.ysc, sticky="ns", padx=c(0, 10), pady=c(10, 0))
   tkgrid.configure(frame2.xsc, sticky="we", padx=c(10, 0), pady=c(0, 5))
 
-  tktag.configure(frame2.tbl, "active", background="#EAEEFE", relief="")
+  tktag.configure(frame2.tbl, "active", background="#FBFCD0")
   tktag.configure(frame2.tbl, "sel",    background="#EAEEFE",
                   foreground="#000000")
   tktag.configure(frame2.tbl, "title",  background="#D9D9D9",

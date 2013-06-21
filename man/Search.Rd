@@ -5,7 +5,7 @@
 \title{Search}
 
 \description{
-A \acronym{GUI} for establishing find and replace arguments.
+A \acronym{GUI} for establishing find and replace arguments in a data table.
 }
 
 \usage{
@@ -33,11 +33,12 @@ A \code{list} with the following components:
   \item{is.reg.exps}{logical; should the search be made using
     \link{regular expression} (that is, a pattern that describes a set of
     strings)?}
-  \item{is.search.col}{logical; is the search limited to a single variable?}
-  \item{is.perl}{logical; should Perl style regular expressions be used?.}
+  \item{is.search.col}{logical; is the search limited to a single column?}
+  \item{is.perl}{logical; should Perl style regular expressions be used?}
   \item{col.name}{character; variable (column) name which the search will be
     restricted to.}
   \item{is.replace.first}{logical; replace only the first instance?}
+  \item{is.search.sel}{logical; is the search limited to selected cells?}
 }
 
 \author{J.C. Fisher}
