@@ -19,9 +19,7 @@ EditData(d, col.names = NULL, col.formats = NULL, read.only = FALSE,
   data table (optional).}
 \item{col.formats}{character; the conversion specification
   format (optional).}
-\item{read.only}{logical or integer; specifies whether the table is read only.
-  Alternatively, read only can be specified for individual columns using an
-  integer array of column indexes.}
+\item{read.only}{logical; specifies whether the table is read only.}
 \item{changelog}{data.frame; history of all data table edits.}
 \item{win.title}{character; a string to display as the title of the dialog box.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
@@ -50,7 +48,7 @@ V4 <- sample(V1 * pi, n)
 d <- data.frame(V1, V2, V3, V4)
 col.names <- c("Integers", "Letters", "DateTime", "Numeric")
 col.formats <- c("\%d", "\%s", "\%m/\%d/\%Y \%H:\%M", "")
-lst <- EditData(d, col.names, col.formats, read.only = 1L)
+lst <- EditData(d, col.names, col.formats, read.only = TRUE)
 str(lst)
 
 rownames(d) <- paste0(sample(LETTERS, n, replace = TRUE), 1:n)

@@ -43,9 +43,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   # Search data table
 
   CallSearch <- function(is.replace=FALSE) {
-
     search.defaults$find.what <- as.character(tclvalue(pattern.var))
-
     ans <- Search(is.replace, defaults=search.defaults, col.names=col.names,
                   parent=tt)
     if (is.null(ans))
@@ -208,8 +206,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       return()
     idx <- which(row.names %in% rec)
     if (length(idx) > 0) {
-      if (is.editable)
-        tkactivate(frame2.tbl, paste0(idx, ",1"))
+      tkactivate(frame2.tbl, paste0(idx, ",1"))
       tkselection.clear(frame2.tbl, "all")
       tkyview(frame2.tbl, idx[1] - 1L)
       first.cell.str <- paste0(idx, ",0")
@@ -225,12 +222,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   # Get single cell value for table
   GetCellValue <- function(r, c) {
     as.tclObj(dd[as.integer(r) + 1L, as.integer(c) + 1L], drop=TRUE)
-  }
-
-  # Tag column
-  TagColumn <- function(...) {
-    if (as.integer(...) %in% read.only)
-      return(as.tclObj("disabledcol"))
   }
 
   # Validate cell value
@@ -252,6 +243,45 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     }
     return(as.tclObj(is.valid))
   }
+
+
+
+
+
+
+
+  # Update active cell
+
+  UpdateActiveCell <- function(s, S) {
+
+
+
+    old.cell <- as.integer(strsplit(s, ",")[[1]])
+    new.cell <- as.integer(strsplit(S, ",")[[1]])
+
+
+    if (length(old.cell) > 0) {
+      tcl(frame2.tbl, "tag", "cell", "", paste(old.cell[1], 0, sep=","))
+      tcl(frame2.tbl, "tag", "cell", "", paste(0, old.cell[2], sep=","))
+    }
+    tcl(frame2.tbl, "tag", "cell", "row.idx", paste(new.cell[1], 0, sep=","))
+    tcl(frame2.tbl, "tag", "cell", "col.idx", paste(0, new.cell[2], sep=","))
+    tcl(frame2.tbl, "tag", "raise", "row.idx")
+    tcl(frame2.tbl, "tag", "raise", "col.idx")
+
+    tktag.configure(frame2.tbl, "row.idx", background="#B3B3B3")
+    tktag.configure(frame2.tbl, "col.idx", background="#B3B3B3")
+
+
+
+
+  }
+
+
+
+
+
+
 
   # Undo edit
 
@@ -333,7 +363,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       }
       txt <- apply(s, 1, function(i) paste(i, collapse="  "))
     }
-    EditText(txt, read.only=TRUE, win.title="Changelog",
+    EditText(txt, read.only=TRUE, win.title="Change Log",
              is.fixed.width.font=TRUE, parent=tt)
     tkfocus(frame2.tbl)
   }
@@ -443,8 +473,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   # Bypass return command
   BypassReturnCmd <- function() {
-    if (!is.editable)
-      return()
     active.cell <- as.character(tkindex(frame2.tbl, "active"))
     old.ij <- as.integer(strsplit(active.cell, ",")[[1]])
     i <- old.ij[1]
@@ -456,6 +484,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     new.ij <- paste(i, j, sep=",")
     tkselection.clear(frame2.tbl, "all")
     tkactivate(frame2.tbl, new.ij)
+    tkselection.set(frame2.tbl, new.ij)
     tksee(frame2.tbl, new.ij)
   }
 
@@ -498,17 +527,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   if (is.null(changelog) || !is.data.frame(changelog))
     changelog <- NULL
 
-  # Set parameters based on whether the table is editable
-  if (inherits(read.only, "logical")) {
-    if (read.only)
-      read.only <- 1:n
-    else
-      read.only <- NULL
-  }
-  if (!inherits(read.only, c("NULL", "integer")))
-    stop("problem with read.only argument")
-  is.editable <- is.null(read.only) || !identical(read.only, (1:n))
-
   # Initialize search results
   matched.cells <- NULL
 
@@ -542,7 +560,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   } else {
     col.formats <- as.character(col.formats[1:n])
     col.formats[is.na(col.formats)] <- ""
-    col.formats[!1:n %in% read.only] <- ""
   }
 
   if (length(rownames(d)) == m)
@@ -620,7 +637,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   # Edit menu
   menu.edit <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
-  if (is.editable) {
+  if (!read.only) {
     tkadd(menu.edit, "command", label="Undo", accelerator="Ctrl+z",
           command=UndoEdit)
     tkadd(menu.edit, "command", label="Redo", accelerator="Ctrl+y",
@@ -629,7 +646,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
   tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c",
         command=BypassCopyCmd)
-  if (is.editable) {
+  if (!read.only) {
     tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+x",
           command=function() {
             RunPreCutCmd()
@@ -657,9 +674,9 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkadd(menu.edit.width, "command", label="Decrease", accelerator="Ctrl+\u2212",
         command=function() tkevent.generate(frame2.tbl, "<Control-minus>"))
   tkadd(menu.edit, "cascade", label="Column width", menu=menu.edit.width)
-  if (is.editable) {
+  if (!read.only) {
     tkadd(menu.edit, "separator")
-    tkadd(menu.edit, "command", label="View changelog", command=ViewChangelog)
+    tkadd(menu.edit, "command", label="View change log", command=ViewChangelog)
   }
 
   # Search menu
@@ -671,7 +688,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
         command=function() Find("next"))
   tkadd(menu.search, "command", label="Find previous",
         command=function() Find("prev"))
-  if (is.editable)
+  if (!read.only)
     tkadd(menu.search, "command", label="Replace\u2026", accelerator="Ctrl+r",
           command=function() CallSearch(is.replace=TRUE))
 
@@ -716,7 +733,25 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkadd(menu.nav, "command", label="Move right", accelerator="\u2192",
         command=function() tkevent.generate(frame2.tbl, "<Right>"))
   tkadd(menu.nav, "separator")
-  if (is.editable) {
+  if (read.only) {
+    menu.nav.view <- tkmenu(tt, tearoff=0)
+    tkadd(menu.nav.view, "command", label="Prior page in view",
+          accelerator="PageUp",
+          command=function() tkevent.generate(frame2.tbl, "<Prior>"))
+    tkadd(menu.nav.view, "command", label="Next page in view",
+          accelerator="PageDown",
+          command=function() tkevent.generate(frame2.tbl, "<Next>"))
+    tkadd(menu.nav, "cascade", label="Move table to have", menu=menu.nav.view)
+    tkadd(menu.nav, "separator")
+    menu.nav.active <- tkmenu(tt, tearoff=0)
+    tkadd(menu.nav.active, "command", label="First cell",
+          accelerator="Ctrl+Home",
+          command=function() tkevent.generate(frame2.tbl, "<Control-Home>"))
+    tkadd(menu.nav.active, "command", label="Last cell", accelerator="Ctrl+End",
+          command=function() tkevent.generate(frame2.tbl, "<Control-End>"))
+    tkadd(menu.nav, "cascade", label="Move activate cell to",
+          menu=menu.nav.active)
+  } else {
     menu.nav.view <- tkmenu(tt, tearoff=0)
     tkadd(menu.nav.view, "command", label="First cell in view",
           accelerator="Home",
@@ -759,24 +794,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
           command=function() tkevent.generate(frame2.tbl, "<Control-e>"))
     tkadd(menu.nav, "cascade", label="Move inside cell to the",
           menu=menu.nav.in)
-  } else {
-    menu.nav.view <- tkmenu(tt, tearoff=0)
-    tkadd(menu.nav.view, "command", label="Prior page in view",
-          accelerator="PageUp",
-          command=function() tkevent.generate(frame2.tbl, "<Prior>"))
-    tkadd(menu.nav.view, "command", label="Next page in view",
-          accelerator="PageDown",
-          command=function() tkevent.generate(frame2.tbl, "<Next>"))
-    tkadd(menu.nav, "cascade", label="Move table to have", menu=menu.nav.view)
-    tkadd(menu.nav, "separator")
-    menu.nav.active <- tkmenu(tt, tearoff=0)
-    tkadd(menu.nav.active, "command", label="First cell",
-          accelerator="Ctrl+Home",
-          command=function() tkevent.generate(frame2.tbl, "<Control-Home>"))
-    tkadd(menu.nav.active, "command", label="Last cell", accelerator="Ctrl+End",
-          command=function() tkevent.generate(frame2.tbl, "<Control-End>"))
-    tkadd(menu.nav, "cascade", label="Move activate cell to",
-          menu=menu.nav.active)
   }
 
   # Finish top menu
@@ -786,14 +803,14 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   frame0 <- ttkframe(tt, relief="flat")
 
-  if (is.editable) {
+  if (read.only) {
+    frame0.but.1.2 <- "x"
+    frame0.but.1.3 <- ttkbutton(frame0, width=12, text="Close",
+                                command=function() tclvalue(tt.done.var) <- 1)
+  } else {
     frame0.but.1.2 <- ttkbutton(frame0, width=12, text="Save",
                                 command=SaveTable)
     frame0.but.1.3 <- ttkbutton(frame0, width=12, text="Cancel",
-                                command=function() tclvalue(tt.done.var) <- 1)
-  } else {
-    frame0.but.1.2 <- "x"
-    frame0.but.1.3 <- ttkbutton(frame0, width=12, text="Close",
                                 command=function() tclvalue(tt.done.var) <- 1)
   }
   frame0.but.1.4 <- ttkbutton(frame0, width=12, text="Help",
@@ -843,12 +860,19 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   tkpack(frame1, side="bottom", anchor="nw", padx=c(10, 0))
 
+
+
+
+
+
+
   # Frame 2, the data table
 
   frame2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
   frame2.tbl <- tkwidget(frame2, "table", rows=m + 1, cols=n + 1,
-                         colwidth=-2, rowheight=1, state="normal",
+                         colwidth=-2, rowheight=1,
+                         state=if (read.only) "disabled" else "normal",
                          height=nrows + 1, width=ncols + 1,
                          ipadx=1, ipady=1, wrap=1, justify="right",
                          highlightcolor="gray75", background="white",
@@ -858,12 +882,12 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                          colstretchmode="none", rowstretchmode="none",
                          drawmode="single", flashmode=1, rowseparator="\n",
                          colseparator="\t", selectmode="extended",
-                         selecttitle=1, insertofftime=0, anchor="nw",
+                         selecttitle=1, insertofftime=0, anchor="ne",
                          highlightthickness=0, cache=1, validate=1,
                          font="TkFixedFont",
+                         browsecommand=function(s, S) UpdateActiveCell(s, S),
                          validatecommand=function(s, S) ValidateCellValue(s, S),
                          command=function(r, c) GetCellValue(r, c),
-                         coltagcommand=function(...) TagColumn(...),
                          xscrollcommand=function(...) tkset(frame2.xsc, ...),
                          yscrollcommand=function(...) tkset(frame2.ysc, ...))
 
@@ -880,14 +904,16 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkgrid(frame2.tbl, frame2.ysc)
   tkgrid(frame2.xsc, "x")
 
-  tkgrid.configure(frame2.tbl, sticky="news", padx=c(10, 0), pady=c(10, 0))
-  tkgrid.configure(frame2.ysc, sticky="ns", padx=c(0, 10), pady=c(10, 0))
-  tkgrid.configure(frame2.xsc, sticky="we", padx=c(10, 0), pady=c(0, 5))
+  tkgrid.configure(frame2.tbl, padx=c(10,  0), pady=c(10, 0), sticky="news")
+  tkgrid.configure(frame2.ysc, padx=c( 0, 10), pady=c(10, 0), sticky="ns")
+  tkgrid.configure(frame2.xsc, padx=c(10,  0), pady=c( 0, 5), sticky="we")
 
   tktag.configure(frame2.tbl, "active", background="#FBFCD0")
-  tktag.configure(frame2.tbl, "sel",    background="#EAEEFE",
+  if (!read.only)
+    tktag.configure(frame2.tbl, "active", anchor="nw", justify="right")
+  tktag.configure(frame2.tbl, "sel", background="#EAEEFE",
                   foreground="#000000")
-  tktag.configure(frame2.tbl, "title",  background="#D9D9D9",
+  tktag.configure(frame2.tbl, "title", background="#D9D9D9",
                   foreground="#000000")
   tktag.configure(frame2.tbl, "flash",  background="#FFFFFF",
                   foreground="#FF0033")
@@ -895,9 +921,8 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tcl(frame2.tbl, "tag", "row", "coltitles", 0)
   tcl(frame2.tbl, "tag", "col", "rowtitles", 0)
 
-  tktag.configure(frame2.tbl, "coltitles", justify="center", anchor="n")
-  tktag.configure(frame2.tbl, "rowtitles", justify="center", anchor="n")
-  tktag.configure(frame2.tbl, "disabledcol", state="disabled", anchor="ne")
+  tktag.configure(frame2.tbl, "coltitles", anchor="n", justify="center")
+  tktag.configure(frame2.tbl, "rowtitles", anchor="n", justify="center")
 
   tkgrid.columnconfigure(frame2, 0, weight=1)
   tkgrid.rowconfigure(frame2, 0, weight=1)
@@ -922,17 +947,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
          paste(.Tcl.callback(BypassCopyCmd), "break", sep="; "))
   tkbind(frame2.tbl, "<Control-z>", UndoEdit)
   tkbind(frame2.tbl, "<Control-y>", RedoEdit)
-
-
-  OnLeftClick <- function() {
-    print(tkindex(frame2.tbl, "active", "row"))
-  }
-
-
-
-# tkbind(frame2.tbl, "<ButtonPress-1>", paste0("+", .Tcl.callback(OnLeftClick)))
-
-
 
   D <- ""  # force 'D' to be something other than a function
   tkbind(frame2.tbl, "<MouseWheel>",
