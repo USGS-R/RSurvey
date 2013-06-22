@@ -923,6 +923,17 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkbind(frame2.tbl, "<Control-z>", UndoEdit)
   tkbind(frame2.tbl, "<Control-y>", RedoEdit)
 
+
+  OnLeftClick <- function() {
+    print(tkindex(frame2.tbl, "active", "row"))
+  }
+
+
+
+# tkbind(frame2.tbl, "<ButtonPress-1>", paste0("+", .Tcl.callback(OnLeftClick)))
+
+
+
   D <- ""  # force 'D' to be something other than a function
   tkbind(frame2.tbl, "<MouseWheel>",
          function(D) {
