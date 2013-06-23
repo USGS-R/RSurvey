@@ -122,6 +122,13 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       else
         columns <- which(col.names == search.defaults$col.name)[1] + 1L
 
+
+
+
+
+
+
+
       x <- as.character(t(dd[-1L, columns, drop=FALSE]))
       if (is.match.word) {
         if (ignore.case)
@@ -206,12 +213,9 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       return()
     idx <- which(row.names %in% rec)
     if (length(idx) > 0) {
-      tkactivate(frame2.tbl, paste0(idx, ",1"))
-      tkselection.clear(frame2.tbl, "all")
-      tkyview(frame2.tbl, idx[1] - 1L)
-      first.cell.str <- paste0(idx, ",0")
-      last.cell.str <- paste(idx, n, sep=",")
-      tkselection.set(frame2.tbl, first.cell.str, last.cell.str)
+      active.cell <- as.character(tkindex(frame2.tbl, "active"))
+      active.col <- as.integer(strsplit(active.cell, ",")[[1]])[2]
+      tksee(frame2.tbl, paste(idx[1], active.col, sep=","))
     } else {
       msg <- "Row name (or record number) not found."
       tkmessageBox(icon="info", message=msg, title="Goto", type="ok",
@@ -253,27 +257,25 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   # Update active cell
 
   UpdateActiveCell <- function(s, S) {
-
-
-
     old.cell <- as.integer(strsplit(s, ",")[[1]])
     new.cell <- as.integer(strsplit(S, ",")[[1]])
-
 
     if (length(old.cell) > 0) {
       tcl(frame2.tbl, "tag", "cell", "", paste(old.cell[1], 0, sep=","))
       tcl(frame2.tbl, "tag", "cell", "", paste(0, old.cell[2], sep=","))
     }
-    tcl(frame2.tbl, "tag", "cell", "row.idx", paste(new.cell[1], 0, sep=","))
-    tcl(frame2.tbl, "tag", "cell", "col.idx", paste(0, new.cell[2], sep=","))
-    tcl(frame2.tbl, "tag", "raise", "row.idx")
-    tcl(frame2.tbl, "tag", "raise", "col.idx")
 
-    tktag.configure(frame2.tbl, "row.idx", background="#B3B3B3")
-    tktag.configure(frame2.tbl, "col.idx", background="#B3B3B3")
+    if (new.cell[1] > 0) {
+      tcl(frame2.tbl, "tag", "cell", "row.idx", paste(new.cell[1], 0, sep=","))
+      tcl(frame2.tbl, "tag", "raise", "row.idx")
+      tktag.configure(frame2.tbl, "row.idx", background="#B3B3B3")
+    }
 
-
-
+    if (new.cell[2] > 0 || new.cell == c(0, 0)) {
+      tcl(frame2.tbl, "tag", "cell", "col.idx", paste(0, new.cell[2], sep=","))
+      tcl(frame2.tbl, "tag", "raise", "col.idx")
+      tktag.configure(frame2.tbl, "col.idx", background="#B3B3B3")
+    }
 
   }
 
@@ -814,9 +816,9 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                                 command=function() tclvalue(tt.done.var) <- 1)
   }
   frame0.but.1.4 <- ttkbutton(frame0, width=12, text="Help",
-                            command=function() {
-                              print(help("EditData", package="RSurvey"))
-                            })
+                              command=function() {
+                                print(help("EditData", package="RSurvey"))
+                              })
   frame0.grp.1.5 <- ttksizegrip(frame0)
 
   tkgrid("x", frame0.but.1.2, frame0.but.1.3, frame0.but.1.4, frame0.grp.1.5)
@@ -873,10 +875,9 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   frame2.tbl <- tkwidget(frame2, "table", rows=m + 1, cols=n + 1,
                          colwidth=-2, rowheight=1,
                          state=if (read.only) "disabled" else "normal",
-                         height=nrows + 1, width=ncols + 1,
-                         ipadx=1, ipady=1, wrap=1, justify="right",
-                         highlightcolor="gray75", background="white",
-                         foreground="black", titlerows=1, titlecols=1,
+                         height=nrows + 1, width=ncols + 1, ipadx=1, ipady=1,
+                         wrap=1, justify="right", background="#FFFFFF",
+                         foreground="#000000", titlerows=1, titlecols=1,
                          multiline=0, resizeborders="col", colorigin=0,
                          bordercursor="sb_h_double_arrow", cursor="plus",
                          colstretchmode="none", rowstretchmode="none",
