@@ -265,16 +265,30 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       tcl(frame2.tbl, "tag", "cell", "", paste(0, old.cell[2], sep=","))
     }
 
-    if (new.cell[1] > 0) {
-      tcl(frame2.tbl, "tag", "cell", "row.idx", paste(new.cell[1], 0, sep=","))
-      tcl(frame2.tbl, "tag", "raise", "row.idx")
-      tktag.configure(frame2.tbl, "row.idx", background="#B3B3B3")
+    if (new.cell[1] == 0 || new.cell[2] == 0) {
+      if (new.cell[1] == 0)
+        new.cell[1] <- 1
+      if (new.cell[2] == 0)
+        new.cell[2] <- 1
+      tkactivate(frame2.tbl, paste(new.cell[1], new.cell[2], sep=","))
     }
 
-    if (new.cell[2] > 0 || new.cell == c(0, 0)) {
-      tcl(frame2.tbl, "tag", "cell", "col.idx", paste(0, new.cell[2], sep=","))
-      tcl(frame2.tbl, "tag", "raise", "col.idx")
-      tktag.configure(frame2.tbl, "col.idx", background="#B3B3B3")
+    tcl(frame2.tbl, "tag", "cell", "row.idx", paste(new.cell[1], 0, sep=","))
+    tktag.raise(frame2.tbl, "row.idx")
+    tktag.configure(frame2.tbl, "row.idx", background="#B3B3B3")
+
+    tcl(frame2.tbl, "tag", "cell", "col.idx", paste(0, new.cell[2], sep=","))
+    tktag.raise(frame2.tbl, "col.idx")
+    tktag.configure(frame2.tbl, "col.idx", background="#B3B3B3")
+
+    tktag.raise(frame2.tbl, "active", "sel")
+
+    if (read.only) {
+      tktag.delete(frame2.tbl, "active_new")
+      tcl(frame2.tbl, "tag", "cell", "active_new",
+          paste(new.cell[1], new.cell[2], sep=","))
+      tktag.configure(frame2.tbl, "active_new", background="#FBFCD0")
+      tktag.raise(frame2.tbl, "active_new", "sel")
     }
 
   }
@@ -924,6 +938,8 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   tktag.configure(frame2.tbl, "coltitles", anchor="n", justify="center")
   tktag.configure(frame2.tbl, "rowtitles", anchor="n", justify="center")
+
+  tktag.raise(frame2.tbl, "title", "sel")
 
   tkgrid.columnconfigure(frame2, 0, weight=1)
   tkgrid.rowconfigure(frame2, 0, weight=1)
