@@ -117,6 +117,9 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       is.all.data <- !search.defaults$is.search.col ||
                      is.null(search.defaults$col.name)
 
+
+
+
       if (is.all.data)
         columns <- 2L:ncol(dd)
       else
@@ -125,6 +128,10 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
 
 
+      sel.cells <- as.character(tktag(frame2.tbl, "sel"))
+      sel.split <- strsplit(sel.cells, ",")
+      sel.ij <- cbind(as.integer(vapply(sel.split, function(i) i[1], "")),
+                      as.integer(vapply(sel.split, function(i) i[2], "")))
 
 
 
