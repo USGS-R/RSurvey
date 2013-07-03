@@ -44,8 +44,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   CallSearch <- function(is.replace=FALSE) {
     search.defaults$find.what <- as.character(tclvalue(pattern.var))
-    ans <- Search(is.replace, defaults=search.defaults, col.names=col.names,
-                  parent=tt)
+    ans <- Search(is.replace, defaults=search.defaults, parent=tt)
     if (is.null(ans))
       return()
 
@@ -54,14 +53,13 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     search.defaults <<- ans
     matched.cells <<- NULL
 
-    Find()
+    Find("next", is.replace)
 
     if (is.replace & (!is.null(matched.cells) && nrow(matched.cells) > 0)) {
       tclServiceMode(FALSE)
 
       if (ans$is.replace.first)
         matched.cells <<- matched.cells[1, , drop=FALSE]
-
       cells <- paste0(matched.cells[, 1], ",", matched.cells[, 2])
 
       ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
@@ -80,10 +78,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       undo.stack <<- rbind(undo.stack, e)
       redo.stack <<- NULL
       matched.cells <<- NULL
-
-      tkactivate(frame2.tbl, "0,0")
-      tkselection.clear(frame2.tbl, "all")
-
       for (i in cells) {
         tcl(frame2.tbl, "clear", "cache", i)
       }
@@ -94,7 +88,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   # Find value in data table
 
-  Find <- function(direction="next") {
+  Find <- function(direction="next", is.replace=FALSE) {
     pattern <- as.character(tclvalue(pattern.var))
     if (pattern == "")
       return()
@@ -114,29 +108,19 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
         fixed <- TRUE
       perl <- search.defaults$is.perl
 
-      is.all.data <- !search.defaults$is.search.col ||
-                     is.null(search.defaults$col.name)
 
+      is.search.sel <- search.defaults$is.search.sel
+      if (is.search.sel) {
+        sel.cells <- as.character(tcl(frame2.tbl, "tag", "cell", "sel"))
+        sel.split <- strsplit(sel.cells, ",")
+        ij <- cbind(as.integer(vapply(sel.split, function(i) i[1], "")),
+                    as.integer(vapply(sel.split, function(i) i[2], "")))
+        ij <- ij[ij[, 1] > 0 & ij[, 2] > 0, ]
+        x <- dd[ij + 1L, drop=FALSE]
+      } else {
+        x <- as.character(t(dd[-1L, -1L, drop=FALSE]))
+      }
 
-
-
-      if (is.all.data)
-        columns <- 2L:ncol(dd)
-      else
-        columns <- which(col.names == search.defaults$col.name)[1] + 1L
-
-
-
-
-      sel.cells <- as.character(tktag(frame2.tbl, "sel"))
-      sel.split <- strsplit(sel.cells, ",")
-      sel.ij <- cbind(as.integer(vapply(sel.split, function(i) i[1], "")),
-                      as.integer(vapply(sel.split, function(i) i[2], "")))
-
-
-
-
-      x <- as.character(t(dd[-1L, columns, drop=FALSE]))
       if (is.match.word) {
         if (ignore.case)
           matched.idxs <- which(tolower(x) == tolower(pattern))
@@ -148,28 +132,22 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                                               ignore.case=ignore.case,
                                               useBytes=FALSE, invert=FALSE))
       }
-
       if (length(matched.idxs) == 0L) {
-        msg <- paste0("Search string \'", pattern, "\' not found")
-        if (!is.all.data)
-          msg <- paste0(msg, " in column \'", search.defaults$col.name, "\'")
-        msg <- paste0(msg, ".")
+        msg <- paste0("Search string \'", pattern, "\' not found.")
         tkmessageBox(icon="info", message=msg, title="Find", type="ok",
                      parent=tt)
         return()
       }
 
-      if (is.all.data) {
+      if (is.search.sel) {
+        matched.cells <<- ij[matched.idxs, , drop=FALSE]
+      } else {
         col.div <- matched.idxs / n
         i <- as.integer(ceiling(col.div))
         j <- as.integer(round(n * (col.div - trunc(col.div))))
         j[j == 0L] <- n
-      } else {
-        i <- matched.idxs
-        j <- columns[1] - 1L
+        matched.cells <<- cbind(i, j)
       }
-
-      matched.cells <<- cbind(i, j)
     }
 
     active.i <- as.integer(tcl(frame2.tbl, "tag", "row", "active"))
@@ -205,16 +183,17 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       }
     }
 
-    cell.str <- paste(cell[1, 1], cell[1, 2], sep=",")
-    tkselection.clear(frame2.tbl, "all")
-
-    tkactivate(frame2.tbl, cell.str)
-    tkselection.set(frame2.tbl, cell.str)
-    tksee(frame2.tbl, cell.str)
+    if (!is.replace) {
+      cell.str <- paste(cell[1, 1], cell[1, 2], sep=",")
+      tkselection.clear(frame2.tbl, "all")
+      tkactivate(frame2.tbl, cell.str)
+      tkselection.set(frame2.tbl, cell.str)
+      tksee(frame2.tbl, cell.str)
+    }
   }
 
   # Go to data record
-  GotoRecord <- function() {
+  ViewRecord <- function() {
     rec <- as.character(tclvalue(record.var))
     if (is.na(rec))
       return()
@@ -260,25 +239,13 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
 
 
+  # Chnage active cell
 
-  # Update active cell
-
-  UpdateActiveCell <- function(s, S) {
-    old.cell <- as.integer(strsplit(s, ",")[[1]])
+  ChangeActiveCell <- function(S) {
     new.cell <- as.integer(strsplit(S, ",")[[1]])
 
-    if (length(old.cell) > 0) {
-      tcl(frame2.tbl, "tag", "cell", "", paste(old.cell[1], 0, sep=","))
-      tcl(frame2.tbl, "tag", "cell", "", paste(0, old.cell[2], sep=","))
-    }
-
-    if (new.cell[1] == 0 || new.cell[2] == 0) {
-      if (new.cell[1] == 0)
-        new.cell[1] <- 1
-      if (new.cell[2] == 0)
-        new.cell[2] <- 1
-      tkactivate(frame2.tbl, paste(new.cell[1], new.cell[2], sep=","))
-    }
+    tktag.delete(frame2.tbl, "row.idx")
+    tktag.delete(frame2.tbl, "col.idx")
 
     tcl(frame2.tbl, "tag", "cell", "row.idx", paste(new.cell[1], 0, sep=","))
     tktag.raise(frame2.tbl, "row.idx")
@@ -287,6 +254,14 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tcl(frame2.tbl, "tag", "cell", "col.idx", paste(0, new.cell[2], sep=","))
     tktag.raise(frame2.tbl, "col.idx")
     tktag.configure(frame2.tbl, "col.idx", background="#B3B3B3")
+
+    if (new.cell[1] == 0 || new.cell[2] == 0) {
+      if (new.cell[1] == 0)
+        new.cell[1] <- 1
+      if (new.cell[2] == 0)
+        new.cell[2] <- 1
+      tkactivate(frame2.tbl, paste(new.cell[1], new.cell[2], sep=","))
+    }
 
     tktag.raise(frame2.tbl, "active", "sel")
 
@@ -297,7 +272,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       tktag.configure(frame2.tbl, "active_new", background="#FBFCD0")
       tktag.raise(frame2.tbl, "active_new", "sel")
     }
-
   }
 
 
@@ -325,12 +299,12 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     redo.stack <<- rbind(redo.stack, undo.stack[idxs, , drop=FALSE])
     undo.stack <<- undo.stack[-idxs, , drop=FALSE]
 
+    active.cell <- as.character(tkindex(frame2.tbl, "active"))
     tkactivate(frame2.tbl, "0,0")
-    tkselection.clear(frame2.tbl, "all")
-
     for (i in cells) {
       tcl(frame2.tbl, "clear", "cache", i)
     }
+    tkactivate(frame2.tbl, active.cell)
 
     tclServiceMode(TRUE)
   }
@@ -354,19 +328,21 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     undo.stack <<- rbind(undo.stack, redo.stack[idxs, , drop=FALSE])
     redo.stack <<- redo.stack[-idxs, , drop=FALSE]
 
+    active.cell <- as.character(tkindex(frame2.tbl, "active"))
     tkactivate(frame2.tbl, "0,0")
-    tkselection.clear(frame2.tbl, "all")
-
     for (i in cells) {
       tcl(frame2.tbl, "clear", "cache", i)
     }
+    tkactivate(frame2.tbl, active.cell)
 
     tclServiceMode(TRUE)
   }
 
+
+
   # View changelog
 
-  ViewChangelog <- function() {
+  ViewChangeLog <- function() {
     s <- GetEdits()
     if (is.null(s)) {
       txt <- ""
@@ -390,6 +366,8 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
              is.fixed.width.font=TRUE, parent=tt)
     tkfocus(frame2.tbl)
   }
+
+
 
   # Get edits
 
@@ -529,7 +507,9 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                    parent=tt)
       return()
     }
+    tkconfigure(frame2.tbl, exportselection=1)
     tcl("tk_tableCopy", frame2.tbl)
+    tkconfigure(frame2.tbl, exportselection=0)
   }
 
   ## Main program
@@ -630,7 +610,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   redo.stack <- NULL
   rtn <- NULL
   search.defaults <- list(is.match.word=FALSE, is.match.case=TRUE,
-                          is.reg.exps=FALSE, is.search.col=FALSE,
+                          is.reg.exps=FALSE, is.search.sel=FALSE,
                           is.perl=FALSE)
 
   # Assign variables linked to Tk widgets
@@ -699,7 +679,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkadd(menu.edit, "cascade", label="Column width", menu=menu.edit.width)
   if (!read.only) {
     tkadd(menu.edit, "separator")
-    tkadd(menu.edit, "command", label="View change log", command=ViewChangelog)
+    tkadd(menu.edit, "command", label="View change log", command=ViewChangeLog)
   }
 
   # Search menu
@@ -870,7 +850,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                               command=function() Find("prev"))
   frame1.but.1.4 <- ttkbutton(frame1, width=2, image=GetBitmapImage("next"),
                               command=function() Find("next"))
-  frame1.but.2.3 <- ttkbutton(frame1, width=4, text="Goto", command=GotoRecord)
+  frame1.but.2.3 <- ttkbutton(frame1, width=4, text="View", command=ViewRecord)
 
   tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.but.1.3, frame1.but.1.4,
          pady=c(0, 4))
@@ -902,12 +882,12 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                          multiline=0, resizeborders="col", colorigin=0,
                          bordercursor="sb_h_double_arrow", cursor="plus",
                          colstretchmode="none", rowstretchmode="none",
-                         drawmode="single", flashmode=1, rowseparator="\n",
+                         drawmode="single", flashmode=0, rowseparator="\n",
                          colseparator="\t", selectmode="extended",
                          selecttitle=1, insertofftime=0, anchor="ne",
                          highlightthickness=0, cache=1, validate=1,
-                         font="TkFixedFont",
-                         browsecommand=function(s, S) UpdateActiveCell(s, S),
+                         font="TkFixedFont", exportselection=0,
+                         browsecommand=function(s, S) ChangeActiveCell(S),
                          validatecommand=function(s, S) ValidateCellValue(s, S),
                          command=function(r, c) GetCellValue(r, c),
                          xscrollcommand=function(...) tkset(frame2.xsc, ...),
@@ -931,14 +911,13 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkgrid.configure(frame2.xsc, padx=c(10,  0), pady=c( 0, 5), sticky="we")
 
   tktag.configure(frame2.tbl, "active", background="#FBFCD0")
-  if (!read.only)
-    tktag.configure(frame2.tbl, "active", anchor="nw", justify="right")
+
+# tktag.configure(frame2.tbl, "active", anchor="nw", justify="right")
+
   tktag.configure(frame2.tbl, "sel", background="#EAEEFE",
                   foreground="#000000")
   tktag.configure(frame2.tbl, "title", background="#D9D9D9",
                   foreground="#000000")
-  tktag.configure(frame2.tbl, "flash",  background="#FFFFFF",
-                  foreground="#FF0033")
 
   tcl(frame2.tbl, "tag", "row", "coltitles", 0)
   tcl(frame2.tbl, "tag", "col", "rowtitles", 0)
@@ -972,7 +951,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkbind(frame2.tbl, "<Control-z>", UndoEdit)
   tkbind(frame2.tbl, "<Control-y>", RedoEdit)
 
-  D <- ""  # force 'D' to be something other than a function
+  D <- ""  # hack to force 'D' to be something other than a function
   tkbind(frame2.tbl, "<MouseWheel>",
          function(D) {
            number <- as.integer((-as.integer(D) / 120)^3)
@@ -986,7 +965,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkbind(frame1.ent.1.2, "<Return>", function() Find("next"))
   tkbind(frame1.ent.1.2, "<Up>",     function() Find("prev"))
   tkbind(frame1.ent.1.2, "<Down>",   function() Find("next"))
-  tkbind(frame1.ent.2.2, "<Return>", function() GotoRecord())
+  tkbind(frame1.ent.2.2, "<Return>", function() ViewRecord())
 
   # GUI control
 

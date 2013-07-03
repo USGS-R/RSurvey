@@ -9,13 +9,12 @@ A \acronym{GUI} for establishing find and replace arguments in a data table.
 }
 
 \usage{
-Search(is.replace = FALSE, defaults = NULL, col.names = NULL, parent = NULL)
+Search(is.replace = FALSE, defaults = NULL, parent = NULL)
 }
 
 \arguments{
 \item{is.replace}{logical; if \code{TRUE}, the replace component is included.}
 \item{defaults}{list; see \sQuote{Value}.}
-\item{col.names}{character; a vector of variable (column) names.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
@@ -35,8 +34,6 @@ A \code{list} with the following components:
     strings)?}
   \item{is.search.col}{logical; is the search limited to a single column?}
   \item{is.perl}{logical; should Perl style regular expressions be used?}
-  \item{col.name}{character; variable (column) name which the search will be
-    restricted to.}
   \item{is.replace.first}{logical; replace only the first instance?}
   \item{is.search.sel}{logical; is the search limited to selected cells?}
 }

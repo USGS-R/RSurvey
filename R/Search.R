@@ -1,7 +1,6 @@
 # A GUI for establishing find and replace arguments.
 
-Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
-                   parent=NULL) {
+Search <- function(is.replace=FALSE, defaults=NULL, parent=NULL) {
 
   ## Additional functions (subroutines)
 
@@ -16,16 +15,13 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
     is.match.case <- as.logical(as.integer(tclvalue(match.case.var)))
     is.reg.exps   <- as.logical(as.integer(tclvalue(reg.exps.var)))
     is.search.col <- as.logical(as.integer(tclvalue(search.col.var)))
-    is.perl <- as.logical(as.integer(tclvalue(perl.var)))
-    col.name <- as.character(tclvalue(col.name.var))
-    if (col.name == "")
-      col.name <- NULL
+    is.perl       <- as.logical(as.integer(tclvalue(perl.var)))
     is.search.sel <- as.logical(as.integer(tclvalue(search.sel.var)))
     rtn <<- list(find.what=find.what, replace.with=replace.with,
                  is.match.word=is.match.word, is.match.case=is.match.case,
                  is.reg.exps=is.reg.exps, is.search.col=is.search.col,
-                 is.perl=is.perl, col.name=col.name,
-                 is.replace.first=is.replace.first, is.search.sel=is.search.sel)
+                 is.perl=is.perl, is.replace.first=is.replace.first,
+                 is.search.sel=is.search.sel)
     tclvalue(tt.done.var) <- 1
   }
 
@@ -34,9 +30,9 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
     is.match.word <- as.logical(as.integer(tclvalue(match.word.var)))
     if (is.match.word) {
       tclvalue(reg.exps.var) <- FALSE
-      tkconfigure(frame3.chk.3.1, state="disabled")
+      tkconfigure(frame3.chk.4.1, state="disabled")
     } else {
-      tkconfigure(frame3.chk.3.1, state="normal")
+      tkconfigure(frame3.chk.4.1, state="normal")
     }
     ToggleRegExps()
   }
@@ -45,21 +41,11 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
   ToggleRegExps <- function() {
     is.reg.exps <- as.logical(as.integer(tclvalue(reg.exps.var)))
     if (is.reg.exps) {
-      tkconfigure(frame3.rad.3.2, state="normal")
-      tkconfigure(frame3.rad.3.3, state="normal")
+      tkconfigure(frame3.rad.4.2, state="normal")
+      tkconfigure(frame3.rad.4.3, state="normal")
     } else {
-      tkconfigure(frame3.rad.3.2, state="disabled")
-      tkconfigure(frame3.rad.3.3, state="disabled")
-    }
-  }
-
-  # Toggle search in variable
-  ToggleSearchCol <- function() {
-    is.search.col <- as.logical(as.integer(tclvalue(search.col.var)))
-    if (is.search.col) {
-      tkconfigure(frame3.box.3.2, state="readonly")
-    } else {
-      tkconfigure(frame3.box.3.2, state="disabled")
+      tkconfigure(frame3.rad.4.2, state="disabled")
+      tkconfigure(frame3.rad.4.3, state="disabled")
     }
   }
 
@@ -67,10 +53,6 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
 
   # Assigin global variables
   rtn <- NULL
-
-  # Variable names
-  if (is.null(col.names) || !is.character(col.names))
-    col.names <- ""
 
   # Assign variables linked to Tk widgets
   find.what.var     <- tclVar()
@@ -81,7 +63,6 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
   search.col.var    <- tclVar(0)
   search.sel.var    <- tclVar(0)
   perl.var          <- tclVar(0)
-  col.name.var      <- tclVar()
   tt.done.var       <- tclVar(0)
 
   # Set default values
@@ -101,8 +82,6 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
       tclvalue(search.col.var) <- defaults$is.search.col
     if (!is.null(defaults$is.perl) && is.logical(defaults$is.perl))
       tclvalue(perl.var) <- defaults$is.perl
-    if (!is.null(defaults$col.name) && is.character(defaults$col.name))
-      tclvalue(col.name.var) <- defaults$col.name
     if (!is.null(defaults$is.search.sel) && is.logical(defaults$is.search.sel))
       tclvalue(search.sel.var) <- defaults$is.search.sel
   }
@@ -116,10 +95,7 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
     tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
                              "+", as.integer(geo[3]) + 25))
   }
-  if (is.replace)
-    tktitle(tt) <- "Replace"
-  else
-    tktitle(tt) <- "Find"
+  tktitle(tt) <- "Search"
   tkwm.resizable(tt, 1, 0)
 
   # Frame 0
@@ -162,7 +138,7 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
 
   frame1 <- ttkframe(tt, relief="flat")
 
-  frame1.lab.1.1 <- ttklabel(frame1, text="Find what:", foreground="#141414")
+  frame1.lab.1.1 <- ttklabel(frame1, text="Find what", foreground="#141414")
   frame1.ent.2.1 <- ttkentry(frame1, width=10, font="TkFixedFont",
                              textvariable=find.what.var)
   tkgrid(frame1.lab.1.1, sticky="w")
@@ -170,7 +146,7 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
   tkgrid.columnconfigure(frame1, 0, weight=1)
 
   if (is.replace) {
-    frame1.lab.3.1 <- ttklabel(frame1, text="Replace with:",
+    frame1.lab.3.1 <- ttklabel(frame1, text="Replace with",
                                foreground="#141414")
     frame1.ent.4.1 <- ttkentry(frame1, width=10, font="TkFixedFont",
                                textvariable=replace.with.var)
@@ -190,30 +166,23 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
   frame3.chk.2.1 <- ttkcheckbutton(frame3, text="Match entire cell contents",
                                    variable=match.word.var,
                                    command=function() ToggleMatchWord())
-  frame3.chk.3.1 <- ttkcheckbutton(frame3, text="Use regular expressions",
+  frame3.chk.3.1 <- ttkcheckbutton(frame3, text="Search in selected cells",
+                                   variable=search.sel.var)
+  frame3.chk.4.1 <- ttkcheckbutton(frame3, text="Search using regular expressions",
                                    variable=reg.exps.var,
                                    command=function() ToggleRegExps())
-  frame3.chk.4.1 <- ttkcheckbutton(frame3, text="Search in column\u2026",
-                                   variable=search.col.var,
-                                   command=function() ToggleSearchCol())
-  frame3.chk.5.1 <- ttkcheckbutton(frame3, text="Search in selected cells",
-                                   variable=search.sel.var)
-  frame3.rad.3.2 <- ttkradiobutton(frame3, variable=perl.var, value=FALSE,
+  frame3.rad.4.2 <- ttkradiobutton(frame3, variable=perl.var, value=FALSE,
                                    text="Unix")
-  frame3.rad.3.3 <- ttkradiobutton(frame3, variable=perl.var, value=TRUE,
+  frame3.rad.4.3 <- ttkradiobutton(frame3, variable=perl.var, value=TRUE,
                                    text="Perl")
-  frame3.box.3.2 <- ttkcombobox(frame3, state="readonly",
-                                textvariable=col.name.var, values=col.names)
 
   tkgrid(frame3.chk.1.1, "x", "x", sticky="w")
   tkgrid(frame3.chk.2.1, "x", "x", sticky="w", pady=2)
-  tkgrid(frame3.chk.3.1, frame3.rad.3.2, frame3.rad.3.3, sticky="w")
-  tkgrid(frame3.chk.4.1, frame3.box.3.2, sticky="w", pady=2)
-  tkgrid(frame3.chk.5.1, "x", "x", sticky="w", pady=c(0, 10))
 
-  tkgrid.configure(frame3.rad.3.2, padx=c(0, 4))
-  tkgrid.configure(frame3.box.3.2, columnspan=2, sticky="we")
-  tkgrid.columnconfigure(frame3, 2, weight=1)
+  tkgrid(frame3.chk.3.1, "x", "x", sticky="w")
+  tkgrid(frame3.chk.4.1, frame3.rad.4.2, frame3.rad.4.3, sticky="w", pady=c(2, 10))
+
+  tkgrid.configure(frame3.rad.4.2, padx=c(4, 4))
 
   tkpack(frame3, fill="x", padx=10)
 
@@ -222,7 +191,6 @@ Search <- function(is.replace=FALSE, defaults=NULL, col.names=NULL,
   tclServiceMode(TRUE)
 
   ToggleRegExps()
-  ToggleSearchCol()
 
   tkfocus(frame1.ent.2.1)
   tkgrab(tt)
