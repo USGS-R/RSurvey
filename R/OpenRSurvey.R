@@ -168,7 +168,7 @@ OpenRSurvey <- function() {
           fmt <- "%f"
         } else if (cls == "integer") {
           fmt <- "%d"
-        } else if (cls == c("POSIXlt", "POSIXct")) {
+        } else if (cls %in% c("POSIXlt", "POSIXct")) {
           fmt <- "%d/%m/%Y %H:%M:%OS"
         } else {
           fmt <- ""

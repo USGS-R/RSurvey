@@ -35,11 +35,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tclvalue(tt.done.var) <- 1
   }
 
-  # Select all cells
-  SelectAll <- function() {
-    tkselection.set(frame2.tbl, "0,0", "end")
-  }
-
   # Search data table
 
   CallSearch <- function(is.replace=FALSE) {
@@ -192,7 +187,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     }
   }
 
-  # Go to data record
+  # View data record
   ViewRecord <- function() {
     rec <- as.character(tclvalue(record.var))
     if (is.na(rec))
@@ -234,27 +229,10 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     return(as.tclObj(is.valid))
   }
 
-
-
-
-
-
   # Chnage active cell
 
   ChangeActiveCell <- function(S) {
     new.cell <- as.integer(strsplit(S, ",")[[1]])
-
-    tktag.delete(frame2.tbl, "row.idx")
-    tktag.delete(frame2.tbl, "col.idx")
-
-    tcl(frame2.tbl, "tag", "cell", "row.idx", paste(new.cell[1], 0, sep=","))
-    tktag.raise(frame2.tbl, "row.idx")
-    tktag.configure(frame2.tbl, "row.idx", background="#B3B3B3")
-
-    tcl(frame2.tbl, "tag", "cell", "col.idx", paste(0, new.cell[2], sep=","))
-    tktag.raise(frame2.tbl, "col.idx")
-    tktag.configure(frame2.tbl, "col.idx", background="#B3B3B3")
-
     if (new.cell[1] == 0 || new.cell[2] == 0) {
       if (new.cell[1] == 0)
         new.cell[1] <- 1
@@ -262,6 +240,15 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
         new.cell[2] <- 1
       tkactivate(frame2.tbl, paste(new.cell[1], new.cell[2], sep=","))
     }
+
+    tktag.delete(frame2.tbl, "row.idx")
+    tktag.delete(frame2.tbl, "col.idx")
+    tcl(frame2.tbl, "tag", "cell", "row.idx", paste(new.cell[1], 0, sep=","))
+    tcl(frame2.tbl, "tag", "cell", "col.idx", paste(0, new.cell[2], sep=","))
+    tktag.raise(frame2.tbl, "row.idx")
+    tktag.raise(frame2.tbl, "col.idx")
+    tktag.configure(frame2.tbl, "row.idx", background="#B3B3B3")
+    tktag.configure(frame2.tbl, "col.idx", background="#B3B3B3")
 
     tktag.raise(frame2.tbl, "active", "sel")
 
@@ -273,6 +260,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       tktag.raise(frame2.tbl, "active_new", "sel")
     }
   }
+
 
 
 
@@ -347,18 +335,19 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     if (is.null(s)) {
       txt <- ""
     } else {
-      s <- s[order(s$record, s$variable),
-             c("record", "variable", "old", "new", "time", "class"), drop=FALSE]
-      header <- c("Record", "Variable Name", "Old Value", "New Value",
-                  "Timestamp", "Class")
+      ids <- c("record", "variable", "old", "new", "time", "class")
+      titles <- c("Record", "Variable Name", "Old Value", "New Value",
+                  "Time Stamp", "Class")
       justify <- c("right", "left", "right", "right", "left", "left")
-      breaks <- vapply(header, function(i) paste(rep("-", nchar(i)),
-                                                 collapse=""), "")
-      s <- rbind(header, breaks, s)
-      width <- apply(s, 2, function(i) max(nchar(i)))
+
+      s <- s[order(s$record, s$variable), ids, drop=FALSE]
+      breaks <- vapply(titles,
+                       function(i) paste(rep("-", nchar(i)), collapse=""), "")
+      s <- rbind(titles, breaks, s)
+      widths <- apply(s, 2, function(i) max(nchar(i)))
 
       for (j in 1:ncol(s)) {
-        s[, j] <- format(s[, j], width=width[j], justify=justify[j])
+        s[, j] <- format(s[, j], width=widths[j], justify=justify[j])
       }
       txt <- apply(s, 1, function(i) paste(i, collapse="  "))
     }
@@ -366,6 +355,10 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
              is.fixed.width.font=TRUE, parent=tt)
     tkfocus(frame2.tbl)
   }
+
+
+
+
 
 
 
