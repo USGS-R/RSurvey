@@ -75,7 +75,7 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
     asp <- NA
 
   if (is.null(csi) || is.na(csi)) {
-    x11(pointsize=pointsize)
+    dev.new(pointsize=pointsize)
     csi <- par("csi")  # height of characters and width of margin line (in)
     dev.off()
   }
@@ -219,7 +219,7 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
     height <- yin + ymar  # canvas height (in)
   }
 
-  x11(width=width, height=height, pointsize=pointsize)
+  dev.new(width=width, height=height, pointsize=pointsize)
 
   # Set line width
   lwd <- 0.5 * (96 / (6 * 12))

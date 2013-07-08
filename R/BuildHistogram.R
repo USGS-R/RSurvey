@@ -44,7 +44,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
 
     if (draw.plot) {
       if (dev.cur() == dev) {
-        x11()
+        dev.new()
         par(mar=c(5, 5, 2, 2) + 0.1)
       }
       plot(obj, col="light grey", freq=freq, main=NULL, xlab=xlab)

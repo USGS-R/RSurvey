@@ -659,7 +659,7 @@ OpenRSurvey <- function() {
   # Set the height of (default-sized) characters in inches.
   SetCsi <- function() {
     if (is.null(Data("csi"))) {
-      x11(pointsize=12)
+      dev.new(pointsize=12)
       Data("csi", par("csi"))
       dev.off()
     }
