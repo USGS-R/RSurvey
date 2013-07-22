@@ -1,3 +1,7 @@
+Changes in Version 0.7-6
+
+  o
+
 Changes in Version 0.7-5
 
   o  Graphics are now opened in a platform-independent way using the dev.new
