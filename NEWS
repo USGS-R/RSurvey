@@ -1,5 +1,8 @@
 Changes in Version 0.7-5
 
+  o  Graphics are now opened in a platform-independent way using the dev.new
+     function.
+
   o  Function name changes: ViewText to EditText, and ViewData to EditData.
 
   o  Calendar date and time variables are accurately converted to character
@@ -8,13 +11,13 @@ Changes in Version 0.7-5
   o  Added ability to import, edit, and export comment string.
 
   o  Added ability to edit raw data in a spreadsheet. Final edits are saved in
-     a changelog.
+     a change log.
 
   o  Added GUI for importing data from an R package. R data sets may also be
      imported from a file.
 
-  o  RSurvey project files are specified using the .RData file extension. The
-     .rda extension is reserved for R data files.
+  o  RSurvey project files are specified using the *.RData file extension. The
+     *.rda extension is reserved for R data files.
 
   o  Functions ReadFile and WriteFile have been embedded into the ImportData and
      ExportData functions, respectively.
