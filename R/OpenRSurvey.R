@@ -687,7 +687,9 @@ OpenRSurvey <- function() {
       tkconfigure(tt, cursor="watch")
       idxs <- vapply(cols, function(i) i$index, 0L)
       nams <- vapply(cols, function(i) i$name, "")[!is.na(idxs)]
-      lst <- EditData(Data("data.raw")[, na.omit(idxs)], col.names=nams,
+      fmts <- vapply(cols, function(i) i$format, "")
+      lst <- EditData(Data("data.raw")[, na.omit(idxs)],
+                      col.formats=fmts, col.names=nams,
                       read.only=FALSE, changelog=Data("changelog"),
                       win.title="Raw Data", parent=tt)
       if (!is.null(lst)) {
@@ -1248,7 +1250,7 @@ OpenRSurvey <- function() {
   frame3.box.2.1 <- ttkcombobox(frame3, state="readonly",
                                 textvariable=plt.typ.var,
                                 values=c("Points", "Surface"))
-  frame3.but.2.4 <- ttkbutton(frame3, width=12, text="Plot",
+  frame3.but.2.4 <- ttkbutton(frame3, width=10, text="Plot",
                               command=function() print("notyet"))
 
   tkgrid(frame3.lab.1.1, frame3.rad.1.2, frame3.rad.1.3, frame3.chk.1.4,
@@ -1261,7 +1263,7 @@ OpenRSurvey <- function() {
   tkgrid.configure(frame3.chk.1.4, padx=c(0, 2))
 
   tkgrid.configure(frame3.box.2.1, padx=c(0, 15), columnspan=3)
-  tkgrid.configure(frame3.but.2.4, columnspan=2)
+  tkgrid.configure(frame3.but.2.4, columnspan=2, sticky="w")
 
   tkpack(frame3, anchor="w", padx=10)
 
