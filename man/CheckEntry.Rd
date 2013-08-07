@@ -5,25 +5,25 @@
 \title{Control Content in Entry Widget}
 
 \description{
-Content control for character strings based on an expected data type.
+Content control for character strings based object class.
 }
 
 \usage{
-CheckEntry(ent.typ, ent.str = "")
+CheckEntry(obj.class, ent.str = "")
 }
 
 \arguments{
-\item{ent.typ}{character; the entry type.}
-\item{ent.str}{character; the entry value.}
+\item{obj.class}{character; object class.}
+\item{ent.str}{character; entry value.}
 }
 
 \details{
-The entry types include: \var{real}, \var{integer}, \var{logical},
-\var{hour}, \var{minute}, \var{second}, and \var{date}.
+The allowed object classes include: \var{real}, \var{integer}, and
+\var{logical}.
 }
 
 \value{
-A character string with strict adherence to the specified data format.
+A character string with strict adherence to the format for the object class.
 }
 
 \author{J.C. Fisher}
@@ -38,12 +38,6 @@ CheckEntry("numeric", "3.14ab")
 
 CheckEntry("integer", "3.")
 ## [1] "3"
-
-CheckEntry("hour", "13")
-## [1] "13"
-
-CheckEntry("hour", "25")
-## [1] "23"
 }
 
 \keyword{manip}
