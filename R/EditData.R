@@ -261,8 +261,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tktag.raise(frame3.tbl, "active", "sel")
     if (read.only) {
       tktag.delete(frame3.tbl, "active_readonly")
-      tcl(frame3.tbl, "tag", "cell", "active_readonly",
-          paste(i, j, sep=","))
+      tcl(frame3.tbl, "tag", "cell", "active_readonly", paste(i, j, sep=","))
       tktag.configure(frame3.tbl, "active_readonly", background="#FBFCD0")
       tktag.raise(frame3.tbl, "active_readonly", "sel")
     } else {
