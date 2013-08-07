@@ -7,30 +7,8 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   # Save table and close
   SaveTable <- function() {
-    s <- GetEdits()
     tclServiceMode(FALSE)
-
-    changelog <- s
-    if (!is.null(s)) {
-      s <- s[, c("class", "new", "row", "col"), drop=FALSE]
-      for (i in unique(s$class)) {
-        ss <- s[s$class == i, ]
-        if (i %in% c("POSIXct", "POSIXlt")) {
-          new <- suppressWarnings(strptime(ss$new, "%Y-%m-%d %H:%M:%S"))
-        } else if (i == "integer") {
-          new <- suppressWarnings(as.integer(ss$new))
-        } else if (i == "numeric") {
-          new <- suppressWarnings(as.numeric(ss$new))
-        } else if (i == "logical") {
-          new <- suppressWarnings(as.logical(ss$new))
-        } else {
-          new <- ss$new
-        }
-        d[cbind(ss$row, ss$col)] <<- new
-      }
-    }
-    rtn <<- list(d=d, changelog=changelog)
-
+    changelog <<- GetEdits()
     tclServiceMode(TRUE)
     tclvalue(tt.done.var) <- 1
   }
@@ -51,32 +29,28 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     Find("next", is.replace)
 
     if (is.replace & (!is.null(matched.cells) && nrow(matched.cells) > 0)) {
-      tclServiceMode(FALSE)
-
       if (ans$is.replace.first)
         matched.cells <<- matched.cells[1, , drop=FALSE]
       cells <- paste0(matched.cells[, 1], ",", matched.cells[, 2])
-
       ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
                      c(0, 0)))
 
-      old.values <- dd[ij + 1L]
-      new.values <- gsub(ans$find.what, ans$replace.with, old.values,
-                         ignore.case=!ans$is.match.case, perl=ans$is.perl,
-                         fixed=!ans$is.reg.exps, useBytes=FALSE)
+      old.vals <- FormatValues(d[ij])
+      new.vals <- gsub(ans$find.what, ans$replace.with, old.vals,
+                       ignore.case=!ans$is.match.case, perl=ans$is.perl,
+                       fixed=!ans$is.reg.exps, useBytes=FALSE)
 
-      dd[ij + 1L] <<- new.values
-
-      e <- data.frame(time=Sys.time(), cell=cells, old=old.values,
-                      new=new.values, stringsAsFactors=FALSE)
-
+      e <- data.frame(time=Sys.time(), cell=cells, old=old.vals, new=new.vals,
+                      stringsAsFactors=FALSE)
       undo.stack <<- rbind(undo.stack, e)
       redo.stack <<- NULL
       matched.cells <<- NULL
-      for (i in cells) {
-        tcl(frame3.tbl, "clear", "cache", i)
-      }
 
+      SaveEdits(new.vals, cells)
+
+      tclServiceMode(FALSE)
+      for (i in seq(along=cells))
+        tkset(frame3.tbl, cells[i], new.vals[i])
       tclServiceMode(TRUE)
     }
   }
@@ -89,10 +63,10 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       return()
 
     if (is.null(matched.cells)) {
-      n <- ncol(dd) - 1L
+      n <- ncol(d)
+      m <- nrow(d)
 
       is.match.word <- search.defaults$is.match.word
-
       if (search.defaults$is.match.case)
         ignore.case <- FALSE
       else
@@ -111,10 +85,11 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
         ij <- cbind(as.integer(vapply(sel.split, function(i) i[1], "")),
                     as.integer(vapply(sel.split, function(i) i[2], "")))
         ij <- ij[ij[, 1] > 0 & ij[, 2] > 0, ]
-        x <- dd[ij + 1L, drop=FALSE]
+        ij <- ij[order(ij[, 1]), ]
       } else {
-        x <- as.character(t(dd[-1L, -1L, drop=FALSE]))
+        ij <- cbind(rep(1:m, each=n), rep(1:n, m))
       }
+      x <- FormatValues(d[ij])
 
       if (is.match.word) {
         if (ignore.case)
@@ -180,9 +155,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
     if (!is.replace) {
       cell.str <- paste(cell[1, 1], cell[1, 2], sep=",")
-      tkselection.clear(frame3.tbl, "all")
       tkactivate(frame3.tbl, cell.str)
-      tkselection.set(frame3.tbl, cell.str)
       tksee(frame3.tbl, cell.str)
     }
   }
@@ -206,239 +179,157 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   # Get single cell value for table
   GetCellValue <- function(r, c) {
-    as.tclObj(dd[as.integer(r) + 1L, as.integer(c) + 1L], drop=TRUE)
+    i <- as.integer(r)
+    j <- as.integer(c)
+    if (i > 0 & j > 0) {
+      val <- FormatValues(d[i, j], col.formats[j])
+    } else if (i == 0 & j > 0) {
+      val <- col.names[j]
+    } else if (i > 0 & j == 0) {
+      val <- row.names[i]
+    } else {
+      val <- ""
+    }
+    as.tclObj(val, drop=TRUE)
+  }
+
+  # Save edits to data frame
+  SaveEdits <- function(vals, i, j) {
+    tclServiceMode(FALSE)
+    if (is.character(i)) {
+      ij <- t(vapply(i, function(x) as.integer(strsplit(x, ",")[[1]]),
+                     c(0, 0)))
+      i <- ij[, 1]
+      j <- ij[, 2]
+    }
+    for (column in unique(j)) {
+      idxs <- which(j == column)
+      obj.class <- class(d[1, column])
+      d[i[idxs], column] <<- suppressWarnings(as(vals[idxs], obj.class))
+    }
+    tclServiceMode(TRUE)
   }
 
   # Validate cell value
   ValidateCellValue <- function(s, S) {
-    e <- data.frame(time=Sys.time(),
-                    cell=as.character(tkindex(frame3.tbl, "active")),
-                    old=as.character(s), new=as.character(S),
-                    stringsAsFactors=FALSE)
-    cell <- as.integer(strsplit(e$cell, ",")[[1]])
-    obj <- d[cell[1], cell[2]]
-    if (inherits(obj, c("numeric", "integer", "logical")) &&
-        !identical(e$new, CheckEntry(class(obj)[1], e$new))) {
-      is.valid <- FALSE
-    } else {
-      undo.stack <<- rbind(undo.stack, e)
-      redo.stack <<- NULL
+    cell <- as.character(tkindex(frame3.tbl, "active"))
+    ij <- as.integer(strsplit(cell, ",")[[1]])
+    new.val <- as.character(S)
+    if (identical(new.val, CheckEntry(class(d[ij[1], ij[2]]), new.val)))
       is.valid <- TRUE
-      dd[cell[1] + 1L, cell[2] + 1L] <<- S
-    }
+    else
+      is.valid <- FALSE
     return(as.tclObj(is.valid))
   }
 
   # Change active cell
-
-  ChangeActiveCell <- function(S) {
-    new.cell <- as.integer(strsplit(S, ",")[[1]])
-    if (new.cell[1] == 0 || new.cell[2] == 0) {
-      if (new.cell[1] == 0)
-        new.cell[1] <- 1
-      if (new.cell[2] == 0)
-        new.cell[2] <- 1
-      tkactivate(frame3.tbl, paste(new.cell[1], new.cell[2], sep=","))
+  ChangeActiveCell <- function(s, S) {
+    if (!read.only && s != "") {
+      old.cell <- as.integer(strsplit(s, ",")[[1]])
+      i <- old.cell[1]
+      j <- old.cell[2]
+      old.val <- FormatValues(d[i, j])
+      new.val <- paste(as.character(tkget(frame3.tbl, s)), collapse=" ")
+      if (new.val != old.val) {
+        SaveEdits(new.val, i, j)
+        e <- data.frame(time=Sys.time(), cell=s, old=old.val, new=new.val,
+                        stringsAsFactors=FALSE)
+        undo.stack <<- rbind(undo.stack, e)
+        redo.stack <<- NULL
+      }
+      tkset(frame3.tbl, s, GetCellValue(i, j))
     }
-
-    tclvalue(value.var) <- FormatValues(d[new.cell[1], new.cell[2]])
-
+    new.cell <- as.integer(strsplit(S, ",")[[1]])
+    i <- new.cell[1]
+    j <- new.cell[2]
+    if (i == 0 || j == 0) {
+      if (i == 0)
+        i <- 1
+      if (j == 0)
+        j <- 1
+      tkactivate(frame3.tbl, paste(i, j, sep=","))
+    }
+    tclvalue(value.var) <- FormatValues(d[i, j])
     tktag.delete(frame3.tbl, "row.idx")
     tktag.delete(frame3.tbl, "col.idx")
-    tcl(frame3.tbl, "tag", "cell", "row.idx", paste(new.cell[1], 0, sep=","))
-    tcl(frame3.tbl, "tag", "cell", "col.idx", paste(0, new.cell[2], sep=","))
+    tcl(frame3.tbl, "tag", "cell", "row.idx", paste(i, 0, sep=","))
+    tcl(frame3.tbl, "tag", "cell", "col.idx", paste(0, j, sep=","))
     tktag.raise(frame3.tbl, "row.idx")
     tktag.raise(frame3.tbl, "col.idx")
     tktag.configure(frame3.tbl, "row.idx", background="#B3B3B3")
     tktag.configure(frame3.tbl, "col.idx", background="#B3B3B3")
-
     tktag.raise(frame3.tbl, "active", "sel")
-
     if (read.only) {
       tktag.delete(frame3.tbl, "active_readonly")
       tcl(frame3.tbl, "tag", "cell", "active_readonly",
-          paste(new.cell[1], new.cell[2], sep=","))
+          paste(i, j, sep=","))
       tktag.configure(frame3.tbl, "active_readonly", background="#FBFCD0")
       tktag.raise(frame3.tbl, "active_readonly", "sel")
+    } else {
+      tkset(frame3.tbl, S, FormatValues(d[i, j]))
     }
   }
 
-
-
-
-
-
-
-
   # Undo edit
-
   UndoEdit <- function() {
     if (is.null(undo.stack) || nrow(undo.stack) == 0)
       return()
-    tclServiceMode(FALSE)
-
-    m <- nrow(undo.stack)
-
-    idxs <- which(undo.stack$time == undo.stack$time[m])
+    idxs <- which(undo.stack$time == undo.stack$time[nrow(undo.stack)])
     cells <- undo.stack[idxs, "cell"]
-    ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
-                   c(0, 0)))
-
-    dd[ij + 1L] <<- undo.stack[idxs, "old"]
-
+    old.vals <- undo.stack[idxs, "old"]
+    SaveEdits(old.vals, cells)
     redo.stack <<- rbind(redo.stack, undo.stack[idxs, , drop=FALSE])
     undo.stack <<- undo.stack[-idxs, , drop=FALSE]
-
-    active.cell <- as.character(tkindex(frame3.tbl, "active"))
-    tkactivate(frame3.tbl, "0,0")
-    for (i in cells) {
-      tcl(frame3.tbl, "clear", "cache", i)
-    }
-    tkactivate(frame3.tbl, active.cell)
-
+    tclServiceMode(FALSE)
+    for (i in seq(along=cells))
+      tkset(frame3.tbl, cells[i], old.vals[i])
     tclServiceMode(TRUE)
   }
 
   # Redo edit
-
   RedoEdit <- function() {
     if (is.null(redo.stack) || nrow(redo.stack) == 0)
       return()
-    tclServiceMode(FALSE)
-
-    m <- nrow(redo.stack)
-
-    idxs <- which(redo.stack$time == redo.stack$time[m])
+    idxs <- which(redo.stack$time == redo.stack$time[nrow(redo.stack)])
     cells <- redo.stack[idxs, "cell"]
-    ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
-                   c(0, 0)))
-
-    dd[ij + 1L] <<- redo.stack[idxs, "new"]
-
+    new.vals <- redo.stack[idxs, "new"]
+    SaveEdits(new.vals, cells)
     undo.stack <<- rbind(undo.stack, redo.stack[idxs, , drop=FALSE])
     redo.stack <<- redo.stack[-idxs, , drop=FALSE]
-
-    active.cell <- as.character(tkindex(frame3.tbl, "active"))
-    tkactivate(frame3.tbl, "0,0")
-    for (i in cells) {
-      tcl(frame3.tbl, "clear", "cache", i)
-    }
-    tkactivate(frame3.tbl, active.cell)
-
+    tclServiceMode(FALSE)
+    for (i in seq(along=cells))
+      tkset(frame3.tbl, cells[i], new.vals[i])
     tclServiceMode(TRUE)
   }
 
-
-
-  # View changelog
-
-  ViewChangeLog <- function() {
-    s <- GetEdits()
-    if (is.null(s)) {
-      txt <- ""
-    } else {
-      ids <- c("record", "variable", "old", "new", "time", "class")
-      titles <- c("Record", "Variable Name", "Old Value", "New Value",
-                  "Time Stamp", "Class")
-      justify <- c("right", "left", "right", "right", "left", "left")
-
-      s <- s[order(s$record, s$variable), ids, drop=FALSE]
-      breaks <- vapply(titles,
-                       function(i) paste(rep("-", nchar(i)), collapse=""), "")
-      s <- rbind(titles, breaks, s)
-      widths <- apply(s, 2, function(i) max(nchar(i)))
-
-      for (j in 1:ncol(s)) {
-        s[, j] <- format(s[, j], width=widths[j], justify=justify[j])
-      }
-      txt <- apply(s, 1, function(i) paste(i, collapse="  "))
-    }
-    EditText(txt, read.only=TRUE, win.title="Change Log",
-             is.fixed.width.font=TRUE, parent=tt)
-    tkfocus(frame3.tbl)
-  }
-
-
-
-
-
-
-
-  # Get edits
-
-  GetEdits <- function() {
-    s <- NULL
-    if (is.null(changelog) & (is.null(undo.stack) || nrow(undo.stack) == 0))
-      return(s)
-
-    if (!is.null(changelog)) {
-      changelog$cell <- paste(changelog[, "row"], changelog[, "col"], sep=",")
-      changelog <- changelog[, c("time", "cell", "old", "new")]
-      undo.stack <- rbind(undo.stack, changelog)
-    }
-
-    for (i in unique(undo.stack$cell)) {
-      undo.stack.cell <- undo.stack[undo.stack$cell == i, , drop=FALSE]
-      undo.stack.cell <- undo.stack.cell[order(undo.stack.cell$time), ,
-                                         drop=FALSE]
-      m <- nrow(undo.stack.cell)
-      cell <- as.integer(strsplit(undo.stack.cell$cell, ",")[[1]])
-      obj <- d[cell[1], cell[2]]
-      old <- undo.stack.cell$old[1]
-      new <- undo.stack.cell$new[m]
-      if (inherits(obj, "POSIXt") &&
-          is.na(strptime(new, "%Y-%m-%d %H:%M:%S"))) {
-        new <- "NaN"
-      } else if (inherits(obj, c("numeric", "integer")) &&
-                 is.na(suppressWarnings(as.numeric(new)))) {
-        new <- "NaN"
-      } else if (inherits(obj, "logical") && is.na(as.logical(new))) {
-        new <- "NaN"
-      }
-
-      if (identical(old, new))
-        next
-      e <- data.frame(record=as.integer(dd[cell[1] + 1L, 1]),
-                      variable=dd[1, cell[2] + 1L],
-                      old=old, new=new,
-                      time=format(undo.stack.cell$time[m]),
-                      class=class(obj)[1], row=cell[1], col=cell[2],
-                      stringsAsFactors=FALSE)
-      s <- rbind(s, e)
-    }
-
-    return(s)
-  }
-
-  # Add edit to undo stack prior to cut command
-  RunPreCutCmd <- function() {
+  # Bypass cut command
+  BypassCutCmd <- function() {
+    tkconfigure(frame3.tbl, exportselection=1)
+    tcl("tk_tableCopy", frame3.tbl)
+    tkconfigure(frame3.tbl, exportselection=0)
     cells <- as.character(tkcurselection(frame3.tbl))
-    old <- vapply(cells,
-                  function(i) {
-                    paste(as.character(tkget(frame3.tbl, i)), collapse=" ")
-                  }, "")
-    new <- "NA"
-    e <- data.frame(time=Sys.time(), cell=cells, old=old, new=new,
+    ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
+                   c(0, 0)))
+    old.vals <- FormatValues(d[ij])
+    new.vals <- "NA"
+    e <- data.frame(time=Sys.time(), cell=cells, old=old.vals, new=new.vals,
                     stringsAsFactors=FALSE)
     undo.stack <<- rbind(undo.stack, e)
     redo.stack <<- NULL
-    ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
-                   c(0, 0)))
-    dd[ij + 1L] <<- "NA"
+    SaveEdits(new.vals, ij[, 1], ij[, 2])
+    for (i in cells)
+      tkset(frame3.tbl, i, "NA")
   }
 
   # Bypass paste command
-
   BypassPasteCmd <- function() {
     active.cell <- as.character(tkindex(frame3.tbl, "active"))
-    new <- try(scan(file="clipboard", what="character", sep="\n", quiet=TRUE),
-               silent=TRUE)
-    if (inherits(new, "try-error"))
+    new.vals <- try(scan(file="clipboard", what="character", sep="\n",
+                         na.strings=NULL, quiet=TRUE), silent=TRUE)
+    if (inherits(new.vals, "try-error"))
       return()
-
-    match.length <- attr(regexpr("\t", new, fixed=TRUE), "match.length")
+    match.length <- attr(regexpr("\t", new.vals, fixed=TRUE), "match.length")
     is.multi.sel <- !all(match.length == match.length[1])
-
     if (is.multi.sel) {
       msg <- paste("Clipboard contains text string copied from multiple",
                    "selections and is unsuitable for pasting.")
@@ -446,24 +337,18 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                    parent=tt)
       return()
     }
-    tclServiceMode(FALSE)
-
-    ncells <- length(new)
+    n <- length(new.vals)
     active.ij <- as.integer(strsplit(active.cell, ",")[[1]])
-    ij <- cbind(active.ij[1]:(active.ij[1] + ncells - 1L),
-                rep(active.ij[2], ncells))
-    cells <- paste(ij[, 1], ij[, 2], sep=",")
-    old <- vapply(cells,
-                  function(i) {
-                    paste(as.character(tkget(frame3.tbl, i)), collapse=" ")
-                  }, "")
-    e <- data.frame(time=Sys.time(), cell=cells, old=old, new=new,
+    ij <- cbind(active.ij[1]:(active.ij[1] + n - 1L), rep(active.ij[2], n))
+    i <- ij[, 1]
+    j <- ij[, 2]
+    cells <- paste(i, j, sep=",")
+    old.vals <- FormatValues(d[ij])
+    e <- data.frame(time=Sys.time(), cell=cells, old=old.vals, new=new.vals,
                     stringsAsFactors=FALSE)
     undo.stack <<- rbind(undo.stack, e)
     redo.stack <<- NULL
-    dd[ij + 1L] <<- new
-
-    tclServiceMode(TRUE)
+    SaveEdits(new.vals, i, j)
     tcl("tk_tablePaste", frame3.tbl)
   }
 
@@ -472,7 +357,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     active.cell <- as.character(tkindex(frame3.tbl, "active"))
     old.ij <- as.integer(strsplit(active.cell, ",")[[1]])
     i <- old.ij[1]
-    if (i > 0 & i < nrow(dd))
+    if (i > 0 & i < (nrow(d) + 1L))
       i <- i + 1L
     j <- old.ij[2]
     if (i == 0 | j == 0)
@@ -508,19 +393,100 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
 
   # Format values
-  FormatValues <- function(vals, fmt="") {
+  FormatValues <- function(vals, fmt="", digits=12) {
     if (inherits(vals, "POSIXt")) {
       if (fmt == "")
         fmt <- "%Y-%m-%d %H:%M:%OS3"
       return(POSIXct2Character(vals, fmt=fmt))
+    } else if (inherits(vals, "numeric")) {
+      vals <- round(vals, digits)
     }
     if (fmt == "")
-      return(format(vals, digits=15, scientific=FALSE, drop0trailing=TRUE))
+      return(format(vals, scientific=FALSE, drop0trailing=TRUE, nsmall=digits))
     ans <- try(sprintf(fmt, vals), silent=TRUE)
     if (inherits(ans, "try-error"))
-      return(format(vals, digits=15, scientific=FALSE, drop0trailing=TRUE))
+      return(format(vals, scientific=FALSE, drop0trailing=TRUE, nsmall=digits))
     return(gsub("(^ +)|( +$)", "", ans))
   }
+
+  # Get edits
+
+  GetEdits <- function() {
+    s <- NULL
+    if (is.null(changelog) & (is.null(undo.stack) || nrow(undo.stack) == 0))
+      return(s)
+
+    if (!is.null(changelog)) {
+      changelog$cell <- paste(changelog[, "row"], changelog[, "col"], sep=",")
+      changelog <- changelog[, c("time", "cell", "old", "new")]
+      undo.stack <- rbind(undo.stack, changelog)
+    }
+
+    for (i in unique(undo.stack$cell)) {
+      undo.stack.cell <- undo.stack[undo.stack$cell == i, , drop=FALSE]
+      undo.stack.cell <- undo.stack.cell[order(undo.stack.cell$time), ,
+                                         drop=FALSE]
+      m <- nrow(undo.stack.cell)
+      cell <- as.integer(strsplit(undo.stack.cell$cell, ",")[[1]])
+      obj <- d[cell[1], cell[2]]
+      old <- undo.stack.cell$old[1]
+      new <- undo.stack.cell$new[m]
+
+      if (inherits(obj, "POSIXt") &&
+          is.na(strptime(new, "%Y-%m-%d %H:%M:%S"))) {
+        new <- "NaN"
+      } else if (inherits(obj, c("numeric", "integer")) &&
+                 is.na(suppressWarnings(as.numeric(new)))) {
+        new <- "NaN"
+      } else if (inherits(obj, "logical") && is.na(as.logical(new))) {
+        new <- "NaN"
+      }
+
+      if (identical(old, new))
+        next
+      e <- data.frame(record=row.names[cell[1]],
+                      variable=col.names[cell[2]],
+                      old=old, new=new,
+                      time=format(undo.stack.cell$time[m]),
+                      class=class(obj)[1], row=cell[1], col=cell[2],
+                      stringsAsFactors=FALSE)
+      s <- rbind(s, e)
+    }
+
+    return(s)
+  }
+
+  # View changelog
+
+  ViewChangeLog <- function() {
+    s <- GetEdits()
+    if (is.null(s)) {
+      txt <- ""
+    } else {
+      ids <- c("record", "variable", "old", "new", "time", "class")
+      titles <- c("Record", "Variable Name", "Old Value", "New Value",
+                  "Time Stamp", "Class")
+      justify <- c("right", "left", "right", "right", "left", "left")
+
+      s <- s[order(s$record, s$variable), ids, drop=FALSE]
+      breaks <- vapply(titles,
+                       function(i) paste(rep("-", nchar(i)), collapse=""), "")
+      s <- rbind(titles, breaks, s)
+      widths <- apply(s, 2, function(i) max(nchar(i)))
+
+      for (j in 1:ncol(s)) {
+        s[, j] <- format(s[, j], width=widths[j], justify=justify[j])
+      }
+      txt <- apply(s, 1, function(i) paste(i, collapse="  "))
+    }
+    EditText(txt, read.only=TRUE, win.title="Change Log",
+             is.fixed.width.font=TRUE, parent=tt)
+    tkfocus(frame3.tbl)
+  }
+
+
+
+
 
   ## Main program
 
@@ -585,31 +551,25 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   col.0.width  <- max(nchar(row.names)) + 1L
   row.0.height <- max(vapply(strsplit(col.names, "\n"), length, 0L))
 
-  # Format data table and determine column widths
-  dd <- d
+  # Determine column widths
   col.width <- NULL
   for (j in 1:n) {
-    dd[, j] <- FormatValues(dd[, j], fmt=col.formats[j])
-
     if (col.names[j] == "")
       nchar.title <- 0
     else
       nchar.title <- max(vapply(strsplit(col.names[j], "\n"),
                                 function(i) nchar(i), 0L))
-    nchar.data <- max(nchar(dd[,j]))
+    nchar.data <- max(nchar(FormatValues(d[,j], fmt=col.formats[j])))
     len <- max(c(nchar.title, nchar.data)) + 1L
     if (len < 10L)
       len <- if (n == 1) 20L else 10L
     col.width[j] <- len
   }
 
-  # Add titles and row names to character data frame
-  dd <- rbind(c("", col.names), cbind(row.names, as.matrix(dd)))
-
   # Assigin global variables
   undo.stack <- NULL
   redo.stack <- NULL
-  rtn <- NULL
+  changelog <- NULL
   search.defaults <- list(is.match.word=FALSE, is.match.case=TRUE,
                           is.reg.exps=FALSE, is.search.sel=FALSE,
                           is.perl=FALSE)
@@ -653,10 +613,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
         command=BypassCopyCmd)
   if (!read.only) {
     tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+x",
-          command=function() {
-            RunPreCutCmd()
-            tcl("tk_tableCut", frame3.tbl)
-          })
+          command=BypassCutCmd)
     tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+v",
           command=BypassPasteCmd)
     tkadd(menu.edit, "separator")
@@ -897,7 +854,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                          selecttitle=1, insertofftime=0, anchor="ne",
                          highlightthickness=0, cache=1, validate=1,
                          font="TkFixedFont", exportselection=0,
-                         browsecommand=function(s, S) ChangeActiveCell(S),
+                         browsecommand=function(s, S) ChangeActiveCell(s, S),
                          validatecommand=function(s, S) ValidateCellValue(s, S),
                          command=function(r, c) GetCellValue(r, c),
                          xscrollcommand=function(...) tkset(frame3.xsc, ...),
@@ -921,9 +878,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkgrid.configure(frame3.xsc, padx=c(10,  0), pady=c(0, 5), sticky="we")
 
   tktag.configure(frame3.tbl, "active", background="#FBFCD0")
-
-# tktag.configure(frame3.tbl, "active", anchor="nw", justify="right")
-
   tktag.configure(frame3.tbl, "sel", background="#EAEEFE",
                   foreground="#000000")
   tktag.configure(frame3.tbl, "title", background="#D9D9D9",
@@ -951,7 +905,8 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkbind(tt, "<Control-f>", function() CallSearch(is.replace=FALSE))
   tkbind(tt, "<Control-r>", function() CallSearch(is.replace=TRUE))
 
-  tkbind(frame3.tbl, "<Control-x>", RunPreCutCmd)
+  tkbind(frame3.tbl, "<Control-x>",
+         paste(.Tcl.callback(BypassCutCmd), "break", sep="; "))
   tkbind(frame3.tbl, "<Control-v>",
          paste(.Tcl.callback(BypassPasteCmd), "break", sep="; "))
   tkbind(frame3.tbl, "<Return>",
@@ -992,5 +947,8 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  invisible(rtn)
+  if (is.null(changelog))
+    invisible(NULL)
+  else
+    invisible(list(d=d, changelog=changelog))
 }
