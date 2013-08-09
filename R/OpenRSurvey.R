@@ -679,7 +679,7 @@ OpenRSurvey <- function() {
       col.names <- names(Data("data.pts"))
       nams <- vapply(col.names, function(i) lst[[i]], "")
       fmts <- vapply(col.names, function(i) cols[[vars[[i]]]]$format, "")
-      EditData(Data("data.pts"), col.names=nams, col.formats=fmts,
+      EditData(Data("data.pts"), col.formats=fmts, col.names=nams,
                read.only=TRUE, win.title="Processed Data", parent=tt)
     } else {  # edit raw data
       if (is.null(Data("data.raw")))

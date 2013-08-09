@@ -10,7 +10,7 @@ A \acronym{GUI} for viewing and editing table formatted data.
 
 \usage{
 EditData(d, col.names = NULL, col.formats = NULL, read.only = FALSE,
-         changelog = NULL, win.title = "View Data", parent = NULL)
+         changelog = NULL, win.title = "Edit Data", parent = NULL)
 }
 
 \arguments{
