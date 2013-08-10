@@ -380,27 +380,24 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0)
       return()
-
-    tkconfigure(tt, cursor="watch")
     SaveNb()
 
-    if (type == "data")
-      idxs <- idx
-    else
-      idxs <- 1:length(cols)
-
+    tkconfigure(tt, cursor="watch")
+    tclServiceMode(FALSE)
     nams <- vapply(cols, function(i) i$name, "")
     fmts <- vapply(cols, function(i) i$format, "")
     funs <- vapply(cols, function(i) i$fun, "")
-
-    d <- as.data.frame(lapply(idxs, function(i) EvalFunction(funs[i], cols)),
-                       stringsAsFactors=FALSE)
-    row.names(d) <- row.names(Data("data.raw"))
+    idxs <- if (type == "data") idx else 1:length(cols)
+    d <- as.data.frame(lapply(idxs, function(i) EvalFunction(funs[i], cols)))
+    rows.str <- row.names(Data("data.raw"))
+    rows.int <- as.integer(rows.str)
+    is.int <- is.integer(rows.int) && !anyDuplicated(rows.int)
+    row.names(d) <- if (is.int) rows.int else rows.str
+    tclServiceMode(TRUE)
+    tkconfigure(tt, cursor="arrow")
 
     EditData(d, nams[idxs], fmts[idxs], read.only=TRUE, win.title="Raw Data",
              parent=tt)
-    tkconfigure(tt, cursor="arrow")
-    tkfocus(tt)
   }
 
   # Build historgram
@@ -485,10 +482,12 @@ ManageVariables <- function(cols, vars, parent=NULL) {
         command=SaveNewVar)
   tkadd(menu.edit, "command", label="Delete", command=DeleteVar)
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="View data",
-        command=function() CallEditData("data"))
-  tkadd(menu.edit, "command", label="View data frame",
+  menu.edit.view <- tkmenu(tt, tearoff=0)
+  tkadd(menu.edit.view, "command", label="All variables",
         command=function() CallEditData())
+  tkadd(menu.edit.view, "command", label="Selected variable",
+        command=function() CallEditData("data"))
+  tkadd(menu.edit, "cascade", label="View raw data for", menu=menu.edit.view)
 
   menu.arrange <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Arrange", menu=menu.arrange, underline=0)

@@ -721,6 +721,7 @@ OpenRSurvey <- function() {
     }
 
     tkconfigure(tt, cursor="watch")
+    tclServiceMode(FALSE)
 
     # Process points
 
@@ -730,15 +731,11 @@ OpenRSurvey <- function() {
       Eval <- function(v) {
         if (is.null(v)) NULL else EvalFunction(cols[[v]]$fun, cols)
       }
-      lst <- lapply(var.names, function(i) Eval(vars[[i]]))
-      len <- vapply(lst, length, 0L)
-      max.len <- max(len)
-
-      d <- list()
-      for (i in seq(along=lst))
-        d[[i]] <- c(lst[[i]], rep(NA, max.len - len[i]))
-      d <- as.data.frame(d)
-      row.names(d) <- type.convert(row.names(Data("data.raw")), as.is=TRUE)
+      d <- as.data.frame(lapply(var.names, function(i) Eval(vars[[i]])))
+      rows.str <- row.names(Data("data.raw"))
+      rows.int <- as.integer(rows.str)
+      is.int <- is.integer(rows.int) && !anyDuplicated(rows.int)
+      row.names(d) <- if (is.int) rows.int else rows.str
       names(d) <- var.names
 
       query.fun <- Data("query.fun")
@@ -761,13 +758,9 @@ OpenRSurvey <- function() {
       Data("data.grd", NULL)
     }
 
-    if (is.null(Data("data.pts"))) {
-      tkconfigure(tt, cursor="arrow")
-      return()
-    }
-
     # Process grid
-    if (is.null(Data("data.grd")) && interpolate) {
+    if (!is.null(Data("data.pts")) && is.null(Data("data.grd")) &&
+        interpolate) {
       ply <- Data("polys", which.attr="crop.poly")
       if (!is.null(ply))
         ply <- Data("polys")[[ply]]
@@ -778,6 +771,7 @@ OpenRSurvey <- function() {
       Data("data.grd", data.grd)
     }
 
+    tclServiceMode(TRUE)
     tkconfigure(tt, cursor="arrow")
   }
 
@@ -911,13 +905,11 @@ OpenRSurvey <- function() {
   menu.file.export <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.export, "command", label="Text file\u2026",
         command=function() WriteData("txt"))
-
   is.pkg <- "rgdal" %in% .packages(all.available=TRUE) &&
             require(rgdal, warn.conflicts=FALSE, quietly=TRUE)
   state <- if (is.pkg) "normal" else "disabled"
   tkadd(menu.file.export, "command", state=state, label="Shapefile\u2026",
         command=function() WriteData("shp"))
-
   tkadd(menu.file.export, "command", label="R data file\u2026",
         command=function() WriteData("rda"))
   tkadd(menu.file, "cascade", label="Export point data as",
@@ -942,12 +934,12 @@ OpenRSurvey <- function() {
   menu.edit <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
 
-  tkadd(menu.edit, "command", label="Comment\u2026",
-        command=EditComment)
-  tkadd(menu.edit, "command", label="Edit raw data\u2026",
-        command=function() CallEditData(read.only=FALSE))
   tkadd(menu.edit, "command", label="Manage variables\u2026",
         command=CallManageVariables)
+  tkadd(menu.edit, "command", label="Edit raw data\u2026",
+        command=function() CallEditData(read.only=FALSE))
+  tkadd(menu.edit, "command", label="Comment\u2026",
+        command=EditComment)
 
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Edit query\u2026",
