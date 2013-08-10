@@ -858,7 +858,6 @@ OpenRSurvey <- function() {
   save.var    <- tclVar()
   data.var    <- tclVar()
   polygon.var <- tclVar()
-  globe.var   <- tclVar()
   config.var  <- tclVar()
   axes.var    <- tclVar()
   layout.var  <- tclVar(1)
@@ -923,7 +922,7 @@ OpenRSurvey <- function() {
         command=SaveRDevice)
   tkadd(menu.file.save, "command", label="RGL graphic\u2026",
         command=SaveRGLDevice)
-  tkadd(menu.file, "cascade", label="Save graph from", menu=menu.file.save)
+  tkadd(menu.file, "cascade", label="Save plot from", menu=menu.file.save)
 
   tkadd(menu.file, "separator")
   tkadd(menu.file, "command", label="Exit",
@@ -1071,8 +1070,8 @@ OpenRSurvey <- function() {
         })
 
   tkadd(menu.graph, "separator")
-  tkadd(menu.graph, "command", label="Close all graphs", accelerator="Ctrl+F4",
-        command=CloseDevices)
+  tkadd(menu.graph, "command", label="Close all graphic devices",
+        accelerator="Ctrl+F4", command=CloseDevices)
 
   # Help menu
 

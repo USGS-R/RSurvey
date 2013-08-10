@@ -169,15 +169,21 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       return()
     idxs <- which(undo.stack$time == undo.stack$time[nrow(undo.stack)])
     cells <- undo.stack[idxs, "cell"]
+    ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
+                   c(0, 0)))
     old.vals <- undo.stack[idxs, "old"]
     SaveEdits(old.vals, cells)
     redo.stack <<- rbind(redo.stack, undo.stack[idxs, , drop=FALSE])
     undo.stack <<- undo.stack[-idxs, , drop=FALSE]
     if (nrow(undo.stack) == 0)
       undo.stack <<- NULL
+    fmt.old.vals <- FormatValues(ij[, 1], ij[, 2], is.fmt=TRUE)
     tclServiceMode(FALSE)
     for (i in seq(along=cells))
-      tkset(frame3.tbl, cells[i], old.vals[i])
+      tkset(frame3.tbl, cells[i], fmt.old.vals[i])
+
+
+
     tclServiceMode(TRUE)
   }
 
@@ -187,13 +193,19 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       return()
     idxs <- which(redo.stack$time == redo.stack$time[nrow(redo.stack)])
     cells <- redo.stack[idxs, "cell"]
+    ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
+                   c(0, 0)))
     new.vals <- redo.stack[idxs, "new"]
     SaveEdits(new.vals, cells)
     undo.stack <<- rbind(undo.stack, redo.stack[idxs, , drop=FALSE])
     redo.stack <<- redo.stack[-idxs, , drop=FALSE]
+    fmt.new.vals <- FormatValues(ij[, 1], ij[, 2], is.fmt=TRUE)
     tclServiceMode(FALSE)
     for (i in seq(along=cells))
-      tkset(frame3.tbl, cells[i], new.vals[i])
+      tkset(frame3.tbl, cells[i], fmt.new.vals[i])
+
+
+
     tclServiceMode(TRUE)
   }
 
@@ -284,7 +296,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tclServiceMode(FALSE)
     for (i in seq(along=cells))
       tkset(frame3.tbl, cells[i], new.vals[i])
-
     tkset(frame3.tbl, active.cell, FormatValues(active.ij[1], active.ij[2]))
     tclServiceMode(TRUE)
   }
@@ -300,10 +311,12 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     if (i == 0 | j == 0)
       return()
     new.ij <- paste(i, j, sep=",")
+    tclServiceMode(FALSE)
     tkselection.clear(frame3.tbl, "all")
     tkactivate(frame3.tbl, new.ij)
     tkselection.set(frame3.tbl, new.ij)
     tksee(frame3.tbl, new.ij)
+    tclServiceMode(TRUE)
   }
 
   # Search data table
@@ -960,6 +973,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   tkbind(frame0.ent.1.1, "<Return>",
          paste(.Tcl.callback(BypassReturnCmd), "break", sep="; "))
+  tkbind(frame0.ent.1.1, "<FocusIn>", function() tksee(frame3.tbl, "active"))
 
   tkbind(tt, "<Control-f>", function() CallSearch(is.replace=FALSE))
   tkbind(tt, "<Control-r>", function() CallSearch(is.replace=TRUE))
