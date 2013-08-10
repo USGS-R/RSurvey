@@ -737,7 +737,7 @@ OpenRSurvey <- function() {
       d <- list()
       for (i in seq(along=lst))
         d[[i]] <- c(lst[[i]], rep(NA, max.len - len[i]))
-      d <- as.data.frame(d, row.names=row.names(Data("data.raw")))
+      d <- as.data.frame(d)
       row.names(d) <- type.convert(row.names(Data("data.raw")), as.is=TRUE)
       names(d) <- var.names
 
