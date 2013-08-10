@@ -734,11 +734,12 @@ OpenRSurvey <- function() {
       len <- vapply(lst, length, 0L)
       max.len <- max(len)
 
-      d <- as.data.frame(matrix(NA, nrow=max.len, ncol=length(lst)))
-      names(d) <- var.names
+      d <- list()
       for (i in seq(along=lst))
         d[[i]] <- c(lst[[i]], rep(NA, max.len - len[i]))
-      row.names(d) <- row.names(Data("data.raw"))
+      d <- as.data.frame(d, row.names=row.names(Data("data.raw")))
+      row.names(d) <- type.convert(row.names(Data("data.raw")), as.is=TRUE)
+      names(d) <- var.names
 
       query.fun <- Data("query.fun")
       if (is.null(query.fun)) {
