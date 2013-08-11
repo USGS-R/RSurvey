@@ -30,7 +30,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   }
 
   # Format values
-  FormatValues <- function(i, j, is.fmt=FALSE, digits=12) {
+  FormatValues <- function(i, j, is.fmt=FALSE) {
     fmt.vals <- rep(NA, length(i))
     for (column in unique(j)) {
       idxs <- j %in% column
@@ -43,14 +43,15 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       } else {
         if (fmt == "") {
           if ("numeric" %in% obj.class)
-            fmt.vals[idxs] <- formatC(vals, digits=digits, format="f",
-                                      mode="real", drop0trailing=TRUE, width=-1)
+            fmt.vals[idxs] <- formatC(vals, digits=num.digits, format="f",
+                                      drop0trailing=TRUE, width=-1)
           else
-            fmt.vals[idxs] <- format(vals)
+            fmt.vals[idxs] <- format(vals, trim=TRUE)
         } else {
           ans <- try(sprintf(fmt, vals), silent=TRUE)
           if (inherits(ans, "try-error"))
-            fmt.vals[idxs] <- format(vals)
+            fmt.vals[idxs] <- format(vals, nsmall=num.digits, trim=TRUE,
+                                     scientific=FALSE)
           else
             fmt.vals[idxs] <- gsub("(^ +)|( +$)", "", ans)
         }
@@ -642,6 +643,8 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   search.defaults <- list(is.match.word=FALSE, is.match.case=TRUE,
                           is.reg.exps=FALSE, is.search.sel=FALSE,
                           is.perl=FALSE)
+  num.tolerance <- .Machine$double.eps^0.5
+  num.digits <- nchar(format(as.integer(1 / num.tolerance)))
 
   # Assign variables linked to Tk widgets
   table.var   <- tclArray()
