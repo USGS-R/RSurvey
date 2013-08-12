@@ -17,16 +17,16 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   GetCellValue <- function(r, c) {
     i <- as.integer(r)
     j <- as.integer(c)
-    if (i > 0 & j > 0) {
+    if (i > 0 && j > 0) {
       val <- FormatValues(i, j, is.fmt=TRUE)
-    } else if (i == 0 & j > 0) {
+    } else if (i == 0 && j > 0) {
       val <- col.names[j]
-    } else if (i > 0 & j == 0) {
+    } else if (i > 0 && j == 0) {
       val <- row.names[i]
     } else {
       val <- ""
     }
-    as.tclObj(val, drop=TRUE)
+    return(as.tclObj(val, drop=TRUE))
   }
 
   # Format values
@@ -37,7 +37,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       vals <- d[i[idxs], column]
       obj.class <- class(d[1, column])
       is.time <- "POSIXt" %in% obj.class
-      fmt <- if (is.fmt || is.time) col.formats[column] else ""
+      fmt <- ifelse (is.fmt || is.time, col.formats[column], "")
       if (is.time) {
         fmt.vals[idxs] <- POSIXct2Character(vals, fmt=fmt)
       } else {
@@ -48,12 +48,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
           else
             fmt.vals[idxs] <- format(vals, trim=TRUE)
         } else {
-          ans <- try(sprintf(fmt, vals), silent=TRUE)
-          if (inherits(ans, "try-error"))
-            fmt.vals[idxs] <- format(vals, nsmall=num.digits, trim=TRUE,
-                                     scientific=FALSE)
-          else
-            fmt.vals[idxs] <- gsub("(^ +)|( +$)", "", ans)
+          fmt.vals[idxs] <- gsub("(^ +)|( +$)", "", sprintf(fmt, vals))
         }
       }
     }
@@ -116,6 +111,16 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     return(as.tclObj(is.valid))
   }
 
+  # Set active cell
+  SetActiveCell <- function() {
+    cell <- as.character(tkindex(frame3.tbl, "active"))
+    ij <- as.integer(strsplit(cell, ",")[[1]])
+    fmt.val <- FormatValues(ij[1], ij[2])
+    if (!read.only)
+      tkset(frame3.tbl, cell, fmt.val)
+    tclvalue(value.var) <- as.character(fmt.val)
+  }
+
   # Change active cell
   ChangeActiveCell <- function(s, S) {
     if (!read.only && s != "") {
@@ -143,8 +148,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
         j <- 1L
       tkactivate(frame3.tbl, paste(i, j, sep=","))
     }
-    val <- FormatValues(i, j)
-    tclvalue(value.var) <- val
     tktag.delete(frame3.tbl, "row.idx")
     tktag.delete(frame3.tbl, "col.idx")
     tcl(frame3.tbl, "tag", "cell", "row.idx", paste(i, 0, sep=","))
@@ -159,9 +162,8 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       tcl(frame3.tbl, "tag", "cell", "active_readonly", paste(i, j, sep=","))
       tktag.configure(frame3.tbl, "active_readonly", background="#FBFCD0")
       tktag.raise(frame3.tbl, "active_readonly", "sel")
-    } else {
-      tkset(frame3.tbl, paste(i, j, sep=","), val)
     }
+    SetActiveCell()
   }
 
   # Undo edit
@@ -182,9 +184,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tclServiceMode(FALSE)
     for (i in seq(along=cells))
       tkset(frame3.tbl, cells[i], fmt.old.vals[i])
-
-
-
+    SetActiveCell()
     tclServiceMode(TRUE)
   }
 
@@ -204,9 +204,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tclServiceMode(FALSE)
     for (i in seq(along=cells))
       tkset(frame3.tbl, cells[i], fmt.new.vals[i])
-
-
-
+    SetActiveCell()
     tclServiceMode(TRUE)
   }
 
@@ -253,6 +251,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tclServiceMode(FALSE)
     for (cell in cells)
       tkset(frame3.tbl, cell, "NA")
+    SetActiveCell()
     tclServiceMode(TRUE)
   }
 
@@ -297,7 +296,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     tclServiceMode(FALSE)
     for (i in seq(along=cells))
       tkset(frame3.tbl, cells[i], new.vals[i])
-    tkset(frame3.tbl, active.cell, FormatValues(active.ij[1], active.ij[2]))
+    SetActiveCell()
     tclServiceMode(TRUE)
   }
 
@@ -356,6 +355,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       tclServiceMode(FALSE)
       for (idx in seq(along=cells))
         tkset(frame3.tbl, cells[idx], new.vals[idx])
+      SetActiveCell()
       tclServiceMode(TRUE)
     }
   }
