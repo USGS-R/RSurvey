@@ -643,8 +643,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   search.defaults <- list(is.match.word=FALSE, is.match.case=TRUE,
                           is.reg.exps=FALSE, is.search.sel=FALSE,
                           is.perl=FALSE)
-  num.tolerance <- .Machine$double.eps^0.5
-  num.digits <- nchar(format(as.integer(1 / num.tolerance)))
+  num.digits <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
 
   # Assign variables linked to Tk widgets
   table.var   <- tclArray()
