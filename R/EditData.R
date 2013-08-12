@@ -35,14 +35,14 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     for (column in unique(j)) {
       idxs <- j %in% column
       vals <- d[i[idxs], column]
-      obj.class <- class(d[1, column])
-      is.time <- "POSIXt" %in% obj.class
+      obj <- d[1, column]
+      is.time <- inherits(obj, "POSIXt")
       fmt <- ifelse (is.fmt || is.time, col.formats[column], "")
       if (is.time) {
         fmt.vals[idxs] <- POSIXct2Character(vals, fmt=fmt)
       } else {
         if (fmt == "") {
-          if ("numeric" %in% obj.class)
+          if (inherits(obj, "numeric"))
             fmt.vals[idxs] <- formatC(vals, digits=num.digits, format="f",
                                       drop0trailing=TRUE, width=-1)
           else
@@ -66,15 +66,19 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     }
     for (column in unique(j)) {
       idxs <- which(j == column)
-      obj.class <- class(d[1, column])
+      obj <- d[1, column]
       new.vals <- vals[idxs]
-      if ("POSIXt" %in% obj.class) {
+      new.vals[new.vals %in% ""] <- NA
+      if (inherits(obj, "POSIXt")) {
         fmt <- gsub("%OS[[:digit:]]+", "%OS", col.formats[column])
         new.vals <- strptime(new.vals, format=fmt)
-        if ("POSIXct" %in% obj.class)
+        if (inherits(obj, "POSIXct"))
           new.vals <- as.POSIXct(new.vals)
+      } else if (inherits(obj, c("factor", "ordered"))) {
+        levels(d[, column]) <<- unique(c(levels(d[, column]),
+                                         na.omit(unique(new.vals))))
       } else {
-        new.vals <- suppressWarnings(as(new.vals, obj.class[1]))
+        new.vals <- suppressWarnings(as(new.vals, class(obj)[1]))
       }
       d[i[idxs], column] <<- new.vals
     }
@@ -131,12 +135,12 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       new.val <- paste(as.character(tkget(frame3.tbl, s)), collapse=" ")
       if (!identical(new.val, old.val)) {
         SaveEdits(new.val, i, j)
-        e <- data.frame(time=Sys.time(), cell=s, old=old.val, new=new.val,
-                        stringsAsFactors=FALSE)
+        e <- data.frame(time=Sys.time(), cell=s, old=old.val,
+                        new=FormatValues(i, j), stringsAsFactors=FALSE)
         undo.stack <<- rbind(undo.stack, e)
         redo.stack <<- NULL
       }
-      tkset(frame3.tbl, s, GetCellValue(i, j))
+      tkset(frame3.tbl, s, FormatValues(i, j, is.fmt=TRUE))
     }
     ij <- as.integer(strsplit(S, ",")[[1]])
     i <- ij[1]
@@ -372,14 +376,8 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       m <- nrow(d)
 
       is.match.word <- search.defaults$is.match.word
-      if (search.defaults$is.match.case)
-        ignore.case <- FALSE
-      else
-        ignore.case <- TRUE
-      if (search.defaults$is.reg.exps)
-        fixed <- FALSE
-      else
-        fixed <- TRUE
+      ignore.case <- ifelse (search.defaults$is.match.case, FALSE, TRUE)
+      fixed <- ifelse (search.defaults$is.reg.exps, FALSE, TRUE)
       perl <- search.defaults$is.perl
       is.search.sel <- search.defaults$is.search.sel
       if (is.search.sel) {
@@ -488,7 +486,8 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       return(s)
 
     if (!is.null(changelog)) {
-      changelog$cell <- paste(changelog[, "row"], changelog[, "col"], sep=",")
+      changelog$cell <- paste(match(changelog$record, row.names(d)),
+                              match(changelog$variable, col.names), sep=",")
       changelog <- changelog[, c("time", "cell", "old", "new")]
       undo.stack <- rbind(undo.stack, changelog)
     }
@@ -503,23 +502,12 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
       old <- undo.stack.cell$old[1]
       new <- undo.stack.cell$new[m]
 
-      if (inherits(obj, "POSIXt") &&
-          is.na(strptime(new, format="%Y-%m-%d %H:%M:%S"))) {
-        new <- "NA"
-      } else if (inherits(obj, c("numeric", "integer")) &&
-                 is.na(suppressWarnings(as.numeric(new)))) {
-        new <- "NA"
-      } else if (inherits(obj, "logical") && is.na(as.logical(new))) {
-        new <- "NA"
-      }
-
       if (identical(old, new))
         next
       e <- data.frame(record=row.names[cell[1]],
                       variable=col.names[cell[2]],
                       old=old, new=new,
                       time=format(undo.stack.cell$time[m]),
-                      class=class(obj)[1], row=cell[1], col=cell[2],
                       stringsAsFactors=FALSE)
       s <- rbind(s, e)
     }
@@ -533,19 +521,19 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     if (is.null(s)) {
       txt <- ""
     } else {
-      ids <- c("record", "variable", "old", "new", "time", "class")
-      titles <- c("Record", "Variable Name", "Old Value", "New Value",
-                  "Time Stamp", "Class")
-      justify <- c("right", "left", "right", "right", "left", "left")
-      s <- s[order(s$record, s$variable), ids, drop=FALSE]
-      breaks <- vapply(titles,
-                       function(i) paste(rep("-", nchar(i)), collapse=""), "")
-      s <- rbind(titles, breaks, s)
+      meta <- rbind(c("time", "Time stamp", "left"),
+                    c("record", "Record", "right"),
+                    c("variable", "Variable name", "left"),
+                    c("old", "Old value", "right"),
+                    c("new", "New value", "right"))
+      colnames(meta) <- c("ids", "titles", "justify")
+      s <- s[order(s$time), meta[, "ids"], drop=FALSE]
+      sep <- vapply(meta[, "titles"],
+                    function(i) paste(rep("-", nchar(i)), collapse=""), "")
+      s <- rbind(meta[, "titles"], sep, s)
       widths <- apply(s, 2, function(i) max(nchar(i)))
-
-      for (j in 1:ncol(s)) {
-        s[, j] <- format(s[, j], width=widths[j], justify=justify[j])
-      }
+      s <- sapply(1:ncol(s), function(j) format(s[, j], width=widths[j],
+                                                justify=meta[j, "justify"]))
       txt <- apply(s, 1, function(i) paste(i, collapse="  "))
     }
     EditText(txt, read.only=TRUE, win.title="Change Log",
