@@ -68,7 +68,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     idx <- as.integer(tcl(frame1.box.3.1, "current"))
     show.ids <- ids
     if (idx > 0)
-      show.ids <- ids[cls %in% classes[idx]]
+      show.ids <- ids[vapply(cols, function(i) classes[idx] %in% i$class, TRUE)]
 
     tclvalue(variable.var) <- ""
     for (i in seq(along=show.ids))
@@ -196,7 +196,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     var.vals <- sort(var.vals, na.last=TRUE)
     if (var.fmt == "") {
       var.vals.txt <- format(var.vals)
-    } else if (var.class == "POSIXct") {
+    } else if ("POSIXct" %in% var.class) {
       var.vals.txt <- format(var.vals, format=var.fmt)
     } else {
       var.vals.txt <- try(sprintf(var.fmt, var.vals), silent=TRUE)
@@ -236,14 +236,14 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     if (length(idx) == 0)
       return()
     val <- as.character(tkget(frame1.lst.4.1, idx, idx))
-    if (var.class == "factor" && is.na(suppressWarnings(as.numeric(val))))
+    if ("factor" %in% var.class && is.na(suppressWarnings(as.numeric(val))))
       var.class <- "character"
-    if (var.class == "POSIXct") {
+    if ("POSIXct" %in% var.class) {
       txt <- paste0("as.POSIXct(\"", val, "\", format = \"", var.fmt, "\")")
-    } else if (var.class == "integer" &&
+    } else if ("integer" %in% var.class &&
                !val %in% c("NA", "NaN", "Inf", "-Inf")) {
       txt <- paste0(val, "L")
-    } else if (var.class == "character" &&
+    } else if ("character" %in% var.class &&
                !val %in% c("NA", "NaN", "Inf", "-Inf")) {
       txt <- paste0("\"", val, "\"")
     } else {
@@ -275,22 +275,25 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     old.fun <- cols[[as.integer(index)]]$fun
   }
   rtn <- NULL
-
   ids <- vapply(cols, function(i) i$id, "")
-  cls <- vapply(cols, function(i) i$class, "")
+
+  # Remove variable being defined
   if (!is.null(index)) {
     edit.fun.id <- ids[index]
     ids <- ids[-index]
-    cls <- cls[-index]
   }
 
+  # Class types
+  classes <- NULL
+  for (i in seq(along=cols)) {
+    if (!i %in% index)
+      classes <- c(classes, cols[[i]]$class)
+  }
+  classes <- unique(classes)
+
+  # Required vector length
   if (!is.null(value.length))
     value.length <- as.integer(value.length)
-
-  # Class types
-  classes <- c("numeric", "integer", "POSIXct", "logical",
-               "character", "factor")
-  classes <- classes[classes %in% cls]
 
   # Assign variables linked to Tk widgets
   variable.var <- tclVar()

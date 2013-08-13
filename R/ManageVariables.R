@@ -107,19 +107,20 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     # Update class
     tkconfigure(frame2.ent.3.2, state="normal")
     saved.class <- cols[[idx]]$class
-    tclvalue(class.var) <- saved.class
+    tclvalue(class.var) <- paste(saved.class, collapse=", ")
     tkconfigure(frame2.ent.3.2, state="readonly")
 
     # Update format
     saved.fmt <- cols[[idx]]$format
     if (is.null(saved.fmt) || saved.fmt == "") {
-      if (saved.class %in% c("character", "logical", "factor")) {
+      if (any(c("character", "logical", "factor", "ordered") %in%
+          saved.class)) {
         saved.fmt <- "%s"
-      } else if (saved.class == "numeric") {
+      } else if ("numeric" %in% saved.class) {
         saved.fmt <- "%f"
-      } else if (saved.class == "integer") {
+      } else if ("integer" %in% saved.class) {
         saved.fmt <- "%d"
-      } else if (saved.class == c("POSIXlt", "POSIXct")) {
+      } else if ("POSIXlt" %in% saved.class) {
         saved.fmt <- "%d/%m/%Y %H:%M:%OS"
       } else {
         saved.fmt <- ""
@@ -287,7 +288,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
       return()
     }
 
-    if (f$class != cols[[idx]]$class)
+    if (!identical(f$class, cols[[idx]]$class))
       cols[[idx]]$format <<- NULL
 
     cols[[idx]]$fun     <<- f$fun
@@ -384,7 +385,8 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     fmts <- vapply(cols, function(i) i$format, "")
     funs <- vapply(cols, function(i) i$fun, "")
     idxs <- if (type == "data") idx else 1:length(cols)
-    d <- as.data.frame(lapply(idxs, function(i) EvalFunction(funs[i], cols)))
+    d <- as.data.frame(lapply(idxs, function(i) EvalFunction(funs[i], cols)),
+                       stringsAsFactors=FALSE)
     rows.str <- row.names(Data("data.raw"))
     rows.int <- as.integer(rows.str)
     is.int <- is.integer(rows.int) && !anyDuplicated(rows.int)
@@ -404,9 +406,10 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     if (length(idx) == 0)
       return()
 
-    cont.classes <- c("integer", "numeric")
-    idxs <- which(vapply(cols, function(i) i$class, "") %in% cont.classes)
-
+    is.num <- vapply(cols,
+                     function(i) any(c("numeric", "integer") %in% i$class),
+                     TRUE)
+    idxs <- which(is.num)
     if (length(idxs) == 0) {
       msg <- paste("A histogram may only be built for continous variables;",
                    "that is, variables of class \"numeric\" or \"integer\".")
@@ -418,8 +421,8 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     ids  <- vapply(cols, function(i) i$id, "")
     funs <- vapply(cols, function(i) i$fun, "")
 
-    d <- sapply(idxs, function(i) EvalFunction(funs[i], cols))
-    d <- as.data.frame(d)
+    d <- as.data.frame(lapply(idxs, function(i) EvalFunction(funs[i], cols)),
+                       stringsAsFactors=FALSE)
 
     var.names <- ids[idxs]
     if (idx %in% idxs)

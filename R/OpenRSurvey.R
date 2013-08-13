@@ -161,14 +161,14 @@ OpenRSurvey <- function() {
 
       cols <- list()
       for (i in 1:n) {
-        cls <- class(d[, i])[1]
-        if (cls %in% c("character", "logical", "factor")) {
+        cls <- class(d[, i])
+        if (any(c("character", "logical", "factor") %in% cls)) {
           fmt <- "%s"
-        } else if (cls == "numeric") {
+        } else if ("numeric" %in% cls) {
           fmt <- "%f"
-        } else if (cls == "integer") {
+        } else if ("integer" %in% cls) {
           fmt <- "%d"
-        } else if (cls %in% c("POSIXlt", "POSIXct")) {
+        } else if ("POSIXlt" %in% cls) {
           fmt <- "%d/%m/%Y %H:%M:%OS"
         } else {
           fmt <- ""
@@ -197,16 +197,17 @@ OpenRSurvey <- function() {
   # Establish defaults for x-, y-, and z-coordinate variables
   EstablishDefaultVars <- function() {
     vars <- list()
-    col.classes <- vapply(Data("cols"), function(i) i$class, "")
-    for (i in seq(along=col.classes)) {
-      if (col.classes[i] %in% c("numeric", "integer")) {
-        if (is.null(vars$x)) {
-          vars$x <- i
-        } else if (is.null(vars$y)) {
-          vars$y <- i
-        } else if (is.null(vars$z)) {
-          vars$z <- i
-        }
+    is.num <- vapply(Data("cols"),
+                     function(i) any(c("numeric", "integer") %in% i$class),
+                     TRUE)
+    idxs.n <- which(is.num)
+    for (i in seq(along=idxs.n)) {
+      if (is.null(vars$x)) {
+        vars$x <- idxs.n[i]
+      } else if (is.null(vars$y)) {
+        vars$y <- idxs.n[i]
+      } else if (is.null(vars$z)) {
+        vars$z <- idxs.n[i]
       }
     }
     Data("vars", vars)
@@ -251,12 +252,11 @@ OpenRSurvey <- function() {
     }
 
     ids <- vapply(cols, function(i) i$id, "")
-    classes <- vapply(cols, function(i) i$class, "")
-
-    idxs.n <- which(classes %in% c("numeric", "integer"))
-
+    is.num <- vapply(cols,
+                     function(i) any(c("numeric", "integer") %in% i$class),
+                     TRUE)
+    idxs.n <- which(is.num)
     vals.n <- c("", ids[idxs.n])
-
     tkconfigure(frame1.box.1.2, value=vals.n)
     tkconfigure(frame1.box.2.2, value=vals.n)
     tkconfigure(frame1.box.3.2, value=vals.n)
@@ -279,9 +279,11 @@ OpenRSurvey <- function() {
 
   # Refresh variables
   RefreshVars <- function(item) {
-    cols <- Data("cols")
-    col.classes <- vapply(cols, function(i) i$class, "")
-    idxs.n <- which(col.classes %in% c("numeric", "integer"))
+    is.num <- vapply(Data("cols"),
+                     function(i) any(c("numeric", "integer") %in% i$class),
+                     TRUE)
+    idxs.n <- which(is.num)
+
     idx.x  <- as.integer(tcl(frame1.box.1.2, "current"))
     idx.y  <- as.integer(tcl(frame1.box.2.2, "current"))
     idx.z  <- as.integer(tcl(frame1.box.3.2, "current"))
@@ -735,7 +737,8 @@ OpenRSurvey <- function() {
       Eval <- function(v) {
         if (is.null(v)) NULL else EvalFunction(cols[[v]]$fun, cols)
       }
-      d <- as.data.frame(lapply(var.names, function(i) Eval(vars[[i]])))
+      d <- as.data.frame(lapply(var.names, function(i) Eval(vars[[i]])),
+                         stringsAsFactors=FALSE)
       rows.str <- row.names(Data("data.raw"))
       rows.int <- as.integer(rows.str)
       is.int <- is.integer(rows.int) && !anyDuplicated(rows.int)

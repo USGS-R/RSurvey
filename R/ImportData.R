@@ -104,7 +104,6 @@ ImportData <- function(parent=NULL) {
 
       # Initialize variables
       cols <- list()
-      vars <- list()
       ids <- NULL
 
       # Establish column types
@@ -134,15 +133,15 @@ ImportData <- function(parent=NULL) {
         }
 
         # Set variable class
-        cls <- class(val)[1]
+        cls <- class(val)
 
         # Set missing formats
         if (is.null(fmt)) {
-          if (cls %in% c("character", "logical", "factor")) {
+          if (any(c("character", "logical", "factor", "ordered") %in% cls)) {
             fmt <- "%s"
-          } else if (cls == "numeric") {
+          } else if ("numeric" %in% cls) {
             fmt <- "%f"
-          } else if (cls == "integer") {
+          } else if ("integer" %in% cls) {
             fmt <- "%d"
           } else {
             fmt <- ""
