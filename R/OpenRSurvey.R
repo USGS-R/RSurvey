@@ -181,7 +181,8 @@ OpenRSurvey <- function() {
         cols[[i]]$index   <- i
         cols[[i]]$fun     <- paste0("\"", ids[i], "\"")
         cols[[i]]$sample  <- na.omit(d[, i])[1]
-        cols[[i]]$summary <- SummarizeVariable(d[, i], fmt=fmt)
+        cols[[i]]$summary <- paste(c("", capture.output(summary(d[, i])), ""),
+                                   collapse="\n")
       }
       Data(clear.data=TRUE)
       Data("comment", comment(d))
@@ -696,7 +697,8 @@ OpenRSurvey <- function() {
         Data("data.raw", lst[["d"]])
         for (i in seq(along=cols)) {
           obj <- EvalFunction(cols[[i]]$fun, cols)
-          cols[[i]]$summary <- SummarizeVariable(obj, fmt=cols[[i]]$format)
+          cols[[i]]$summary <- paste(c("", capture.output(summary(obj)), ""),
+                                     collapse="\n")
           cols[[i]]$sample <- na.omit(obj)[1]
         }
         Data("cols", cols)
@@ -1225,7 +1227,8 @@ OpenRSurvey <- function() {
 
   tkgrid.configure(frame2.but.1.2, padx=4)
 
-  tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE, padx=10, pady=0)
+##tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE, padx=10, pady=0)
+  tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE, padx=10, pady=c(0, 10))
 
   # Frame 3, view
 
@@ -1257,7 +1260,7 @@ OpenRSurvey <- function() {
   tkgrid.configure(frame3.box.2.1, padx=c(0, 15), columnspan=3)
   tkgrid.configure(frame3.but.2.4, columnspan=2, sticky="w")
 
-  tkpack(frame3, anchor="w", padx=10)
+##tkpack(frame3, anchor="w", padx=10)
 
   # Set variables
   SetVars()

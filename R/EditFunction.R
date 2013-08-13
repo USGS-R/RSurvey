@@ -54,7 +54,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         return()
       }
 
-      rtn <<- list(fun=txt, class=class(obj)[1], summary=SummarizeVariable(obj),
+      summary.str <- paste(c("\n", capture.output(summary(obj)), ""),
+                           collapse="\n")
+      rtn <<- list(fun=txt, class=class(obj)[1], summary=summary.str,
                    sample=na.omit(obj)[1])
     }
     tclvalue(tt.done.var) <- 1

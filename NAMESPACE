@@ -40,5 +40,4 @@ export(AddAxis,
        SetAxesLimits,
        SetConfiguration,
        SetPolygonLimits,
-       SetPreferences,
-       SummarizeVariable)
+       SetPreferences)

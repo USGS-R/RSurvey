@@ -167,7 +167,8 @@ ImportData <- function(parent=NULL) {
         cols[[j]]$index   <- j
         cols[[j]]$fun     <- paste0("\"", id, "\"")
         cols[[j]]$sample  <- na.omit(val)[1]
-        cols[[j]]$summary <- SummarizeVariable(val, fmt=fmt)
+        cols[[j]]$summary <- paste(c("", capture.output(summary(val)), ""),
+                                   collapse="\n")
         d[, j] <- val
       }
 

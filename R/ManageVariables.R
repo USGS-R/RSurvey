@@ -80,16 +80,11 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     new.fun <- as.character(tclvalue(tkget(frame2.txt.4.2, "1.0", "end-1c")))
     cols[[idx]]$fun <<- new.fun
 
-    # Save summary
-    is.fun <- !identical(old.fun, new.fun)
-    is.fmt <- !identical(old.fmt, new.fmt)
-    if (is.fun) {
+    # Save summary string
+    if (!identical(old.fun, new.fun)) {
       obj <- EvalFunction(new.fun, cols)
-      cols[[idx]]$summary <<- SummarizeVariable(obj, fmt=new.fmt)
-      cols[[idx]]$sample <<- na.omit(obj)[1]
-    } else if (is.fmt) {
-      cols[[idx]]$summary <<- SummarizeVariable(cols[[idx]]$summary,
-                                                fmt=new.fmt)
+      cols[[idx]]$summary <<- paste(c("", capture.output(summary(obj)), ""),
+                                    collapse="\n")
     }
 
     # Save name
@@ -146,7 +141,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     # Update summary
     tkconfigure(frame3.txt, state="normal")
     tcl(frame3.txt, "delete", "1.0", "end")
-    sum.str <- cols[[idx]]$summary$String
+    sum.str <- cols[[idx]]$summary
     if (!is.null(sum.str))
       tkinsert(frame3.txt, "end", sum.str)
     tkconfigure(frame3.txt, state="disabled")
@@ -247,8 +242,8 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     idx <- length(cols) + 1L
 
     cols[[idx]] <- list(id="", class="")
-    value.length <- cols[[1]]$summary$Count
-    f <- EditFunction(cols, index=idx, value.length=value.length,
+
+    f <- EditFunction(cols, index=idx, value.length=nrow(Data("data.raw")),
                       win.title="New Variable", parent=tt)
 
     if (is.null(f$fun) || f$fun == "")
@@ -275,8 +270,8 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     if (length(idx) == 0)
       return()
 
-    n <- cols[[1]]$summary$Count
-    f <- EditFunction(cols, index=idx, value.length=n, parent=tt)
+    f <- EditFunction(cols, index=idx, value.length=nrow(Data("data.raw")),
+                      parent=tt)
 
     if (is.null(f$fun))
       return()
@@ -635,7 +630,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
 
   frame3.ysc <- ttkscrollbar(frame3, orient="vertical")
 
-  frame3.txt <- tktext(frame3, bg="white", padx=2, pady=2, width=50, height=8,
+  frame3.txt <- tktext(frame3, bg="white", padx=2, pady=2, width=60, height=8,
                 undo=1, wrap="none", foreground="black", relief="flat",
                 font="TkFixedFont",
                 yscrollcommand=function(...) tkset(frame3.ysc, ...))
