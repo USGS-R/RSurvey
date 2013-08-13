@@ -83,8 +83,9 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     # Save summary string
     if (!identical(old.fun, new.fun)) {
       obj <- EvalFunction(new.fun, cols)
-      cols[[idx]]$summary <<- paste(c("", capture.output(summary(obj)), ""),
-                                    collapse="\n")
+      cols[[idx]]$summary <<- paste(c("", capture.output(summary(obj)),
+                                      "", capture.output(str(obj)),
+                                      ""), collapse="\n")
     }
 
     # Save name

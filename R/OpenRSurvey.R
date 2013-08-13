@@ -181,8 +181,9 @@ OpenRSurvey <- function() {
         cols[[i]]$index   <- i
         cols[[i]]$fun     <- paste0("\"", ids[i], "\"")
         cols[[i]]$sample  <- na.omit(d[, i])[1]
-        cols[[i]]$summary <- paste(c("", capture.output(summary(d[, i])), ""),
-                                   collapse="\n")
+        cols[[i]]$summary <- paste(c("", capture.output(summary(d[, i])),
+                                     "", capture.output(str(d[, i])),
+                                     ""), collapse="\n")
       }
       Data(clear.data=TRUE)
       Data("comment", comment(d))
@@ -697,8 +698,9 @@ OpenRSurvey <- function() {
         Data("data.raw", lst[["d"]])
         for (i in seq(along=cols)) {
           obj <- EvalFunction(cols[[i]]$fun, cols)
-          cols[[i]]$summary <- paste(c("", capture.output(summary(obj)), ""),
-                                     collapse="\n")
+          cols[[i]]$summary <- paste(c("", capture.output(summary(obj)), "",
+                                       "", capture.output(str(obj)),
+                                       ""), collapse="\n")
           cols[[i]]$sample <- na.omit(obj)[1]
         }
         Data("cols", cols)

@@ -54,8 +54,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         return()
       }
 
-      summary.str <- paste(c("\n", capture.output(summary(obj)), ""),
-                           collapse="\n")
+      summary.str <- paste(c("", capture.output(summary(obj)),
+                             "", capture.output(str(obj)),
+                             ""), collapse="\n")
       rtn <<- list(fun=txt, class=class(obj)[1], summary=summary.str,
                    sample=na.omit(obj)[1])
     }
