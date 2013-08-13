@@ -9,7 +9,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   CalcHist <- function(draw.plot=TRUE) {
     idx <- as.integer(tcl(frame1.box.1.2, "current")) + 1L
     x <- d[, idx]
-    xlab <- var.names[idx]
+    xlab <- as.character(var.names[idx])
 
     type <- as.integer(tclvalue(breaks.var))
     if (type == 1L) {
@@ -48,18 +48,11 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
         par(mar=c(5, 5, 2, 2) + 0.1)
       }
       plot(obj, col="light grey", freq=freq, main=NULL, xlab=xlab)
-
     } else {
       obj$xname <- xlab
-      n <- max(vapply(obj, length, 0L))
-      for (i in names(obj)) {
-        obj[[i]] <- format(obj[[i]])
-        length(obj[[i]]) <- n
-        obj[[i]][is.na(obj[[i]])] <- ""
-      }
-      obj <- as.data.frame(do.call(cbind, obj))
-      EditData(obj, col.names=names(obj), read.only=TRUE,
-               win.title="Histogram Data", parent=tt)
+      txt <- paste(c(capture.output(obj), ""), collapse="\n")
+      EditText(txt, read.only=TRUE, win.title="Histogram Data",
+               is.fixed.width.font=TRUE, parent=tt)
     }
   }
 
