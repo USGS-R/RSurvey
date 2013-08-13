@@ -93,17 +93,7 @@ EditText <- function(txt, read.only=FALSE, win.title="View Text",
   }
 
   # Determine the width of the text window
-  if (read.only) {
-    if (n > 88) {
-      txt.width <- 90
-    } else if (n < 48) {
-      txt.width <- 50
-    } else {
-      txt.width <- n + 2
-    }
-  } else {
-    txt.width <- 90
-  }
+  txt.width <- 80
 
   # Determine font type
   if (is.fixed.width.font)

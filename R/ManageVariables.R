@@ -482,7 +482,8 @@ ManageVariables <- function(cols, vars, parent=NULL) {
         command=function() CallEditData())
   tkadd(menu.edit.view, "command", label="Selected variable",
         command=function() CallEditData("data"))
-  tkadd(menu.edit, "cascade", label="View raw data for", menu=menu.edit.view)
+  tkadd(menu.edit, "cascade", label="View data for",
+        menu=menu.edit.view)
 
   menu.arrange <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Arrange", menu=menu.arrange, underline=0)
@@ -496,7 +497,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
         accelerator="Shift+Ctrl+]", command=function() Arrange("front"))
 
   menu.graph <- tkmenu(tt, tearoff=0)
-  tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
+  tkadd(top.menu, "cascade", label="Plot", menu=menu.graph, underline=0)
   tkadd(menu.graph, "command", label="Histogram\u2026",
         command=CallBuildHistogram)
 

@@ -538,7 +538,21 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
     }
     EditText(txt, read.only=TRUE, win.title="Change Log",
              is.fixed.width.font=TRUE, parent=tt)
-    tkfocus(frame3.tbl)
+  }
+
+  # View structure or summary
+  ViewData <- function(type) {
+    names(d) <- make.names(col.names, unique=TRUE)
+    if (type == "str") {
+      txt <- capture.output(str(d))
+      win.title <- "Structure"
+    } else if (type == "summary") {
+      txt <- capture.output(summary(d))
+      win.title <- "Summary"
+    }
+    txt <- paste(c(txt, ""), collapse="\n")
+    EditText(txt, read.only=TRUE, win.title=win.title,
+             is.fixed.width.font=TRUE, parent=tt)
   }
 
 
@@ -695,10 +709,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkadd(menu.edit.width, "command", label="Decrease", accelerator="Ctrl+\u2212",
         command=function() tkevent.generate(frame3.tbl, "<Control-minus>"))
   tkadd(menu.edit, "cascade", label="Column width", menu=menu.edit.width)
-  if (!read.only) {
-    tkadd(menu.edit, "separator")
-    tkadd(menu.edit, "command", label="View change log", command=ViewChangeLog)
-  }
 
   # Search menu
   menu.search <- tkmenu(tt, tearoff=0, relief="flat")
@@ -815,6 +825,18 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
           command=function() tkevent.generate(frame3.tbl, "<Control-e>"))
     tkadd(menu.nav, "cascade", label="Move inside cell to the",
           menu=menu.nav.in)
+  }
+
+# View menu
+  menu.view <- tkmenu(tt, tearoff=0, relief="flat")
+  tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
+  tkadd(menu.view, "command", label="Structure",
+        command=function() ViewData("str"))
+  tkadd(menu.view, "command", label="Summary",
+        command=function() ViewData("summary"))
+  if (!read.only) {
+    tkadd(menu.view, "separator")
+    tkadd(menu.view, "command", label="Change log", command=ViewChangeLog)
   }
 
   # Finish top menu
