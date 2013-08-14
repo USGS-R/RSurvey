@@ -132,22 +132,6 @@ ImportData <- function(parent=NULL) {
             val <- type.convert(val, as.is=TRUE)
         }
 
-        # Set variable class
-        cls <- class(val)
-
-        # Set missing formats
-        if (is.null(fmt)) {
-          if (any(c("character", "logical", "factor", "ordered") %in% cls)) {
-            fmt <- "%s"
-          } else if ("numeric" %in% cls) {
-            fmt <- "%f"
-          } else if ("integer" %in% cls) {
-            fmt <- "%d"
-          } else {
-            fmt <- ""
-          }
-        }
-
         # Organize metadata
         nam <- nams[j]
         id <- nam
@@ -161,8 +145,8 @@ ImportData <- function(parent=NULL) {
         cols[[j]] <- list()
         cols[[j]]$id      <- id
         cols[[j]]$name    <- nam
-        cols[[j]]$format  <- fmt
-        cols[[j]]$class   <- cls
+        cols[[j]]$format  <- if (is.null(fmt)) "" else fmt
+        cols[[j]]$class   <- class(val)
         cols[[j]]$index   <- j
         cols[[j]]$fun     <- paste0("\"", id, "\"")
         cols[[j]]$sample  <- na.omit(val)[1]

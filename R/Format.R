@@ -1,6 +1,6 @@
 # Build C-style string formats.
 
-Format <- function(sample=pi, fmt=NULL, parent=NULL) {
+Format <- function(sample=pi, fmt="", parent=NULL) {
 
   ## Additional functions (subroutines)
 
@@ -12,37 +12,28 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
       tkmessageBox(icon="error", message=msg, title="Error", type="ok",
                    parent=tt)
     } else {
-      if (fmt == "") {
-        if (inherits(sample, c("character", "logical"))) {
-          fmt <- "%s"
-        } else if (inherits(sample, "numeric")) {
-          fmt <- "%f"
-        } else if (inherits(sample, "integer")) {
-          fmt <- "%d"
-        }
-      }
       new.fmt <<- fmt
       tclvalue(tt.done.var) <- 1
     }
   }
 
-  # Translate format string, return TRUE if custom format
+  # Translate format string, return TRUE if format is recognized
 
   TranslateFormat <- function() {
     if (nchar(fmt) < 2L)
-      return(TRUE)
+      return(FALSE)
     if (substr(fmt, 1L, 1L) != "%")
-      return(TRUE)
+      return(FALSE)
     code <- substr(fmt, nchar(fmt), nchar(fmt))
     if (inherits(sample, "integer")) {
       if (code != "d")
-        return(TRUE)
+        return(FALSE)
     } else if (inherits(sample, "numeric")) {
       if (!code %in% c("f", "e"))
-        return(TRUE)
+        return(FALSE)
     } else {
       if(code != "s")
-        return(TRUE)
+        return(FALSE)
     }
 
     width <- ""
@@ -53,22 +44,22 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     len <- attr(regexpr("\\-", fmt), "match.length")
     is.left <- if (len > 0L) TRUE else FALSE
     if (len > 1L)
-      return(TRUE)
+      return(FALSE)
 
     len <- attr(regexpr("\\.", fmt), "match.length")
     is.period <- if (len > 0L) TRUE else FALSE
     if (len > 1L | (is.period & code %in% c("d", "s")))
-      return(TRUE)
+      return(FALSE)
 
     len <- attr(regexpr("[[:space:]]", fmt), "match.length")
     is.space <- if (len > 0L) TRUE else FALSE
     if (len > 1L | (is.space & code == "s"))
-      return(TRUE)
+      return(FALSE)
 
     len <- attr(regexpr("\\+", fmt), "match.length")
     is.sign <- if (len > 0L) TRUE else FALSE
     if (len > 1L | (is.sign & code == "s"))
-      return(TRUE)
+      return(FALSE)
 
     is.pad <- FALSE
 
@@ -80,7 +71,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
         if (length(fmt.split) > 1L) {
           precision <- suppressWarnings(as.integer(fmt.split[2L]))
           if (is.na(precision))
-            return(TRUE)
+            return(FALSE)
         }
         fmt <- fmt.split[1L]
       }
@@ -98,7 +89,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
       if (nchar(fmt) > 0L) {
         width <- suppressWarnings(as.integer(fmt))
         if (is.na(width))
-          return(TRUE)
+          return(FALSE)
       }
     }
 
@@ -112,7 +103,7 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
     tclvalue(pad.var) <- is.pad
 
     BuildFormat()
-    return(FALSE)
+    return(TRUE)
   }
 
   # Add string to conversion format entry
@@ -243,10 +234,11 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
 
   ## Main program
 
-  if (!inherits(sample, c("numeric", "integer", "character",
-                          "factor", "logical")))
-    stop(paste0("Class of sample object is not acceptable:",
-                class(sample), "."))
+  ans <- try(as.character(sample), silent=TRUE)
+  if (inherits(ans, "try-error") || length(ans) != 1)
+    stop("class of sample object is not valid")
+  if (!is.character(fmt))
+    stop("format argument must be of class character")
 
   new.fmt <- NULL
 
@@ -264,13 +256,12 @@ Format <- function(sample=pi, fmt=NULL, parent=NULL) {
   pad.var        <- tclVar(0)
   tt.done.var    <- tclVar(0)
 
-  if (is.character(fmt)) {
+  if (fmt != "") {
     tclvalue(custom.var) <- TRUE
     tclvalue(fmt.var) <- fmt
   }
 
-  is.custom <- TranslateFormat()
-  if (is.custom)
+  if (!TranslateFormat())
     UpdateSample()
 
   # Open GUI

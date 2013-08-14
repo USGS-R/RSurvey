@@ -161,23 +161,11 @@ OpenRSurvey <- function() {
 
       cols <- list()
       for (i in 1:n) {
-        cls <- class(d[, i])
-        if (any(c("character", "logical", "factor") %in% cls)) {
-          fmt <- "%s"
-        } else if ("numeric" %in% cls) {
-          fmt <- "%f"
-        } else if ("integer" %in% cls) {
-          fmt <- "%d"
-        } else if ("POSIXlt" %in% cls) {
-          fmt <- "%d/%m/%Y %H:%M:%OS"
-        } else {
-          fmt <- ""
-        }
         cols[[i]] <- list()
         cols[[i]]$id      <- ids[i]
         cols[[i]]$name    <- nams[i]
-        cols[[i]]$format  <- fmt
-        cols[[i]]$class   <- cls
+        cols[[i]]$format  <- ""
+        cols[[i]]$class   <- class(d[, i])
         cols[[i]]$index   <- i
         cols[[i]]$fun     <- paste0("\"", ids[i], "\"")
         cols[[i]]$sample  <- na.omit(d[, i])[1]
@@ -689,11 +677,11 @@ OpenRSurvey <- function() {
       if (is.null(Data("data.raw")))
         return()
       tkconfigure(tt, cursor="watch")
-      idxs <- vapply(cols, function(i) i$index, 0L)
-      nams <- vapply(cols, function(i) i$name, "")[!is.na(idxs)]
+      idxs <- na.omit(vapply(cols, function(i) i$index, 0L))
+      nams <- vapply(cols, function(i) i$name, "")
       fmts <- vapply(cols, function(i) i$format, "")
-      lst <- EditData(Data("data.raw")[, na.omit(idxs)],
-                      col.formats=fmts, col.names=nams,
+      lst <- EditData(Data("data.raw")[, idxs],
+                      col.formats=fmts[idxs], col.names=nams[idxs],
                       read.only=FALSE, changelog=Data("changelog"),
                       win.title="Raw Data", parent=tt)
       if (!is.null(lst)) {

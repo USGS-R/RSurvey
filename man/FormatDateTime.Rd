@@ -10,8 +10,8 @@ class \dQuote{POSIXt}, calendar dates and times.
 }
 
 \usage{
-FormatDateTime(sample = as.POSIXct("1991-08-25 20:57:08"),
-               fmt = NULL, parent = NULL)
+FormatDateTime(sample = as.POSIXct("1991-08-25 20:57:08"), fmt = "",
+               parent = NULL)
 }
 
 \arguments{

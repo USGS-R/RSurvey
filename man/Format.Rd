@@ -9,7 +9,7 @@ A \acronym{GUI} for the system \code{sprintf} C-library function.
 }
 
 \usage{
-Format(sample = pi, fmt = NULL, parent = NULL)
+Format(sample = pi, fmt = "", parent = NULL)
 }
 
 \arguments{

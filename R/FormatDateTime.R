@@ -1,6 +1,6 @@
 # Build calendar date and time string formats.
 
-FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
+FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt="",
                            parent=NULL) {
 
   ## Additional functions (subroutines)
@@ -8,8 +8,6 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
   # Save format
   SaveFormat <- function() {
     fmt <- as.character(tclvalue(fmt.var))
-    if (fmt == "")
-      fmt <- "%d/%m/%Y %H:%M:%OS"
     new.fmt <<- fmt
     tclvalue(tt.done.var) <- 1
   }
@@ -25,8 +23,8 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
 
   # Update sample date-time entry
   UpdateSample <- function() {
-    txt <- sub("%$", "", tclvalue(fmt.var))
-    tclvalue(sample.var) <- if (txt == "") "" else format(sample, format=txt)
+    fmt <- sub("%$", "", tclvalue(fmt.var))
+    tclvalue(sample.var) <- format(sample, format=fmt)
   }
 
   # Add string to format entry
@@ -85,8 +83,10 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
 
   ## Main program
 
-  if (!inherits(sample, c("POSIXct", "POSIXlt")))
-    stop("Sample object must be of class POSIXct or POSIXlt.")
+  if (!inherits(sample, "POSIXt"))
+    stop("Sample object must be of class POSIXt.")
+  if (!is.character(fmt))
+    stop("format argument must be of class character")
 
   cur.val <- NA
   new.fmt <- NULL
@@ -96,13 +96,10 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt=NULL,
   # Assign variables linked to Tk widgets
 
   sample.var <- tclVar()
-  fmt.var <- tclVar()
-  if (!is.null(fmt) && is.character(fmt)) {
-     tclvalue(fmt.var) <- fmt
-     UpdateSample()
-  }
-
+  fmt.var <- tclVar(fmt)
   tt.done.var <- tclVar(0)
+
+  UpdateSample()
 
   # Open GUI
 

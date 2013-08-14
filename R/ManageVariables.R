@@ -112,20 +112,6 @@ ManageVariables <- function(cols, vars, parent=NULL) {
 
     # Update format
     saved.fmt <- cols[[idx]]$format
-    if (is.null(saved.fmt) || saved.fmt == "") {
-      if (any(c("character", "logical", "factor", "ordered") %in%
-          saved.class)) {
-        saved.fmt <- "%s"
-      } else if ("numeric" %in% saved.class) {
-        saved.fmt <- "%f"
-      } else if ("integer" %in% saved.class) {
-        saved.fmt <- "%d"
-      } else if ("POSIXlt" %in% saved.class) {
-        saved.fmt <- "%d/%m/%Y %H:%M:%OS"
-      } else {
-        saved.fmt <- ""
-      }
-    }
     tkconfigure(frame2.ent.2.2, state="normal")
     tclvalue(fmt.var) <- saved.fmt
     tkconfigure(frame2.ent.2.2, state="readonly")
@@ -289,7 +275,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     }
 
     if (!identical(f$class, cols[[idx]]$class))
-      cols[[idx]]$format <<- NULL
+        cols[[idx]]$format <<- ""
 
     cols[[idx]]$fun     <<- f$fun
     cols[[idx]]$class   <<- f$class
@@ -309,7 +295,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     sample.value <- cols[[idx]]$sample
 
     old.fmt <- as.character(tclvalue(fmt.var))
-    if (inherits(sample.value, "POSIXct")) {
+    if (inherits(sample.value, "POSIXt")) {
       new.fmt <- FormatDateTime(sample=sample.value, fmt=old.fmt, parent=tt)
     } else {
       if (is.null(sample.value))
@@ -317,8 +303,10 @@ ManageVariables <- function(cols, vars, parent=NULL) {
       new.fmt <- Format(sample=sample.value, fmt=old.fmt, parent=tt)
     }
 
-    if (!is.null(new.fmt))
-      tclvalue(fmt.var) <- new.fmt
+    if (is.null(new.fmt))
+      new.fmt <- ""
+
+    tclvalue(fmt.var) <- new.fmt
   }
 
   # Arrange variables in listbox
@@ -482,10 +470,10 @@ ManageVariables <- function(cols, vars, parent=NULL) {
   tkadd(menu.edit, "command", label="Delete", command=DeleteVar)
   tkadd(menu.edit, "separator")
   menu.edit.view <- tkmenu(tt, tearoff=0)
-  tkadd(menu.edit.view, "command", label="All variables",
-        command=function() CallEditData())
   tkadd(menu.edit.view, "command", label="Selected variable",
         command=function() CallEditData("data"))
+  tkadd(menu.edit.view, "command", label="All variables",
+        command=function() CallEditData())
   tkadd(menu.edit, "cascade", label="View data for",
         menu=menu.edit.view)
 

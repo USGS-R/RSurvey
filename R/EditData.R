@@ -74,7 +74,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
         new.vals <- strptime(new.vals, format=fmt)
         if (inherits(obj, "POSIXct"))
           new.vals <- as.POSIXct(new.vals)
-      } else if (inherits(obj, c("factor", "ordered"))) {
+      } else if (inherits(obj, "factor")) {
         levels(d[, column]) <<- unique(c(levels(d[, column]),
                                          na.omit(unique(new.vals))))
       } else {
@@ -555,17 +555,15 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
              is.fixed.width.font=TRUE, parent=tt)
   }
 
-  # Resize column to default width
+  # Resize column
   ResizeColumn <- function(x, y) {
     border.col <- as.character(tcl(frame3.tbl, "border", "mark",
                                    as.character(x), as.character(y), "col"))
-    if (length(border.col) == 0)
-      return()
-    j <- as.integer(border.col)
-    tcl(frame3.tbl, "width", j, col.width[j])
+    if (length(border.col) > 0) {
+      j <- as.integer(border.col)
+      tcl(frame3.tbl, "width", j, col.width[j])
+    }
   }
-
-
 
 
 
@@ -576,6 +574,9 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                               silent=TRUE), "try-error")
   if (!is.tktable)
     return()
+
+  # Numerical precision
+  num.digits <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
 
   # Table dimensions
   m <- nrow(d)
@@ -655,7 +656,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   search.defaults <- list(is.match.word=FALSE, is.match.case=TRUE,
                           is.reg.exps=FALSE, is.search.sel=FALSE,
                           is.perl=FALSE)
-  num.digits <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
 
   # Assign variables linked to Tk widgets
   table.var   <- tclArray()

@@ -66,9 +66,10 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   # Rebuild list box based on selected class type to show
   RebuildList <- function() {
     idx <- as.integer(tcl(frame1.box.3.1, "current"))
-    show.ids <- ids
     if (idx > 0)
       show.ids <- ids[vapply(cols, function(i) classes[idx] %in% i$class, TRUE)]
+    else
+      show.ids <- ids
 
     tclvalue(variable.var) <- ""
     for (i in seq(along=show.ids))
@@ -128,10 +129,10 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   # Call date and time format editor
   CallFormatDateTime <- function() {
-    spec <- FormatDateTime(parent=tt)
+    fmt <- FormatDateTime(parent=tt)
     tkfocus(frame2.txt.2.1)
-    if(!is.null(spec))
-      InsertString(spec)
+    if(!is.null(fmt))
+      InsertString(gsub("%OS[[:digit:]]+", "%OS", fmt))
   }
 
   # Text edit functions
@@ -196,7 +197,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     var.vals <- sort(var.vals, na.last=TRUE)
     if (var.fmt == "") {
       var.vals.txt <- format(var.vals)
-    } else if ("POSIXct" %in% var.class) {
+    } else if ("POSIXt" %in% var.class) {
       var.vals.txt <- format(var.vals, format=var.fmt)
     } else {
       var.vals.txt <- try(sprintf(var.fmt, var.vals), silent=TRUE)
@@ -238,7 +239,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     val <- as.character(tkget(frame1.lst.4.1, idx, idx))
     if ("factor" %in% var.class && is.na(suppressWarnings(as.numeric(val))))
       var.class <- "character"
-    if ("POSIXct" %in% var.class) {
+    if ("POSIXt" %in% var.class) {
       txt <- paste0("as.POSIXct(\"", val, "\", format = \"", var.fmt, "\")")
     } else if ("integer" %in% var.class &&
                !val %in% c("NA", "NaN", "Inf", "-Inf")) {

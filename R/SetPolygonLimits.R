@@ -94,7 +94,7 @@ SetPolygonLimits <- function(poly.names=NULL, data.poly=NULL, crop.poly=NULL,
   tkgrid(frame1.lab.1.1, frame1.box.1.2, pady=c(20, 10))
   tkgrid(frame1.lab.2.1, frame1.box.2.2, pady=c(0, 10))
 
-  tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, sticky="w")
+  tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, padx=c(0, 4), sticky="w")
   tkgrid.configure(frame1.box.1.2, frame1.box.2.2, sticky="we")
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=25)
