@@ -372,18 +372,26 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     nams <- vapply(cols, function(i) i$name, "")
     fmts <- vapply(cols, function(i) i$format, "")
     funs <- vapply(cols, function(i) i$fun, "")
-    idxs <- if (type == "data") idx else 1:length(cols)
+
+    idxs <- if (type == "data") idx else 1L:length(cols)
     d <- as.data.frame(lapply(idxs, function(i) EvalFunction(funs[i], cols)),
                        stringsAsFactors=FALSE)
     rows.str <- row.names(Data("data.raw"))
     rows.int <- as.integer(rows.str)
     is.int <- is.integer(rows.int) && !anyDuplicated(rows.int)
     row.names(d) <- if (is.int) rows.int else rows.str
+    raw.idxs <- na.omit(vapply(cols, function(i) i$index, 1L))
+    if (all(idxs %in% raw.idxs)) {
+      win.title <- "Raw Data"
+    } else if (all(!idxs %in% raw.idxs)) {
+      win.title <- "Derived Data"
+    } else {
+      win.title <- "Raw and Derived Data"
+    }
     tclServiceMode(TRUE)
     tkconfigure(tt, cursor="arrow")
-
-    EditData(d, nams[idxs], fmts[idxs], read.only=TRUE, win.title="Raw Data",
-             parent=tt)
+    EditData(d, nams[idxs], fmts[idxs], read.only=TRUE,
+             win.title=win.title, parent=tt)
   }
 
   # Build historgram

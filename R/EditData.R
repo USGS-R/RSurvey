@@ -646,7 +646,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                                          is.fmt=TRUE)))
     len <- max(c(nchar.title, nchar.data)) + 1L
     if (len < 10L)
-      len <- if (n == 1) 20L else 10L
+      len <- if (n == 1) 15L else 10L
     col.width[j] <- len
   }
 
