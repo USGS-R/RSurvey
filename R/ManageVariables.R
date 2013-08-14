@@ -107,7 +107,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     # Update class
     tkconfigure(frame2.ent.3.2, state="normal")
     saved.class <- cols[[idx]]$class
-    tclvalue(class.var) <- paste(saved.class, collapse=", ")
+    tclvalue(class.var) <- paste(saved.class)
     tkconfigure(frame2.ent.3.2, state="readonly")
 
     # Update format

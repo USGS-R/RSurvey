@@ -555,6 +555,16 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
              is.fixed.width.font=TRUE, parent=tt)
   }
 
+  # Resize column to default width
+  ResizeColumn <- function(x, y) {
+    border.col <- as.character(tcl(frame3.tbl, "border", "mark",
+                                   as.character(x), as.character(y), "col"))
+    if (length(border.col) == 0)
+      return()
+    j <- as.integer(border.col)
+    tcl(frame3.tbl, "width", j, col.width[j])
+  }
+
 
 
 
@@ -1000,6 +1010,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
          paste(.Tcl.callback(BypassCopyCmd), "break", sep="; "))
   tkbind(frame3.tbl, "<Control-z>", UndoEdit)
   tkbind(frame3.tbl, "<Control-y>", RedoEdit)
+  tkbind(frame3.tbl, "<Double-Button-1>", function(x, y) ResizeColumn(x, y))
 
   D <- ""  # hack to force 'D' to be something other than a function
   tkbind(frame3.tbl, "<MouseWheel>",

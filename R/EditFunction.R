@@ -289,7 +289,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     if (!i %in% index)
       classes <- c(classes, cols[[i]]$class)
   }
-  classes <- unique(classes)
+  classes <- suppressWarnings(sort(unique(classes)))
 
   # Required vector length
   if (!is.null(value.length))
