@@ -248,7 +248,7 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
 
   tclServiceMode(FALSE)
 
-  tt <- tktoplevel(padx=0, pady=0)
+  tt <- tktoplevel()
 
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)

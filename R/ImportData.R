@@ -517,7 +517,7 @@ ImportData <- function(parent=NULL) {
 
   tclServiceMode(FALSE)
 
-  tt <- tktoplevel(padx=0, pady=0)
+  tt <- tktoplevel()
 
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
@@ -526,7 +526,7 @@ ImportData <- function(parent=NULL) {
                              "+", as.integer(geo[3]) + 25))
   }
 
-  tktitle(tt) <- "Import Data From Text File, URL, Or Clipboard"
+  tktitle(tt) <- "Import Raw Data From Text File, URL, Or Clipboard"
 
   # Frame 0 contains load and cancel buttons, and size grip
 
@@ -596,11 +596,12 @@ ImportData <- function(parent=NULL) {
   frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Header lines")
 
-  txt <- paste("Conversion specification formats of the variables,",
-               "for example, '%10.6f' or '%Y-%m-%d %H:%M'")
+  txt <- paste("Format conversion specification strings of the variables,",
+               "for example, '%10.6f' and '%Y-%m-%d %H:%M'.")
   frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=conv.fmts.var,
                                    command=SetTags, text=txt)
-  txt <- "Names of the variables, that is, column names in the data table"
+  txt <- paste("Field names of the variables, that is, names given to the",
+               "columns in the data table.")
   frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=col.names.var,
                                    command=SetTags, text=txt)
 
@@ -623,7 +624,7 @@ ImportData <- function(parent=NULL) {
   frame3.lab.3.1 <- ttklabel(frame3, text="Comment")
   frame3.lab.3.4 <- ttklabel(frame3, text="Encoding")
   txt <- paste("Comments located above data records and header lines will be",
-               "preserved; all other comments will be ignored.")
+               "preserved; all other comments are ignored.")
   frame3.lab.4.1 <- ttklabel(frame3, text=txt, foreground="#A40802")
 
   frame3.box.1.2 <- ttkcombobox(frame3, width=17, state="readonly", value=sep1)
@@ -649,8 +650,7 @@ ImportData <- function(parent=NULL) {
          pady=c(4, 0))
   tkgrid(frame3.lab.3.1, frame3.box.3.2, frame3.ent.3.3, frame3.lab.3.4,
          frame3.box.3.5, "x", "x", "x", pady=c(4, 0))
-  tkgrid(frame3.lab.4.1, "x", "x", "x", "x", "x", "x", "x", padx=0,
-         pady=c(5, 0))
+  tkgrid(frame3.lab.4.1, "x", "x", "x", "x", "x", "x", "x", pady=c(5, 0))
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.1.4, frame3.lab.1.6,
                    frame3.lab.2.1, frame3.lab.2.4, frame3.lab.2.6,
@@ -738,9 +738,9 @@ ImportData <- function(parent=NULL) {
   tkgrid(frame4.tbl, frame4.ysc)
   tkgrid(frame4.xsc, "x")
 
-  tkgrid.configure(frame4.tbl, sticky="news", padx=c(10, 0), pady=0)
-  tkgrid.configure(frame4.ysc, sticky="ns", padx=c(0, 10), pady=0)
-  tkgrid.configure(frame4.xsc, sticky="we", padx=c(10, 0), pady=0)
+  tkgrid.configure(frame4.tbl, sticky="news", padx=c(10, 0))
+  tkgrid.configure(frame4.ysc, sticky="ns", padx=c(0, 10))
+  tkgrid.configure(frame4.xsc, sticky="we", padx=c(10, 0))
 
   tktag.configure(frame4.tbl, "active", background="#EAEEFE", relief="")
   tktag.configure(frame4.tbl, "sel", background="#EAEEFE", foreground="black")

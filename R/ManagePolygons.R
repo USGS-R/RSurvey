@@ -392,7 +392,7 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
 
   tclServiceMode(FALSE)
 
-  tt <- tktoplevel(padx=0, pady=0)
+  tt <- tktoplevel()
 
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
@@ -589,15 +589,15 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
   tkgrid(frame3c.lab.1)
   tkgrid.columnconfigure(frame3c, 0, weight=1, minsize=13)
 
-  tkpack(frame3a, fill="x", padx=0, pady=c(0, 5))
-  tkpack(frame3b, fill="x", padx=0, pady=c(5, 5))
+  tkpack(frame3a, fill="x", pady=c(0, 5))
+  tkpack(frame3b, fill="x", pady=c(5, 5))
   tkpack(frame3c, fill="both", expand=TRUE)
 
   # Final layout
 
   tkgrid(frame2.cvs, sticky="news")
 
-  tkgrid.configure(frame2.cvs, padx=5, pady=0)
+  tkgrid.configure(frame2.cvs, padx=5)
 
   tkgrid.rowconfigure(frame2, frame2.cvs, weight=1)
   tkgrid.columnconfigure(frame2, frame2.cvs, weight=1)

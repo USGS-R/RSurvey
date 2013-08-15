@@ -456,7 +456,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   # Open gui
 
   tclServiceMode(FALSE)
-  tt <- tktoplevel(padx=0, pady=0)
+  tt <- tktoplevel()
 
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
@@ -557,7 +557,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
   # Frame 1, listbox with variable names
 
-  frame1 <- tkframe(pw, relief="flat", padx=0, pady=0)
+  frame1 <- tkframe(pw, relief="flat")
 
   frame1.lst <- tklistbox(frame1, selectmode="browse", activestyle="none",
                 relief="flat", borderwidth=5, width=25, exportselection=FALSE,
@@ -639,8 +639,8 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
   tkgrid(frame3.txt, frame3.ysc)
 
-  tkgrid.configure(frame3.txt, sticky="news", padx=0, pady=0)
-  tkgrid.configure(frame3.ysc, sticky="ns", padx=0, pady=0)
+  tkgrid.configure(frame3.txt, sticky="news")
+  tkgrid.configure(frame3.ysc, sticky="ns")
 
   tkgrid.columnconfigure(frame3, 0, weight=1, minsize=25)
   tkgrid.rowconfigure(frame3, 0, weight=1, minsize=25)

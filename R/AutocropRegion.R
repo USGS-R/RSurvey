@@ -93,7 +93,7 @@ AutocropRegion <- function(d, parent=NULL, ...) {
 
   # Open GUI
   tclServiceMode(FALSE)
-  tt <- tktoplevel(padx=0, pady=0)
+  tt <- tktoplevel()
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))

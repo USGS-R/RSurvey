@@ -169,7 +169,7 @@ EditText <- function(txt, read.only=FALSE, win.title="View Text",
 
   # Frame 0, ok and cancel buttons
 
-  frame0 <- tkframe(tt, relief="flat", padx=0, pady=0)
+  frame0 <- tkframe(tt, relief="flat")
 
   if (read.only) {
     frame0.but.1.2 <- "x"
@@ -196,7 +196,7 @@ EditText <- function(txt, read.only=FALSE, win.title="View Text",
 
   # Frame 1, text window
 
-  frame1 <- tkframe(tt, relief="flat", padx=0, pady=0)
+  frame1 <- tkframe(tt, relief="flat")
 
   frame1.txt.1.1 <- tktext(frame1, bg="white", font=font.type, padx=2,
                            pady=2, width=txt.width, height=20, undo=1,
@@ -213,7 +213,7 @@ EditText <- function(txt, read.only=FALSE, win.title="View Text",
   tkconfigure(frame1.ysc.1.2, command=paste(.Tk.ID(frame1.txt.1.1), "yview"))
 
   tkgrid(frame1.txt.1.1, frame1.ysc.1.2)
-  tkgrid.configure(frame1.txt.1.1, padx=0, pady=0, sticky="nswe")
+  tkgrid.configure(frame1.txt.1.1, sticky="nswe")
   tkgrid.configure(frame1.ysc.1.2, sticky="ns")
 
   if (!read.only || (read.only & n > 120)) {

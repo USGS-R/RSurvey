@@ -288,7 +288,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt="",
   tkgrid.configure(frame2a.ent, sticky="we", columnspan=9)
 
   tkgrid.configure(frame2a.but.6, padx=c(5, 2))
-  tkgrid.configure(frame2a.but.8, padx=0)
+  tkgrid.configure(frame2a.but.8)
 
   tcl("grid", "anchor", frame2a, "w")
   tkgrid.columnconfigure(frame2a, 8, weight=1, minsize=0)
@@ -298,7 +298,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt="",
                            text="Sample")
   frame2b.ent <- ttkentry(frame2b, textvariable=sample.var, width=30,
                           state="readonly", takefocus=FALSE)
-  tkgrid(frame2b.ent, padx=0, pady=5)
+  tkgrid(frame2b.ent, pady=5)
   tkgrid.configure(frame2b.ent, sticky="we")
   tcl("grid", "anchor", frame2b, "w")
   tkgrid.columnconfigure(frame2b, 0, weight=1, minsize=10)
@@ -320,8 +320,8 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt="",
 
   tkgrid(frame1.tre, frame1.ysc, frame2)
 
-  tkgrid.configure(frame1.ysc, padx=0, pady=c(20, 0), sticky="nws")
-  tkgrid.configure(frame1.tre, padx=0, pady=0, sticky="news")
+  tkgrid.configure(frame1.ysc, pady=c(20, 0), sticky="nws")
+  tkgrid.configure(frame1.tre, sticky="news")
 
   tkgrid.rowconfigure(frame1, frame1.tre, weight=1)
   tkgrid.columnconfigure(frame1, frame1.tre, weight=1)

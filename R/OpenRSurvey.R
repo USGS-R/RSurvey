@@ -1200,7 +1200,7 @@ OpenRSurvey <- function() {
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=25)
 
-  tkpack(frame1, fill="x", expand=TRUE, ipadx=0, ipady=0, padx=10, pady=5)
+  tkpack(frame1, fill="x", expand=TRUE, padx=10, pady=5)
 
   # Frame 2, plotting buttons
 
@@ -1223,12 +1223,12 @@ OpenRSurvey <- function() {
 
   tkgrid.configure(frame2.but.1.2, padx=4)
 
-##tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE, padx=10, pady=0)
-  tkpack(frame2, fill="x", ipadx=0, ipady=0, expand=TRUE, padx=10, pady=c(0, 10))
+##tkpack(frame2, fill="x", expand=TRUE, padx=10)
+  tkpack(frame2, fill="x", expand=TRUE, padx=10, pady=c(0, 10))
 
   # Frame 3, view
 
-  frame3 <- tkframe(tt, relief="flat", padx=0, pady=0)
+  frame3 <- tkframe(tt, relief="flat")
 
   frame3.lab.1.1 <- ttklabel(frame3, text="View")
   frame3.rad.1.2 <- ttkradiobutton(frame3, variable=layout.var, value=TRUE,

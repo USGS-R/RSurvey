@@ -422,7 +422,7 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
   tkgrid.configure(frame3.ent, sticky="we")
   tcl("grid", "anchor", frame3, "w")
   tkgrid.columnconfigure(frame3, 0, weight=1, minsize=13)
-  tkpack(frame3, fill="x", expand=TRUE, padx=10, pady=0)
+  tkpack(frame3, fill="x", expand=TRUE, padx=10)
 
   # Bind events
 

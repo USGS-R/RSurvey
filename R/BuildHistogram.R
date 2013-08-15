@@ -209,7 +209,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   tcl(frame1.box.1.2, "current", var.default - 1L)
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=25)
-  tkpack(frame1, fill="x", expand=TRUE, ipadx=0, ipady=0, padx=10, pady=5)
+  tkpack(frame1, fill="x", expand=TRUE, padx=10, pady=5)
 
   # Frame 2
 
@@ -273,12 +273,10 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
                    padx=c(0,150))
 
   tkgrid.columnconfigure(frame2, 1, weight=1, minsize=50)
-  tkpack(frame2, fill="x", expand=TRUE, ipadx=0, ipady=0, padx=10, pady=5)
+  tkpack(frame2, fill="x", expand=TRUE, padx=10, pady=5)
 
   # Frame 3
-
   frame3 <- ttkframe(tt, relief="flat")
-
   txt <- "The histogram cells are right-closed (left-open) intervals"
   frame3.chk.1 <- ttkcheckbutton(frame3, text=txt, variable=right.var,
                                  command=PlotHist)
@@ -286,7 +284,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   tkpack(frame3, fill="x", expand=TRUE, padx=20, pady=5)
 
   # Frame 4
-
   frame4 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Axis scaling")
   frame4.rbt.1.1 <- ttkradiobutton(frame4, variable=freq.var, value=TRUE,
@@ -297,7 +294,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
                                    command=PlotHist)
   tkgrid(frame4.rbt.1.1, frame4.rbt.1.2)
   tkgrid.configure(frame4.rbt.1.1, padx=c(0, 10))
-  tkpack(frame4, fill="x", expand=TRUE, ipadx=0, ipady=0, padx=10, pady=5)
+  tkpack(frame4, fill="x", expand=TRUE, padx=10, pady=5)
 
   # Bind events
 

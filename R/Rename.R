@@ -91,7 +91,7 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
   if (!is.null(cur.name) && cur.name %in% names)
     tcl(frame1.box.1, "current", match(cur.name, names) - 1)
 
-  tkgrid(frame1.lab.1, frame1.box.1, pady=0)
+  tkgrid(frame1.lab.1, frame1.box.1)
   tkgrid(frame1.lab.2, frame1.ent.1, pady=c(10, 0))
 
   tkgrid.configure(frame1.lab.1, frame1.lab.2, sticky="w", padx=c(0, 2))

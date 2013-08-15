@@ -310,7 +310,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   tclServiceMode(FALSE)
 
-  tt <- tktoplevel(padx=0, pady=0)
+  tt <- tktoplevel()
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
@@ -505,9 +505,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   # Frame 0, ok and cancel buttons, and size grip
 
-  frame0 <- tkframe(tt, relief="flat", padx=0, pady=0)
+  frame0 <- tkframe(tt, relief="flat")
 
-  frame0a <- tkframe(frame0, relief="flat", padx=0, pady=0)
+  frame0a <- tkframe(frame0, relief="flat")
   frame0a.chk.1 <- ttkcheckbutton(frame0a, text="Inverse", variable=inverse.var)
   frame0a.chk.2 <- ttkcheckbutton(frame0a, text="Hyperbolic",
                                   variable=hyperbolic.var)
@@ -549,7 +549,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   # Frame 1
 
-  frame1 <- tkframe(pw, relief="flat", padx=0, pady=0)
+  frame1 <- tkframe(pw, relief="flat")
 
   txt <- "Double click to insert variable"
   frame1.lab.1.1 <- ttklabel(frame1, text=txt, foreground="#141414")
@@ -599,7 +599,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   # Frame 2
 
-  frame2 <- tkframe(pw, relief="flat", padx=0, pady=0)
+  frame2 <- tkframe(pw, relief="flat")
 
   txt <- "Define function"
   if (!is.null(index) && edit.fun.id != "")
@@ -627,7 +627,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   frame2.ysc.2.2 <- ttkscrollbar(frame2, orient="vertical")
   tkconfigure(frame2.ysc.2.2, command=paste(.Tk.ID(frame2.txt.2.1), "yview"))
 
-  frame2a <- tkframe(frame2, relief="flat", padx=0, pady=0)
+  frame2a <- tkframe(frame2, relief="flat")
   frame2a.but.01 <- ttkbutton(frame2a, width=3, text="\u002b",
                               command=function() InsertString(" + "))
   frame2a.but.02 <- ttkbutton(frame2a, width=3, text="\u2212",
@@ -681,7 +681,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                    sticky="nsew")
   tkgrid.configure(frame2.ysc.2.2, padx=c(0, 10), pady=c(2, 0), columnspan=2,
                    sticky="ns")
-  tkgrid.configure(frame2a, pady=0, columnspan=2, sticky="we")
+  tkgrid.configure(frame2a, columnspan=2, sticky="we")
 
   tkgrid.rowconfigure(frame2, 1, weight=1)
   tkgrid.columnconfigure(frame2, 1, weight=1, minsize=20)

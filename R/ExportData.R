@@ -507,8 +507,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
                      padx=c(0, 2))
     tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, frame3.ent.3.3,
                      padx=c(2, 0))
-    tkgrid.configure(frame3.chk.4.1, columnspan=5, sticky="w", padx=0,
-                     pady=c(5, 0))
+    tkgrid.configure(frame3.chk.4.1, columnspan=5, sticky="w", pady=c(5, 0))
 
     tkpack(frame3, fill="x", padx=10, pady=c(0, 10))
 
