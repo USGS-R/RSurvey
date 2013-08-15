@@ -369,7 +369,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
 
     tkconfigure(tt, cursor="watch")
     tclServiceMode(FALSE)
-    nams <- vapply(cols, function(i) i$name, "")
+    nams <- vapply(cols, function(i) i$id, "")
     fmts <- vapply(cols, function(i) i$format, "")
     funs <- vapply(cols, function(i) i$fun, "")
 

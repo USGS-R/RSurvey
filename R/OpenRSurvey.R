@@ -678,7 +678,7 @@ OpenRSurvey <- function() {
         return()
       tkconfigure(tt, cursor="watch")
       idxs <- na.omit(vapply(cols, function(i) i$index, 0L))
-      nams <- vapply(cols, function(i) i$name, "")
+      nams <- vapply(cols, function(i) i$id, "")
       fmts <- vapply(cols, function(i) i$format, "")
       lst <- EditData(Data("data.raw")[, idxs],
                       col.formats=fmts[idxs], col.names=nams[idxs],
