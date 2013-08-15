@@ -298,11 +298,14 @@ OpenRSurvey <- function() {
 
   # Manage variables
   CallManageVariables <- function() {
-    ans <- ManageVariables(Data("cols"), Data("vars"), tt)
+    ans <- ManageVariables(Data("cols"), Data("vars"), Data("query"),
+                           Data("changelog"), tt)
     if (!is.null(ans) && (!identical(ans$cols, Data("cols")) |
                           !identical(ans$vars, Data("vars")))) {
       Data("cols", ans$cols)
       Data("vars", ans$vars)
+      Data("query", ans$query)
+      Data("changelog", ans$changelog)
       Data("data.pts", NULL)
       Data("data.grd", NULL)
       SetVars()
@@ -733,11 +736,11 @@ OpenRSurvey <- function() {
       row.names(d) <- if (is.int) rows.int else rows.str
       names(d) <- var.names
 
-      query.fun <- Data("query.fun")
-      if (is.null(query.fun)) {
+      query <- Data("query")
+      if (is.null(query)) {
         coerce.rows <- NULL
       } else {
-        coerce.rows <- EvalFunction(query.fun, cols)
+        coerce.rows <- EvalFunction(query, cols)
       }
 
       if (!is.null(vars$x)) {
@@ -778,23 +781,23 @@ OpenRSurvey <- function() {
     if (n == 0)
       return()
     cols <- Data("cols")
-    old.fun <- Data("query.fun")
+    old.fun <- Data("query")
     f <- EditFunction(cols, fun=old.fun, value.length=n, value.class="logical",
                       win.title="Edit Query", parent=tt)
     if (is.null(f))
       return()
     if (f$fun == "")
-      Data("query.fun", NULL)
+      Data("query", NULL)
     else
-      Data("query.fun", f$fun)
+      Data("query", f$fun)
     Data("data.pts", NULL)
     Data("data.grd", NULL)
   }
 
   # Clear query
   ClearQuery <- function() {
-    if (!is.null(Data("query.fun"))) {
-      Data("query.fun", NULL)
+    if (!is.null(Data("query"))) {
+      Data("query", NULL)
       Data("data.pts", NULL)
       Data("data.grd", NULL)
     }

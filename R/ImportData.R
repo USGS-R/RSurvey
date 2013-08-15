@@ -339,10 +339,13 @@ ImportData <- function(parent=NULL) {
         table.var[[i - 1, j - 1]] <- as.tclObj(d[i, j], drop=TRUE))
 
     for (i in 1:ncol(d)) {
-      len <- max(nchar(gsub("\t", "    ", d[1:nrows, i])), na.omit=TRUE) + 1
-      if (len < 7)
-        len <- 7
-      tcl(frame4.tbl, "width", i - 1, len)
+      len <- max(nchar(gsub("\t", "    ", d[1:nrows, i])), na.omit=TRUE) + 1L
+      if (len < 10L) {
+        len <- 10L
+      } else if (len > 100L) {
+        len <- 100L
+      }
+      tcl(frame4.tbl, "width", i - 1L, len)
     }
 
     SetTags()
@@ -368,7 +371,7 @@ ImportData <- function(parent=NULL) {
 
   # Data file
   GetDataFile <- function() {
-    exts <- c("txt", "csv", "tab", "gz")
+    exts <- c("tab", "csv", "txt", "gz")
     f <- GetFile(cmd="Open", exts=exts, win.title="Open Data File", parent=tt)
     tkfocus(tt)
     if (is.null(f))
@@ -451,7 +454,7 @@ ImportData <- function(parent=NULL) {
   is.tktable <- !inherits(try(tcl("package", "present", "Tktable"),
                           silent=TRUE), "try-error")
   if (!is.tktable) {
-    f <- GetFile(cmd="Open", exts="txt", win.title="Open Data File",
+    f <- GetFile(cmd="Open", exts="tab", win.title="Open Data File",
                  parent=parent)
     if (!is.null(f)) {
       RaiseWarning(parent)

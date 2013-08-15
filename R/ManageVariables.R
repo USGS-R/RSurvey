@@ -1,6 +1,6 @@
 # A GUI for managing and manipulating data.
 
-ManageVariables <- function(cols, vars, parent=NULL) {
+ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
   ## Additional functions (subroutines)
 
@@ -8,7 +8,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
   SaveChanges <- function(type) {
     SaveNb()
     if (!identical(cols, old.cols)) {
-      rtn <<- list(cols=cols, vars=vars)
+      rtn <<- list(cols=cols, vars=vars, query=query, changelog=changelog)
       old.cols <<- cols
     }
     if (type == "ok")
@@ -42,7 +42,7 @@ ManageVariables <- function(cols, vars, parent=NULL) {
     tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var),
                               idx - 1, idx - 1, new.id)
 
-    # Update functions
+    # Update variable id's used in functions, query, and changelog
     if (!is.null(old.id)) {
       old.fun <- cols[[idx]]$fun
       str.1 <- paste0("\"", old.id, "\"")
@@ -56,11 +56,10 @@ ManageVariables <- function(cols, vars, parent=NULL) {
         tkinsert(frame2.txt.4.2, "end", new.fun)
         tkconfigure(frame2.txt.4.2, state="disabled")
       }
-      query.fun <- Data("query.fun")
-      if (!is.null(query.fun)) {
-         query.fun <- gsub(str.1, str.2, query.fun, fixed=TRUE)
-         Data("query.fun", query.fun)
-      }
+      if (!is.null(query))
+        query <<- gsub(str.1, str.2, query, fixed=TRUE)
+      if (!is.null(changelog))
+        changelog[changelog[, "variable"] %in% old.id, "variable"] <<- new.id
     }
   }
 
