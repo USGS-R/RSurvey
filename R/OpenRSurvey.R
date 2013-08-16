@@ -783,7 +783,7 @@ OpenRSurvey <- function() {
     cols <- Data("cols")
     old.fun <- Data("query")
     f <- EditFunction(cols, fun=old.fun, value.length=n, value.class="logical",
-                      win.title="Filter Data Records", parent=tt)
+                      win.title="Filter Raw Data Records", parent=tt)
     if (is.null(f))
       return()
     if (f$fun == "")
@@ -897,7 +897,7 @@ OpenRSurvey <- function() {
         command=function() ReadData("rpackage"))
   tkadd(menu.file.import, "command", label="R data file\u2026",
         command=function() ReadData("rda"))
-  tkadd(menu.file, "cascade", label="Import point data from",
+  tkadd(menu.file, "cascade", label="Import raw data from",
         menu=menu.file.import)
   menu.file.export <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.export, "command", label="Text file\u2026",
@@ -939,7 +939,7 @@ OpenRSurvey <- function() {
         command=EditComment)
 
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Filter data records\u2026",
+  tkadd(menu.edit, "command", label="Filter raw data records\u2026",
         command=BuildQuery)
   tkadd(menu.edit, "command", label="Clear filter",
         command=ClearQuery)
