@@ -854,7 +854,8 @@ OpenRSurvey <- function() {
   # Assign variables linked to Tk entry widgets
   import.var  <- tclVar()
   save.var    <- tclVar()
-  data.var    <- tclVar()
+  manage.var  <- tclVar()
+  filter.var  <- tclVar()
   polygon.var <- tclVar()
   config.var  <- tclVar()
   axes.var    <- tclVar()
@@ -939,9 +940,9 @@ OpenRSurvey <- function() {
         command=EditComment)
 
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Edit query\u2026",
+  tkadd(menu.edit, "command", label="Edit data filter\u2026",
         command=BuildQuery)
-  tkadd(menu.edit, "command", label="Clear query",
+  tkadd(menu.edit, "command", label="Clear data filter",
         command=ClearQuery)
 
   tkadd(menu.edit, "separator")
@@ -1124,8 +1125,10 @@ OpenRSurvey <- function() {
                  file=file.path(image.path, "save.gif"))
   tkimage.create("photo", import.var, format="GIF",
                  file=file.path(image.path, "import.gif"))
-  tkimage.create("photo", data.var, format="GIF",
-                 file=file.path(image.path, "data.gif"))
+  tkimage.create("photo", manage.var, format="GIF",
+                 file=file.path(image.path, "manage.gif"))
+  tkimage.create("photo", filter.var, format="GIF",
+                 file=file.path(image.path, "filter.gif"))
   tkimage.create("photo", polygon.var, format="GIF",
                  file=file.path(image.path, "polygon.gif"))
   tkimage.create("photo", config.var, format="GIF",
@@ -1142,26 +1145,29 @@ OpenRSurvey <- function() {
                             borderwidth=1, image=import.var,
                             command=function() ReadData("txt"))
   frame0.but.3  <- tkbutton(frame0, relief="flat", overrelief="raised",
-                            borderwidth=1, image=data.var,
+                            borderwidth=1, image=manage.var,
                             command=CallManageVariables)
   frame0.but.4  <- tkbutton(frame0, relief="flat", overrelief="raised",
+                            borderwidth=1, image=filter.var,
+                            command=BuildQuery)
+  frame0.but.5  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=polygon.var,
                             command=CallManagePolygons)
-  frame0.but.5  <- tkbutton(frame0, relief="flat", overrelief="raised",
+  frame0.but.6  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=config.var,
                             command=function() SetConfiguration(tt))
-  frame0.but.6  <- tkbutton(frame0, relief="flat", overrelief="raised",
+  frame0.but.7  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=axes.var,
                             command=function() {
                               lim <- SetAxesLimits(Data("lim.axes"), tt)
                               Data("lim.axes", lim)
                             })
-  frame0.but.7  <- tkbutton(frame0, relief="flat", overrelief="raised",
+  frame0.but.8  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=close.var,
                             command=CloseDevices)
 
   tkgrid(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4, frame0.but.5,
-         frame0.but.6, frame0.but.7, sticky="w", padx=1)
+         frame0.but.6, frame0.but.7, frame0.but.8, sticky="w", padx=1)
   tkgrid.configure(frame0.but.1, padx=c(5, 0))
 
   separator <- ttkseparator(tt, orient="horizontal")
