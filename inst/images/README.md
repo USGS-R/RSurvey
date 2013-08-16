@@ -8,8 +8,8 @@ Image files in this directory are covered by the following public licenses:
 
 - - -
 
-**Image:** axes.gif (remixed), close.gif, config.gif, filter.gif, import.gif,
-           manage.gif, polygons.gif, save.gif  
+**Image:** axes.gif (remixed), close.gif, config.gif, import.gif, manage.gif,
+           polygons.gif, save.gif  
 **Icon set:** Gnome icons  
 **Designer:** Gnome Project  
 **Site:** <http://www.gnome.org>  
