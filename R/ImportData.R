@@ -7,8 +7,9 @@ ImportData <- function(parent=NULL) {
   # Read table
 
   ReadTable <- function(con, headers=c(FALSE, FALSE), sep="\t", dec=".",
-                        quote="\"'", nrows=-1, na.strings=c("", "NA"), skip=0,
-                        comment.char="#", encoding=getOption("encoding")) {
+                        quote="\"'", nrows=-1, na.strings=c("", "NA"), skip=0L,
+                        comment.char="#", str.as.fact=TRUE,
+                        encoding=getOption("encoding")) {
 
     # Clear previous data
     Data(clear.data=TRUE)
@@ -129,7 +130,7 @@ ImportData <- function(parent=NULL) {
           if (is.time)
             val <- as.POSIXct(date.time)
           else
-            val <- type.convert(val, as.is=TRUE)
+            val <- type.convert(val, as.is=!str.as.fact)
         }
 
         # Organize metadata
@@ -269,12 +270,13 @@ ImportData <- function(parent=NULL) {
 
       is.fmts <- as.logical(as.integer(tclvalue(conv.fmts.var)))
       is.cols <- as.logical(as.integer(tclvalue(col.names.var)))
+      is.fact <- as.logical(as.integer(tclvalue(str.as.fact.var)))
       headers <- c(is.fmts, is.cols)
 
       tkconfigure(tt, cursor="watch")
       ans <- ReadTable(con, headers=headers, sep=sep, dec=dec, quote=quo,
                        nrows=nrw, na.strings=c("", nas), skip=skp,
-                       comment.char=com)
+                       comment.char=com, str.as.fact=is.fact)
       tkconfigure(tt, cursor="arrow")
       close(con)
 
@@ -287,6 +289,7 @@ ImportData <- function(parent=NULL) {
         Data("import.file", src)
         Data("import.fmts", is.fmts)
         Data("import.cols", is.cols)
+        Data("import.str.as.fact", is.fact)
         Data("import.skip", skp)
         Data("import.sep", sep)
         Data("import.dec", dec)
@@ -496,14 +499,15 @@ ImportData <- function(parent=NULL) {
 
   table.var <- tclArray()
 
-  conv.fmts.var  <- tclVar(0)
-  col.names.var  <- tclVar(0)
-  skip.var       <- tclVar(0)
-  nrow.var       <- tclVar()
-  source.var     <- tclVar()
-  sep.var        <- tclVar()
-  nas.var        <- tclVar()
-  com.var        <- tclVar()
+  conv.fmts.var   <- tclVar(0)
+  col.names.var   <- tclVar(0)
+  skip.var        <- tclVar(0)
+  nrow.var        <- tclVar()
+  source.var      <- tclVar()
+  sep.var         <- tclVar()
+  nas.var         <- tclVar()
+  com.var         <- tclVar()
+  str.as.fact.var <- tclVar(1)
 
   tt.done.var <- tclVar(0)
 
@@ -643,13 +647,15 @@ ImportData <- function(parent=NULL) {
   frame3.but.1.8 <- ttkbutton(frame3, width=2, image=GetBitmapImage("find"),
                               command=NumLinesInFile)
 
+  frame3.chk.3.6 <- ttkcheckbutton(frame3, variable=str.as.fact.var,
+                                   text="Convert strings to factors")
+
   tkgrid(frame3.lab.1.1, frame3.box.1.2, frame3.ent.1.3, frame3.lab.1.4,
          frame3.box.1.5, frame3.lab.1.6, frame3.ent.1.7, frame3.but.1.8)
   tkgrid(frame3.lab.2.1, frame3.box.2.2, frame3.ent.2.3, frame3.lab.2.4,
-         frame3.box.2.5, frame3.lab.2.6, frame3.ent.2.7, "x",
-         pady=c(4, 0))
+         frame3.box.2.5, frame3.lab.2.6, frame3.ent.2.7, "x", pady=c(4, 0))
   tkgrid(frame3.lab.3.1, frame3.box.3.2, frame3.ent.3.3, frame3.lab.3.4,
-         frame3.box.3.5, "x", "x", "x", pady=c(4, 0))
+         frame3.box.3.5, frame3.chk.3.6, "x", "x", pady=c(4, 0))
   tkgrid(frame3.lab.4.1, "x", "x", "x", "x", "x", "x", "x", pady=c(5, 0))
 
   tkgrid.configure(frame3.lab.1.1, frame3.lab.1.4, frame3.lab.1.6,
@@ -659,6 +665,7 @@ ImportData <- function(parent=NULL) {
   tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, frame3.lab.3.1, padx=c(0, 2))
   tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, frame3.ent.3.3, padx=c(2, 0))
   tkgrid.configure(frame3.but.1.8, padx=c(2, 0))
+  tkgrid.configure(frame3.chk.3.6, padx=c(10, 0), columnspan=3, sticky="w")
   tkgrid.configure(frame3.lab.4.1, columnspan=8, sticky="w")
 
   tkpack(frame3, anchor="w", fill="x", padx=10, pady=c(0, 15))
@@ -710,6 +717,8 @@ ImportData <- function(parent=NULL) {
     tcl(frame3.box.2.5, "current", match(Data("import.quote"), quo0) - 1)
   if (!is.null(Data("import.encoding")))
     tcl(frame3.box.3.5, "current", match(Data("import.encoding"), enc0) - 1)
+  if (!is.null(Data("import.str.as.fact")))
+    tclvalue(str.as.fact.var) <- Data("import.str.as.fact")
 
   # Frame 4, example data table
 

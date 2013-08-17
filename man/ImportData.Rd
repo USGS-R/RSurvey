@@ -60,6 +60,8 @@ Sets the following components in \code{\link{Data}}:
 \item{import.comment}{character; comment character.}
 \item{import.encoding}{character; encoding that was assumed for input strings,
   see \code{\link{Encoding}}.}
+\item{import.str.as.fact}{logical; should character variables be converted to
+  factors?}
 \item{comment}{character; a vector of comment strings.}
 \item{data.raw}{data.frame; the imported (or raw) data table.}
 \item{cols}{list; length equal to the current number of data variables.
