@@ -70,7 +70,7 @@ SetInterpolation <- function(parent=NULL) {
       tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
                                "+", as.integer(geo[3]) + 25))
   }
-  tktitle(tt) <- "Interpolation"
+  tktitle(tt) <- "Set Interpolation Method"
 
   tkwm.resizable(tt, 1, 0)
 

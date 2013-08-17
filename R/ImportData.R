@@ -485,9 +485,9 @@ ImportData <- function(parent=NULL) {
   dec0 <- c(".", ",")
   dec1 <- c("Period ( . )", "Comma ( , )")
 
-  com0 <- c("", "#", "!", "\\", "~", NA)
-  com1 <- c("None", "Number sign ( # )", "Exclamation ( ! )",
-            "Backslash ( \\\\ )", "Tilde ( ~ )", "Custom\u2026")
+  com0 <- c("#", "!", "\\", "~", "", NA)
+  com1 <- c("Number sign ( # )", "Exclamation ( ! )", "Backslash ( \\\\ )",
+            "Tilde ( ~ )", "None", "Custom\u2026")
 
   enc0 <- c("native.enc", iconvlist())
   enc1 <- c("Default", iconvlist())
