@@ -43,7 +43,7 @@ Support for displaying table data is provided by
 [tktable](http://tktable.sourceforge.net/ "tktable"),
 a spreadsheet-like [Tcl/Tk](http://www.tcl.tk/ "Tcl/Tk") widget
 (included with the Windows binary distribution of R).
-A call to `tclRequire` will indicate whether tktable is available for use:
+The following call with indicate whether tktable is available for use:
 
     > capabilities()['tcltk']
 
