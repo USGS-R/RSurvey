@@ -45,7 +45,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       }
 
       if (!is.null(value.class) && !inherits(obj, value.class)) {
-        msg <- paste0("A query must result in a vector of class \"",
+        msg <- paste0("Filter must result in a vector of class \"",
                       value.class,
                       "\". The evaluated function is a vector of class \"",
                       class(obj), "\", please revise.")

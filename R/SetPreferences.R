@@ -70,7 +70,7 @@ SetPreferences <- function(parent=NULL) {
       tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
                                "+", as.integer(geo[3]) + 25))
   }
-  tktitle(tt) <- "Preferences"
+  tktitle(tt) <- "Interpolation"
 
   tkwm.resizable(tt, 1, 0)
 

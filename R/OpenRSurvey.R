@@ -783,7 +783,7 @@ OpenRSurvey <- function() {
     cols <- Data("cols")
     old.fun <- Data("query")
     f <- EditFunction(cols, fun=old.fun, value.length=n, value.class="logical",
-                      win.title="Filter Raw Data Records", parent=tt)
+                      win.title="Filter Data Records", parent=tt)
     if (is.null(f))
       return()
     if (f$fun == "")
@@ -939,7 +939,7 @@ OpenRSurvey <- function() {
         command=EditComment)
 
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Filter raw data records\u2026",
+  tkadd(menu.edit, "command", label="Filter data records\u2026",
         command=BuildQuery)
   tkadd(menu.edit, "command", label="Clear filter",
         command=ClearQuery)
@@ -962,7 +962,7 @@ OpenRSurvey <- function() {
         })
 
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Interpolation preferences",
+  tkadd(menu.edit, "command", label="Interpolation",
         command=function() {
           SetPreferences(tt)
         })

@@ -26,7 +26,7 @@ EditFunction(cols, index = NULL, fun = NULL, value.length = NULL,
 }
 
 \details{
-This \acronym{GUI} is appropriate for defining new variables in a
+This \acronym{GUI} is appropriate for deriving new variables in a
 pre-existing data frame or query building.
 }
 
