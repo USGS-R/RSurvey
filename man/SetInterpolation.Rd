@@ -1,14 +1,14 @@
-\name{SetPreferences}
+\name{SetInterpolation}
 
-\alias{SetPreferences}
+\alias{SetInterpolation}
 
-\title{Set Preferences}
+\title{Set Interpolation Preferences}
 
 \description{
 A \acronym{GUI} for specifying the interpolation algorithms input parameters.
 }
 
-\usage{SetPreferences(parent = NULL)}
+\usage{SetInterpolation(parent = NULL)}
 
 \arguments{
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
@@ -38,7 +38,7 @@ values.
 }
 
 \examples{
-\donttest{SetPreferences()}
+\donttest{SetInterpolation()}
 }
 
 \keyword{misc}

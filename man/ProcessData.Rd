@@ -27,9 +27,9 @@ ProcessData(d, type = "p", coerce.rows = NULL, ply = NULL,
 \item{ply}{gpc.poly; if \code{type = "p"} a polygon that defines either the
   data limits, else if \code{type = "g"} a crop region for gridded data.}
 \item{grid.res}{list; numeric components giving the grid spacing along
-  the x- and y-axis for interpolated values, see \code{\link{SetPreferences}}.}
+  the x- and y-axis for interpolated values, see \code{\link{SetInterpolation}}.}
 \item{grid.mba}{list; integer components giving the input parameters for the
-  multilevel B-splines algorithm, see \code{\link{SetPreferences}}.}
+  multilevel B-splines algorithm, see \code{\link{SetInterpolation}}.}
 }
 
 \details{

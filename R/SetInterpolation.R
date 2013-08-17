@@ -1,6 +1,6 @@
 # A GUI for specifying the interpolation parameters.
 
-SetPreferences <- function(parent=NULL) {
+SetInterpolation <- function(parent=NULL) {
 
   ## Additional functions (subroutines)
 
@@ -85,7 +85,7 @@ SetPreferences <- function(parent=NULL) {
 
   frame0.but.4 <- ttkbutton(frame0, width=12, text="Help",
                             command=function() {
-                              print(help("SetPreferences", package="RSurvey"))
+                              print(help("SetInterpolation", package="RSurvey"))
                             })
   tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4,
          pady=c(15, 10), padx=c(4, 0))

@@ -964,7 +964,7 @@ OpenRSurvey <- function() {
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Interpolation",
         command=function() {
-          SetPreferences(tt)
+          SetInterpolation(tt)
         })
 
   tkadd(menu.edit, "separator")
