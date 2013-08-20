@@ -73,6 +73,10 @@ ExportData <- function(file.type="txt", parent=NULL) {
 
     row.names(d) <- row.nams
 
+    if (is.null(Data("export")))
+      Data("export", list())
+    Data(c("export", "processed"), is.proc)
+
     # Write text file
 
     if (file.type == "txt") {
@@ -170,23 +174,20 @@ ExportData <- function(file.type="txt", parent=NULL) {
                   sep=sep, eol=eol, na=nas, dec=dec, row.names=is.rows,
                   col.names=FALSE, qmethod=qme, fileEncoding=enc)
 
-      # Update default values for GUI
-      if (file.access(file.name, mode=0) == 0) {
-        Data("export.fmts", is.fmts)
-        Data("export.cols", is.cols)
-        Data("export.rows", is.rows)
-        Data("export.comment", is.comm)
-        Data("export.sep", sep)
-        Data("export.dec", dec)
-        Data("export.na", nas)
-        Data("export.com", com)
-        Data("export.qmethod", qme)
-        Data("export.quote", is.quot)
-        Data("export.encoding", enc)
-        Data("export.eol", eol)
-        Data("export.compressed", is.gzip)
-        Data("export.changelog", is.clog)
-      }
+      Data(c("export", "fmts"), is.fmts)
+      Data(c("export", "cols"), is.cols)
+      Data(c("export", "rows"), is.rows)
+      Data(c("export", "comment"), is.comm)
+      Data(c("export", "sep"), sep)
+      Data(c("export", "dec"), dec)
+      Data(c("export", "na"), nas)
+      Data(c("export", "com"), com)
+      Data(c("export", "qmethod"), qme)
+      Data(c("export", "quote"), is.quot)
+      Data(c("export", "encoding"), enc)
+      Data(c("export", "eol"), eol)
+      Data(c("export", "compressed"), is.gzip)
+      Data(c("export", "changelog"), is.clog)
 
     # Write shapefile
     } else if (file.type == "shp") {
@@ -205,7 +206,6 @@ ExportData <- function(file.type="txt", parent=NULL) {
         layer <- sub(paste0(".", ext, "$"), "", layer)
       rgdal::writeOGR(obj=d, dsn=dsn, layer=layer, driver="ESRI Shapefile",
                       verbose=TRUE, overwrite_layer=TRUE)
-      Data("export.processed", is.proc)
 
     # Write R data file
     } else if (file.type == "rda") {
@@ -213,8 +213,9 @@ ExportData <- function(file.type="txt", parent=NULL) {
       names(d) <- make.names(names=col.ids, unique=TRUE)
       comment(d) <- Data("comment")
       save(d, file=file.name, ascii=ascii)
+      Data(c("export", "ascii"), ascii)
     }
-    Data("export.processed", is.proc)
+
     tclvalue(tt.done.var) <- 1
   }
 
@@ -240,7 +241,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
   GetDataFile <- function() {
     if (file.type == "txt") {
       default.ext <- "txt"
-      exts <- c("txt", "csv", "tab")
+      exts <- c("tab", "csv", "txt")
       is.gzip <- as.logical(as.integer(tclvalue(compress.var)))
       if (is.gzip) {
         default.ext <- "gz"
@@ -331,23 +332,51 @@ ExportData <- function(file.type="txt", parent=NULL) {
   # Assign variables linked to Tk widgets
 
   variables.var <- tclVar()
-  processed.var <- tclVar(0)
-  conv.fmts.var <- tclVar(0)
-  col.names.var <- tclVar(0)
-  row.names.var <- tclVar(0)
-  comment.var   <- tclVar(0)
+  for (i in seq(along=col.ids))
+    tcl("lappend", variables.var, col.ids[i])
+
   sep.var       <- tclVar()
   nas.var       <- tclVar()
   com.var       <- tclVar()
-  quote.var     <- tclVar(0)
   file.var      <- tclVar()
-  compress.var  <- tclVar(0)
-  ascii.var     <- tclVar(0)
-  changelog.var <- tclVar(0)
   tt.done.var   <- tclVar(0)
 
-  for (i in seq(along=col.ids))
-    tcl("lappend", variables.var, col.ids[i])
+  if (is.null(Data(c("export", "processed"))))
+    processed.var <- tclVar(FALSE)
+  else
+    processed.var <- tclVar(Data(c("export", "processed")))
+  if (is.null(Data(c("export", "fmts"))))
+    conv.fmts.var <- tclVar(FALSE)
+  else
+    conv.fmts.var <- tclVar(Data(c("export", "fmts")))
+  if (is.null(Data(c("export", "cols"))))
+    col.names.var <- tclVar(FALSE)
+  else
+    col.names.var <- tclVar(Data(c("export", "cols")))
+  if (is.null(Data(c("export", "rows"))))
+    row.names.var <- tclVar(FALSE)
+  else
+    row.names.var <- tclVar(Data(c("export", "rows")))
+  if (is.null(Data(c("export", "comment"))))
+    comment.var <- tclVar(FALSE)
+  else
+    comment.var <- tclVar(Data(c("export", "comment")))
+  if (is.null(Data(c("export", "quote"))))
+    quote.var <- tclVar(FALSE)
+  else
+    quote.var <- tclVar(Data(c("export", "quote")))
+  if (is.null(Data(c("export", "compress"))))
+    compress.var <- tclVar(FALSE)
+  else
+    compress.var <- tclVar(Data(c("export", "compress")))
+  if (is.null(Data(c("export", "changelog"))))
+    changelog.var <- tclVar(FALSE)
+  else
+    changelog.var <- tclVar(Data(c("export", "changelog")))
+  if (is.null(Data(c("export", "ascii"))))
+    ascii.var <- tclVar(FALSE)
+  else
+    ascii.var <- tclVar(Data(c("export", "ascii")))
 
   # Open GUI
 
@@ -423,8 +452,6 @@ ExportData <- function(file.type="txt", parent=NULL) {
 
   tkpack(frame1, fill="both", expand=TRUE, side="top", padx=10, pady=10)
 
-  if (!is.null(Data("export.processed")))
-    tclvalue(processed.var) <- Data("export.processed")
   if (is.null(Data("data.pts"))) {
     tclvalue(processed.var) <- 0
     tkconfigure(frame1.chk.2.4, state="disabled")
@@ -451,15 +478,6 @@ ExportData <- function(file.type="txt", parent=NULL) {
     tkgrid.configure(frame2.chk.1.2, frame2.chk.2.2, padx=c(40, 0))
 
     tkpack(frame2, fill="x", padx=10, pady=c(0, 10))
-
-    if (!is.null(Data("export.fmts")))
-      tclvalue(conv.fmts.var) <- Data("export.fmts")
-    if (!is.null(Data("export.cols")))
-      tclvalue(col.names.var) <- Data("export.cols")
-    if (!is.null(Data("export.rows")))
-      tclvalue(row.names.var) <- Data("export.rows")
-    if (!is.null(Data("export.comment")))
-      tclvalue(comment.var) <- Data("export.comment")
 
     # Frame 3, export parmaters
 
@@ -517,43 +535,44 @@ ExportData <- function(file.type="txt", parent=NULL) {
     tcl(frame3.box.2.5, "current", 0)
     tcl(frame3.box.3.2, "current", 0)
 
-    if (!is.null(Data("export.sep"))) {
-      if (Data("export.sep") %in% sep0) {
-        tcl(frame3.box.1.2, "current", match(Data("export.sep"), sep0) - 1)
+    if (!is.null(Data(c("export", "sep")))) {
+      if (Data(c("export", "sep")) %in% sep0) {
+        tcl(frame3.box.1.2, "current",
+            match(Data(c("export", "sep")), sep0) - 1)
         tkconfigure(frame3.ent.1.3, state="disabled")
       } else {
         tcl(frame3.box.1.2, "current", match(NA, sep0) - 1)
         tkconfigure(frame3.ent.1.3, state="normal")
-        tclvalue(sep.var) <- Data("export.sep")
+        tclvalue(sep.var) <- Data(c("export", "sep"))
       }
     }
-    if (!is.null(Data("export.na"))) {
-      if (Data("export.na") %in% nas0) {
-        tcl(frame3.box.2.2, "current", match(Data("export.na"), nas0) - 1)
+    if (!is.null(Data(c("export", "na")))) {
+      if (Data(c("export", "na")) %in% nas0) {
+        tcl(frame3.box.2.2, "current", match(Data(c("export", "na")), nas0) - 1)
         tkconfigure(frame3.ent.2.3, state="disabled")
       } else {
         tcl(frame3.box.2.2, "current", match(NA, nas0) - 1)
         tkconfigure(frame3.ent.2.3, state="normal")
-        tclvalue(nas.var) <- Data("export.na")
+        tclvalue(nas.var) <- Data(c("export", "na"))
       }
     }
-    if (!is.null(Data("export.com"))) {
-      if (Data("export.com") %in% com0) {
-        tcl(frame3.box.3.2, "current", match(Data("export.com"), com0) - 1)
+    if (!is.null(Data(c("export", "com")))) {
+      if (Data(c("export", "com")) %in% com0) {
+        tcl(frame3.box.3.2, "current",
+            match(Data(c("export", "com")), com0) - 1)
         tkconfigure(frame3.ent.3.3, state="disabled")
       } else {
         tcl(frame3.box.3.2, "current", match(NA, com0) - 1)
         tkconfigure(frame3.ent.3.3, state="normal")
-        tclvalue(com.var) <- Data("export.com")
+        tclvalue(com.var) <- Data(c("export", "com"))
       }
     }
 
-    if (!is.null(Data("export.dec")))
-      tcl(frame3.box.1.5, "current", match(Data("export.dec"), dec0) - 1)
-    if (!is.null(Data("export.qmethod")))
-      tcl(frame3.box.2.5, "current", match(Data("export.qmethod"), qme0) - 1)
-    if (!is.null(Data("export.quote")))
-      tclvalue(quote.var) <- Data("export.quote")
+    if (!is.null(Data(c("export", "dec"))))
+      tcl(frame3.box.1.5, "current", match(Data(c("export", "dec")), dec0) - 1)
+    if (!is.null(Data(c("export", "qmethod"))))
+      tcl(frame3.box.2.5, "current",
+          match(Data(c("export", "qmethod")), qme0) - 1)
   }
 
   # Frame 4, output file and compression
@@ -589,20 +608,16 @@ ExportData <- function(file.type="txt", parent=NULL) {
     tcl(frame4.box.2.2, "current", 0)
     tcl(frame4.box.3.2, "current", 0)
 
-    if (!is.null(Data("export.encoding")))
-      tcl(frame4.box.2.2, "current", match(Data("export.encoding"), enc0) - 1)
-    if (!is.null(Data("export.eol")))
-      tcl(frame4.box.3.2, "current", match(Data("export.eol"), eol0) - 1)
-    if (!is.null(Data("export.compress")))
-      tclvalue(compress.var) <- Data("export.compress")
+    if (!is.null(Data(c("export", "encoding"))))
+      tcl(frame4.box.2.2, "current",
+          match(Data(c("export", "encoding")), enc0) - 1)
+    if (!is.null(Data(c("export", "eol"))))
+      tcl(frame4.box.3.2, "current", match(Data(c("export", "eol")), eol0) - 1)
 
     if (is.null(Data("changelog"))) {
+      tclvalue(changelog.var) <- 0
       tkconfigure(frame4.chk.3.3, state="disabled")
-    } else {
-      if (!is.null(Data("export.changelog")))
-        tclvalue(changelog.var) <- Data("export.changelog")
     }
-
   } else if (file.type == "rda") {
     frame4.rbt.2.1 <- ttkradiobutton(frame4, variable=ascii.var,
                                      value=0, text="Binary")

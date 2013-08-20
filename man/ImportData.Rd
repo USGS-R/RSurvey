@@ -46,21 +46,21 @@ rows to read in.
 
 \value{
 Sets the following components in \code{\link{Data}}:
-\item{import.file}{character; the name of the file which the data is read
+\item{import$file}{character; the name of the file which the data is read
   from.}
-\item{import.fmts}{logical; indicates whether the file contains the conversion
-  specification formats of the variables.}
-\item{import.cols}{logical; indicates whether the file contains the names of
+\item{import$fmts}{logical; indicates whether the file contains the conversion
+  specification format strings of the variables.}
+\item{import$cols}{logical; indicates whether the file contains the names of
   the variables.}
-\item{import.skip}{integer; the number of lines skiped before data is read.}
-\item{import.sep}{character; the field separator string.}
-\item{import.dec}{character; used in the file for decimal points.}
-\item{import.na}{character; string interpreted as \code{\link{NA}} values.}
-\item{import.quote}{character; the set of quoting characters.}
-\item{import.comment}{character; comment character.}
-\item{import.encoding}{character; encoding that was assumed for input strings,
+\item{import$skip}{integer; the number of lines skiped before data is read.}
+\item{import$sep}{character; the field separator string.}
+\item{import$dec}{character; used in the file for decimal points.}
+\item{import$na}{character; string interpreted as \code{\link{NA}} values.}
+\item{import$quote}{character; the set of quoting characters.}
+\item{import$comment}{character; comment character.}
+\item{import$encoding}{character; encoding that was assumed for input strings,
   see \code{\link{Encoding}}.}
-\item{import.str.as.fact}{logical; should character variables be converted to
+\item{import$str.as.fact}{logical; should character variables be converted to
   factors?}
 \item{comment}{character; a vector of comment strings.}
 \item{data.raw}{data.frame; the imported (or raw) data table.}

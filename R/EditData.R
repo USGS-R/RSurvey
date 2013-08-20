@@ -517,25 +517,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   # View changelog
   ViewChangeLog <- function() {
-    s <- GetEdits()
-    if (is.null(s)) {
-      txt <- ""
-    } else {
-      meta <- rbind(c("time", "Time stamp", "left"),
-                    c("record", "Record", "right"),
-                    c("variable", "Variable name", "left"),
-                    c("old", "Old value", "right"),
-                    c("new", "New value", "right"))
-      colnames(meta) <- c("ids", "titles", "justify")
-      s <- s[order(s$time), meta[, "ids"], drop=FALSE]
-      sep <- vapply(meta[, "titles"],
-                    function(i) paste(rep("-", nchar(i)), collapse=""), "")
-      s <- rbind(meta[, "titles"], sep, s)
-      widths <- apply(s, 2, function(i) max(nchar(i)))
-      s <- sapply(1:ncol(s), function(j) format(s[, j], width=widths[j],
-                                                justify=meta[j, "justify"]))
-      txt <- apply(s, 1, function(i) paste(i, collapse="  "))
-    }
+    txt <- paste(c(capture.output(GetEdits()), ""), collapse="\n")
     EditText(txt, read.only=TRUE, win.title="Change Log",
              is.fixed.width.font=TRUE, parent=tt)
   }

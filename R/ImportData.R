@@ -286,17 +286,18 @@ ImportData <- function(parent=NULL) {
       }
 
       if (!is.null(ans)) {
-        Data("import.file", src)
-        Data("import.fmts", is.fmts)
-        Data("import.cols", is.cols)
-        Data("import.str.as.fact", is.fact)
-        Data("import.skip", skp)
-        Data("import.sep", sep)
-        Data("import.dec", dec)
-        Data("import.na", nas)
-        Data("import.quote", quo)
-        Data("import.comment", com)
-        Data("import.encoding", enc)
+        Data("import", list())
+        Data(c("import", "file"), src)
+        Data(c("import", "fmts"), is.fmts)
+        Data(c("import", "cols"), is.cols)
+        Data(c("import", "str.as.fact"), is.fact)
+        Data(c("import", "skip"), skp)
+        Data(c("import", "sep"), sep)
+        Data(c("import", "dec"), dec)
+        Data(c("import", "na"), nas)
+        Data(c("import", "quote"), quo)
+        Data(c("import", "comment"), com)
+        Data(c("import", "encoding"), enc)
         tclvalue(tt.done.var) <- 1
       }
     }
@@ -497,25 +498,30 @@ ImportData <- function(parent=NULL) {
 
   # Assign variables linked to Tk widgets
 
-  table.var <- tclArray()
-
-  conv.fmts.var   <- tclVar(0)
-  col.names.var   <- tclVar(0)
-  skip.var        <- tclVar(0)
-  nrow.var        <- tclVar()
-  source.var      <- tclVar()
-  sep.var         <- tclVar()
-  nas.var         <- tclVar()
-  com.var         <- tclVar()
-  str.as.fact.var <- tclVar(1)
-
+  table.var   <- tclArray()
+  nrow.var    <- tclVar()
+  source.var  <- tclVar()
+  sep.var     <- tclVar()
+  nas.var     <- tclVar()
+  com.var     <- tclVar()
   tt.done.var <- tclVar(0)
 
-  # Set header lines
-  if (!is.null(Data("import.fmts")))
-    tclvalue(conv.fmts.var) <- Data("import.fmts")
-  if (!is.null(Data("import.cols")))
-    tclvalue(col.names.var) <- Data("import.cols")
+  if (is.null(Data(c("import", "fmts"))))
+    conv.fmts.var <- tclVar(FALSE)
+  else
+    conv.fmts.var <- tclVar(Data(c("import", "fmts")))
+  if (is.null(Data(c("import", "cols"))))
+    col.names.var <- tclVar(FALSE)
+  else
+    col.names.var <- tclVar(Data(c("import", "cols")))
+  if (is.null(Data(c("import", "skip"))))
+    skip.var <- tclVar(FALSE)
+  else
+    skip.var <- tclVar(Data(c("import", "skip")))
+  if (is.null(Data(c("import", "str.as.fact"))))
+    str.as.fact.var <- tclVar(TRUE)
+  else
+    str.as.fact.var <- tclVar(Data(c("import", "str.as.fact")))
 
   # Open GUI
 
@@ -677,48 +683,44 @@ ImportData <- function(parent=NULL) {
   tcl(frame3.box.3.2, "current", 0)
   tcl(frame3.box.3.5, "current", 0)
 
-  if (!is.null(Data("import.skip")))
-    tclvalue(skip.var) <- Data("import.skip")
-
-  if (!is.null(Data("import.sep"))) {
-    if (Data("import.sep") %in% sep0) {
-      tcl(frame3.box.1.2, "current", match(Data("import.sep"), sep0) - 1)
+  if (!is.null(Data(c("import", "sep")))) {
+    if (Data(c("import", "sep")) %in% sep0) {
+      tcl(frame3.box.1.2, "current", match(Data(c("import", "sep")), sep0) - 1)
       tkconfigure(frame3.ent.1.3, state="disabled")
     } else {
       tcl(frame3.box.1.2, "current", match(NA, sep0) - 1)
       tkconfigure(frame3.ent.1.3, state="normal")
-      tclvalue(sep.var) <- Data("import.sep")
+      tclvalue(sep.var) <- Data(c("import", "sep"))
     }
   }
-  if (!is.null(Data("import.na"))) {
-    if (Data("import.na") %in% nas0) {
-      tcl(frame3.box.2.2, "current", match(Data("import.na"), nas0) - 1)
+  if (!is.null(Data(c("import", "na")))) {
+    if (Data(c("import", "na")) %in% nas0) {
+      tcl(frame3.box.2.2, "current", match(Data(c("import", "na")), nas0) - 1)
       tkconfigure(frame3.ent.2.3, state="disabled")
     } else {
       tcl(frame3.box.2.2, "current", match(NA, nas0) - 1)
       tkconfigure(frame3.ent.2.3, state="normal")
-      tclvalue(nas.var) <- Data("import.na")
+      tclvalue(nas.var) <- Data(c("import", "na"))
     }
   }
-  if (!is.null(Data("import.comment"))) {
-    if (Data("import.comment") %in% com0) {
-      tcl(frame3.box.3.2, "current", match(Data("import.comment"), com0) - 1)
+  if (!is.null(Data(c("import", "comment")))) {
+    if (Data(c("import", "comment")) %in% com0) {
+      tcl(frame3.box.3.2, "current",
+          match(Data(c("import", "comment")), com0) - 1)
       tkconfigure(frame3.ent.3.3, state="disabled")
     } else {
       tcl(frame3.box.3.2, "current", match(NA, com0) - 1)
       tkconfigure(frame3.ent.3.3, state="normal")
-      tclvalue(com.var) <- Data("import.comment")
+      tclvalue(com.var) <- Data(c("import", "comment"))
     }
   }
-
-  if (!is.null(Data("import.dec")))
-    tcl(frame3.box.1.5, "current", match(Data("import.dec"), dec0) - 1)
-  if (!is.null(Data("import.quote")))
-    tcl(frame3.box.2.5, "current", match(Data("import.quote"), quo0) - 1)
-  if (!is.null(Data("import.encoding")))
-    tcl(frame3.box.3.5, "current", match(Data("import.encoding"), enc0) - 1)
-  if (!is.null(Data("import.str.as.fact")))
-    tclvalue(str.as.fact.var) <- Data("import.str.as.fact")
+  if (!is.null(Data(c("import", "dec"))))
+    tcl(frame3.box.1.5, "current", match(Data(c("import", "dec")), dec0) - 1)
+  if (!is.null(Data(c("import", "quote"))))
+    tcl(frame3.box.2.5, "current", match(Data(c("import", "quote")), quo0) - 1)
+  if (!is.null(Data(c("import", "encoding"))))
+    tcl(frame3.box.3.5, "current",
+        match(Data(c("import", "encoding")), enc0) - 1)
 
   # Frame 4, example data table
 
