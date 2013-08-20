@@ -42,8 +42,8 @@ LoadPackages <- function() {
     stop("tcltk required")
 
   # Establish required and suggested packages
-  require.pkgs <- c("sp", "rgeos", "rgl", "MBA")
-  suggest.pkgs <- c("rgdal", "tripack", "colorspace", "dichromat")
+  require.pkgs <- c("sp", "rgeos", "MBA")
+  suggest.pkgs <- c("rgdal", "tripack", "colorspace", "dichromat", "rgl")
   pkgs <- c(require.pkgs, suggest.pkgs)
 
   # Account for missing packages

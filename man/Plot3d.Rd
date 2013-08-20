@@ -60,7 +60,7 @@ around the x-axis, and zooms the display, respectively.
 \author{J.C. Fisher}
 
 \seealso{
-\code{\link{surface3d}}, \code{\link{points3d}}
+\code{rgl::surface3d}, \code{rgl::points3d}
 }
 
 \examples{

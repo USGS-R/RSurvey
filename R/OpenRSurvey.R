@@ -465,6 +465,19 @@ OpenRSurvey <- function() {
     chk
   }
 
+  # Plot histogram
+  PlotHistogram <- function() {
+    CallProcessData()
+    if (is.null(Data("data.pts")))
+      return()
+    d <- Data("data.pts")
+    d <- d[, names(d) != "sort.on"]
+    lst <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate",
+                vx="x-vector", vy="y-vector")
+    var.names <- vapply(names(d), function(i) lst[[i]], "")
+    BuildHistogram(d, var.names=var.names, parent=tt)
+  }
+
   # Plot point or 2d surface data
 
   CallPlot2d <- function(type, build.poly=FALSE) {
@@ -832,7 +845,7 @@ OpenRSurvey <- function() {
             "    set in the command line or by clicking in the Menu:\n",
             "    Edit - GUI Preferences: SDI, then Save and restart R.\n\n")
 
-  # Establish default directories and load required packages
+  # Establish default directories and load packages
   path <- getwd()
   if ("package:RSurvey" %in% search()) {
     image.path <- system.file("images", package="RSurvey")
@@ -845,6 +858,16 @@ OpenRSurvey <- function() {
   }
   if (is.null(Data("default.dir")))
     Data("default.dir", path)
+
+  # Check if suggested packages are loaded
+  is.rgl <- "rgl" %in% .packages(all.available=TRUE) &&
+            require(rgl, warn.conflicts=FALSE, quietly=TRUE)
+  is.rgdal <- "rgdal" %in% .packages(all.available=TRUE) &&
+              require(rgdal, warn.conflicts=FALSE, quietly=TRUE)
+  is.tripack <- "tripack" %in% .packages(all.available=TRUE) &&
+                require(tripack, warn.conflicts=FALSE, quietly=TRUE)
+  is.colorspace <- "colorspace" %in% .packages(all.available=TRUE) &&
+                   require(colorspace, warn.conflicts=FALSE, quietly=TRUE)
 
   # Set options
   SetCsi()
@@ -902,10 +925,8 @@ OpenRSurvey <- function() {
   menu.file.export <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.export, "command", label="Text file\u2026",
         command=function() WriteData("txt"))
-  is.pkg <- "rgdal" %in% .packages(all.available=TRUE) &&
-            require(rgdal, warn.conflicts=FALSE, quietly=TRUE)
-  state <- if (is.pkg) "normal" else "disabled"
-  tkadd(menu.file.export, "command", state=state, label="Shapefile\u2026",
+  tkadd(menu.file.export, "command", label="Shapefile\u2026",
+        state=if (is.rgdal) "normal" else "disabled",
         command=function() WriteData("shp"))
   tkadd(menu.file.export, "command", label="R data file\u2026",
         command=function() WriteData("rda"))
@@ -1003,11 +1024,8 @@ OpenRSurvey <- function() {
           ConstructPolygon(type="l")
         })
   tkadd(menu.poly, "cascade", label="Build", menu=menu.poly.con)
-
-  is.pkg <- "tripack" %in% .packages(all.available=TRUE) &&
-            require(tripack, warn.conflicts=FALSE, quietly=TRUE)
-  state <- if (is.pkg) "normal" else "disabled"
-  tkadd(menu.poly, "command", state=state, label="Autocrop region\u2026",
+  tkadd(menu.poly, "command", label="Autocrop region\u2026",
+        state=if (is.tripack) "normal" else "disabled",
         command=CallAutocropRegion)
 
   # Graph menu
@@ -1016,22 +1034,13 @@ OpenRSurvey <- function() {
   tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
 
   tkadd(menu.graph, "command", label="Plot histogram\u2026",
-        command=function() {
-          CallProcessData()
-          if (is.null(Data("data.pts")))
-            return()
-          d <- Data("data.pts")
-          d <- d[, names(d) != "sort.on"]
-          lst <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate",
-                      vx="x-vector", vy="y-vector")
-          var.names <- vapply(names(d), function(i) lst[[i]], "")
-          BuildHistogram(d, var.names=var.names, parent=tt)
-        })
+        command=PlotHistogram)
   tkadd(menu.graph, "command", label="Plot scatterplot",
         command=function() {
           CallPlot2d(type="p")
         })
   tkadd(menu.graph, "command", label="Plot 2D-interpolated map",
+        state=if (is.rgl) "normal" else "disabled",
         command=function() {
           type <- if (Data("img.contour")) "g" else "l"
           CallPlot2d(type=type)
@@ -1055,11 +1064,8 @@ OpenRSurvey <- function() {
         command=function() {
           SetConfiguration(tt)
         })
-
-  is.pkg <- "colorspace" %in% .packages(all.available=TRUE) &&
-            require(colorspace, warn.conflicts=FALSE, quietly=TRUE)
-  state <- if (is.pkg) "normal" else "disabled"
-  tkadd(menu.graph, "command", state=state, label="Choose color palette\u2026",
+  tkadd(menu.graph, "command", label="Choose color palette\u2026",
+        state=if (is.colorspace) "normal" else "disabled",
         command=function() {
           pal <- colorspace::choose_palette(pal=Data("color.palette"),
                                             n=Data("nlevels"), parent=tt)
@@ -1217,6 +1223,7 @@ OpenRSurvey <- function() {
                                 CallPlot2d(type=type)
                               })
   frame2.but.1.3 <- ttkbutton(frame2, width=10, text="3D Map",
+                              state=if (is.rgl) "normal" else "disabled",
                               command=CallPlot3d)
 
   tkgrid(frame2.but.1.1, frame2.but.1.2, frame2.but.1.3)

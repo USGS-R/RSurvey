@@ -6,6 +6,9 @@ Plot3d <- function(x=NULL, y=NULL, z=NULL, px=NULL, py=NULL, pz=NULL,
                    nlevels=20, color.palette=terrain.colors,
                    mouse.mode=c("trackball", "zAxis", "zoom"), bg="white") {
 
+  if (!require(rgl))
+    stop()
+
   # Account for missing arguments
 
   if (is.null(z)) {

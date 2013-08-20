@@ -1,6 +1,5 @@
 importFrom(sp, point.in.polygon)
 importFrom(MBA, mba.points)
-importFrom(rgl, surface3d, points3d)
 importFrom(rgeos, read.polyfile, write.polyfile, get.pts, get.bbox, area.poly,
            union, setdiff, intersect)
 importClassesFrom(rgeos, gpc.poly)
