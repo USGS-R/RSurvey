@@ -134,6 +134,9 @@ OpenRSurvey <- function() {
                        parent=tt)
           return()
         }
+        if (is.null(Data("import")))
+          Data("import", list())
+        Data(c("import", "file"), f)
 
       } else if (file.type == "rpackage") {
         d <- ImportPackageData(classes, parent=tt)

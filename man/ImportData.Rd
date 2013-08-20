@@ -70,11 +70,7 @@ Sets the following components in \code{\link{Data}}:
 }
 
 \note{
-Requires the Tcl package
-\href{http://tktable.sourceforge.net/}{Tktable}.
-If Tktable is unavailable, an open-file dialog box is activated,
-followed by a call to the \code{\link{read.table}} function using default
-argument values.
+Requires the Tcl package \href{http://tktable.sourceforge.net/}{Tktable}.
 }
 
 \seealso{
@@ -84,9 +80,7 @@ argument values.
 \author{J.C. Fisher}
 
 \examples{
-\donttest{tclRequire("Tktable", warn = TRUE)
-ImportData()
-}
+\donttest{ImportData()}
 }
 
 \keyword{IO}

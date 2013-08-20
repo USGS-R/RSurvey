@@ -454,21 +454,10 @@ ImportData <- function(parent=NULL) {
 
   ## Main program
 
-  # GUI requires Tktable
-  is.tktable <- !inherits(try(tcl("package", "present", "Tktable"),
-                          silent=TRUE), "try-error")
-  if (!is.tktable) {
-    f <- GetFile(cmd="Open", exts="tab", win.title="Open Data File",
-                 parent=parent)
-    if (!is.null(f)) {
-      RaiseWarning(parent)
-      if (is.null(Data("cols")))
-        con <- file(description=f, open="r")
-        ReadTable(con)
-        close(con)
-    }
-    return()
-  }
+  # GUI requires TkTable
+  if (inherits(try(tcltk::tcl("package", "present", "Tktable"), silent=TRUE),
+               "try-error"))
+    stop("TkTable is not available")
 
   # Initialize values
 

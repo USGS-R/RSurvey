@@ -551,11 +551,10 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   ## Main program
 
-  # Check if Tktable is loaded
-  is.tktable <- !inherits(try(tcl("package", "present", "Tktable"),
-                              silent=TRUE), "try-error")
-  if (!is.tktable)
-    return()
+  # GUI requires TkTable
+  if (inherits(try(tcltk::tcl("package", "present", "Tktable"), silent=TRUE),
+               "try-error"))
+    stop("TkTable is not available")
 
   # Numerical precision
   num.digits <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
