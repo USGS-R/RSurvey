@@ -1128,10 +1128,10 @@ OpenRSurvey <- function() {
                  file=file.path(image.path, "manage.gif"))
   tkimage.create("photo", polygon.var, format="GIF",
                  file=file.path(image.path, "polygon.gif"))
-  tkimage.create("photo", config.var, format="GIF",
-                 file=file.path(image.path, "config.gif"))
   tkimage.create("photo", axes.var, format="GIF",
                  file=file.path(image.path, "axes.gif"))
+  tkimage.create("photo", config.var, format="GIF",
+                 file=file.path(image.path, "config.gif"))
   tkimage.create("photo", close.var, format="GIF",
                  file=file.path(image.path, "close.gif"))
 
@@ -1148,14 +1148,14 @@ OpenRSurvey <- function() {
                             borderwidth=1, image=polygon.var,
                             command=CallManagePolygons)
   frame0.but.5  <- tkbutton(frame0, relief="flat", overrelief="raised",
-                            borderwidth=1, image=config.var,
-                            command=function() SetConfiguration(tt))
-  frame0.but.6  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=axes.var,
                             command=function() {
                               lim <- SetAxesLimits(Data("lim.axes"), tt)
                               Data("lim.axes", lim)
                             })
+  frame0.but.6  <- tkbutton(frame0, relief="flat", overrelief="raised",
+                            borderwidth=1, image=config.var,
+                            command=function() SetConfiguration(tt))
   frame0.but.7  <- tkbutton(frame0, relief="flat", overrelief="raised",
                             borderwidth=1, image=close.var,
                             command=CloseDevices)

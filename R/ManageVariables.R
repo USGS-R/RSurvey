@@ -159,6 +159,12 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
       return()
 
     var.str <- paste0("\"", cols[[idx]]$id, "\"")
+
+    if (!is.null(query) &&  grepl(var.str, query, fixed=TRUE))
+      query <<- NULL
+    if (!is.null(changelog) &&  grepl(var.str, changelog, fixed=TRUE))
+      changelog <<- NULL
+
     funs.with.var <- grep(var.str, sapply(cols, function(i) i$fun), fixed=TRUE)
     dependent.vars <- funs.with.var[!funs.with.var %in% idx]
 
