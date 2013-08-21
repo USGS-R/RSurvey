@@ -10,11 +10,16 @@ A \acronym{GUI} for managing and manipulating polygons that is based on the
 }
 
 \usage{
-ManagePolygons(polys = NULL, encoding = getOption("encoding"), parent = NULL)
+ManagePolygons(polys = NULL, poly.data = NULL, poly.crop = NULL,
+               encoding = getOption("encoding"), parent = NULL)
 }
 
 \arguments{
 \item{polys}{list; its components are objects of \code{\link{gpc.poly-class}}.}
+\item{poly.data}{character; the name of the polygon that defines the
+  data limits boundary.}
+\item{poly.crop}{character; the name of the polygon that defines the crop
+  region for interpolated data.}
 \item{encoding}{character; encoding to be assumed for input strings. If the
   value is \code{"latin1"} or \code{"UTF-8"} it is used to mark character
   strings as known to be in Latin-1 or UTF-8: it is not used to re-encode
@@ -40,9 +45,8 @@ See \code{\link{read.polyfile}} within the \pkg{rgeos} package for details.
 }
 
 \value{
-Queries and sets the \code{polys} component of \code{\link{Data}};
-includes attributes of \code{polys} (\code{data.poly} and \code{crop.poly}),
-see \code{\link{SetPolygonLimits}}.
+A list with components \code{polys}, \code{poly.data}, and \code{poly.crop}
+(see \sQuote{Arguments}).
 }
 
 \author{J.C. Fisher}

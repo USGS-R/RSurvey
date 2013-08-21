@@ -1,24 +1,21 @@
 # A GUI for managing and manipulating polygons; based on the rgeos package.
 
-ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
-                           parent=NULL) {
+ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
+                           encoding=getOption("encoding"), parent=NULL) {
 
   ## Additional functions (subroutines)
 
   # Save polygon
   SavePolygon <- function(type) {
-    if (length(polys) > 0) {
+    if (length(polys) > 0)
       polys <- polys[vapply(polys, function(i) inherits(i, "gpc.poly"), TRUE)]
-      if (!data.poly %in% names(polys))
-        data.poly <- NULL
-      if (!crop.poly %in% names(polys))
-        crop.poly <- NULL
-      attr(polys, "data.poly") <- data.poly
-      attr(polys, "crop.poly") <- crop.poly
-      rtn <<- polys
-    } else {
-      rtn <<- list()
-    }
+    if (length(polys) == 0)
+      polys <- NULL
+    if (!is.null(poly.data) && !poly.data %in% names(polys))
+      poly.data <- NULL
+    if (!is.null(poly.crop) && !poly.crop %in% names(polys))
+      poly.crop <- NULL
+    rtn <<- list(polys=polys, poly.data=poly.data, poly.crop=poly.crop)
     if (type == "ok")
       tclvalue(tt.done.var) <- 1
   }
@@ -191,11 +188,10 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
       if (identical(new.names, old.names))
         return()
       names(polys) <<- new.names
-
-      if (!is.na(data.poly))
-        data.poly <<- new.names[which(old.names %in% data.poly)]
-      if (!is.na(crop.poly))
-        crop.poly <<- new.names[which(old.names %in% crop.poly)]
+      if (!is.null(poly.data))
+        poly.data <<- new.names[which(old.names %in% poly.data)]
+      if (!is.null(poly.crop))
+        poly.crop <<- new.names[which(old.names %in% poly.crop)]
     }
 
     for (i in seq(along=new.names)) {
@@ -365,14 +361,6 @@ ManagePolygons <- function(polys=NULL, encoding=getOption("encoding"),
 
   if (is.null(polys))
     polys <- list()
-
-  data.poly <- attr(polys, "data.poly")
-  crop.poly <- attr(polys, "crop.poly")
-
-  if (is.null(data.poly))
-    data.poly <- NA
-  if (is.null(crop.poly))
-    crop.poly <- NA
 
   # Assign the variables linked to Tk widgets
 
