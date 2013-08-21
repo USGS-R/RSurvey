@@ -143,8 +143,8 @@ OpenRSurvey <- function() {
       if (is.null(d) || nrow(d) == 0 || ncol(d) == 0)
         return()
       if (!is.null(Data("cols"))) {
-        msg <- "This action will delete existing data?"
-        ans <- as.character(tkmessageBox(icon="question", message=msg,
+        msg <- "This action will delete existing data."
+        ans <- as.character(tkmessageBox(icon="warning", message=msg,
                                          title="Warning", type="okcancel",
                                          parent=tt))
         if (ans == "cancel")

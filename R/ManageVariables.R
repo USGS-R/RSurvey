@@ -183,8 +183,8 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
                     "\" corresponds with raw data.\n\n",
                     "Are you sure you want to remove it?")
       ans <- tkmessageBox(icon="question", message=msg, title="Question",
-                          type="okcancel", parent=tt)
-      if (as.character(ans) == "cancel")
+                          type="yesno", parent=tt)
+      if (as.character(ans) == "no")
         return()
     }
 

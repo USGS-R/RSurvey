@@ -186,9 +186,9 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       msg <- paste("There are", n, "unique values; this operation can be",
                    "computationally expensive. Would you like to continue?")
       ans <- as.character(tkmessageBox(icon="question", message=msg,
-                                       title="Warning", type="okcancel",
+                                       title="Warning", type="yesno",
                                        parent=tt))
-      if (ans == "cancel") {
+      if (ans == "no") {
         tkconfigure(tt, cursor="arrow")
         return()
       }

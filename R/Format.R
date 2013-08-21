@@ -154,7 +154,10 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
       tkfocus(frame1.ent.1)
     } else {
       BuildFormat()
-      tkfocus(frame2.ent.1.2)
+      if (is.numeric(sample) && !is.integer(sample))
+        tkfocus(frame2.ent.1.4)
+      else
+        tkfocus(frame2.ent.1.2)
     }
   }
 

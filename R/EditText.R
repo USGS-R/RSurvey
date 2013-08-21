@@ -20,9 +20,9 @@ EditText <- function(txt, read.only=FALSE, win.title="View Text",
       msg <- paste("This action will delete existing console text.",
                    "Would you like to continue?", sep="\n")
       ans <- as.character(tkmessageBox(icon="question", message=msg,
-                                       title="Warning", type="okcancel",
+                                       title="Warning", type="yesno",
                                        parent=tt))
-      if (ans == "ok")
+      if (ans == "yes")
         ClearConsole()
       else
         return()
