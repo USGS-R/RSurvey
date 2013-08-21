@@ -218,7 +218,7 @@ ImportData <- function(parent=NULL) {
     con <- GetConnection(src, enc)
 
     if (inherits(con, "try-error") || !isOpen(con, "r")) {
-      RaiseError(1, con)
+      RaiseError(1L, con)
       return()
     }
 
@@ -274,10 +274,12 @@ ImportData <- function(parent=NULL) {
       headers <- c(is.fmts, is.cols)
 
       tkconfigure(tt, cursor="watch")
+      tclServiceMode(FALSE)
       ans <- ReadTable(con, headers=headers, sep=sep, dec=dec, quote=quo,
                        nrows=nrw, na.strings=c("", nas), skip=skp,
                        comment.char=com, str.as.fact=is.fact)
       tkconfigure(tt, cursor="arrow")
+      tclServiceMode(TRUE)
       close(con)
 
       if (inherits(ans, "try-error")) {
@@ -365,12 +367,14 @@ ImportData <- function(parent=NULL) {
     if (inherits(con, "try-error"))
       return()
     tkconfigure(tt, cursor="watch")
-    total.rows <- 0
-    while ((read.rows <- length(readLines(con))) > 0)
+    tclServiceMode(FALSE)
+    total.rows <- 0L
+    while ((read.rows <- length(readLines(con))) > 0L)
       total.rows <- total.rows + read.rows
-    tkconfigure(tt, cursor="arrow")
     close(con)
     tclvalue(nrow.var) <- total.rows
+    tkconfigure(tt, cursor="arrow")
+    tclServiceMode(TRUE)
   }
 
   # Data file

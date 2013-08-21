@@ -67,7 +67,6 @@ OpenRSurvey <- function() {
   SaveProjAs <- function() {
     Data("proj.file", NULL)
     SaveProj()
-    tkfocus(tt)
   }
 
   # Clear objects
@@ -110,7 +109,6 @@ OpenRSurvey <- function() {
       CallProcessData()
       ExportData(file.type=file.type, parent=tt)
     }
-    tkfocus(tt)
   }
 
   # Read data
@@ -313,7 +311,6 @@ OpenRSurvey <- function() {
       Data("data.grd", NULL)
       SetVars()
     }
-    tkfocus(tt)
   }
 
   # Close graphic devices
@@ -421,7 +418,6 @@ OpenRSurvey <- function() {
                    parent=tt)
     shown.construct.polygon.msgbox <<- FALSE
     CallPlot2d(type=type, build.poly=TRUE)
-    tkfocus(tt)
   }
 
   # Autocrop polygon
@@ -452,7 +448,6 @@ OpenRSurvey <- function() {
       Data("poly.crop", ply.name)
       Data("data.grd", NULL)
     }
-    tkfocus(tt)
   }
 
   # Name polygon
@@ -573,16 +568,22 @@ OpenRSurvey <- function() {
     }
 
     tkconfigure(tt, cursor="watch")
-    Plot2d(dat, type=type, xlim=lim$x, ylim=lim$y, zlim=lim$z,
-           xlab=xlab, ylab=ylab, zlab=zlab, asp=Data("asp.yx"),
-           csi=Data("csi"), width=Data("width"), nlevels=nlevels,
-           cex.pts=Data("cex.pts"), rkey=Data("rkey"),
-           color.palette=Data("color.palette"),
-           vuni=Data("vuni"), vmax=Data("vmax"),
-           vxby=Data("vxby"), vyby=Data("vyby"),
-           axis.side=axis.side, minor.ticks=Data("minor.ticks"),
-           ticks.inside=Data("ticks.inside"), rm.pnt.line=Data("rm.pnt.line"),
-           add.contour.lines=show.lines)
+    tclServiceMode(FALSE)
+    ans <- try(Plot2d(dat, type=type, xlim=lim$x, ylim=lim$y, zlim=lim$z,
+                      xlab=xlab, ylab=ylab, zlab=zlab, asp=Data("asp.yx"),
+                      csi=Data("csi"), width=Data("width"), nlevels=nlevels,
+                      cex.pts=Data("cex.pts"), rkey=Data("rkey"),
+                      color.palette=Data("color.palette"),
+                      vuni=Data("vuni"), vmax=Data("vmax"),
+                      vxby=Data("vxby"), vyby=Data("vyby"),
+                      axis.side=axis.side, minor.ticks=Data("minor.ticks"),
+                      ticks.inside=Data("ticks.inside"),
+                      rm.pnt.line=Data("rm.pnt.line"),
+                      add.contour.lines=show.lines))
+    tkconfigure(tt, cursor="arrow")
+    tclServiceMode(TRUE)
+    if (inherits(ans, "try-error"))
+      return()
 
     if (show.poly)
       plot(ply, add=TRUE, poly.args=list(border="black", lty=3))
@@ -641,7 +642,6 @@ OpenRSurvey <- function() {
         }
       }
     }
-    tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }
 
@@ -656,12 +656,14 @@ OpenRSurvey <- function() {
       pts <- Data("data.pts")
     lim <- Data("lim.axes")
     tkconfigure(tt, cursor="watch")
-    Plot3d(x=dat, px=pts, xlim=lim$x, ylim=lim$y, zlim=lim$z,
-           vasp=Data("asp.zx"), hasp=Data("asp.yx"),
-           width=Data("width"), cex.pts=Data("cex.pts"),
-           nlevels=Data("nlevels"), color.palette=Data("color.palette"))
-    tkconfigure(tt, cursor="arrow")
+    tclServiceMode(FALSE)
+    try(Plot3d(x=dat, px=pts, xlim=lim$x, ylim=lim$y, zlim=lim$z,
+               vasp=Data("asp.zx"), hasp=Data("asp.yx"),
+               width=Data("width"), cex.pts=Data("cex.pts"),
+               nlevels=Data("nlevels"), color.palette=Data("color.palette")))
     tkfocus(tt)
+    tkconfigure(tt, cursor="arrow")
+    tclServiceMode(TRUE)
   }
 
   # Set the height of (default-sized) characters in inches.
@@ -675,32 +677,39 @@ OpenRSurvey <- function() {
 
   # Call edit data
   CallEditData <- function(read.only) {
-    CallProcessData()
-    cols <- Data("cols")
-    vars <- Data("vars")
     if (read.only) {  # view processed data
+      CallProcessData()
       if (is.null(Data("data.pts")))
         return()
       tkconfigure(tt, cursor="watch")
+      tclServiceMode(FALSE)
+      cols <- Data("cols")
+      vars <- Data("vars")
       lst <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate",
                   vx="x-vector", vy="y-vector")
       col.names <- names(Data("data.pts"))
       nams <- vapply(col.names, function(i) lst[[i]], "")
       fmts <- vapply(col.names, function(i) cols[[vars[[i]]]]$format, "")
-      EditData(Data("data.pts"), col.formats=fmts, col.names=nams,
-               read.only=TRUE, win.title="Processed Data", parent=tt)
+      tkconfigure(tt, cursor="arrow")
+      tclServiceMode(TRUE)
+      try(EditData(Data("data.pts"), col.formats=fmts, col.names=nams,
+                   read.only=TRUE, win.title="Processed Data", parent=tt))
+
     } else {  # edit raw data
       if (is.null(Data("data.raw")))
         return()
       tkconfigure(tt, cursor="watch")
+      tclServiceMode(FALSE)
+      cols <- Data("cols")
       idxs <- na.omit(vapply(cols, function(i) i$index, 0L))
       nams <- vapply(cols, function(i) i$id, "")
       fmts <- vapply(cols, function(i) i$format, "")
-      lst <- EditData(Data("data.raw")[, idxs],
-                      col.formats=fmts[idxs], col.names=nams[idxs],
-                      read.only=FALSE, changelog=Data("changelog"),
-                      win.title="Raw Data", parent=tt)
-      if (!is.null(lst)) {
+      lst <- try(EditData(Data("data.raw")[, idxs],
+                          col.formats=fmts[idxs], col.names=nams[idxs],
+                          read.only=FALSE, changelog=Data("changelog"),
+                          win.title="Raw Data", parent=tt))
+
+      if (!is.null(lst) && !inherits(lst, "try-error")) {
         Data("data.raw", lst[["d"]])
         for (i in seq(along=cols)) {
           obj <- EvalFunction(cols[[i]]$fun, cols)
@@ -714,9 +723,9 @@ OpenRSurvey <- function() {
         Data("data.pts", NULL)
         Data("data.grd", NULL)
       }
+      tkconfigure(tt, cursor="arrow")
+      tclServiceMode(TRUE)
     }
-    tkconfigure(tt, cursor="arrow")
-    tkfocus(tt)
   }
 
   # Call process data
@@ -764,9 +773,12 @@ OpenRSurvey <- function() {
         ply <- NULL
       }
 
-      data.pts <- ProcessData(d, type="p", coerce.rows=coerce.rows, ply=ply)
-      Data("data.pts", data.pts)
-      Data("data.grd", NULL)
+      data.pts <- try(ProcessData(d, type="p", coerce.rows=coerce.rows,
+                                  ply=ply))
+      if (!inherits(data.pts, "try-error")) {
+        Data("data.pts", data.pts)
+        Data("data.grd", NULL)
+      }
     }
 
     # Process grid
@@ -777,13 +789,13 @@ OpenRSurvey <- function() {
         ply <- Data("polys")[[ply]]
       grid.res <- Data("grid.res")
       grid.mba <- Data("grid.mba")
-      data.grd <- ProcessData(Data("data.pts"), type="g", ply=ply,
-                              grid.res=grid.res, grid.mba=grid.mba)
-      Data("data.grd", data.grd)
+      data.grd <- try(ProcessData(Data("data.pts"), type="g", ply=ply,
+                                  grid.res=grid.res, grid.mba=grid.mba))
+      if (!inherits(data.grd, "try-error"))
+        Data("data.grd", data.grd)
     }
-
-    tclServiceMode(TRUE)
     tkconfigure(tt, cursor="arrow")
+    tclServiceMode(TRUE)
   }
 
   # Build query
