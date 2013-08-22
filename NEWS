@@ -1,5 +1,7 @@
 Changes in Version 0.7-6
 
+  o  Fixed bug that was preventing data imports from paste operation.
+
   o  Improved performance in the EditData function by removing its reliance on a
      copy of the data frame that was coerced into character-class components.
 
@@ -9,7 +11,7 @@ Changes in Version 0.7-6
      string.
 
   o  SummarizeVariable function removed and replaced with the more general
-     summary and str functions.
+     base::summary and utils::str functions.
 
 Changes in Version 0.7-5
 

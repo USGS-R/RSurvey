@@ -19,7 +19,7 @@ ImportData <- function(parent=NULL) {
 
       # Load comment
       comments <- NULL
-      if (!is.na(comment.char) && comment.char != "") {
+      if (!is.na(comment.char) && comment.char != "" && isSeekable(con)) {
         pattern <- paste0("^", comment.char)
         while (TRUE) {
           read.line <- readLines(con, n=1)
@@ -192,7 +192,7 @@ ImportData <- function(parent=NULL) {
   # Establish data connection
   GetConnection <- function(src, enc) {
     if (src == "") {
-      con <- try(textConnection(cb), silent=TRUE)
+      con <- try(textConnection(cb, local=TRUE), silent=TRUE)
     } else if (substr(src, 1, 6) %in% c("http:/", "ftp://", "file:/")) {
       con <- try(url(description=src, open="r", encoding=enc), silent=TRUE)
     } else if (attr(GetFile(file=src), "extension") == "gz") {
@@ -626,8 +626,9 @@ ImportData <- function(parent=NULL) {
   frame3.lab.2.6 <- ttklabel(frame3, text="Skip lines")
   frame3.lab.3.1 <- ttklabel(frame3, text="Comment")
   frame3.lab.3.4 <- ttklabel(frame3, text="Encoding")
-  txt <- paste("Comments located above data records and header lines will be",
-               "preserved; all other comments are ignored.")
+  txt <- paste("Comments located above data records and header lines",
+               "will be preserved (files only); all other comments are",
+               "ignored.")
   frame3.lab.4.1 <- ttklabel(frame3, text=txt, foreground="#A40802")
 
   frame3.box.1.2 <- ttkcombobox(frame3, width=17, state="readonly", value=sep1)
