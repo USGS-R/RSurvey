@@ -1,3 +1,5 @@
+# Comment 1
+# Comment 2
 %m/%d/%Y %H:%M:%OS2	%5.1f	%5.1f	%.2f	%.2f		%.2e		%d					%s
 T POSIXct	X numeric, m	Y numeric, m	Z numeric, ft	Z numeric, ft	Z numeric, m		Logical	Integer, psia		Logical	Date character	Time character	Character
 04/24/2009 10:43:38.275	7.8	-2.3	-0.870	998.28	-0.265	-2.62E-01	TRUE	1			8/20/2008	11:55:00 AM
