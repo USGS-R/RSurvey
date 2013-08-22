@@ -1,14 +1,14 @@
 Changes in Version 0.7-6
 
-  o  Fixed bug that was preventing data imports from paste operation.
+  o  Fixed bug that was preventing data imports using paste operation.
 
   o  Improved performance in the EditData function by removing its reliance on a
      copy of the data frame that was coerced into character-class components.
 
-  o  The format function is now used when a format conversion specification
-     string is not supplied. Previously defaulted to a general string
-     representation; for example, numeric objects were formatted using the '%f'
-     string.
+  o  The base::format function is now used when a format conversion
+     specification string is not supplied. Previously defaulted to a general
+     string representation; for example, numeric objects were formatted using
+     the '%f' string.
 
   o  SummarizeVariable function removed and replaced with the more general
      base::summary and utils::str functions.

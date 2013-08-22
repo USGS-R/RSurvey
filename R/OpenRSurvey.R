@@ -26,15 +26,14 @@ OpenRSurvey <- function() {
       return()
     if (ClearObjs() == "cancel")
       return()
-    project <- NULL
-    ans <- try(load(file=f), silent=TRUE)
+    ans <- try(load(file=f, envir=environment(OpenProj)), silent=TRUE)
     if (inherits(ans, "try-error")) {
       msg <- "Not a valid project file."
       tkmessageBox(icon="error", message=msg, detail=ans, title="Error",
                    type="ok", parent=tt)
       return()
     }
-    Data(replace.all=project)
+    Data(replace.all=get(ans, envir=environment(OpenProj)))
     Data("proj.file", f)
     SetCsi()
     SetVars()
@@ -57,8 +56,10 @@ OpenRSurvey <- function() {
     if (!is.null(Data("proj.file"))) {
       csi <- Data("csi")
       Data("csi", NULL)
-      project <- Data()
-      save(project, file=Data("proj.file"), compress=TRUE)
+      f <- Data("proj.file")
+      obj.name <- sub("[.][^.]*$", "", basename(f))
+      assign(obj.name, Data(), envir=environment(SaveProj))
+      save(list=obj.name, file=f, compress=TRUE)
       Data("csi", csi)
     }
   }

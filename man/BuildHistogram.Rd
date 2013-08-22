@@ -38,9 +38,8 @@ Does not return any value.
 
 \examples{
 \donttest{tclRequire("Tktable", warn = TRUE)
-data(project)
-d <- project$data.pts
-BuildHistogram(d)
+data(ex.project)
+BuildHistogram(ex.project$data.pts)
 }
 }
 

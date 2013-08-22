@@ -58,8 +58,9 @@ The \code{vars} object is a list with components:
 \author{J.C. Fisher}
 
 \examples{
-\donttest{data(project)
-ManageVariables(project$cols, project$vars, project$query, project$changelog)}
+\donttest{data(ex.project)
+ManageVariables(ex.project$cols, ex.project$vars, ex.project$query,
+                ex.project$changelog)}
 }
 
 \keyword{misc}

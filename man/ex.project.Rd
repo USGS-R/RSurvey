@@ -1,6 +1,6 @@
-\name{project}
+\name{ex.project}
 
-\alias{project}
+\alias{ex.project}
 
 \docType{data}
 
@@ -11,7 +11,7 @@ This is an example project data set for \pkg{RSurvey}.
 }
 
 \usage{
-project
+ex.project
 }
 
 \format{
@@ -22,9 +22,9 @@ graphical parameters, and options to control the way in which
 }
 
 \examples{
-\donttest{data(project)
+\donttest{data(ex.project)
 # To load a project data set into RSurvey
-Data(replace.all = project)
+Data(replace.all = ex.project)
 }
 }
 

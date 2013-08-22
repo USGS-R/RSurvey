@@ -65,9 +65,8 @@ around the x-axis, and zooms the display, respectively.
 
 \examples{
 \donttest{
-data(project)
-d <- project$data.grd
-Plot3d(d)
+data(ex.project)
+Plot3d(ex.project$data.grd)
 rgl.quit()
 }
 }

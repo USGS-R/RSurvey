@@ -81,12 +81,12 @@ and \code{ncol(z)}, respectively.
 }
 
 \examples{
-data(project)
+data(ex.project)
 
-d <- project$data.pts
+d <- ex.project$data.pts
 Plot2d(d, type = "p")
 
-d <- project$data.grd
+d <- ex.project$data.grd
 Plot2d(d, type = "l")
 Plot2d(d, type = "g")
 }
