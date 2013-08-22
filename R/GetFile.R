@@ -34,6 +34,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
                       tab   = "Text Files",
                       tif   = "TIFF Files",
                       tiff  = "TIFF Files",
+                      tsv   = "Text Files",
                       txt   = "Text Files"
                   )
 

@@ -379,7 +379,7 @@ ImportData <- function(parent=NULL) {
 
   # Data file
   GetDataFile <- function() {
-    exts <- c("tab", "csv", "txt", "gz")
+    exts <- c("tsv", "csv", "txt", "gz")
     f <- GetFile(cmd="Open", exts=exts, win.title="Open Data File", parent=tt)
     tkfocus(tt)
     if (is.null(f))
@@ -390,7 +390,7 @@ ImportData <- function(parent=NULL) {
     ext <- attr(f, "extension")
     if (ext == "csv") {
       tcl(frame3.box.1.2, "current", match(",", sep0) - 1)
-    } else if (ext == "tab") {
+    } else if (ext == "tsv") {
       tcl(frame3.box.1.2, "current", match("\t", sep0) - 1)
     }
     RebuildTable()

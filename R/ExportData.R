@@ -243,7 +243,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
   GetDataFile <- function() {
     if (file.type == "txt") {
       default.ext <- "txt"
-      exts <- c("tab", "csv", "txt")
+      exts <- c("tsv", "csv", "txt")
       is.gzip <- as.logical(as.integer(tclvalue(compress.var)))
       if (is.gzip) {
         default.ext <- "gz"

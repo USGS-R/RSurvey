@@ -349,6 +349,13 @@ OpenRSurvey <- function() {
       rgl.postscript(filename=f, fmt=attr(f, "extension"))
   }
 
+  # Session information
+  SessionInfo <- function() {
+    txt <- paste(c(capture.output(sessionInfo()), ""), collapse="\n")
+    EditText(txt, read.only=TRUE, win.title="Session Information",
+             is.fixed.width.font=TRUE, parent=tt)
+  }
+
   # About package
   AboutPackage <- function() {
     msg <- paste(readLines(about.path, n=-1L), collapse="\n")
@@ -1109,6 +1116,8 @@ OpenRSurvey <- function() {
   tkadd(menu.help, "cascade", label="Repository on  ", menu=menu.help.rep)
 
   tkadd(menu.help, "separator")
+  tkadd(menu.help, "command", label="Session information",
+        command=SessionInfo)
   tkadd(menu.help, "command", label="About",
         command=AboutPackage)
 
