@@ -390,7 +390,7 @@ ImportData <- function(parent=NULL) {
     ext <- attr(f, "extension")
     if (ext == "csv") {
       tcl(frame3.box.1.2, "current", match(",", sep0) - 1)
-    } else if (ext == "tsv") {
+    } else if (ext %in% c("tsv", "tab")) {
       tcl(frame3.box.1.2, "current", match("\t", sep0) - 1)
     }
     RebuildTable()
@@ -469,15 +469,15 @@ ImportData <- function(parent=NULL) {
 
   nrows <- 50
 
-  sep0 <- c("\t", "", ",", ";", "|", NA)
-  sep1 <- c("Tab ( \\t )", "White space (  )", "Comma ( , )",
+  sep0 <- c("", "\t", ",", ";", "|", NA)
+  sep1 <- c("White space (  )", "Tab ( \\t )", "Comma ( , )",
             "Semicolon ( ; )", "Pipe ( | )", "Custom\u2026")
 
   nas0 <- c("NA", "na", "N/A", "n/a", NA)
   nas1 <- c("NA", "na", "N/A", "n/a", "Custom\u2026")
 
-  quo0 <- c("", "\"", "'")
-  quo1 <- c("None", "Double ( \" )", "Single ( \' )")
+  quo0 <- c("\"'", "\"", "'", "")
+  quo1 <- c("Double Single ( \" \' )", "Double ( \" )", "Single ( \' )", "None")
 
   dec0 <- c(".", ",")
   dec1 <- c("Period ( . )", "Comma ( , )")
