@@ -874,6 +874,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   tkgrid.columnconfigure(frame1, 0, weight=1)
 
+  tkgrid.configure(frame1.but.1.2, padx=c(10, 0))
   tkgrid.configure(frame1.but.1.3, padx=c(4, 0))
   tkgrid.configure(frame1.but.1.4, pady=10, padx=c(4, 10), columnspan=2)
   tkgrid.configure(frame1.grp.1.5, sticky="se")

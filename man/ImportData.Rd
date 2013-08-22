@@ -46,7 +46,7 @@ rows to read in.
 
 \value{
 Sets the following components in \code{\link{Data}}:
-\item{import$file}{character; the name of the file which the data is read
+\item{import$source}{character; the name of the file which the data is read
   from.}
 \item{import$fmts}{logical; indicates whether the file contains the conversion
   specification format strings of the variables.}

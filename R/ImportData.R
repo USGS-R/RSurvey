@@ -289,7 +289,7 @@ ImportData <- function(parent=NULL) {
 
       if (!is.null(ans)) {
         Data("import", list())
-        Data(c("import", "file"), src)
+        Data(c("import", "source"), src)
         Data(c("import", "fmts"), is.fmts)
         Data(c("import", "cols"), is.cols)
         Data(c("import", "str.as.fact"), is.fact)

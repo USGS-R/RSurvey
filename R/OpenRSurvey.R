@@ -119,9 +119,14 @@ OpenRSurvey <- function() {
     } else {
       classes <- c("data.frame", "matrix")
 
-      if (file.type == "rda") {
+      if (file.type == "rpackage") {
+        ans <- ImportPackageData(classes, parent=tt)
+        d <- ans$d
+        src <- ans$src
+
+      } else if (file.type == "rda") {
         f <- GetFile(cmd="Open", exts="rda", win.title="Open R Data File",
-                     parent=tt)
+                       parent=tt)
         if (is.null(f))
           return()
         d <- local({d.name <- load(file=f)
@@ -132,12 +137,7 @@ OpenRSurvey <- function() {
                        parent=tt)
           return()
         }
-        if (is.null(Data("import")))
-          Data("import", list())
-        Data(c("import", "file"), f)
-
-      } else if (file.type == "rpackage") {
-        d <- ImportPackageData(classes, parent=tt)
+        src <- f[1]
       }
 
       if (is.null(d) || nrow(d) == 0 || ncol(d) == 0)
@@ -178,6 +178,7 @@ OpenRSurvey <- function() {
       Data("comment", comment(d))
       Data("data.raw", d)
       Data("cols", cols)
+      Data("import", list(source=src))
     }
     EstablishDefaultVars()
     SetVars()
@@ -704,7 +705,7 @@ OpenRSurvey <- function() {
       idxs <- na.omit(vapply(cols, function(i) i$index, 0L))
       nams <- vapply(cols, function(i) i$id, "")
       fmts <- vapply(cols, function(i) i$format, "")
-      lst <- try(EditData(Data("data.raw")[, idxs],
+      lst <- try(EditData(Data("data.raw")[, idxs, drop=FALSE],
                           col.formats=fmts[idxs], col.names=nams[idxs],
                           read.only=FALSE, changelog=Data("changelog"),
                           win.title="Raw Data", parent=tt))
