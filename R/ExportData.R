@@ -212,7 +212,9 @@ ExportData <- function(file.type="txt", parent=NULL) {
       ascii <- as.logical(as.integer(tclvalue(ascii.var)))
       names(d) <- make.names(names=col.ids, unique=TRUE)
       comment(d) <- Data("comment")
-      save(d, file=file.name, ascii=ascii)
+      obj.name <- sub("[.][^.]*$", "", basename(file.name))
+      assign(obj.name, d, envir=environment(ExportToFile))
+      save(list=obj.name, file=file.name, ascii=ascii)
       Data(c("export", "ascii"), ascii)
     }
 
