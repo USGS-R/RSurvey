@@ -17,6 +17,7 @@ AutocropRegion <- function(d, parent=NULL, ...) {
 
   DrawPolygon <- function() {
     tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
 
     max.len <- as.numeric(tclvalue(max.len.var))
     if (is.na(max.len) || max.len > default.len) {
@@ -40,7 +41,6 @@ AutocropRegion <- function(d, parent=NULL, ...) {
       old.ply <<- ply
     }
 
-    tkconfigure(tt, cursor="arrow")
     tkfocus(tt)
   }
 

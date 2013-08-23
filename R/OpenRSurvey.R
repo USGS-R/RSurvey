@@ -492,6 +492,8 @@ OpenRSurvey <- function() {
       CallProcessData()
     else
       CallProcessData(interpolate=TRUE)
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
 
     if (is.null(Data("data.grd")) && type %in% c("g", "l")) {
       return()
@@ -576,8 +578,6 @@ OpenRSurvey <- function() {
         lim$y[2] <- bby[2]
     }
 
-    tkconfigure(tt, cursor="watch")
-    tclServiceMode(FALSE)
     ans <- try(Plot2d(dat, type=type, xlim=lim$x, ylim=lim$y, zlim=lim$z,
                       xlab=xlab, ylab=ylab, zlab=zlab, asp=Data("asp.yx"),
                       csi=Data("csi"), width=Data("width"), nlevels=nlevels,
@@ -589,8 +589,6 @@ OpenRSurvey <- function() {
                       ticks.inside=Data("ticks.inside"),
                       rm.pnt.line=Data("rm.pnt.line"),
                       add.contour.lines=show.lines))
-    tkconfigure(tt, cursor="arrow")
-    tclServiceMode(TRUE)
     if (inherits(ans, "try-error"))
       return()
 
@@ -657,6 +655,8 @@ OpenRSurvey <- function() {
   # Plot 3d surface data
   CallPlot3d <- function() {
     CallProcessData(interpolate=TRUE)
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
     if (is.null(Data("data.grd")))
       return()
     dat <- Data("data.grd")
@@ -664,15 +664,11 @@ OpenRSurvey <- function() {
     if (Data("show.points"))
       pts <- Data("data.pts")
     lim <- Data("lim.axes")
-    tkconfigure(tt, cursor="watch")
-    tclServiceMode(FALSE)
     try(Plot3d(x=dat, px=pts, xlim=lim$x, ylim=lim$y, zlim=lim$z,
                vasp=Data("asp.zx"), hasp=Data("asp.yx"),
                width=Data("width"), cex.pts=Data("cex.pts"),
                nlevels=Data("nlevels"), color.palette=Data("color.palette")))
     tkfocus(tt)
-    tkconfigure(tt, cursor="arrow")
-    tclServiceMode(TRUE)
   }
 
   # Set the height of (default-sized) characters in inches.
@@ -686,12 +682,12 @@ OpenRSurvey <- function() {
 
   # Call edit data
   CallEditData <- function(read.only) {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
     if (read.only) {  # view processed data
       CallProcessData()
       if (is.null(Data("data.pts")))
         return()
-      tkconfigure(tt, cursor="watch")
-      tclServiceMode(FALSE)
       cols <- Data("cols")
       vars <- Data("vars")
       lst <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate",
@@ -699,16 +695,12 @@ OpenRSurvey <- function() {
       col.names <- names(Data("data.pts"))
       nams <- vapply(col.names, function(i) lst[[i]], "")
       fmts <- vapply(col.names, function(i) cols[[vars[[i]]]]$format, "")
-      tkconfigure(tt, cursor="arrow")
-      tclServiceMode(TRUE)
       try(EditData(Data("data.pts"), col.formats=fmts, col.names=nams,
                    read.only=TRUE, win.title="Processed Data", parent=tt))
 
     } else {  # edit raw data
       if (is.null(Data("data.raw")))
         return()
-      tkconfigure(tt, cursor="watch")
-      tclServiceMode(FALSE)
       cols <- Data("cols")
       idxs <- na.omit(vapply(cols, function(i) i$index, 0L))
       nams <- vapply(cols, function(i) i$id, "")
@@ -732,14 +724,14 @@ OpenRSurvey <- function() {
         Data("data.pts", NULL)
         Data("data.grd", NULL)
       }
-      tkconfigure(tt, cursor="arrow")
-      tclServiceMode(TRUE)
     }
   }
 
   # Call process data
 
   CallProcessData <- function(interpolate=FALSE) {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
     vars <- Data("vars")
     var.names <- names(vars)
     if (!all(c("x", "y") %in% var.names)) {
@@ -747,9 +739,6 @@ OpenRSurvey <- function() {
       Data("data.grd", NULL)
       return()
     }
-
-    tkconfigure(tt, cursor="watch")
-    tclServiceMode(FALSE)
 
     # Process points
 
@@ -803,8 +792,6 @@ OpenRSurvey <- function() {
       if (!inherits(data.grd, "try-error"))
         Data("data.grd", data.grd)
     }
-    tkconfigure(tt, cursor="arrow")
-    tclServiceMode(TRUE)
   }
 
   # Build query

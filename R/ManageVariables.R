@@ -367,13 +367,13 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   # View data for selected variable
 
   CallEditData <- function(type="dataframe") {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
     idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0)
       return()
     SaveNb()
 
-    tkconfigure(tt, cursor="watch")
-    tclServiceMode(FALSE)
     nams <- vapply(cols, function(i) i$id, "")
     fmts <- vapply(cols, function(i) i$format, "")
     funs <- vapply(cols, function(i) i$fun, "")
@@ -393,8 +393,6 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     } else {
       win.title <- "Raw and Derived Data"
     }
-    tclServiceMode(TRUE)
-    tkconfigure(tt, cursor="arrow")
     EditData(d, nams[idxs], fmts[idxs], read.only=TRUE,
              win.title=win.title, parent=tt)
   }

@@ -46,7 +46,7 @@ Sets the following components in \code{\link{Data}}:
 \item{export$eol}{character; the character to print at the end of each line
   (text only).}
 \item{export$compressed}{logical; indicate whether the file should be
-  compressed using \href{http://www.gzip.org/}{gzip} (text only).}
+  compressed using \href{http://www.bzip.org/}{bzip2} (text only).}
 \item{export$changelog}{logical; indicate if a separate text file should be
   written with the change log (text only).}
 \item{export$ascii}{logical; if \code{TRUE}, an ASCII representation of the data

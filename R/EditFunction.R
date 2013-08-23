@@ -169,6 +169,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   # Show unique values
   ShowUniqueValues <- function() {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
     idx <- as.integer(tkcurselection(frame1.lst.2.1))
     if (length(idx) == 0)
       return()
@@ -177,7 +179,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
     var.fmt <- cols[[idx]]$format
 
-    tkconfigure(tt, cursor="watch")
     var.vals <- unique(EvalFunction(cols[[idx]]$fun, cols))
     var.class <- cols[[idx]]$class
 
@@ -188,10 +189,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       ans <- as.character(tkmessageBox(icon="question", message=msg,
                                        title="Warning", type="yesno",
                                        parent=tt))
-      if (ans == "no") {
-        tkconfigure(tt, cursor="arrow")
+      if (ans == "no")
         return()
-      }
     }
 
     var.vals <- sort(var.vals, na.last=TRUE)
@@ -212,7 +211,6 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     tkselection.clear(frame1.lst.4.1, 0, "end")
     tkconfigure(frame1.but.5.1, state="disabled")
     tkfocus(frame2.txt.2.1)
-    tkconfigure(tt, cursor="arrow")
   }
 
   # Change variable selection

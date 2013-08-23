@@ -26,16 +26,15 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
 
   # Load package
   LoadPackage <- function(pkg.name) {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
     lib <- paste("package", pkg.name, sep=":")
-    if (!lib %in% search()) {
-      tkconfigure(tt, cursor="watch")
+    if (!lib %in% search())
       suppressPackageStartupMessages(require(pkg.name, quietly=TRUE,
                                              warn.conflicts=FALSE,
                                              character.only=TRUE))
-      tkconfigure(tt, cursor="arrow")
-    }
     if (lib %in% search()) {
       idx <- as.integer(tcl(frame1.box.3.1, "current"))
       if (idx == 2L) {
@@ -98,9 +97,9 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
 
   # GUI control for select package
   SelectPackage <- function() {
-    idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
     tkconfigure(tt, cursor="watch")
-    tclServiceMode(FALSE)
+    on.exit(tkconfigure(tt, cursor="arrow"))
+    idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
     if (IsPackageLoaded(pkg.name)) {
       tkconfigure(frame1.but.4.2, state="disabled", default="disabled")
@@ -158,8 +157,6 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
       tkselection.clear(frame1.lst.2.4, 0, "end")
       tclvalue(dataset.var) <- ""
     }
-    tclServiceMode(TRUE)
-    tkconfigure(tt, cursor="arrow")
     SelectDataset()
   }
 

@@ -9,6 +9,7 @@ LoadPackages <- function() {
   # Install missing packages from CRAN mirror
   InstallPackages <- function() {
     tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
     idx <- which(cran.mirrors$Name %in% as.character(tclvalue(repo.var)))
     repo <- cran.mirrors$URL[idx]
     contriburl <- contrib.url(repos=repo, type=getOption("pkgType"))
@@ -23,10 +24,8 @@ LoadPackages <- function() {
                     "\n\nWould you like to try a different CRAN mirror?")
       ans <- tkmessageBox(icon="question", message=msg, title="CRAN",
                           type="yesno", parent=tt)
-      if (tolower(substr(ans, 1, 1)) == "y") {
-        tkconfigure(tt, cursor="arrow")
+      if (tolower(substr(ans, 1, 1)) == "y")
         return()
-      }
     }
     if (length(available.pkgs) > 0) {
       tclServiceMode(FALSE)

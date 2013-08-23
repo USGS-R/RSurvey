@@ -195,11 +195,15 @@ ImportData <- function(parent=NULL) {
       con <- try(textConnection(cb, local=TRUE), silent=TRUE)
     } else if (substr(src, 1, 6) %in% c("http:/", "ftp://", "file:/")) {
       con <- try(url(description=src, open="r", encoding=enc), silent=TRUE)
-    } else if (attr(GetFile(file=src), "extension") == "gz") {
-      con <- try(gzfile(description=src, open="r", encoding=enc,
-                        compression=6), silent=TRUE)
     } else {
-      con <- try(file(description=src, open="r", encoding=enc), silent=TRUE)
+      ext <- attr(GetFile(file=src), "extension")
+      if (ext == "gz") {
+        con <- try(gzfile(description=src, open="r", encoding=enc), silent=TRUE)
+      } else if (ext == "bz2") {
+        con <- try(bzfile(description=src, open="r", encoding=enc), silent=TRUE)
+      } else {
+        con <- try(file(description=src, open="r", encoding=enc), silent=TRUE)
+      }
     }
     return(con)
   }
@@ -207,6 +211,9 @@ ImportData <- function(parent=NULL) {
   # Read data from file and populate example table
 
   ReadFile <- function(summary.only=TRUE) {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
+
     sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
     dec <- dec0[as.integer(tcl(frame3.box.1.5, "current")) + 1]
     nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
@@ -273,13 +280,9 @@ ImportData <- function(parent=NULL) {
       is.fact <- as.logical(as.integer(tclvalue(str.as.fact.var)))
       headers <- c(is.fmts, is.cols)
 
-      tkconfigure(tt, cursor="watch")
-      tclServiceMode(FALSE)
       ans <- ReadTable(con, headers=headers, sep=sep, dec=dec, quote=quo,
                        nrows=nrw, na.strings=c("", nas), skip=skp,
                        comment.char=com, str.as.fact=is.fact)
-      tkconfigure(tt, cursor="arrow")
-      tclServiceMode(TRUE)
       close(con)
 
       if (inherits(ans, "try-error")) {
@@ -361,25 +364,23 @@ ImportData <- function(parent=NULL) {
 
   # Determine the number of lines in a file
   NumLinesInFile <- function() {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
     src <- as.character(tclvalue(source.var))
     enc <- enc0[as.integer(tcl(frame3.box.3.5, "current")) + 1]
     con <- GetConnection(src, enc)
     if (inherits(con, "try-error"))
       return()
-    tkconfigure(tt, cursor="watch")
-    tclServiceMode(FALSE)
     total.rows <- 0L
     while ((read.rows <- length(readLines(con))) > 0L)
       total.rows <- total.rows + read.rows
     close(con)
     tclvalue(nrow.var) <- total.rows
-    tkconfigure(tt, cursor="arrow")
-    tclServiceMode(TRUE)
   }
 
   # Data file
   GetDataFile <- function() {
-    exts <- c("tsv", "csv", "txt", "gz")
+    exts <- c("tsv", "csv", "txt", "bz2", "gz")
     f <- GetFile(cmd="Open", exts=exts, win.title="Open Data File", parent=tt)
     tkfocus(tt)
     if (is.null(f))
@@ -388,6 +389,12 @@ ImportData <- function(parent=NULL) {
     tclvalue(nrow.var) <- ""
     cb <<- NULL
     ext <- attr(f, "extension")
+    if (ext %in% c("bz2", "gz")) {
+      nam <- sub("[.][^.]*$", "", basename(f))
+      ext <- tail(unlist(strsplit(nam, "\\."))[-1], 1)
+      if (length(ext) == 0L)
+        ext <- ""
+    }
     if (ext == "csv") {
       tcl(frame3.box.1.2, "current", match(",", sep0) - 1)
     } else if (ext %in% c("tsv", "tab")) {

@@ -7,7 +7,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
   ## Additional functions (subroutines)
 
   # Determine file extension
-  FileExt <- function(x) {
+  GetFileExt <- function(x) {
     ext <- tail(unlist(strsplit(basename(x), "\\."))[-1], 1)
     if (length(ext) == 0L)
       ext <- ""
@@ -18,6 +18,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
 
   # Initialize file filters
   all.filters <- list(bmp   = "Windows Bitmap Files",
+                      bz2   = "Compressed Text Files",
                       csv   = "Text Files",
                       eps   = "Encapsulated Postscript Files",
                       gz    = "Compressed Text Files",
@@ -44,7 +45,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
       val <- summary.connection(file)$description
     else
       val <- file
-    ext <- FileExt(val)
+    ext <- GetFileExt(val)
     attr(val, "directory") <- dirname(val)
     attr(val, "extension") <- ext
     attr(val, "name") <- sub(paste0(".", ext, "$"), "", basename(val))
@@ -113,7 +114,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
 
   for (i in seq(along=ans)) {
     val <- ans[i]
-    ext <- FileExt(val)
+    ext <- GetFileExt(val)
     attr(val, "directory") <- dirname(val)
     attr(val, "extension") <- ext
     attr(val, "name") <- sub(paste0(".", ext, "$"), "", basename(val))

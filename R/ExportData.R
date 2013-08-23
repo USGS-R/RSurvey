@@ -85,7 +85,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
       is.rows <- as.logical(as.integer(tclvalue(row.names.var)))
       is.quot <- as.logical(as.integer(tclvalue(quote.var)))
       is.comm <- as.logical(as.integer(tclvalue(comment.var)))
-      is.gzip <- as.logical(as.integer(tclvalue(compress.var)))
+      is.comp <- as.logical(as.integer(tclvalue(compress.var)))
       is.clog <- as.logical(as.integer(tclvalue(changelog.var)))
 
       sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
@@ -110,7 +110,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
       # Write changelog
       if (is.clog) {
         dir.name <- dirname(file.name)
-        base.name <- sub(".gz$", "", basename(file.name))
+        base.name <- sub(".bz2$", "", basename(file.name))
         base.name <- unlist(strsplit(base.name, "\\."))
         if (length(base.name) > 1)
           base.name <- base.name[-length(base.name)]
@@ -130,8 +130,8 @@ ExportData <- function(file.type="txt", parent=NULL) {
       }
 
       # Set data file connection
-      if (is.gzip)
-        con <- gzfile(description=file.name, open="w", encoding=enc)
+      if (is.comp)
+        con <- bzfile(description=file.name, open="w", encoding=enc)
       else
         con <- file(description=file.name, open="w", encoding=enc)
       if (!inherits(con, "connection"))
@@ -186,7 +186,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
       Data(c("export", "quote"), is.quot)
       Data(c("export", "encoding"), enc)
       Data(c("export", "eol"), eol)
-      Data(c("export", "compressed"), is.gzip)
+      Data(c("export", "compressed"), is.comp)
       Data(c("export", "changelog"), is.clog)
 
     # Write shapefile
@@ -244,10 +244,10 @@ ExportData <- function(file.type="txt", parent=NULL) {
     if (file.type == "txt") {
       default.ext <- "txt"
       exts <- c("tsv", "csv", "txt")
-      is.gzip <- as.logical(as.integer(tclvalue(compress.var)))
-      if (is.gzip) {
-        default.ext <- "gz"
-        exts <- "gz"
+      is.comp <- as.logical(as.integer(tclvalue(compress.var)))
+      if (is.comp) {
+        default.ext <- "bz2"
+        exts <- "bz2"
       }
     } else if (file.type == "shp") {
       default.ext <- "shp"
@@ -266,18 +266,18 @@ ExportData <- function(file.type="txt", parent=NULL) {
     ToggleExport()
   }
 
-  # Toggle gz extension on file entry
+  # Toggle bz2 extension on file entry
   ToggleExtension <- function() {
     f <- as.character(tclvalue(file.var))
     n <- nchar(f)
     if (nchar(f) < 3L)
       return()
-    is.gz <- substr(f, n - 2L, n) == ".gz"
-    is.gzip <- as.logical(as.integer(tclvalue(compress.var)))
+    is.bz2 <- substr(f, n - 2L, n) == ".bz2"
+    is.comp <- as.logical(as.integer(tclvalue(compress.var)))
     f.new <- f
-    if (is.gzip & !is.gz)
-      f.new <- paste0(f, ".gz")
-    if (!is.gzip & is.gz)
+    if (is.comp & !is.bz2)
+      f.new <- paste0(f, ".bz2")
+    if (!is.comp & is.bz2)
       f.new <- substr(f, 1L, n - 3L)
     if (!identical(f, f.new))
       tclvalue(file.var) <- f.new
@@ -589,7 +589,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
   frame4.lab.3.1 <- ttklabel(frame4, text="End-of-line")
   frame4.box.2.2 <- ttkcombobox(frame4, width=17, state="readonly", value=enc1)
   frame4.box.3.2 <- ttkcombobox(frame4, width=17, state="readonly", value=eol1)
-  txt <- "Compress using gzip"
+  txt <- "Compress using bzip2"
   frame4.chk.2.3 <- ttkcheckbutton(frame4, variable=compress.var, text=txt,
                                    command=ToggleExtension)
   txt <- "Include changelog ( *.log )"
