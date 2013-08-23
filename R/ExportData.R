@@ -7,6 +7,9 @@ ExportData <- function(file.type="txt", parent=NULL) {
   # Final export of data to file
 
   ExportToFile <- function() {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
+    
     idxs <- as.integer(tkcurselection(frame1.lst.1.1)) + 1L
     col.ids <- col.ids[idxs]
     is.proc <- as.logical(as.integer(tclvalue(processed.var)))
@@ -44,7 +47,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
     }
     n <- length(col.idxs)
     m <- length(row.idxs)
-    d <- as.data.frame(matrix(NA, nrow=m, ncol=n))
+    d <- matrix(NA, nrow=m, ncol=n)
 
     for (i in 1:n) {
       obj <- EvalFunction(col.funs[i], cols)[row.idxs]
@@ -136,7 +139,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
         con <- file(description=file.name, open="w", encoding=enc)
       if (!inherits(con, "connection"))
         stop("Connection error")
-      on.exit(close(con))
+      on.exit(close(con), add=TRUE)
 
       # Write comment
       if (is.comm) {
@@ -169,11 +172,11 @@ ExportData <- function(file.type="txt", parent=NULL) {
                     qmethod=qme, fileEncoding=enc)
       }
 
-      # Write table
+      # Write records
       write.table(d, file=con, append=(is.comm | any(headers)), quote=is.quot,
                   sep=sep, eol=eol, na=nas, dec=dec, row.names=is.rows,
                   col.names=FALSE, qmethod=qme, fileEncoding=enc)
-
+      
       Data(c("export", "fmts"), is.fmts)
       Data(c("export", "cols"), is.cols)
       Data(c("export", "rows"), is.rows)
@@ -242,12 +245,22 @@ ExportData <- function(file.type="txt", parent=NULL) {
   # Get file
   GetDataFile <- function() {
     if (file.type == "txt") {
-      default.ext <- "txt"
-      exts <- c("tsv", "csv", "txt")
       is.comp <- as.logical(as.integer(tclvalue(compress.var)))
       if (is.comp) {
         default.ext <- "bz2"
         exts <- "bz2"
+      } else {
+        sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
+        if ("," %in% sep) {
+          default.ext <- "csv"
+          exts <- "csv"
+        } else if ("\t" %in% sep) {
+          default.ext <- "tsv"
+          exts <- c("tsv", "tab")
+        } else {
+          default.ext <- "txt"
+          exts <- c("txt", "tsv", "csv")
+        }
       }
     } else if (file.type == "shp") {
       default.ext <- "shp"
@@ -308,8 +321,8 @@ ExportData <- function(file.type="txt", parent=NULL) {
 
   # Initialize values
 
-  sep0 <- c("\t", "", ",", ";", "|", NA)
-  sep1 <- c("Tab ( \\t )", "White space (  )", "Comma ( , )",
+  sep0 <- c("\t", ",", "", ";", "|", NA)
+  sep1 <- c("Tab ( \\t )", "Comma ( , )", "White space (  )",
             "Semicolon ( ; )", "Pipe ( | )", "Custom\u2026")
 
   nas0 <- c("NA", "na", "N/A", "n/a", NA)
@@ -469,9 +482,9 @@ ExportData <- function(file.type="txt", parent=NULL) {
     frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=comment.var,
                                      text="Comment")
     frame2.chk.1.2 <- ttkcheckbutton(frame2, variable=conv.fmts.var,
-                                     text="Conversion specification formats")
+                                     text="Conversion specification strings")
     frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=row.names.var,
-                                     text="Record numbers")
+                                     text="Record (row) names")
     frame2.chk.2.2 <- ttkcheckbutton(frame2, variable=col.names.var,
                                      text="Variable (column) names")
 
@@ -589,12 +602,12 @@ ExportData <- function(file.type="txt", parent=NULL) {
   frame4.lab.3.1 <- ttklabel(frame4, text="End-of-line")
   frame4.box.2.2 <- ttkcombobox(frame4, width=17, state="readonly", value=enc1)
   frame4.box.3.2 <- ttkcombobox(frame4, width=17, state="readonly", value=eol1)
-  txt <- "Compress using bzip2"
-  frame4.chk.2.3 <- ttkcheckbutton(frame4, variable=compress.var, text=txt,
-                                   command=ToggleExtension)
   txt <- "Include changelog ( *.log )"
-  frame4.chk.3.3 <- ttkcheckbutton(frame4, variable=changelog.var, text=txt)
-
+  frame4.chk.2.3 <- ttkcheckbutton(frame4, variable=changelog.var, text=txt)
+  txt <- "Compress using bzip2"
+  frame4.chk.3.3 <- ttkcheckbutton(frame4, variable=compress.var, text=txt,
+                                   command=ToggleExtension)
+                                   
   tkgrid(frame4.ent.1.1, "x", "x", "x", frame4.but.1.5)
   tkgrid.configure(frame4.ent.1.1, sticky="we", columnspan=4, padx=c(0, 2))
 
@@ -618,7 +631,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
 
     if (is.null(Data("changelog"))) {
       tclvalue(changelog.var) <- 0
-      tkconfigure(frame4.chk.3.3, state="disabled")
+      tkconfigure(frame4.chk.2.3, state="disabled")
     }
   } else if (file.type == "rda") {
     frame4.rbt.2.1 <- ttkradiobutton(frame4, variable=ascii.var,
