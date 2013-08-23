@@ -400,6 +400,8 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   # Build historgram
 
   CallBuildHistogram <- function() {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
     SaveNb()
     idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0)

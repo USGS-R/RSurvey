@@ -20,8 +20,8 @@ ImportData(parent = NULL)
 This \acronym{GUI} is a wrapper for the \code{\link{read.table}} function.
 Data connections are defined as the path to the file to be opened, a
 complete \acronym{URL} (e.g. http://, ftp:// or file://), or windows clipboard.
-Files are limited to text format (\file{.txt} \file{.csv}, or
-\file{.tab}); however, they can be compressed by
+Files are limited to text format (\file{.tsv} \file{.csv}, or
+\file{.txt}); however, they can be compressed by
 \emph{\href{http://www.bzip.org/}{bzip2}} with additional extension \file{.bz2}.
 
 Conversion specification formats are the character representation of object

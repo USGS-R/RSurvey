@@ -358,8 +358,9 @@ OpenRSurvey <- function() {
 
   # About package
   AboutPackage <- function() {
-    msg <- paste(readLines(about.path, n=-1L), collapse="\n")
-    tkmessageBox(icon="info", message=msg, title="About", parent=tt)
+    txt <- paste(readLines(about.path, n=-1L), collapse="\n")
+    EditText(txt, read.only=TRUE, win.title="About",
+             is.fixed.width.font=FALSE, parent=tt)
   }
 
   # Manage polygons
@@ -475,6 +476,8 @@ OpenRSurvey <- function() {
   # Plot histogram
   PlotHistogram <- function() {
     CallProcessData()
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
     if (is.null(Data("data.pts")))
       return()
     d <- Data("data.pts")
