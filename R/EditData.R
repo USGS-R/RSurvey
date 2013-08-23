@@ -524,6 +524,8 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   # View structure or summary
   ViewData <- function(type) {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
     names(d) <- make.names(col.names, unique=TRUE)
     if (type == "str") {
       txt <- capture.output(str(d))
@@ -704,6 +706,18 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
         command=function() tkevent.generate(frame3.tbl, "<Control-minus>"))
   tkadd(menu.edit, "cascade", label="Column width", menu=menu.edit.width)
 
+# View menu
+  menu.view <- tkmenu(tt, tearoff=0, relief="flat")
+  tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
+  tkadd(menu.view, "command", label="Structure",
+        command=function() ViewData("str"))
+  tkadd(menu.view, "command", label="Summary",
+        command=function() ViewData("summary"))
+  if (!read.only) {
+    tkadd(menu.view, "separator")
+    tkadd(menu.view, "command", label="Change log", command=ViewChangeLog)
+  }
+
   # Search menu
   menu.search <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Search", menu=menu.search, underline=0)
@@ -821,18 +835,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
           menu=menu.nav.in)
   }
 
-# View menu
-  menu.view <- tkmenu(tt, tearoff=0, relief="flat")
-  tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
-  tkadd(menu.view, "command", label="Structure",
-        command=function() ViewData("str"))
-  tkadd(menu.view, "command", label="Summary",
-        command=function() ViewData("summary"))
-  if (!read.only) {
-    tkadd(menu.view, "separator")
-    tkadd(menu.view, "command", label="Change log", command=ViewChangeLog)
-  }
-
   # Finish top menu
   tkconfigure(tt, menu=top.menu)
 
@@ -919,7 +921,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   frame3.tbl <- tkwidget(frame3, "table", rows=m + 1, cols=n + 1,
                          colwidth=-2, rowheight=1,
-                         state=if (read.only) "disabled" else "normal",
+                         state=ifelse(read.only, "disabled", "normal"),
                          height=nrows + 1, width=ncols + 1, ipadx=1, ipady=1,
                          wrap=0, justify="right", background="#FFFFFF",
                          foreground="#000000", titlerows=1, titlecols=1,
@@ -928,7 +930,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                          colstretchmode="none", rowstretchmode="none",
                          drawmode="single", flashmode=0, rowseparator="\n",
                          colseparator="\t", selectmode="extended",
-                         selecttitle=1, insertofftime=0, anchor="ne",
+                         selecttitle=1, insertofftime=0, anchor="ne", 
                          highlightthickness=0, cache=1, validate=1,
                          font="TkFixedFont", exportselection=0,
                          browsecommand=function(s, S) ChangeActiveCell(s, S),

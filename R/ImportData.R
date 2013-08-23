@@ -177,32 +177,20 @@ ImportData <- function(parent=NULL) {
                  type="ok", parent=tt)
   }
 
-  # Raise warning message if data already exists
-  RaiseWarning <- function(parent) {
-    if (!is.null(Data("cols"))) {
-      msg <- "This action will delete existing data?"
-      ans <- as.character(tkmessageBox(icon="question", message=msg,
-                                       title="Warning", type="okcancel",
-                                       parent=parent))
-      if (ans == "ok")
-        Data(clear.data=TRUE)
-    }
-  }
-
   # Establish data connection
-  GetConnection <- function(src, enc) {
+  GetConnection <- function(src, enc, opn="r") {
     if (src == "") {
       con <- try(textConnection(cb, local=TRUE), silent=TRUE)
     } else if (substr(src, 1, 6) %in% c("http:/", "ftp://", "file:/")) {
-      con <- try(url(description=src, open="r", encoding=enc), silent=TRUE)
+      con <- try(url(description=src, open=opn, encoding=enc), silent=TRUE)
     } else {
       ext <- attr(GetFile(file=src), "extension")
       if (ext == "gz") {
-        con <- try(gzfile(description=src, open="r", encoding=enc), silent=TRUE)
+        con <- try(gzfile(description=src, open=opn, encoding=enc), silent=TRUE)
       } else if (ext == "bz2") {
-        con <- try(bzfile(description=src, open="r", encoding=enc), silent=TRUE)
+        con <- try(bzfile(description=src, open=opn, encoding=enc), silent=TRUE)
       } else {
-        con <- try(file(description=src, open="r", encoding=enc), silent=TRUE)
+        con <- try(file(description=src, open=opn, encoding=enc), silent=TRUE)
       }
     }
     return(con)
@@ -223,6 +211,7 @@ ImportData <- function(parent=NULL) {
 
     src <- as.character(tclvalue(source.var))
     con <- GetConnection(src, enc)
+    on.exit(close(con), add=TRUE)
 
     if (inherits(con, "try-error") || !isOpen(con, "r")) {
       RaiseError(1L, con)
@@ -256,7 +245,6 @@ ImportData <- function(parent=NULL) {
                           check.names=TRUE, fill=TRUE, strip.white=TRUE,
                           blank.lines.skip=TRUE, comment.char=com,
                           allowEscapes=TRUE, flush=TRUE), silent=TRUE)
-      close(con)
       if (inherits(d, "try-error")) {
         RaiseError(2L, d)
         return()
@@ -268,11 +256,17 @@ ImportData <- function(parent=NULL) {
       return(d)
 
     } else {
-
-      RaiseWarning(tt)
+      
+      # Raise warning message if data already exists
       if (!is.null(Data("cols"))) {
-        close(con)
-        return()
+        msg <- "This action will delete existing data?"
+        ans <- as.character(tkmessageBox(icon="question", message=msg,
+                                         title="Warning", type="okcancel",
+                                         parent=parent))
+        if (ans == "ok") 
+          Data(clear.data=TRUE)
+        else 
+          return()
       }
 
       is.fmts <- as.logical(as.integer(tclvalue(conv.fmts.var)))
@@ -283,8 +277,6 @@ ImportData <- function(parent=NULL) {
       ans <- ReadTable(con, headers=headers, sep=sep, dec=dec, quote=quo,
                        nrows=nrw, na.strings=c("", nas), skip=skp,
                        comment.char=com, str.as.fact=is.fact)
-      close(con)
-
       if (inherits(ans, "try-error")) {
         RaiseError(2L, ans)
         return()
@@ -361,21 +353,42 @@ ImportData <- function(parent=NULL) {
     tkconfigure(frame4.tbl, state="disabled")
     tclServiceMode(TRUE)
   }
-
-  # Determine the number of lines in a file
-  NumLinesInFile <- function() {
+  
+  # Count the number of lines in a file; adapted from R.utils::countLines
+  CountLines <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
     src <- as.character(tclvalue(source.var))
     enc <- enc0[as.integer(tcl(frame3.box.3.5, "current")) + 1]
-    con <- GetConnection(src, enc)
+    con <- GetConnection(src, enc, opn="rb")
+    on.exit(close(con), add=TRUE)
     if (inherits(con, "try-error"))
       return()
-    total.rows <- 0L
-    while ((read.rows <- length(readLines(con))) > 0L)
-      total.rows <- total.rows + read.rows
-    close(con)
-    tclvalue(nrow.var) <- total.rows
+    lf <- as.raw(0x0a)
+    cr <- as.raw(0x0d)
+    is.last.cr <- FALSE
+    nbreaks <- 0L
+    while(TRUE) {
+      bfr <- readBin(con=con, what="raw", n=5e+07L)
+      if (is.last.cr && bfr[1] == lf)
+        bfr[1] <- as.raw(32)
+      n <- length(bfr)
+      if (n == 0)
+        break
+      idxs.cr <- which(bfr == cr)
+      ncr <- length(idxs.cr)
+      if (ncr > 0) {
+        idxs.crlf <- idxs.cr[bfr[idxs.cr + 1L] == lf]
+        bfr <- bfr[-idxs.crlf]
+        n <- length(bfr)
+        idxs.crlf <- NULL
+        ncr <- length(which(bfr == cr))
+      }
+      nlf <- length(which(bfr == lf))
+      nbreaks <- nbreaks + ncr + nlf
+      is.last.cr <- bfr[n] == cr
+    }
+    tclvalue(nrow.var) <- nbreaks
   }
 
   # Data file
@@ -652,7 +665,7 @@ ImportData <- function(parent=NULL) {
   frame3.ent.3.3 <- ttkentry(frame3, width=12, textvariable=com.var)
 
   frame3.but.1.8 <- ttkbutton(frame3, width=2, image=GetBitmapImage("find"),
-                              command=NumLinesInFile)
+                              command=CountLines)
 
   frame3.chk.3.6 <- ttkcheckbutton(frame3, variable=str.as.fact.var,
                                    text="Convert strings to factors")
