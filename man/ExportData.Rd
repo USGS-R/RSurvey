@@ -21,36 +21,37 @@ ExportData(file.type = "txt", parent = NULL)
 }
 
 \value{
-Sets the following components in \code{\link{Data}}:
-\item{export$processed}{logical; are exported records limited to processed
+Saves the \acronym{GUI} options in the \code{export} component of 
+\code{\link{Data}}. List components of \code{export} include:
+\item{processed}{logical; are exported records limited to processed
   data?}
-\item{export$fmts}{logical;  indicates whether a header line of conversion
+\item{fmts}{logical; indicates whether a header line of conversion
   specification format strings is written (text only).}
-\item{export$cols}{logical;  indicates whether a header line of column names is
+\item{cols}{logical; indicates whether a header line of column names is
   written (text only).}
-\item{export$rows}{logical; indicates whether the row names are written
+\item{rows}{logical; indicates whether the row names are written
   (text only).}
-\item{export$comment}{logical; indicates whether to write comments using the
-  comment character, \code{export$com} (text only).}
-\item{export$sep}{character; the field separator character (text only).}
-\item{export$dec}{character; string used for decimal points (text only).}
-\item{export$nas}{character; string interpreted as \code{\link{NA}} value
+\item{comment}{logical; indicates whether to write comments using the
+  comment character, \code{com} (text only).}
+\item{sep}{character; the field separator character (text only).}
+\item{dec}{character; string used for decimal points (text only).}
+\item{nas}{character; string interpreted as \code{\link{NA}} value
   (text only).}
-\item{export$com}{character; comment character (text only).}
-\item{export$qmethod}{character; a string specifying how to deal with embedded
+\item{com}{character; comment character (text only).}
+\item{qmethod}{character; a string specifying how to deal with embedded
   double quote characters when quoting strings (text only).}
-\item{export$quote}{logical; if \code{TRUE}, any character or factor columns
+\item{quote}{logical; if \code{TRUE}, any character or factor columns
   will be surrounded by double quotes (text only).}
-\item{export$encoding}{character; declares the encoding to be used on the file
+\item{encoding}{character; declares the encoding to be used on the file
   (text only).}
-\item{export$eol}{character; the character to print at the end of each line
+\item{eol}{character; the character to print at the end of each line
   (text only).}
-\item{export$compressed}{logical; indicate whether the file should be
+\item{compressed}{logical; indicate whether the file should be
   compressed using \href{http://www.bzip.org/}{bzip2} (text only).}
-\item{export$changelog}{logical; indicate if a separate text file should be
+\item{changelog}{logical; indicate if a separate text file should be
   written with the change log (text only).}
-\item{export$ascii}{logical; if \code{TRUE}, an ASCII representation of the data
-  is written (R data only).}
+\item{ascii}{logical; if \code{TRUE}, an \acronym{ASCII} representation of the 
+  data is written (R data only).}
 }
 
 \seealso{

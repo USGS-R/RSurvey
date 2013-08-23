@@ -708,25 +708,27 @@ OpenRSurvey <- function() {
       idxs <- na.omit(vapply(cols, function(i) i$index, 0L))
       nams <- vapply(cols, function(i) i$id, "")
       fmts <- vapply(cols, function(i) i$format, "")
-      lst <- try(EditData(Data("data.raw")[, idxs, drop=FALSE],
-                          col.formats=fmts[idxs], col.names=nams[idxs],
-                          read.only=FALSE, changelog=Data("changelog"),
-                          win.title="Raw Data", parent=tt))
 
-      if (!is.null(lst) && !inherits(lst, "try-error")) {
-        Data("data.raw", lst[["d"]])
-        for (i in seq(along=cols)) {
-          obj <- EvalFunction(cols[[i]]$fun, cols)
-          cols[[i]]$summary <- paste(c("", capture.output(summary(obj)), "",
-                                       "", capture.output(str(obj)),
-                                       ""), collapse="\n")
-          cols[[i]]$sample <- na.omit(obj)[1]
-        }
-        Data("cols", cols)
-        Data("changelog", lst[["changelog"]])
-        Data("data.pts", NULL)
-        Data("data.grd", NULL)
+      ans <- EditData(Data("data.raw")[, idxs, drop=FALSE],
+                      col.formats=fmts[idxs], col.names=nams[idxs],
+                      read.only=FALSE, changelog=Data("changelog"),
+                      win.title="Raw Data", parent=tt)
+      if (is.null(ans))
+        return()
+      Data("data.raw", ans[["d"]])
+      Data("changelog", ans[["changelog"]])
+      
+      for (i in seq(along=cols)) {
+        obj <- EvalFunction(cols[[i]]$fun, cols)
+        cols[[i]]$summary <- paste(c("", capture.output(summary(obj)), "",
+                                     "", capture.output(str(obj)),
+                                     ""), collapse="\n")
+        cols[[i]]$sample <- na.omit(obj)[1]
       }
+      Data("cols", cols)
+      
+      Data("data.pts", NULL)
+      Data("data.grd", NULL)
     }
   }
 

@@ -1,7 +1,8 @@
 # A GUI for viewing and editing table formatted data.
 
-EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
-                     changelog=NULL, win.title="Edit Data", parent=NULL) {
+EditData <- function(d, col.names=colnames(d), col.formats=NULL, 
+                     read.only=FALSE, changelog=NULL, win.title="Edit Data", 
+                     parent=NULL) {
 
   ## Additional functions (subroutines)
 
@@ -558,19 +559,22 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
                "try-error"))
     stop("TkTable is not available")
 
-  # Numerical precision
-  num.digits <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
-
+  # Check validity of arguments
+  if (!inherits(d, c("matrix", "data.frame")))
+    stop("invalid data frame")
+  if (!inherits(changelog, c("NULL", "data.frame")))
+    stop("invalid changelog")
+  changelog.old <- changelog
+  
   # Table dimensions
   m <- nrow(d)
   n <- ncol(d)
-  if (m == 0)
+  if (m == 0 || n == 0)
     return()
-
-  # Check validity of changelog
-  if (is.null(changelog) || !is.data.frame(changelog))
-    changelog <- NULL
-
+  
+  # Numerical precision
+  num.digits <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
+  
   # Initialize search results
   matched.cells <- NULL
 
@@ -580,7 +584,6 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
 
   # Account for missing arguments
   if (is.null(col.names)) {
-    col.names <- colnames(d)
     if (is.null(col.names) | length(col.names) != n) {
       col.names <- LETTERS[1:n]
       if (any(is.na(col.names))) {
@@ -1031,7 +1034,7 @@ EditData <- function(d, col.names=NULL, col.formats=NULL, read.only=FALSE,
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  if (is.null(changelog))
+  if (identical(changelog.old, changelog))
     invisible(NULL)
   else
     invisible(list(d=d, changelog=changelog))

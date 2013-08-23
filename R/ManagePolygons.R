@@ -314,8 +314,8 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       f <- list(f)
     for (i in seq(along=f)) {
       con <- file(f[[i]], "r", encoding=encoding)
-      on.exit(close(con), add=TRUE)
       new.poly <- read.polyfile(con, nohole=FALSE)
+      close(con)
       if (!inherits(new.poly, "gpc.poly"))
         next
       nam <- NamePolygon(old=names(polys), nam=attr(f[[i]], "name"))

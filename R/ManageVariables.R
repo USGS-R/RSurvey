@@ -366,7 +366,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
   # View data for selected variable
 
-  CallEditData <- function(type="dataframe") {
+  CallEditData <- function(type="data.frame") {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
     idx <- as.integer(tkcurselection(frame1.lst)) + 1L
