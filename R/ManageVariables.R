@@ -481,14 +481,13 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   tkadd(menu.edit, "command", label="New\u2026", accelerator="Ctrl+n",
         command=SaveNewVar)
   tkadd(menu.edit, "command", label="Delete", command=DeleteVar)
-  tkadd(menu.edit, "separator")
-  menu.edit.view <- tkmenu(tt, tearoff=0)
-  tkadd(menu.edit.view, "command", label="Selected variable",
+
+  menu.view <- tkmenu(tt, tearoff=0, relief="flat")
+  tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
+  tkadd(menu.view, "command", label="Selected variable",
         command=function() CallEditData("data"))
-  tkadd(menu.edit.view, "command", label="All variables",
+  tkadd(menu.view, "command", label="All variables",
         command=function() CallEditData())
-  tkadd(menu.edit, "cascade", label="View data for",
-        menu=menu.edit.view)
 
   menu.arrange <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Arrange", menu=menu.arrange, underline=0)

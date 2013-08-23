@@ -991,8 +991,10 @@ OpenRSurvey <- function() {
           SetInterpolation(tt)
         })
 
-  tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="View processed data",
+  # View menu
+  menu.view <- tkmenu(tt, tearoff=0)
+  tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
+  tkadd(menu.view, "command", label="Processed data",
         command=function() {
           CallEditData(read.only=TRUE)
         })
