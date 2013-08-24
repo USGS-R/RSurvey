@@ -6,6 +6,10 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
 
   # Load data set
   LoadDataset <- function() {
+    tkconfigure(tt, cursor="watch")
+    tclServiceMode(FALSE)
+    on.exit(tkconfigure(tt, cursor="arrow"))
+    on.exit(tclServiceMode(TRUE), add=TRUE)
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
     idx <- as.integer(tkcurselection(frame1.lst.2.4))
@@ -27,7 +31,9 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
   # Load package
   LoadPackage <- function(pkg.name) {
     tkconfigure(tt, cursor="watch")
+    tclServiceMode(FALSE)
     on.exit(tkconfigure(tt, cursor="arrow"))
+    on.exit(tclServiceMode(TRUE), add=TRUE)
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
     lib <- paste("package", pkg.name, sep=":")
@@ -98,7 +104,9 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
   # GUI control for select package
   SelectPackage <- function() {
     tkconfigure(tt, cursor="watch")
+    tclServiceMode(FALSE)
     on.exit(tkconfigure(tt, cursor="arrow"))
+    on.exit(tclServiceMode(TRUE), add=TRUE)
     idx <- as.integer(tkcurselection(frame1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
     if (IsPackageLoaded(pkg.name)) {
@@ -179,8 +187,11 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
 
   # GUI control for select package type
   SelectPackageType <- function() {
-    idx <- as.integer(tcl(frame1.box.3.1, "current"))
+    tkconfigure(tt, cursor="watch")
     tclServiceMode(FALSE)
+    on.exit(tkconfigure(tt, cursor="arrow"))
+    on.exit(tclServiceMode(TRUE), add=TRUE)
+    idx <- as.integer(tcl(frame1.box.3.1, "current"))
     if (idx == 0L) {
       pkg.names <<- all.pkgs
     } else {
@@ -195,7 +206,6 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
     for (i in seq(along=pkg.names))
       tcl("lappend", package.var, pkg.names[i])
     tkselection.set(frame1.lst.2.1, 0)
-    tclServiceMode(TRUE)
     SelectPackage()
     tkfocus(frame1.lst.2.1)
   }

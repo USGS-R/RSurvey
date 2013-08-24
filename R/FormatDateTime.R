@@ -38,11 +38,12 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt="",
 
   # Expand or collapse nodes in treeview
   ToggleTreeView <- function(open.nodes) {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     if (open.nodes)
       img <- img.minus
     else
       img <- img.plus
-    tclServiceMode(FALSE)
     tkconfigure(frame0.but.1, image=img,
                 command=function() ToggleTreeView(!open.nodes))
     tcl(frame1.tre, "item", id.dt, "-open", open.nodes)
@@ -54,7 +55,6 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt="",
     tcl(frame1.tre, "item", id.mn, "-open", open.nodes)
     tcl(frame1.tre, "item", id.sc, "-open", open.nodes)
     tcl(frame1.tre, "item", id.wk, "-open", open.nodes)
-    tclServiceMode(TRUE)
   }
 
   # Copy format to clipboard

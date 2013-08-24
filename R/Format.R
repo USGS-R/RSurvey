@@ -118,9 +118,11 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
   # Toggle GUI state based on custom check box
 
   ToggleState <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
+
     is.custom <- as.logical(as.integer(tclvalue(custom.var)))
 
-    tclServiceMode(FALSE)
     s <- if (is.custom) "normal" else "readonly"
     tkconfigure(frame1.ent.1, state=s)
 
@@ -148,7 +150,6 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
     tkconfigure(frame2.chk.4.1, state=s)
     tkconfigure(frame2.chk.5.1, state=s)
     tkconfigure(frame2.chk.6.1, state=s)
-    tclServiceMode(TRUE)
 
     if (is.custom) {
       tkfocus(frame1.ent.1)

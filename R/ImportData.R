@@ -304,6 +304,9 @@ ImportData <- function(parent=NULL) {
   # Rebuild table
 
   RebuildTable <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
+
     sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
     sep.state <- if (is.na(sep)) "normal" else "disabled"
     tkconfigure(frame3.ent.1.3, state=sep.state)
@@ -323,7 +326,6 @@ ImportData <- function(parent=NULL) {
     if (is.null(d))
       return()
 
-    tclServiceMode(FALSE)
     ResetGUI()
 
     insert.rows <- nrow(d) - 1 - GetEndRow()
@@ -352,13 +354,14 @@ ImportData <- function(parent=NULL) {
 
     SetTags()
     tkconfigure(frame4.tbl, state="disabled")
-    tclServiceMode(TRUE)
   }
 
   # Count the number of lines in a file; adapted from R.utils::countLines
   CountLines <- function() {
     tkconfigure(tt, cursor="watch")
-    on.exit(tkconfigure(tt, cursor="arrow"))
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
+    on.exit(tkconfigure(tt, cursor="arrow"), add=TRUE)
     src <- as.character(tclvalue(source.var))
     enc <- enc0[as.integer(tcl(frame3.box.3.5, "current")) + 1]
     con <- GetConnection(src, enc, opn="rb")
@@ -431,16 +434,18 @@ ImportData <- function(parent=NULL) {
 
   # Clear all
   ClearData <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     cb <<- NULL
     tclvalue(source.var) <- ""
     tclvalue(nrow.var) <- ""
-    tclServiceMode(FALSE)
     ResetGUI()
-    tclServiceMode(TRUE)
   }
 
   # Reset GUI
   ResetGUI <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     tkconfigure(frame4.tbl, state="normal")
     tcl("unset", table.var)
     if (GetEndRow() > 0)
@@ -459,6 +464,8 @@ ImportData <- function(parent=NULL) {
 
   # Set tags in table
   SetTags <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     if (GetEndRow() == 0 & GetEndCol() == 0)
       return()
     tcl(frame4.tbl, "clear", "tags")
@@ -476,6 +483,8 @@ ImportData <- function(parent=NULL) {
   # Determine the tables maximum row and column
   GetEndRow <- function() as.numeric(tkindex(frame4.tbl, "end", "row"))
   GetEndCol <- function() as.numeric(tkindex(frame4.tbl, "end", "col"))
+
+
 
   ## Main program
 

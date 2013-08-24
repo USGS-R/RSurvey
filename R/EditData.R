@@ -9,8 +9,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
   # Save table and close
   SaveTable <- function() {
     tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     changelog <<- GetEdits()
-    tclServiceMode(TRUE)
     tclvalue(tt.done.var) <- 1
   }
 
@@ -58,7 +58,6 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
 
   # Save edits to data frame
   SaveEdits <- function(vals, i, j) {
-    tclServiceMode(FALSE)
     if (is.character(i)) {
       ij <- t(vapply(i, function(x) as.integer(strsplit(x, ",")[[1]]),
                      c(0, 0)))
@@ -83,7 +82,6 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
       }
       d[i[idxs], column] <<- new.vals
     }
-    tclServiceMode(TRUE)
   }
 
   # Validate entry value
@@ -128,6 +126,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
 
   # Change active cell
   ChangeActiveCell <- function(s, S) {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     if (!read.only && s != "") {
       old.cell <- as.integer(strsplit(s, ",")[[1]])
       i <- old.cell[1]
@@ -173,6 +173,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
 
   # Undo edit
   UndoEdit <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     if (is.null(undo.stack) || nrow(undo.stack) == 0)
       return()
     idxs <- which(undo.stack$time == undo.stack$time[nrow(undo.stack)])
@@ -186,15 +188,15 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     if (nrow(undo.stack) == 0)
       undo.stack <<- NULL
     fmt.old.vals <- FormatValues(ij[, 1], ij[, 2], is.fmt=TRUE)
-    tclServiceMode(FALSE)
     for (i in seq(along=cells))
       tkset(frame3.tbl, cells[i], fmt.old.vals[i])
     SetActiveCell()
-    tclServiceMode(TRUE)
   }
 
   # Redo edit
   RedoEdit <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     if (is.null(redo.stack) || nrow(redo.stack) == 0)
       return()
     idxs <- which(redo.stack$time == redo.stack$time[nrow(redo.stack)])
@@ -206,15 +208,15 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     undo.stack <<- rbind(undo.stack, redo.stack[idxs, , drop=FALSE])
     redo.stack <<- redo.stack[-idxs, , drop=FALSE]
     fmt.new.vals <- FormatValues(ij[, 1], ij[, 2], is.fmt=TRUE)
-    tclServiceMode(FALSE)
     for (i in seq(along=cells))
       tkset(frame3.tbl, cells[i], fmt.new.vals[i])
     SetActiveCell()
-    tclServiceMode(TRUE)
   }
 
   # Bypass copy command
   BypassCopyCmd <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     cells <- as.character(tkcurselection(frame3.tbl))
     ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
                    c(0, 0)))
@@ -241,6 +243,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
   # Bypass cut command
   BypassCutCmd <- function() {
     BypassCopyCmd()
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     cells <- as.character(tkcurselection(frame3.tbl))
     ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
                    c(0, 0)))
@@ -253,15 +257,15 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     undo.stack <<- rbind(undo.stack, e)
     redo.stack <<- NULL
     SaveEdits(new.vals, i, j)
-    tclServiceMode(FALSE)
     for (cell in cells)
       tkset(frame3.tbl, cell, "NA")
     SetActiveCell()
-    tclServiceMode(TRUE)
   }
 
   # Bypass paste command
   BypassPasteCmd <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     active.cell <- as.character(tkindex(frame3.tbl, "active"))
     new.vals <- suppressWarnings(try(read.table(file="clipboard",
                                                 colClasses="character",
@@ -298,15 +302,15 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     SaveEdits(new.vals, i, j)
 
     new.vals <- FormatValues(i, j, is.fmt=TRUE)
-    tclServiceMode(FALSE)
     for (i in seq(along=cells))
       tkset(frame3.tbl, cells[i], new.vals[i])
     SetActiveCell()
-    tclServiceMode(TRUE)
   }
 
   # Bypass return command
   BypassReturnCmd <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     active.cell <- as.character(tkindex(frame3.tbl, "active"))
     old.ij <- as.integer(strsplit(active.cell, ",")[[1]])
     i <- old.ij[1]
@@ -316,12 +320,10 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     if (i == 0 | j == 0)
       return()
     new.ij <- paste(i, j, sep=",")
-    tclServiceMode(FALSE)
     tkselection.clear(frame3.tbl, "all")
     tkactivate(frame3.tbl, new.ij)
     tkselection.set(frame3.tbl, new.ij)
     tksee(frame3.tbl, new.ij)
-    tclServiceMode(TRUE)
   }
 
   # Search data table
@@ -331,6 +333,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     ans <- Search(is.replace, defaults=search.defaults, parent=tt)
     if (is.null(ans))
       return()
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
 
     tclvalue(pattern.var) <- ans$find.what
 
@@ -357,17 +361,17 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
 
       SaveEdits(new.vals, cells)
 
-      tclServiceMode(FALSE)
       for (idx in seq(along=cells))
         tkset(frame3.tbl, cells[idx], new.vals[idx])
       SetActiveCell()
-      tclServiceMode(TRUE)
     }
   }
 
   # Find value in data table
 
   Find <- function(direction="next", is.replace=FALSE) {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     pattern <- as.character(tclvalue(pattern.var))
     if (pattern == "")
       return()
@@ -464,6 +468,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
 
   # View data record
   ViewRecord <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     rec <- as.character(tclvalue(record.var))
     if (is.na(rec))
       return()
@@ -518,6 +524,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
 
   # View changelog
   ViewChangeLog <- function() {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
     txt <- paste(c(capture.output(GetEdits()), ""), collapse="\n")
     EditText(txt, read.only=TRUE, win.title="Changelog",
              is.fixed.width.font=TRUE, parent=tt)
@@ -542,6 +550,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
 
   # Resize column
   ResizeColumn <- function(x, y) {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     border.col <- as.character(tcl(frame3.tbl, "border", "mark",
                                    as.character(x), as.character(y), "col"))
     if (length(border.col) > 0) {

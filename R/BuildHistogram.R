@@ -75,11 +75,13 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   # Toggle state on break options
 
   ToggleState <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
+
     type <- as.integer(tclvalue(breaks.var))
     states <- rep(FALSE, 4)
     states[type] <- TRUE
 
-    tclServiceMode(FALSE)
     s <- if (states[1]) "readonly" else "disabled"
     tkconfigure(frame2.box.2.1, state=s)
     s <- if (states[2]) "!disabled" else "disabled"
@@ -95,7 +97,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     tkconfigure(frame2.ent.8.2,  state=s)
     tkconfigure(frame2.ent.9.2,  state=s)
     tkconfigure(frame2.ent.10.2, state=s)
-    tclServiceMode(TRUE)
 
     if (states[1]) {
       tkfocus(frame2.box.2.1)

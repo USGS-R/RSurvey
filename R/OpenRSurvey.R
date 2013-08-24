@@ -7,6 +7,7 @@ OpenRSurvey <- function() {
   # Close GUI
   CloseGUI <- function() {
     tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     if (as.integer(tclvalue(tt.done.var)) != 0)
       return()
     CloseDevices()
@@ -15,7 +16,6 @@ OpenRSurvey <- function() {
                            "+", as.integer(geo[3])))
     tclvalue(tt.done.var) <- 1
     tkdestroy(tt)
-    tclServiceMode(TRUE)
   }
 
   # Open binary project file
@@ -222,6 +222,9 @@ OpenRSurvey <- function() {
   # Set variables
 
   SetVars <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
+
     tkset(frame1.box.1.2, "")
     tkset(frame1.box.2.2, "")
     tkset(frame1.box.3.2, "")
@@ -270,6 +273,9 @@ OpenRSurvey <- function() {
 
   # Refresh variables
   RefreshVars <- function(item) {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
+
     is.num <- vapply(Data("cols"),
                      function(i) any(c("numeric", "integer") %in% i$class),
                      TRUE)

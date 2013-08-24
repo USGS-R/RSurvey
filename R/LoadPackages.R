@@ -8,6 +8,8 @@ LoadPackages <- function() {
 
   # Install missing packages from CRAN mirror
   InstallPackages <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
     idx <- which(cran.mirrors$Name %in% as.character(tclvalue(repo.var)))
@@ -27,11 +29,8 @@ LoadPackages <- function() {
       if (tolower(substr(ans, 1, 1)) == "y")
         return()
     }
-    if (length(available.pkgs) > 0) {
-      tclServiceMode(FALSE)
+    if (length(available.pkgs) > 0)
       install.packages(available.pkgs, repos=repo, quiet=TRUE)
-      tclServiceMode(TRUE)
-    }
     tclvalue(tt.done.var) <- 1
   }
 
