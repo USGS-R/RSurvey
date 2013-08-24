@@ -744,7 +744,10 @@ OpenRSurvey <- function() {
 
   CallProcessData <- function(interpolate=FALSE) {
     tkconfigure(tt, cursor="watch")
+    tclServiceMode(FALSE)
     on.exit(tkconfigure(tt, cursor="arrow"))
+    on.exit(tclServiceMode(TRUE), add=TRUE)
+
     vars <- Data("vars")
     var.names <- names(vars)
     if (!all(c("x", "y") %in% var.names)) {

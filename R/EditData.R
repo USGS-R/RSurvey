@@ -10,6 +10,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
   SaveTable <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
+    SaveActiveEdits()
     changelog <<- GetEdits()
     tclvalue(tt.done.var) <- 1
   }
@@ -81,6 +82,23 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
         new.vals <- suppressWarnings(as(new.vals, class(obj)[1]))
       }
       d[i[idxs], column] <<- new.vals
+    }
+  }
+
+  # Save edits in active cell
+  SaveActiveEdits <- function() {
+    cell <- as.character(tkindex(frame3.tbl, "active"))
+    ij <- as.integer(strsplit(cell, ",")[[1]])
+    i <- ij[1]
+    j <- ij[2]
+    old.val <- FormatValues(i, j)
+    new.val <- paste(as.character(tkget(frame3.tbl, cell)), collapse=" ")
+    if (!identical(new.val, old.val)) {
+      SaveEdits(new.val, i, j)
+      e <- data.frame(time=Sys.time(), cell=cell, old=old.val,
+                      new=FormatValues(i, j), stringsAsFactors=FALSE)
+      undo.stack <<- rbind(undo.stack, e)
+      redo.stack <<- NULL
     }
   }
 
@@ -526,6 +544,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
   ViewChangeLog <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
+    SaveActiveEdits()
     txt <- paste(c(capture.output(GetEdits()), ""), collapse="\n")
     EditText(txt, read.only=TRUE, win.title="Changelog",
              is.fixed.width.font=TRUE, parent=tt)
@@ -535,6 +554,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
   ViewData <- function(type) {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
+    SaveActiveEdits()
     names(d) <- make.names(col.names, unique=TRUE)
     if (type == "str") {
       txt <- capture.output(str(d))
