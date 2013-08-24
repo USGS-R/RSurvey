@@ -717,7 +717,8 @@ OpenRSurvey <- function() {
         return()
       Data("data.raw", ans[["d"]])
       Data("changelog", ans[["changelog"]])
-      
+      gc(ans)
+
       for (i in seq(along=cols)) {
         obj <- EvalFunction(cols[[i]]$fun, cols)
         cols[[i]]$summary <- paste(c("", capture.output(summary(obj)), "",
@@ -726,7 +727,7 @@ OpenRSurvey <- function() {
         cols[[i]]$sample <- na.omit(obj)[1]
       }
       Data("cols", cols)
-      
+
       Data("data.pts", NULL)
       Data("data.grd", NULL)
     }

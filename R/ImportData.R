@@ -161,6 +161,7 @@ ImportData <- function(parent=NULL) {
       Data("comment", comments)
       Data("data.raw", d)
       Data("cols", cols)
+      gc()
     })
 
     ans <- paste("\nTime required to import data:",
@@ -256,16 +257,16 @@ ImportData <- function(parent=NULL) {
       return(d)
 
     } else {
-      
+
       # Raise warning message if data already exists
       if (!is.null(Data("cols"))) {
         msg <- "This action will delete existing data?"
         ans <- as.character(tkmessageBox(icon="question", message=msg,
                                          title="Warning", type="okcancel",
                                          parent=parent))
-        if (ans == "ok") 
+        if (ans == "ok")
           Data(clear.data=TRUE)
-        else 
+        else
           return()
       }
 
@@ -353,7 +354,7 @@ ImportData <- function(parent=NULL) {
     tkconfigure(frame4.tbl, state="disabled")
     tclServiceMode(TRUE)
   }
-  
+
   # Count the number of lines in a file; adapted from R.utils::countLines
   CountLines <- function() {
     tkconfigure(tt, cursor="watch")

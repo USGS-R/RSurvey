@@ -9,7 +9,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
   ExportToFile <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
-    
+
     idxs <- as.integer(tkcurselection(frame1.lst.1.1)) + 1L
     col.ids <- col.ids[idxs]
     is.proc <- as.logical(as.integer(tclvalue(processed.var)))
@@ -176,7 +176,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
       write.table(d, file=con, append=(is.comm | any(headers)), quote=is.quot,
                   sep=sep, eol=eol, na=nas, dec=dec, row.names=is.rows,
                   col.names=FALSE, qmethod=qme, fileEncoding=enc)
-      
+
       Data(c("export", "fmts"), is.fmts)
       Data(c("export", "cols"), is.cols)
       Data(c("export", "rows"), is.rows)
@@ -220,7 +220,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
       save(list=obj.name, file=file.name, ascii=ascii)
       Data(c("export", "ascii"), ascii)
     }
-
+    gc()
     tclvalue(tt.done.var) <- 1
   }
 
@@ -607,7 +607,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
   txt <- "Compress using bzip2"
   frame4.chk.3.3 <- ttkcheckbutton(frame4, variable=compress.var, text=txt,
                                    command=ToggleExtension)
-                                   
+
   tkgrid(frame4.ent.1.1, "x", "x", "x", frame4.but.1.5)
   tkgrid.configure(frame4.ent.1.1, sticky="we", columnspan=4, padx=c(0, 2))
 
