@@ -715,9 +715,10 @@ OpenRSurvey <- function() {
                       win.title="Raw Data", parent=tt)
       if (is.null(ans))
         return()
-      Data("data.raw", ans[["d"]])
-      Data("changelog", ans[["changelog"]])
-      gc(ans)
+
+      Data("data.raw", ans$d)
+      Data("changelog", ans$changelog)
+      memory.usage <- gc()
 
       for (i in seq(along=cols)) {
         obj <- EvalFunction(cols[[i]]$fun, cols)

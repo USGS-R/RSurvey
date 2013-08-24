@@ -1,7 +1,7 @@
 # A GUI for viewing and editing table formatted data.
 
-EditData <- function(d, col.names=colnames(d), col.formats=NULL, 
-                     read.only=FALSE, changelog=NULL, win.title="Edit Data", 
+EditData <- function(d, col.names=colnames(d), col.formats=NULL,
+                     read.only=FALSE, changelog=NULL, win.title="Edit Data",
                      parent=NULL) {
 
   ## Additional functions (subroutines)
@@ -565,16 +565,16 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
   if (!inherits(changelog, c("NULL", "data.frame")))
     stop("invalid changelog")
   changelog.old <- changelog
-  
+
   # Table dimensions
   m <- nrow(d)
   n <- ncol(d)
   if (m == 0 || n == 0)
     return()
-  
+
   # Numerical precision
   num.digits <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
-  
+
   # Initialize search results
   matched.cells <- NULL
 
@@ -933,7 +933,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
                          colstretchmode="none", rowstretchmode="none",
                          drawmode="single", flashmode=0, rowseparator="\n",
                          colseparator="\t", selectmode="extended",
-                         selecttitle=1, insertofftime=0, anchor="ne", 
+                         selecttitle=1, insertofftime=0, anchor="ne",
                          highlightthickness=0, cache=1, validate=1,
                          font="TkFixedFont", exportselection=0,
                          browsecommand=function(s, S) ChangeActiveCell(s, S),

@@ -220,7 +220,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
       save(list=obj.name, file=file.name, ascii=ascii)
       Data(c("export", "ascii"), ascii)
     }
-    gc()
+    memory.usage <- gc()
     tclvalue(tt.done.var) <- 1
   }
 

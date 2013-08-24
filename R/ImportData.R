@@ -161,7 +161,7 @@ ImportData <- function(parent=NULL) {
       Data("comment", comments)
       Data("data.raw", d)
       Data("cols", cols)
-      gc()
+      memory.usage <- gc()
     })
 
     ans <- paste("\nTime required to import data:",
