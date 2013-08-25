@@ -153,11 +153,11 @@ ExportData <- function(file.type="txt", parent=NULL) {
       if (any(headers)) {
 
         if (is.rows) {
-          h <- as.data.frame(matrix(NA, nrow=sum(headers), ncol=ncol(d) + 1L))
+          h <- matrix(NA, nrow=sum(headers), ncol=ncol(d) + 1L)
           col.fmts <- c("", col.fmts)
           col.nams <- c("", col.nams)
         } else {
-          h <- as.data.frame(matrix(NA, nrow=sum(headers), ncol=ncol(d)))
+          h <- matrix(NA, nrow=sum(headers), ncol=ncol(d))
         }
 
         i <- 1L

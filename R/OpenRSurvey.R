@@ -611,8 +611,7 @@ OpenRSurvey <- function() {
       loc.xy <- cbind(c(v$x, v$x[1]), c(v$y, v$y[1]))
       points(loc.xy, col="black", bg="black", pch=22)
       lines(loc.xy, col="black")
-
-      ply.new <- as(as.data.frame(v), "gpc.poly")
+      ply.new <- suppressWarnings(as(v, "gpc.poly"))
       if (!is.null(ply))
         ply.new <- intersect(ply, ply.new)
       if (area.poly(ply.new) == 0) {

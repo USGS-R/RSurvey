@@ -89,7 +89,7 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
     x1 <- as.vector(matrix(rep(xo, ynum), nrow=xnum, ncol=ynum, byrow=FALSE))
     y1 <- as.vector(matrix(rep(yo, xnum), nrow=xnum, ncol=ynum, byrow=TRUE))
 
-    pts <- as.data.frame(cbind(x=x1, y=y1))
+    pts <- cbind(x=x1, y=y1)
 
     m <- n <- 1
     x.diff <- diff(range(x))
