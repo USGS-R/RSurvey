@@ -6,16 +6,16 @@ OpenRSurvey <- function() {
 
   # Close GUI
   CloseGUI <- function() {
+    if (as.integer(tclvalue(tt.done.var)) > 0)
+      return()
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
-    if (as.integer(tclvalue(tt.done.var)) != 0)
-      return()
-    CloseDevices()
     geo <- unlist(strsplit(as.character(tkwm.geometry(tt)), "\\+"))
+    tkdestroy(tt)
     Data("win.loc", paste0("+", as.integer(geo[2]),
                            "+", as.integer(geo[3])))
     tclvalue(tt.done.var) <- 1
-    tkdestroy(tt)
+    CloseDevices()
   }
 
   # Open binary project file

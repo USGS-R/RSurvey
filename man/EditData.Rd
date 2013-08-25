@@ -19,7 +19,7 @@ EditData(d, col.names = colnames(d), col.formats = NULL, read.only = FALSE,
 \item{col.formats}{character; a vector of format conversion specification
   strings (optional), see \code{\link{sprintf}} and \code{\link{strftime}}.}
 \item{read.only}{logical; specifies whether the table is in read only mode.}
-\item{changelog}{data.frame; history of all data table edits (see 
+\item{changelog}{data.frame; history of all data table edits (see
   \sQuote{Value}).}
 \item{win.title}{character; a string to display as the title of the dialog box.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
@@ -32,14 +32,14 @@ Edits are reflected in the \code{changelog}.
 }
 
 \value{
-\code{NULL} is returned if no edits were made; otherwise, new values of 
-\code{d} and \code{changelog} are returned as components in a \code{list}. The 
+\code{NULL} is returned if no edits were made; otherwise, new values of
+\code{d} and \code{changelog} are returned as components in a \code{list}. The
 \code{changelog} data frame contains the following variables:
+  \item{timestamp}{POSIXct; identifies when the edit event occurred.}
   \item{record}{character; row name.}
   \item{variable}{character; column name.}
   \item{old}{character; value before editing.}
   \item{new}{character; value after editing.}
-  \item{time}{character; time stamp.}
 }
 
 \note{

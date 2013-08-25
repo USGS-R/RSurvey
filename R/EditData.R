@@ -95,7 +95,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     new.val <- paste(as.character(tkget(frame3.tbl, cell)), collapse=" ")
     if (!identical(new.val, old.val)) {
       SaveEdits(new.val, i, j)
-      e <- data.frame(time=Sys.time(), cell=cell, old=old.val,
+      e <- data.frame(timestamp=Sys.time(), cell=cell, old=old.val,
                       new=FormatValues(i, j), stringsAsFactors=FALSE)
       undo.stack <<- rbind(undo.stack, e)
       redo.stack <<- NULL
@@ -154,7 +154,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
       new.val <- paste(as.character(tkget(frame3.tbl, s)), collapse=" ")
       if (!identical(new.val, old.val)) {
         SaveEdits(new.val, i, j)
-        e <- data.frame(time=Sys.time(), cell=s, old=old.val,
+        e <- data.frame(timestamp=Sys.time(), cell=s, old=old.val,
                         new=FormatValues(i, j), stringsAsFactors=FALSE)
         undo.stack <<- rbind(undo.stack, e)
         redo.stack <<- NULL
@@ -195,7 +195,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     on.exit(tclServiceMode(TRUE))
     if (is.null(undo.stack) || nrow(undo.stack) == 0)
       return()
-    idxs <- which(undo.stack$time == undo.stack$time[nrow(undo.stack)])
+    idxs <- which(undo.stack$timestamp ==
+                  undo.stack$timestamp[nrow(undo.stack)])
     cells <- undo.stack[idxs, "cell"]
     ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
                    c(0, 0)))
@@ -217,7 +218,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     on.exit(tclServiceMode(TRUE))
     if (is.null(redo.stack) || nrow(redo.stack) == 0)
       return()
-    idxs <- which(redo.stack$time == redo.stack$time[nrow(redo.stack)])
+    idxs <- which(redo.stack$timestamp ==
+                  redo.stack$timestamp[nrow(redo.stack)])
     cells <- redo.stack[idxs, "cell"]
     ij <- t(vapply(cells, function(i) as.integer(strsplit(i, ",")[[1]]),
                    c(0, 0)))
@@ -270,8 +272,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     j <- ij[, 2]
     old.vals <- FormatValues(i, j)
     new.vals <- "NA"
-    e <- data.frame(time=Sys.time(), cell=cells, old=old.vals, new=new.vals,
-                    stringsAsFactors=FALSE)
+    e <- data.frame(timestamp=Sys.time(), cell=cells, old=old.vals,
+                    new=new.vals, stringsAsFactors=FALSE)
     undo.stack <<- rbind(undo.stack, e)
     redo.stack <<- NULL
     SaveEdits(new.vals, i, j)
@@ -313,8 +315,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     j <- ij[, 2]
     cells <- paste(i, j, sep=",")
     old.vals <- FormatValues(i, j)
-    e <- data.frame(time=Sys.time(), cell=cells, old=old.vals, new=new.vals,
-                    stringsAsFactors=FALSE)
+    e <- data.frame(timestamp=Sys.time(), cell=cells, old=old.vals,
+                    new=new.vals, stringsAsFactors=FALSE)
     undo.stack <<- rbind(undo.stack, e)
     redo.stack <<- NULL
     SaveEdits(new.vals, i, j)
@@ -371,8 +373,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
                        ignore.case=!ans$is.match.case, perl=ans$is.perl,
                        fixed=!ans$is.reg.exps, useBytes=FALSE)
 
-      e <- data.frame(time=Sys.time(), cell=cells, old=old.vals, new=new.vals,
-                      stringsAsFactors=FALSE)
+      e <- data.frame(timestamp=Sys.time(), cell=cells, old=old.vals,
+                      new=new.vals, stringsAsFactors=FALSE)
       undo.stack <<- rbind(undo.stack, e)
       redo.stack <<- NULL
       matched.cells <<- NULL
@@ -513,13 +515,13 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     if (!is.null(changelog)) {
       changelog$cell <- paste(match(changelog$record, row.names(d)),
                               match(changelog$variable, col.names), sep=",")
-      changelog <- changelog[, c("time", "cell", "old", "new")]
+      changelog <- changelog[, c("timestamp", "cell", "old", "new")]
       undo.stack <- rbind(undo.stack, changelog)
     }
 
     for (i in unique(undo.stack$cell)) {
       undo.stack.cell <- undo.stack[undo.stack$cell == i, , drop=FALSE]
-      undo.stack.cell <- undo.stack.cell[order(undo.stack.cell$time), ,
+      undo.stack.cell <- undo.stack.cell[order(undo.stack.cell$timestamp), ,
                                          drop=FALSE]
       m <- nrow(undo.stack.cell)
       cell <- as.integer(strsplit(undo.stack.cell$cell, ",")[[1]])
@@ -529,14 +531,12 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
 
       if (identical(old, new))
         next
-      e <- data.frame(record=row.names[cell[1]],
-                      variable=col.names[cell[2]],
-                      old=old, new=new,
-                      time=format(undo.stack.cell$time[m]),
-                      stringsAsFactors=FALSE)
-      s <- rbind(s, e)
-    }
 
+      l <- list(timestamp=undo.stack.cell$timestamp[m],
+                record=row.names[cell[1]], variable=col.names[cell[2]],
+                old=old, new=new)
+      s <- rbind(s, as.data.frame(l))
+    }
     return(s)
   }
 
