@@ -356,7 +356,8 @@ ImportData <- function(parent=NULL) {
     tkconfigure(frame4.tbl, state="disabled")
   }
 
-  # Count the number of lines in a file; adapted from R.utils::countLines
+  # Count the number of lines in a file; adapted from 
+  # R.utils::countLines (v1.26.2)
   CountLines <- function() {
     tkconfigure(tt, cursor="watch")
     tclServiceMode(FALSE)
