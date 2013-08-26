@@ -25,22 +25,17 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
       breaks <- num.split[!is.na(num.split)]
       if (length(breaks) == 0)
         return()
-    } else if (type == 4L) {
-      seq.from <- as.numeric(tclvalue(from.var))
-      seq.to   <- as.numeric(tclvalue(to.var))
-      seq.by   <- as.numeric(tclvalue(by.var))
-      if (any(is.na(c(seq.from, seq.to, seq.by))))
-        return()
-      breaks <- try(seq(seq.from, seq.to, seq.by), silent=TRUE)
-      if (inherits(breaks, "try-error"))
-        return()
     }
 
     right <- as.logical(as.integer(tclvalue(right.var)))
     freq <- as.logical(as.integer(tclvalue(freq.var)))
-    obj <- try(hist(d[[idx]], breaks=breaks, right=right, plot=FALSE))
-    if (inherits(obj, "try-error"))
+    obj <- try(hist(d[[idx]], breaks=breaks, right=right, plot=FALSE), silent=TRUE)
+    if (inherits(obj, "try-error")) {
+      msg <- "Unable to construct historgram."
+      tkmessageBox(icon="error", message=msg, detail=obj, title="Error",
+                   type="ok", parent=tt)
       return()
+    }
 
     if (draw.plot) {
       if (dev.cur() == dev) {
@@ -90,13 +85,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     tkconfigure(frame2.ent.4.3, state=s)
     s <- if (states[3]) "normal" else "disabled"
     tkconfigure(frame2.ent.6.1, state=s)
-    s <- if (states[4]) "normal" else "disabled"
-    tkconfigure(frame2.lab.8.1,  state=s)
-    tkconfigure(frame2.lab.9.1,  state=s)
-    tkconfigure(frame2.lab.10.1, state=s)
-    tkconfigure(frame2.ent.8.2,  state=s)
-    tkconfigure(frame2.ent.9.2,  state=s)
-    tkconfigure(frame2.ent.10.2, state=s)
 
     if (states[1]) {
       tkfocus(frame2.box.2.1)
@@ -104,8 +92,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
       tkfocus(frame2.ent.4.3)
     } else if (states[3]) {
       tkfocus(frame2.ent.6.1)
-    } else if (states[4]) {
-      tkfocus(frame2.ent.8.2)
     }
 
     PlotHist()
@@ -161,9 +147,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   single.var <- tclVar(defs[var.default])
   scale.var <- tclVar(xdef)
   vector.var <- tclVar()
-  from.var <- tclVar()
-  to.var <- tclVar()
-  by.var <- tclVar()
   right.var <- tclVar(TRUE)
   freq.var <- tclVar(TRUE)
 
@@ -191,17 +174,18 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
                             command=function() CalcHist(draw.plot=FALSE))
   frame0.but.2 <- ttkbutton(frame0, width=12, text="Plot",
                             command=function() CalcHist())
-  frame0.but.3 <- ttkbutton(frame0, width=12, text="Close",
+  frame0.but.4 <- ttkbutton(frame0, width=12, text="Close",
                             command=function() tclvalue(tt.done.var) <- 1)
-  frame0.but.4 <- ttkbutton(frame0, width=12, text="Help",
+  frame0.but.5 <- ttkbutton(frame0, width=12, text="Help",
                             command=function() {
                               print(help("BuildHistogram", package="RSurvey"))
                             })
-  tkgrid(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4,
-         pady=10, padx=c(0, 4))
-  tkgrid.configure(frame0.but.4, padx=c(0, 10))
-
-  tkpack(frame0, side="bottom", anchor="e")
+  tkgrid(frame0.but.1, frame0.but.2, "x", frame0.but.4, frame0.but.5, pady=10)
+  tkgrid.configure(frame0.but.1, padx=c(10, 4))
+  tkgrid.configure(frame0.but.5, padx=c(4, 10))
+  
+  tkgrid.columnconfigure(frame0, 2, weight=1, minsize=15)
+  tkpack(frame0, fill="x", expand=TRUE, side="bottom", anchor="e")
 
   # Frame 1
 
@@ -246,18 +230,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   frame2.rbt.5.1 <- ttkradiobutton(frame2, variable=breaks.var, value=3L,
                                   text=txt, command=ToggleState)
   frame2.ent.6.1 <- ttkentry(frame2, width=15, textvariable=vector.var)
-
-  txt <- "A sequence giving the breakpoints between cells"
-  frame2.rbt.7.1 <- ttkradiobutton(frame2, variable=breaks.var, value=4L,
-                                  text=txt, command=ToggleState)
-
-  frame2.lab.8.1  <- ttklabel(frame2, text="Starting value")
-  frame2.lab.9.1  <- ttklabel(frame2, text="Ending value")
-  frame2.lab.10.1 <- ttklabel(frame2, text="Increment")
-
-  frame2.ent.8.2  <- ttkentry(frame2, width=10, textvariable=from.var)
-  frame2.ent.9.2  <- ttkentry(frame2, width=10, textvariable=to.var)
-  frame2.ent.10.2 <- ttkentry(frame2, width=10, textvariable=by.var)
+  
 
   tkgrid(frame2.rbt.1.1, sticky="w", columnspan=3)
   tkgrid(frame2.box.2.1, padx=c(20, 0), pady=c(0, 10), sticky="we",
@@ -265,21 +238,10 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   tkgrid(frame2.rbt.3.1, sticky="w", columnspan=3)
   tkgrid(frame2.scl.4.1, "x", frame2.ent.4.3, pady=c(0, 5), sticky="we")
   tkgrid(frame2.rbt.5.1, sticky="w", columnspan=3)
-  tkgrid(frame2.ent.6.1, padx=c(20, 0), pady=c(0, 10), sticky="we",
+  tkgrid(frame2.ent.6.1, padx=c(20, 0), pady=c(0, 5), sticky="we",
          columnspan=3)
-  tkgrid(frame2.rbt.7.1, sticky="w", columnspan=3)
-  tkgrid(frame2.lab.8.1, frame2.ent.8.2)
-  tkgrid(frame2.lab.9.1, frame2.ent.9.2)
-  tkgrid(frame2.lab.10.1, frame2.ent.10.2)
-
+  
   tkgrid.configure(frame2.scl.4.1, columnspan=2, padx=c(20, 4))
-  tkgrid.configure(frame2.lab.8.1, frame2.lab.9.1, frame2.lab.10.1,
-                   padx=c(40, 4), sticky="w")
-  tkgrid.configure(frame2.ent.8.2, frame2.ent.9.2, frame2.ent.10.2,
-                   columnspan=2, sticky="we")
-  tkgrid.configure(frame2.ent.9.2, pady=2)
-  tkgrid.configure(frame2.ent.8.2, frame2.ent.9.2, frame2.ent.10.2,
-                   padx=c(0,150))
 
   tkgrid.columnconfigure(frame2, 1, weight=1, minsize=50)
   tkpack(frame2, fill="x", expand=TRUE, padx=10, pady=5)
@@ -330,18 +292,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
            tclvalue(single.var) <- ent
            tclvalue(scale.var) <- (as.integer(ent) - 1) / (maxs[idx] - 1)
            PlotHist()
-         })
-  tkbind(frame2.ent.8.2, "<KeyRelease>",
-         function() {
-           tclvalue(from.var) <- CheckEntry("numeric", tclvalue(from.var))
-         })
-  tkbind(frame2.ent.9.2, "<KeyRelease>",
-         function() {
-           tclvalue(to.var) <- CheckEntry("numeric", tclvalue(to.var))
-         })
-  tkbind(frame2.ent.10.2, "<KeyRelease>",
-         function() {
-           tclvalue(by.var) <- CheckEntry("numeric", tclvalue(by.var))
          })
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)

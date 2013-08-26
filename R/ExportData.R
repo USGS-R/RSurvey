@@ -481,8 +481,9 @@ ExportData <- function(file.type="txt", parent=NULL) {
 
     frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=comment.var,
                                      text="Comment")
+    txt <- "Format conversion specification strings"
     frame2.chk.1.2 <- ttkcheckbutton(frame2, variable=conv.fmts.var,
-                                     text="Conversion specification strings")
+                                     text=txt)
     frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=row.names.var,
                                      text="Record (row) names")
     frame2.chk.2.2 <- ttkcheckbutton(frame2, variable=col.names.var,

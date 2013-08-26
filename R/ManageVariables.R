@@ -421,7 +421,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
     ids  <- vapply(cols, function(i) i$id, "")
     funs <- vapply(cols, function(i) i$fun, "")
-###############
+
     d <- lapply(idxs, function(i) EvalFunction(funs[i], cols))
 
     var.names <- ids[idxs]
