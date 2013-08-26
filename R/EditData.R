@@ -50,7 +50,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
           else
             fmt.vals[idxs] <- format(vals, trim=TRUE)
         } else {
-          fmt.vals[idxs] <- gsub("(^ +)|( +$)", "", sprintf(fmt, vals))
+#         fmt.vals[idxs] <- gsub("(^ +)|( +$)", "", sprintf(fmt, vals))
+          fmt.vals[idxs] <- sprintf(fmt, vals)
         }
       }
     }
@@ -955,15 +956,15 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
   frame3.tbl <- tkwidget(frame3, "table", rows=m + 1, cols=n + 1,
                          colwidth=-2, rowheight=1,
                          state=ifelse(read.only, "disabled", "normal"),
-                         height=nrows + 1, width=ncols + 1, ipadx=1, ipady=1,
-                         wrap=0, justify="right", background="#FFFFFF",
+                         height=nrows + 1, width=ncols + 1, ipadx=3, ipady=1,
+                         wrap=0, justify="left", background="#FFFFFF",
                          foreground="#000000", titlerows=1, titlecols=1,
                          multiline=0, resizeborders="col", colorigin=0,
                          bordercursor="sb_h_double_arrow", cursor="plus",
                          colstretchmode="none", rowstretchmode="none",
                          drawmode="single", flashmode=0, rowseparator="\n",
                          colseparator="\t", selectmode="extended",
-                         selecttitle=1, insertofftime=0, anchor="ne",
+                         selecttitle=1, insertofftime=0, anchor="nw",
                          highlightthickness=0, cache=1, validate=1,
                          font="TkFixedFont", exportselection=0,
                          browsecommand=function(s, S) ChangeActiveCell(s, S),
@@ -998,8 +999,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
   tcl(frame3.tbl, "tag", "row", "coltitles", 0)
   tcl(frame3.tbl, "tag", "col", "rowtitles", 0)
 
-  tktag.configure(frame3.tbl, "coltitles", anchor="n", justify="center")
-  tktag.configure(frame3.tbl, "rowtitles", anchor="n", justify="center")
+  tktag.configure(frame3.tbl, "coltitles", anchor="nw")
+  tktag.configure(frame3.tbl, "rowtitles", anchor="n")
 
   tktag.raise(frame3.tbl, "title", "sel")
 
