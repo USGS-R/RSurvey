@@ -7,14 +7,15 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   # Calculate and plot histogram
 
   CalcHist <- function(draw.plot=TRUE) {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
+
     idx <- as.integer(tcl(frame1.box.1.2, "current")) + 1L
-    x <- d[, idx]
     xlab <- as.character(var.names[idx])
 
     type <- as.integer(tclvalue(breaks.var))
     if (type == 1L) {
-      idx <- as.integer(tcl(frame2.box.2.1, "current")) + 1L
-      breaks <- fun.names[idx]
+      breaks <- fun.names[as.integer(tcl(frame2.box.2.1, "current")) + 1L]
     } else if (type == 2L) {
       breaks <- as.integer(tclvalue(single.var))
     } else if (type == 3L) {
@@ -37,8 +38,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
 
     right <- as.logical(as.integer(tclvalue(right.var)))
     freq <- as.logical(as.integer(tclvalue(freq.var)))
-
-    obj <- try(hist(x, breaks=breaks, right=right, plot=FALSE))
+    obj <- try(hist(d[[idx]], breaks=breaks, right=right, plot=FALSE))
     if (inherits(obj, "try-error"))
       return()
 
@@ -115,31 +115,40 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
 
   # Check input arguments
 
-  if (!is.matrix(d) & !is.data.frame(d) & !is.vector(d))
+  if (inherits(d, c("data.frame", "matrix"))) {
+    d <- as.list(d)
+  } else if (!is.list(d) && is.null(dim(d))) {
+    d <- list(d)
+  }
+  if (!is.list(d) || length(d) == 0L)
     stop()
-  if (is.vector(d))
-    d <- as.matrix(d)
+
+  is.num <- which(vapply(d, function(i) inherits(i, c("numeric", "integer")),
+                         TRUE))
+  d <- d[is.num]
+  if (length(d) == 0L)
+    stop()
 
   if (is.null(var.names)) {
-    var.names <- colnames(d)
+    var.names <- names(d)
     if (is.null(var.names))
-      var.names <- paste0("Unknown (", 1:ncol(d), ")")
+      var.names <- paste0("Unknown (", length(d), ")")
   }
 
   if (is.character(var.default)) {
     var.default <- which(var.default == var.names)
-    if (length(var.default) == 0 || !var.default %in% 1:ncol(d))
+    if (length(var.default) == 0)
       var.default <- 1L
   }
-  if (!is.integer(var.default) || !var.default %in% 1:ncol(d))
+  if (!is.integer(var.default) && !var.default %in% var.names)
     stop()
 
   # Set limits and default value
-  maxs <- as.vector(apply(d, 2, function(i) length(unique(i))))
+  maxs <- vapply(d, function(i) length(unique(i)), 0L)
   maxs[maxs > 100] <- 100
   maxs[maxs <  10] <-  10
-  defs <- as.vector(apply(d, 2, function(i) length(hist(i, plot=FALSE)$breaks)))
-  xdef <- (defs[var.default] - 1) / (maxs[var.default] - 1)
+  defs <- vapply(d, function(i) length(hist(i, plot=FALSE)$breaks), 0L)
+  xdef <- (defs[var.default] - 1L) / (maxs[var.default] - 1L)
 
   # Initialize device
   dev <- dev.cur()
@@ -151,7 +160,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   breaks.var <- tclVar(1L)
   single.var <- tclVar(defs[var.default])
   scale.var <- tclVar(xdef)
-
   vector.var <- tclVar()
   from.var <- tclVar()
   to.var <- tclVar()

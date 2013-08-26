@@ -421,9 +421,8 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
     ids  <- vapply(cols, function(i) i$id, "")
     funs <- vapply(cols, function(i) i$fun, "")
-
-    d <- as.data.frame(lapply(idxs, function(i) EvalFunction(funs[i], cols)),
-                       stringsAsFactors=FALSE)
+###############
+    d <- lapply(idxs, function(i) EvalFunction(funs[i], cols))
 
     var.names <- ids[idxs]
     if (idx %in% idxs)
