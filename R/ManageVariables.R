@@ -238,12 +238,12 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
     f <- EditFunction(cols, index=idx, value.length=nrow(Data("data.raw")),
                       win.title="New Variable", parent=tt)
-
     if (is.null(f$fun) || f$fun == "")
       return()
 
-    cols[[idx]] <<- list(id="", name="New Variable", class=f$class, index=NA,
-                         fun=f$fun, sample=f$sample, summary=f$summary)
+    cols[[idx]] <<- list(id="", name="New Variable", format="", class=f$class, 
+                         index=NA, fun=f$fun, sample=f$sample, 
+                         summary=f$summary)
 
     tcl("lappend", list.var, new.name)
     tkselection.clear(frame1.lst, 0, "end")
