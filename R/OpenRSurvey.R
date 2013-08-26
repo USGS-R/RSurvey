@@ -184,14 +184,19 @@ OpenRSurvey <- function() {
     EstablishDefaultVars()
     SetVars()
   }
+  
+  # Get numeric columns
+  GetNumericCols <- function(cols) {
+    is.num <- vapply(cols,
+                     function(i) any(c("numeric", "integer") %in% i$class),
+                     TRUE)
+    return(which(is.num))
+  }
 
   # Establish defaults for x-, y-, and z-coordinate variables
   EstablishDefaultVars <- function() {
     vars <- list()
-    is.num <- vapply(Data("cols"),
-                     function(i) any(c("numeric", "integer") %in% i$class),
-                     TRUE)
-    idxs.n <- which(is.num)
+    idxs.n <- GetNumericCols(Data("cols"))
     for (i in seq(along=idxs.n)) {
       if (is.null(vars$x)) {
         vars$x <- idxs.n[i]
@@ -246,10 +251,7 @@ OpenRSurvey <- function() {
     }
 
     ids <- vapply(cols, function(i) i$id, "")
-    is.num <- vapply(cols,
-                     function(i) any(c("numeric", "integer") %in% i$class),
-                     TRUE)
-    idxs.n <- which(is.num)
+    idxs.n <- GetNumericCols(cols)
     vals.n <- c("", ids[idxs.n])
     tkconfigure(frame1.box.1.2, value=vals.n)
     tkconfigure(frame1.box.2.2, value=vals.n)
@@ -276,10 +278,7 @@ OpenRSurvey <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
 
-    is.num <- vapply(Data("cols"),
-                     function(i) any(c("numeric", "integer") %in% i$class),
-                     TRUE)
-    idxs.n <- which(is.num)
+    idxs.n <- GetNumericCols(Data("cols"))
 
     idx.x  <- as.integer(tcl(frame1.box.1.2, "current"))
     idx.y  <- as.integer(tcl(frame1.box.2.2, "current"))
@@ -488,10 +487,7 @@ OpenRSurvey <- function() {
       return()
     d <- Data("data.pts")
     d <- d[, names(d) != "sort.on"]
-    lst <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate",
-                vx="x-vector", vy="y-vector")
-    var.names <- vapply(names(d), function(i) lst[[i]], "")
-    BuildHistogram(d, var.names=var.names, parent=tt)
+    BuildHistogram(d, var.names=names(d), parent=tt)
   }
 
   # Plot point or 2d surface data
@@ -698,11 +694,8 @@ OpenRSurvey <- function() {
         return()
       cols <- Data("cols")
       vars <- Data("vars")
-      lst <- list(x="x-coordinate", y="y-coordinate", z="z-coordinate",
-                  vx="x-vector", vy="y-vector")
-      col.names <- names(Data("data.pts"))
-      nams <- vapply(col.names, function(i) lst[[i]], "")
-      fmts <- vapply(col.names, function(i) cols[[vars[[i]]]]$format, "")
+      nams <- names(Data("data.pts"))
+      fmts <- vapply(nams, function(i) cols[[vars[[i]]]]$format, "")
       try(EditData(Data("data.pts"), col.formats=fmts, col.names=nams,
                    read.only=TRUE, win.title="Processed Data", parent=tt))
 
@@ -1197,11 +1190,11 @@ OpenRSurvey <- function() {
   frame1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                           text="Set variables")
 
-  frame1.lab.1.1 <- ttklabel(frame1, text="x-coordinate")
-  frame1.lab.2.1 <- ttklabel(frame1, text="y-coordinate")
-  frame1.lab.3.1 <- ttklabel(frame1, text="z-coordinate")
-  frame1.lab.4.1 <- ttklabel(frame1, text="x-vector")
-  frame1.lab.5.1 <- ttklabel(frame1, text="y-vector")
+  frame1.lab.1.1 <- ttklabel(frame1, text="x")
+  frame1.lab.2.1 <- ttklabel(frame1, text="y")
+  frame1.lab.3.1 <- ttklabel(frame1, text="z")
+  frame1.lab.4.1 <- ttklabel(frame1, text="vx")
+  frame1.lab.5.1 <- ttklabel(frame1, text="vy")
 
   frame1.box.1.2 <- ttkcombobox(frame1, state="readonly")
   frame1.box.2.2 <- ttkcombobox(frame1, state="readonly")
