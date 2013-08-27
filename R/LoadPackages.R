@@ -38,9 +38,10 @@ LoadPackages <- function() {
 
   if (!capabilities()["tcltk"])
     stop("Tcl/Tk capabilities required")
+  require("tcltk")
 
   # Establish required and suggested packages
-  require.pkgs <- c("tcltk", "sp", "rgeos", "MBA")
+  require.pkgs <- c("sp", "rgeos", "MBA")
   suggest.pkgs <- c("rgdal", "tripack", "colorspace", "dichromat", "rgl")
   pkgs <- c(require.pkgs, suggest.pkgs)
 

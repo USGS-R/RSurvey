@@ -211,17 +211,12 @@ OpenRSurvey <- function() {
 
   # Set button state
   ButtonState <- function(vars) {
-    if (is.null(vars$x) | is.null(vars$y))
-      s <- "disabled"
-    else
-      s <- "normal"
-    tkconfigure(frame2.but.1.1, state=s)
-    if (is.null(vars$x) | is.null(vars$y) | is.null(vars$z))
-      s <- "disabled"
-    else
-      s <- "normal"
-    tkconfigure(frame2.but.1.2, state=s)
-    tkconfigure(frame2.but.1.3, state=s)
+    is.xy <- !is.null(vars$x) && !is.null(vars$y)
+    tkconfigure(frame2.but.1.1, state=ifelse(is.xy, "normal", "disabled"))
+    is.2d <- is.xy && !is.null(vars$z)
+    tkconfigure(frame2.but.1.2, state=ifelse(is.2d, "normal", "disabled"))
+    is.3d <- is.2d && is.rgl
+    tkconfigure(frame2.but.1.3, state=ifelse(is.3d, "normal", "disabled"))
   }
 
   # Set variables
@@ -323,8 +318,10 @@ OpenRSurvey <- function() {
   # Close graphic devices
   CloseDevices <- function() {
     graphics.off()
-    while (rgl.cur() != 0)
-      rgl.close()
+    if (is.rgl) {
+      while (rgl.cur() != 0)
+        rgl.close()
+    }
   }
 
   # Save R graphic devices
@@ -341,7 +338,7 @@ OpenRSurvey <- function() {
 
   # Save RGL graphic devices
   SaveRGLDevice <- function() {
-    if (rgl.cur() == 0)
+    if (!is.rgl || rgl.cur() == 0)
       return()
     f <- GetFile(cmd="Save As", exts=c("png", "eps", "pdf"),
                  win.title="Save RGL Graphic As", defaultextension="png",
@@ -1050,12 +1047,12 @@ OpenRSurvey <- function() {
           CallPlot2d(type="p")
         })
   tkadd(menu.graph, "command", label="Plot 2D-interpolated map",
-        state=if (is.rgl) "normal" else "disabled",
         command=function() {
           type <- if (Data("img.contour")) "g" else "l"
           CallPlot2d(type=type)
         })
   tkadd(menu.graph, "command", label="Plot 3D-interpolated map",
+        state=ifelse(is.rgl, "normal", "disabled"),
         command=CallPlot3d)
 
   tkadd(menu.graph, "separator")
@@ -1235,7 +1232,6 @@ OpenRSurvey <- function() {
                                 CallPlot2d(type=type)
                               })
   frame2.but.1.3 <- ttkbutton(frame2, width=10, text="3D Map",
-                              state=if (is.rgl) "normal" else "disabled",
                               command=CallPlot3d)
 
   tkgrid(frame2.but.1.1, frame2.but.1.2, frame2.but.1.3)
