@@ -358,31 +358,31 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkadd(menu.convert.char, "command", label="Date",
         command=function() InsertString("as.Date(<variable>, format = \"<format>\")"))
   tkadd(menu.convert, "cascade", label="Character to", menu=menu.convert.char)
-  
+
   menu.convert.factor <- tkmenu(tt, tearoff=0)
   tkadd(menu.convert.factor, "command", label="Character",
         command=function() InsertString("as.character(<variable>)"))
   tkadd(menu.convert.factor, "command", label="Integer",
         command=function() InsertString("as.integer(<variable>)"))
   tkadd(menu.convert, "cascade", label="Factor to", menu=menu.convert.factor)
-  
+
   menu.convert.num <- tkmenu(tt, tearoff=0)
   tkadd(menu.convert.num, "command", label="POSIXct",
         command=function() InsertString("as.POSIXct(<variable>, origin = \"1970-01-01 00:00:00.00\")"))
   tkadd(menu.convert, "cascade", label="Numeric to", menu=menu.convert.num)
-  
+
   menu.convert.int <- tkmenu(tt, tearoff=0)
   tkadd(menu.convert.int, "command", label="POSIXct",
         command=function() InsertString("as.POSIXct(<variable>, origin = \"1970-01-01 00:00:00\")"))
   tkadd(menu.convert.int, "command", label="Date",
         command=function() InsertString("as.Date(<variable>, origin = \"1899-12-30\")"))
   tkadd(menu.convert, "cascade", label="Integer to", menu=menu.convert.int)
-  
+
   menu.convert.log <- tkmenu(tt, tearoff=0)
   tkadd(menu.convert.log, "command", label="Integer",
         command=function() InsertString("as.integer(<variable>)"))
   tkadd(menu.convert, "cascade", label="Logical to", menu=menu.convert.log)
-  
+
   menu.convert.posix <- tkmenu(tt, tearoff=0)
   tkadd(menu.convert.posix, "command", label="Numeric",
         command=function() InsertString("as.numeric(<variable>)"))

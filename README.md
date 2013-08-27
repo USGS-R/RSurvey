@@ -45,7 +45,7 @@ a spreadsheet-like [Tcl/Tk](http://www.tcl.tk/ "Tcl/Tk") widget
 (included with the Windows binary distribution of R).
 The following call will indicate whether tktable is available for use:
 
-    > tclRequire('Tktable', warn = TRUE)
+    > tcltk::tclRequire('Tktable', warn = TRUE)
 
 Run
 ---

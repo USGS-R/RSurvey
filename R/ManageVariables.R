@@ -241,8 +241,8 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     if (is.null(f$fun) || f$fun == "")
       return()
 
-    cols[[idx]] <<- list(id="", name="New Variable", format="", class=f$class, 
-                         index=NA, fun=f$fun, sample=f$sample, 
+    cols[[idx]] <<- list(id="", name="New Variable", format="", class=f$class,
+                         index=NA, fun=f$fun, sample=f$sample,
                          summary=f$summary)
 
     tcl("lappend", list.var, new.name)

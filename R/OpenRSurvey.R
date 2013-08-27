@@ -184,7 +184,7 @@ OpenRSurvey <- function() {
     EstablishDefaultVars()
     SetVars()
   }
-  
+
   # Get numeric columns
   GetNumericCols <- function(cols) {
     is.num <- vapply(cols,

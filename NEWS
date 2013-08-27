@@ -1,11 +1,11 @@
 Changes in Version 0.7-6
 
   o  Variables of class 'Date' are now handled correctly.
-  
+
   o  Removed dependency on the 'rgl' package.
 
   o  Improved performance for counting the number of lines in a file.
-  
+
   o  Fixed bug that was preventing data imports using paste operation.
 
   o  Improved performance in the EditData function by removing its reliance on a
