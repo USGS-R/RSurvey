@@ -341,23 +341,34 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkadd(menu.edit, "command", label="Clear console", accelerator="Ctrl+l",
         command=ClearConsole)
 
-  menu.class <- tkmenu(tt, tearoff=0)
-  tkadd(top.menu, "cascade", label="Class", menu=menu.class, underline=0)
-
-  tkadd(menu.class, "command", label="As character",
-        command=function() InsertString("as.character(<variable>)"))
-  tkadd(menu.class, "command", label="As factor",
+  menu.convert <- tkmenu(tt, tearoff=0)
+  tkadd(top.menu, "cascade", label="Convert", menu=menu.convert, underline=0)
+  menu.convert.char <- tkmenu(tt, tearoff=0)
+  tkadd(menu.convert.char, "command", label="Factor",
         command=function() InsertString("as.factor(<variable>)"))
-  tkadd(menu.class, "command", label="As integer",
-        command=function() InsertString("as.integer(<variable>)"))
-  tkadd(menu.class, "command", label="As logical",
-        command=function()  InsertString("as.logical(<variable>)"))
-  tkadd(menu.class, "command", label="As numeric",
+  tkadd(menu.convert.char, "command", label="Numeric",
         command=function() InsertString("as.numeric(<variable>)"))
-  tkadd(menu.class, "command", label="As POSIXct",
-        command=function() {
-          InsertString("as.POSIXct(<variable>, format = \"<format>\")")
-        })
+  tkadd(menu.convert.char, "command", label="Integer",
+        command=function() InsertString("as.integer(<variable>)"))
+  tkadd(menu.convert.char, "command", label="Logical",
+        command=function() InsertString("as.logical(<variable>)"))
+  tkadd(menu.convert.char, "command", label="POSIXct",
+        command=function() InsertString("as.POSIXct(strptime(<variable>, format = \"<format>\"))"))
+  tkadd(menu.convert, "cascade", label="Character to", menu=menu.convert.char)
+  menu.convert.factor <- tkmenu(tt, tearoff=0)
+  tkadd(menu.convert.factor, "command", label="Character",
+        command=function() InsertString("as.character(<variable>)"))
+  tkadd(menu.convert.factor, "command", label="Integer",
+        command=function() InsertString("as.integer(<variable>)"))
+  tkadd(menu.convert, "cascade", label="Factor to", menu=menu.convert.factor)
+  menu.convert.int <- tkmenu(tt, tearoff=0)
+  tkadd(menu.convert.int, "command", label="POSIXct",
+        command=function() InsertString("as.POSIXct(<variable>, origin = \"<format>\")"))
+  tkadd(menu.convert, "cascade", label="Integer to", menu=menu.convert.int)
+  menu.convert.posix <- tkmenu(tt, tearoff=0)
+  tkadd(menu.convert.posix, "command", label="Integer",
+        command=function() InsertString("as.integer(<variable>)"))
+  tkadd(menu.convert, "cascade", label="POSIXct to", menu=menu.convert.posix)
 
   menu.math <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Math", menu=menu.math, underline=0)
