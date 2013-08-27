@@ -6,7 +6,7 @@
 
 \description{
 A \acronym{GUI} for converting between character representations and objects of
-class \dQuote{POSIXt}, calendar dates and times.
+class \dQuote{POSIXt} or \dQuote{Date}.
 }
 
 \usage{
@@ -15,8 +15,9 @@ FormatDateTime(sample = as.POSIXct("1991-08-25 20:57:08"), fmt = "",
 }
 
 \arguments{
-\item{sample}{POSIXct or POSIXlt; a calendar date and time object.}
-\item{fmt}{character; the conversion specification format for date-time values.}
+\item{sample}{POSIXt or Date; a time object.}
+\item{fmt}{character; the format conversion specification string for time 
+  values.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 

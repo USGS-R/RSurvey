@@ -128,8 +128,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   }
 
   # Call date and time format editor
-  CallFormatDateTime <- function() {
-    fmt <- FormatDateTime(parent=tt)
+  CallFormatDateTime <- function(sample) {
+    fmt <- FormatDateTime(sample=sample, parent=tt)
     tkfocus(frame2.txt.2.1)
     if(!is.null(fmt))
       InsertString(gsub("%OS[[:digit:]]+", "%OS", fmt))
@@ -343,6 +343,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   menu.convert <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Convert", menu=menu.convert, underline=0)
+
   menu.convert.char <- tkmenu(tt, tearoff=0)
   tkadd(menu.convert.char, "command", label="Factor",
         command=function() InsertString("as.factor(<variable>)"))
@@ -354,21 +355,45 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertString("as.logical(<variable>)"))
   tkadd(menu.convert.char, "command", label="POSIXct",
         command=function() InsertString("as.POSIXct(strptime(<variable>, format = \"<format>\"))"))
+  tkadd(menu.convert.char, "command", label="Date",
+        command=function() InsertString("as.Date(<variable>, format = \"<format>\")"))
   tkadd(menu.convert, "cascade", label="Character to", menu=menu.convert.char)
+  
   menu.convert.factor <- tkmenu(tt, tearoff=0)
   tkadd(menu.convert.factor, "command", label="Character",
         command=function() InsertString("as.character(<variable>)"))
   tkadd(menu.convert.factor, "command", label="Integer",
         command=function() InsertString("as.integer(<variable>)"))
   tkadd(menu.convert, "cascade", label="Factor to", menu=menu.convert.factor)
+  
+  menu.convert.num <- tkmenu(tt, tearoff=0)
+  tkadd(menu.convert.num, "command", label="POSIXct",
+        command=function() InsertString("as.POSIXct(<variable>, origin = \"1970-01-01 00:00:00.00\")"))
+  tkadd(menu.convert, "cascade", label="Numeric to", menu=menu.convert.num)
+  
   menu.convert.int <- tkmenu(tt, tearoff=0)
   tkadd(menu.convert.int, "command", label="POSIXct",
-        command=function() InsertString("as.POSIXct(<variable>, origin = \"<format>\")"))
+        command=function() InsertString("as.POSIXct(<variable>, origin = \"1970-01-01 00:00:00\")"))
+  tkadd(menu.convert.int, "command", label="Date",
+        command=function() InsertString("as.Date(<variable>, origin = \"1899-12-30\")"))
   tkadd(menu.convert, "cascade", label="Integer to", menu=menu.convert.int)
-  menu.convert.posix <- tkmenu(tt, tearoff=0)
-  tkadd(menu.convert.posix, "command", label="Integer",
+  
+  menu.convert.log <- tkmenu(tt, tearoff=0)
+  tkadd(menu.convert.log, "command", label="Integer",
         command=function() InsertString("as.integer(<variable>)"))
+  tkadd(menu.convert, "cascade", label="Logical to", menu=menu.convert.log)
+  
+  menu.convert.posix <- tkmenu(tt, tearoff=0)
+  tkadd(menu.convert.posix, "command", label="Numeric",
+        command=function() InsertString("as.numeric(<variable>)"))
+  tkadd(menu.convert.posix, "command", label="Date",
+        command=function() InsertString("as.Date(<variable>, tz = \"UTC\")"))
   tkadd(menu.convert, "cascade", label="POSIXct to", menu=menu.convert.posix)
+
+  menu.convert.date <- tkmenu(tt, tearoff=0)
+  tkadd(menu.convert.date, "command", label="Integer",
+        command=function() InsertString("as.integer(<variable>)"))
+  tkadd(menu.convert, "cascade", label="Date to", menu=menu.convert.date)
 
   menu.math <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Math", menu=menu.math, underline=0)
@@ -506,8 +531,12 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   menu.tools <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Tools", menu=menu.tools, underline=0)
-  tkadd(menu.tools, "command", label="Build format for date-time variable\u2026",
-        command=CallFormatDateTime)
+  menu.tools.time <- tkmenu(tt, tearoff=0)
+  tkadd(menu.tools.time, "command", label="POSIXct\u2026",
+        command=function() CallFormatDateTime(Sys.time()))
+  tkadd(menu.tools.time, "command", label="Date\u2026",
+        command=function() CallFormatDateTime(Sys.Date()))
+  tkadd(menu.tools, "cascade", label="Build format for", menu=menu.tools.time)
 
   # Finalize top menu
   tkconfigure(tt, menu=top.menu)
@@ -627,7 +656,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   frame2.lab.1.2 <- ttklabel(frame2, text=txt, foreground="#A40802")
 
   frame2.txt.2.1 <- tktext(frame2, bg="white", font="TkFixedFont",
-                           padx=2, pady=2, width=50, height=12, undo=1,
+                           padx=2, pady=2, width=80, height=12, undo=1,
                            autoseparators=1, wrap="none", foreground="black",
                            relief="flat",
                            yscrollcommand=function(...)

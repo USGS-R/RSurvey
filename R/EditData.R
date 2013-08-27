@@ -38,10 +38,13 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
       idxs <- j %in% column
       vals <- d[i[idxs], column]
       obj <- d[1, column]
-      is.time <- inherits(obj, "POSIXt")
+      is.time <- inherits(obj, c("POSIXt", "Date"))
       fmt <- ifelse (is.fmt || is.time, col.formats[column], "")
       if (is.time) {
-        fmt.vals[idxs] <- POSIXct2Character(vals, fmt=fmt)
+        if (inherits(obj, "POSIXt"))
+          fmt.vals[idxs] <- POSIXct2Character(vals, fmt=fmt)
+        else
+          fmt.vals[idxs] <- format(vals, format=fmt)
       } else {
         if (fmt == "") {
           if (inherits(obj, "numeric"))
@@ -50,7 +53,6 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
           else
             fmt.vals[idxs] <- format(vals, trim=TRUE)
         } else {
-#         fmt.vals[idxs] <- gsub("(^ +)|( +$)", "", sprintf(fmt, vals))
           fmt.vals[idxs] <- sprintf(fmt, vals)
         }
       }
@@ -76,6 +78,9 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
         new.vals <- strptime(new.vals, format=fmt)
         if (inherits(obj, "POSIXct"))
           new.vals <- as.POSIXct(new.vals)
+      } else if (inherits(obj, "Date")) {
+        fmt <- col.formats[column]
+        new.vals <- as.Date(new.vals, format=ifelse(fmt == "", "%Y-%m-%d", fmt))
       } else if (inherits(obj, "factor")) {
         levels(d[, column]) <<- unique(c(levels(d[, column]),
                                          na.omit(unique(new.vals))))

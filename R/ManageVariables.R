@@ -300,7 +300,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     sample.value <- cols[[idx]]$sample
 
     old.fmt <- as.character(tclvalue(fmt.var))
-    if (inherits(sample.value, "POSIXt")) {
+    if (inherits(sample.value, c("POSIXt", "Date"))) {
       new.fmt <- FormatDateTime(sample=sample.value, fmt=old.fmt, parent=tt)
     } else {
       if (is.null(sample.value))
