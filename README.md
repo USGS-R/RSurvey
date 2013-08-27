@@ -33,7 +33,9 @@ for shapefile support,
 [**colorspace**](http://cran.r-project.org/web/packages/colorspace/index.html "colorspace")
 for color palettes based on HCL colors,
 [**dichromat**](http://cran.r-project.org/web/packages/dichromat/index.html "dichromat")
-for color-blind safe palettes, and
+for color-blind safe palettes,
+[**rgl**](http://cran.r-project.org/web/packages/rgl/index.html "rgl")
+for 3D visualization, and
 [**tripack**](http://cran.r-project.org/web/packages/tripack/index.html "tripack")
 for auto-cropping. Note that the license for **tripack** explicitly forbids
 commercial use. If any of these recommended packages are missing, **RSurvey**
