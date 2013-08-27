@@ -866,13 +866,13 @@ OpenRSurvey <- function() {
 
   # Check if suggested packages are loaded
   is.rgl <- "rgl" %in% .packages(all.available=TRUE) &&
-            require(rgl, warn.conflicts=FALSE, quietly=TRUE)
+            require("rgl", warn.conflicts=FALSE, quietly=TRUE)
   is.rgdal <- "rgdal" %in% .packages(all.available=TRUE) &&
-              require(rgdal, warn.conflicts=FALSE, quietly=TRUE)
+              require("rgdal", warn.conflicts=FALSE, quietly=TRUE)
   is.tripack <- "tripack" %in% .packages(all.available=TRUE) &&
-                require(tripack, warn.conflicts=FALSE, quietly=TRUE)
+                require("tripack", warn.conflicts=FALSE, quietly=TRUE)
   is.colorspace <- "colorspace" %in% .packages(all.available=TRUE) &&
-                   require(colorspace, warn.conflicts=FALSE, quietly=TRUE)
+                   require("colorspace", warn.conflicts=FALSE, quietly=TRUE)
 
   # Set options
   SetCsi()

@@ -252,7 +252,7 @@ ChooseColor <- function(col, parent=NULL) {
 
   ## Main program
 
-  if(!require(colorspace))
+  if(!require("colorspace"))
     stop()
 
   # Color chart information

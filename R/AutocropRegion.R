@@ -63,7 +63,7 @@ AutocropRegion <- function(d, parent=NULL, ...) {
 
   ## Main program
 
-  if (!require(tripack))
+  if (!require("tripack"))
     stop()
 
   # Initialize parameters

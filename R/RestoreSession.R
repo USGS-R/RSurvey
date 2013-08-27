@@ -4,16 +4,16 @@ RestoreSession <- function(path, save.objs, fun.call) {
 
   if (missing(path)) {
     if (exists("Data")) {
-      require(tcltk)
-
       initial.dir <- getwd()
       if("R" %in% dir(path=initial.dir, full.names=FALSE))
         initial.dir <- file.path(initial.dir, "R")
 
-      path <- tclvalue(tkchooseDirectory(initialdir=initial.dir,
-                                         title="Choose R Source Directory..."))
-      if (path == "")
+      path <- tcltk::tkchooseDirectory(initialdir=initial.dir,
+                                       title="Choose R Source Directory...")
+      path <- tcltk::tclvalue(path)
+      if (!nzchar(path))
         return()
+
       Data("default.dir", path)
     } else {
       path <- file.path(getwd(), "R")

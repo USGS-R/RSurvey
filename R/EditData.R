@@ -261,9 +261,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     }
     vals <- FormatValues(ij[, 1], ij[, 2])
     mat.vals <- matrix(vals, nrow=ni, ncol=nj, byrow=TRUE)
-    str.vals <- paste(apply(mat.vals, 1, function(i) paste(i, collapse="\t")),
-                      collapse="\n")
-    writeClipboard(str.vals, format=1)
+    write.table(mat.vals, file="clipboard", sep="\t", eol="\n",
+                row.names=FALSE, col.names=FALSE)
   }
 
   # Bypass cut command
