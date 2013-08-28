@@ -8,10 +8,10 @@ LoadPackages <- function() {
 
   # Install missing packages from CRAN mirror
   InstallPackages <- function() {
-    tclServiceMode(FALSE)
-    on.exit(tclServiceMode(TRUE))
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE), add=TRUE)
     idx <- which(cran.mirrors$Name %in% as.character(tclvalue(repo.var)))
     repo <- cran.mirrors$URL[idx]
     contriburl <- contrib.url(repos=repo, type=getOption("pkgType"))
