@@ -928,28 +928,27 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
 
   frame2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0, height=200)
 
-  frame2.lab.1.1 <- ttklabel(frame2, text="Find")
-  frame2.lab.2.1 <- ttklabel(frame2, text="Record")
+  frame2.lab.1.1 <- ttklabel(frame2, text="Record")
+  frame2.lab.2.1 <- ttklabel(frame2, text="Find")
 
   frame2.ent.1.2 <- ttkentry(frame2, width=15, font="TkFixedFont",
-                             textvariable=pattern.var)
-  frame2.ent.2.2 <- ttkentry(frame2, width=15, font="TkFixedFont",
                              textvariable=record.var)
+  frame2.ent.2.2 <- ttkentry(frame2, width=15, font="TkFixedFont",
+                             textvariable=pattern.var)
 
-  frame2.but.1.3 <- ttkbutton(frame2, width=2, image=GetBitmapImage("previous"),
+  frame2.but.1.3 <- ttkbutton(frame2, width=4, text="View", command=ViewRecord)
+  frame2.but.2.3 <- ttkbutton(frame2, width=2, image=GetBitmapImage("previous"),
                               command=function() Find("prev"))
-  frame2.but.1.4 <- ttkbutton(frame2, width=2, image=GetBitmapImage("next"),
+  frame2.but.2.4 <- ttkbutton(frame2, width=2, image=GetBitmapImage("next"),
                               command=function() Find("next"))
-  frame2.but.2.3 <- ttkbutton(frame2, width=4, text="View", command=ViewRecord)
 
-  tkgrid(frame2.lab.1.1, frame2.ent.1.2, frame2.but.1.3, frame2.but.1.4,
-         pady=c(0, 4))
-  tkgrid(frame2.lab.2.1, frame2.ent.2.2, frame2.but.2.3)
+  tkgrid(frame2.lab.1.1, frame2.ent.1.2, frame2.but.1.3, pady=c(0, 4))
+  tkgrid(frame2.lab.2.1, frame2.ent.2.2, frame2.but.2.3, frame2.but.2.4)
 
-  tkgrid.configure(frame2.ent.1.2, frame2.ent.2.2, padx=c(0, 2))
-  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, padx=c(0, 2), sticky="w")
-  tkgrid.configure(frame2.but.1.4, padx=c(2, 10))
-  tkgrid.configure(frame2.but.2.3, columnspan=2, padx=c(0, 10), sticky="we")
+  tkgrid.configure(frame2.ent.2.2, frame2.ent.1.2, padx=c(0, 2))
+  tkgrid.configure(frame2.lab.2.1, frame2.lab.1.1, padx=c(0, 2), sticky="w")
+  tkgrid.configure(frame2.but.1.3, columnspan=2, padx=c(0, 10), sticky="we")
+  tkgrid.configure(frame2.but.2.4, padx=c(2, 10))
 
   tkpack(frame2, side="bottom", anchor="nw", padx=c(10, 0))
 
@@ -1045,14 +1044,14 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
            tkyview(frame3.tbl, "scroll", number, "units")
          })
 
-  tkbind(frame2.ent.1.2, "<KeyRelease>",
+  tkbind(frame2.ent.2.2, "<KeyRelease>",
          function() {
            matched.cells <<- NULL
          })
-  tkbind(frame2.ent.1.2, "<Return>", function() Find("next"))
-  tkbind(frame2.ent.1.2, "<Up>",     function() Find("prev"))
-  tkbind(frame2.ent.1.2, "<Down>",   function() Find("next"))
-  tkbind(frame2.ent.2.2, "<Return>", function() ViewRecord())
+  tkbind(frame2.ent.2.2, "<Return>", function() Find("next"))
+  tkbind(frame2.ent.2.2, "<Up>",     function() Find("prev"))
+  tkbind(frame2.ent.2.2, "<Down>",   function() Find("next"))
+  tkbind(frame2.ent.1.2, "<Return>", function() ViewRecord())
 
   # GUI control
 

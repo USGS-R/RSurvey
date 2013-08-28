@@ -27,4 +27,4 @@ Image files in this directory are covered by the following public licenses:
 
 **Image:** pch.gif  
 **Designer:** Jason C. Fisher  
-**License:** Public Domain
+**License:** Public domain
