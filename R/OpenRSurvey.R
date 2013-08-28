@@ -851,27 +851,25 @@ OpenRSurvey <- function() {
             "    Edit - GUI Preferences: SDI, then Save and restart R.\n\n")
 
   # Establish default directories and load packages
-  path <- getwd()
   if ("package:RSurvey" %in% search()) {
     image.path <- system.file("images", package="RSurvey")
     about.path <- system.file("DESCRIPTION", package="RSurvey")
   } else {
-    image.path <- file.path(path, "inst", "images")
-    about.path <- file.path(path, "DESCRIPTION")
-    r.path <- file.path(path, "R")
-    LoadPackages()
+    image.path <- file.path(getwd(), "inst", "images")
+    about.path <- file.path(getwd(), "DESCRIPTION")
   }
   if (is.null(Data("default.dir")))
-    Data("default.dir", path)
+    Data("default.dir", getwd())
 
   # Check if suggested packages are loaded
-  is.rgl <- "rgl" %in% .packages(all.available=TRUE) &&
+  available.packages <- .packages(all.available=TRUE)
+  is.rgl <- "rgl" %in% available.packages &&
             require("rgl", warn.conflicts=FALSE, quietly=TRUE)
-  is.rgdal <- "rgdal" %in% .packages(all.available=TRUE) &&
+  is.rgdal <- "rgdal" %in% available.packages &&
               require("rgdal", warn.conflicts=FALSE, quietly=TRUE)
-  is.tripack <- "tripack" %in% .packages(all.available=TRUE) &&
+  is.tripack <- "tripack" %in% available.packages &&
                 require("tripack", warn.conflicts=FALSE, quietly=TRUE)
-  is.colorspace <- "colorspace" %in% .packages(all.available=TRUE) &&
+  is.colorspace <- "colorspace" %in% available.packages &&
                    require("colorspace", warn.conflicts=FALSE, quietly=TRUE)
 
   # Set options
@@ -1122,7 +1120,8 @@ OpenRSurvey <- function() {
               CloseGUI()
               Data("data.pts", NULL)
               Data("data.grd", NULL)
-              RestoreSession(r.path, save.objs="Data", fun.call="OpenRSurvey")
+              RestoreSession(file.path(getwd(), "R"), save.objs="Data",
+                             fun.call="OpenRSurvey")
             })
   }
 

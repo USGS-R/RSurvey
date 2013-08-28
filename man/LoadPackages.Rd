@@ -2,14 +2,13 @@
 
 \alias{LoadPackages}
 
-\title{Load Required and Suggested Packages}
+\title{Load Suggested Packages}
 
 \description{
-This function installs \R packages required by \pkg{RSurvey}.
-If a required package is unavailable on the local computer an attempt
-is made to acquire the package from
-\href{http://cran.r-project.org/}{CRAN}
-using an existing network connection.
+This function installs \R packages suggested by \pkg{RSurvey}. If a suggested
+package is unavailable on the local computer an attempt is made to acquire the
+package from \href{http://cran.r-project.org/}{CRAN} using an existing network
+connection.
 }
 
 \usage{

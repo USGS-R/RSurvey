@@ -590,7 +590,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
   ## Main program
 
   # GUI requires TkTable
-  if (inherits(try(tcltk::tcl("package", "present", "Tktable"), silent=TRUE),
+  if (inherits(try(tcl("package", "present", "Tktable"), silent=TRUE),
                "try-error"))
     stop("TkTable is not available")
 

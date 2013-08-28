@@ -35,9 +35,9 @@ BuildPackage <- function() {
 
   cmd <- paste(Sys.getenv("COMSPEC"), "/c", cmd)
 
-  f <- tcltk::tcl("tk_getSaveFile", defaultextension=".bat",
-                  title="Save Batch file As", initialfile=paste0(pkg, ".bat"),
-                  initialdir=file.path(getwd(), ".."))
+  f <- tcl("tk_getSaveFile", defaultextension=".bat",
+           title="Save Batch file As", initialfile=paste0(pkg, ".bat"),
+           initialdir=file.path(getwd(), ".."))
   f <- as.character(f)
 
   if (length(f) == 0)

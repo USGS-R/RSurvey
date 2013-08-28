@@ -356,7 +356,7 @@ ImportData <- function(parent=NULL) {
     tkconfigure(frame4.tbl, state="disabled")
   }
 
-  # Count the number of lines in a file; adapted from 
+  # Count the number of lines in a file; adapted from
   # R.utils::countLines (v1.26.2)
   CountLines <- function() {
     tkconfigure(tt, cursor="watch")
@@ -490,9 +490,9 @@ ImportData <- function(parent=NULL) {
   ## Main program
 
   # GUI requires TkTable
-  if (inherits(try(tcltk::tcl("package", "present", "Tktable"), silent=TRUE),
+  if (inherits(try(tcl("package", "present", "Tktable"), silent=TRUE),
                "try-error"))
-    stop("TkTable is not available")
+    return("TkTable is not available")
 
   # Initialize values
 

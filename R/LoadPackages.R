@@ -1,4 +1,4 @@
-# This function loads R packages required by RSurvey. If a required
+# This function loads R packages suggested by RSurvey. If a suggested
 # package is unavailable on the local computer an attempt is made to
 # acquire the package from CRAN using an existing network connection.
 
@@ -36,14 +36,8 @@ LoadPackages <- function() {
 
   ## Main program
 
-  if (!capabilities()["tcltk"])
-    stop("Tcl/Tk capabilities required")
-  require("tcltk")
-
-  # Establish required and suggested packages
-  require.pkgs <- c("sp", "rgeos", "MBA")
-  suggest.pkgs <- c("rgdal", "tripack", "colorspace", "dichromat", "rgl")
-  pkgs <- c(require.pkgs, suggest.pkgs)
+  # Suggested packages
+  pkgs <- c("rgdal", "tripack", "colorspace", "dichromat", "rgl")
 
   # Account for missing packages
 
@@ -120,16 +114,12 @@ LoadPackages <- function() {
 
   # Load packages into current session
   for (pkg in pkgs) {
-    is.pkg.suggested <- pkg %in% suggest.pkgs
     is.pkg.loaded <- suppressWarnings(require(pkg, character.only=TRUE,
-                                      warn.conflicts=!is.pkg.suggested,
-                                      quietly=is.pkg.suggested))
+                                              warn.conflicts=FALSE,
+                                              quietly=TRUE))
     if (is.pkg.loaded)
       next
-    if (is.pkg.suggested)
-      warning(paste("unable to load suggested package:", pkg))
-    else
-      stop(paste("unable to load required package:", pkg))
+    warning(paste("unable to load suggested package:", pkg))
   }
 
   # Warn if Tktable is unavailable
