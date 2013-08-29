@@ -59,15 +59,10 @@ around the x-axis, and zooms the display, respectively.
 
 \author{J.C. Fisher}
 
-\seealso{
-\code{rgl::surface3d}, \code{rgl::points3d}
-}
-
 \examples{
-\donttest{
-data(ex.project)
+\donttest{data(ex.project)
 Plot3d(ex.project$data.grd)
-rgl.quit()
+rgl::rgl.quit()
 }
 }
 

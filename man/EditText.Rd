@@ -27,13 +27,13 @@ Something
 
 \author{J.C. Fisher}
 
-\examples{\donttest{
-txt <- c("\"Hills cherish the ambition",
+\examples{
+\donttest{txt <- c("\"Hills cherish the ambition",
          "    to turn into partial",
          "   differential equations\"",
          "",
          "        -Donald Hall")
-new.txt <- EditText(txt)
+new.txt <- EditText(txt, is.fixed.width.font = TRUE)
 
 EditText(txt, read.only = TRUE)
 }}

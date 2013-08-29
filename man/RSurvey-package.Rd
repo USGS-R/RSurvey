@@ -24,8 +24,7 @@ The set of standards used for coding \pkg{RSurvey} is documented in
 }
 
 \examples{
-\donttest{library(RSurvey)
-OpenRSurvey()}
+\donttest{library(RSurvey)}
 }
 
 \keyword{package}

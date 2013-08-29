@@ -107,10 +107,12 @@ AutocropRegion <- function(d, parent=NULL, ...) {
 
   frame0 <- ttkframe(tt, relief="flat")
 
-  frame0.but.2 <- ttkbutton(frame0, width=10, text="Build",
+  frame0.but.1 <- ttkbutton(frame0, width=10, text="Build",
                             command=DrawPolygon)
-  frame0.but.3 <- ttkbutton(frame0, width=10, text="Refresh",
+  frame0.but.2 <- ttkbutton(frame0, width=10, text="Refresh",
                             command=RefreshPlot)
+
+
   frame0.but.4 <- ttkbutton(frame0, width=10, text="Save",
                             command=SavePolygon)
   frame0.but.5 <- ttkbutton(frame0, width=10, text="Cancel",
@@ -120,11 +122,12 @@ AutocropRegion <- function(d, parent=NULL, ...) {
                               print(help("Autocrop", package="RSurvey"))
                             })
 
-  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, frame0.but.5,
+  tkgrid(frame0.but.1, frame0.but.2, "x", frame0.but.4, frame0.but.5,
          frame0.but.6, pady=c(15, 10), padx=c(4, 0))
 
-  tkgrid.columnconfigure(frame0, 0, weight=1)
-  tkgrid.configure(frame0.but.2, padx=c(10, 0))
+  tkgrid.columnconfigure(frame0, 2, weight=1)
+  tkgrid.configure(frame0.but.1, padx=c(10, 0))
+  tkgrid.configure(frame0.but.2, padx=c(4, 25))
   tkgrid.configure(frame0.but.6, padx=c(4, 10))
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 

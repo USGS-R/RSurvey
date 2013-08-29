@@ -41,7 +41,8 @@ x1 y1\cr
 x2 y2\cr
 ...\cr\cr
 The hole flag is either 1 to indicate a hole, or 0 for a regular contour.
-See \code{\link{read.polyfile}} within the \pkg{rgeos} package for details.
+See \code{\link[rgeos]{read.polyfile}} within the \pkg{rgeos} package for
+details.
 }
 
 \value{

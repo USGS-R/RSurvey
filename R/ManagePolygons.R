@@ -54,7 +54,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       return()
 
     for (idx in idxs) {
-      bb <- get.bbox(polys[[idx]])
+      bb <- rgeos::get.bbox(polys[[idx]])
       xran <- range(c(xran, bb$x))
       yran <- range(c(yran, bb$y))
     }
@@ -94,7 +94,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
     }
 
     if (!is.null(polys.base)) {
-      base.pts <- get.pts(polys.base)
+      base.pts <- rgeos::get.pts(polys.base)
       if (length(base.pts) == 0)
         polys.base <<- NULL
     }
@@ -110,14 +110,15 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
         if (any(hole))
           DrawPolygon(base.pts[hole], col.fill="white")
       }
-      tclvalue(area.var) <- format(area.poly(polys.base))
+      tclvalue(area.var) <- format(rgeos::area.poly(polys.base))
       tclvalue(poly.var) <- length(base.pts)
       tclvalue(hole.var) <- sum(hole)
       tclvalue(vert.var) <- vert
     }
 
     for (i in idxs)
-      DrawPolygon(get.pts(polys[[i]]), tag=names(polys)[i], col.line=col.pal[i])
+      DrawPolygon(rgeos::get.pts(polys[[i]]), tag=names(polys)[i],
+                  col.line=col.pal[i])
   }
 
   # Transform coordinates from real to canvas
@@ -305,7 +306,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
   ImportPolygon <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
-    
+
     f <- GetFile(cmd="Open", exts=c("ply"), win.title="Open Polygon File(s)",
                  multi=TRUE, parent=tt)
     if (is.null(f))
@@ -314,7 +315,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       f <- list(f)
     for (i in seq(along=f)) {
       con <- file(f[[i]], "r", encoding=encoding)
-      new.poly <- read.polyfile(con, nohole=FALSE)
+      new.poly <- rgeos::read.polyfile(con, nohole=FALSE)
       close(con)
       if (!inherits(new.poly, "gpc.poly"))
         next
@@ -340,7 +341,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
                    parent=tt)
       if (is.null(f))
         next
-      write.polyfile(polys[[i]], f)
+      rgeos::write.polyfile(polys[[i]], f)
     }
     tkfocus(tt)
   }

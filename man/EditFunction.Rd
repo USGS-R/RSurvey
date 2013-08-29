@@ -44,8 +44,8 @@ Returns a list with two four components:
 \code{\link{EvalFunction}}
 }
 
-\examples{\donttest{
-d <- data.frame(cbind(x = 1, y = 1:10))
+\examples{
+\donttest{d <- data.frame(cbind(x = 1, y = 1:10))
 Data("data.raw", d)
 cols <- list()
 cols[[1]] <- list(id = "X", index = 1, fun = "\"X\"")

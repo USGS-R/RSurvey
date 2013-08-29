@@ -41,8 +41,8 @@ Returns a polygon object of \code{\link{gpc.poly-class}}.
 \code{Autocrop}
 }
 
-\examples{\donttest{
-data(tritest, package = "tripack")
+\examples{
+\donttest{data(tritest, package = "tripack")
 AutocropRegion(as.data.frame(tritest), asp = 1)
 }}
 

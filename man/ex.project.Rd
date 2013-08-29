@@ -23,7 +23,8 @@ described throughout the \pkg{RSurvey} documentation.
 \donttest{data(ex.project)
 str(ex.project)
 
-Data(replace.all = ex.project) # To programmatically load a project into RSurvey
+# To programmatically load a project into RSurvey:
+Data(replace.all = ex.project)
 }
 }
 

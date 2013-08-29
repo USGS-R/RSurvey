@@ -614,24 +614,23 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
   matched.cells <- NULL
 
   # Number of rows and columns in the viewable table
-  nrows <- if (m > 15) 15 else m
-  ncols <- if (n >  6)  6 else n
+  nrows <- if (m > 15L) 15L else m
+  ncols <- if (n >  6L)  6L else n
 
   # Account for missing arguments
-  if (is.null(col.names)) {
-    if (is.null(col.names) | length(col.names) != n) {
-      col.names <- LETTERS[1:n]
-      if (any(is.na(col.names))) {
-        from <- seq(27, n, by=26)
-        for (i in seq(along=from)) {
-          to <- from[i] + 25
-          if (to > n)
-            to <- n
-          l <- paste0(LETTERS[i], LETTERS[1:(to - from[i] + 1L)])
-          col.names[from[i]:to] <- l
-        }
+  if (is.null(col.names) || length(col.names) != n) {
+    col.names <- LETTERS[1:n]
+    if (any(is.na(col.names))) {
+      from <- seq(27, n, by=26)
+      for (i in seq(along=from)) {
+        to <- from[i] + 25
+        if (to > n)
+          to <- n
+        l <- paste0(LETTERS[i], LETTERS[1:(to - from[i] + 1L)])
+        col.names[from[i]:to] <- l
       }
     }
+    colnames(d) <- col.names
   } else {
     col.names <- col.names[1:n]
     col.names[is.na(col.names)] <- ""
@@ -656,7 +655,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
 
   # Determine column widths
   col.width <- NULL
-  for (j in 1:n) {
+  for (j in 1L:n) {
     if (col.names[j] == "")
       nchar.title <- 0
     else

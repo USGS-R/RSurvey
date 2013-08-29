@@ -178,6 +178,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     idx <- which(vapply(cols, function(i) i$id, "") == id)
 
     var.fmt <- cols[[idx]]$format
+    if (is.null(var.fmt))
+      var.fmt <- ""
 
     var.vals <- unique(EvalFunction(cols[[idx]]$fun, cols))
     var.class <- cols[[idx]]$class

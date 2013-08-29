@@ -35,8 +35,8 @@ Returns a polygon object of \code{\link{gpc.poly-class}}.
 
 \author{J.C. Fisher}
 
-\examples{\donttest{
-data(tritest, package = "tripack")
+\examples{
+\donttest{data(tritest, package = "tripack")
 mesh <- tripack::tri.mesh(tritest$x, tritest$y)
 plot(mesh)
 ply <- Autocrop(mesh, max.len = 0.5, max.itr = 100)

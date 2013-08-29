@@ -16,7 +16,7 @@ BuildHistogram(d, var.names = NULL, var.default = 1L, parent = NULL)
 \arguments{
 \item{d}{list, data.frame, matrix, or numeric; vector(s) of values for which the
   histogram is desired.}
-\item{var.names}{character; names corresponding to each vector (column) in 
+\item{var.names}{character; names corresponding to each vector (column) in
   \code{d}.}
 \item{var.default}{character or integer; vector name or index in \code{d},
   defaults to \code{1L}.}
@@ -38,10 +38,8 @@ Does not return any value.
 }
 
 \examples{
-\donttest{tclRequire("Tktable", warn = TRUE)
-data(ex.project)
+\donttest{data(ex.project)
 BuildHistogram(ex.project$data.pts)
-}
-}
+}}
 
 \keyword{misc}

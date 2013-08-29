@@ -40,8 +40,8 @@ A \code{list} with the following components:
 
 \author{J.C. Fisher}
 
-\examples{\donttest{
-ans <- Search()
-}}
+\examples{
+\donttest{ans <- Search()}
+}
 
 \keyword{misc}

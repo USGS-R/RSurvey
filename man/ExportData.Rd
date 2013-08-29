@@ -21,7 +21,7 @@ ExportData(file.type = "txt", parent = NULL)
 }
 
 \value{
-Saves the \acronym{GUI} options in the \code{export} component of 
+Saves the \acronym{GUI} options in the \code{export} component of
 \code{\link{Data}}. List components of \code{export} include:
 \item{processed}{logical; are exported records limited to processed
   data?}
@@ -50,7 +50,7 @@ Saves the \acronym{GUI} options in the \code{export} component of
   compressed using \href{http://www.bzip.org/}{bzip2} (text only).}
 \item{changelog}{logical; indicate if a separate text file should be
   written with the change log (text only).}
-\item{ascii}{logical; if \code{TRUE}, an \acronym{ASCII} representation of the 
+\item{ascii}{logical; if \code{TRUE}, an \acronym{ASCII} representation of the
   data is written (R data only).}
 }
 
@@ -61,7 +61,9 @@ Saves the \acronym{GUI} options in the \code{export} component of
 \author{J.C. Fisher}
 
 \examples{
-\donttest{ExportData(file.type = "txt")}
-}
+\donttest{data(ex.project)
+Data(replace.all = ex.project)
+ExportData(file.type = "txt")
+}}
 
 \keyword{IO}

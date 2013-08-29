@@ -44,7 +44,7 @@ z <- matrix(runif(length(x) * length(y)), nrow = length(y),
             ncol = length(x))
 
 d <- list(x = x, y = y, z = z)
-filled.contour(d, plot.axes = {axis(1); axis(2); sp::plot(ply, add = TRUE)})
+filled.contour(d, plot.axes = {axis(1); axis(2)})
 
 d <- CutoutPolygon(d, ply)
 filled.contour(d, color.palette = terrain.colors)

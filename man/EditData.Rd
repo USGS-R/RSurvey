@@ -49,8 +49,8 @@ Requires the Tcl package
 
 \author{J.C. Fisher}
 
-\examples{\donttest{
-tclRequire("Tktable", warn = TRUE)
+\examples{
+\donttest{tcltk::tclRequire("Tktable", warn = TRUE)
 
 n <- 1000L
 V1 <- sample(c(1:9, NA), n, replace = TRUE)
@@ -60,15 +60,15 @@ V4 <- sample(V1 * pi, n)
 d <- data.frame(V1, V2, V3, V4)
 col.names <- c("Integers", "Letters", "DateTime", "Numeric")
 col.formats <- c("\%d", "\%s", "\%m/\%d/\%Y \%H:\%M", "")
-ans <- EditData(d, col.names, col.formats, read.only = TRUE)
+ans <- EditData(d, col.names, col.formats)
 str(ans)
 
 rownames(d) <- paste0(sample(LETTERS, n, replace = TRUE), 1:n)
-EditData(d)
+EditData(d, read.only = TRUE)
 
 colnames(d) <- NULL
 rownames(d) <- NULL
-EditData(d)
+EditData(d, read.only = TRUE)
 }}
 
 \keyword{misc}

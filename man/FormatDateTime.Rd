@@ -16,7 +16,7 @@ FormatDateTime(sample = as.POSIXct("1991-08-25 20:57:08"), fmt = "",
 
 \arguments{
 \item{sample}{POSIXt or Date; a time object.}
-\item{fmt}{character; the format conversion specification string for time 
+\item{fmt}{character; the format conversion specification string for time
   values.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
@@ -32,7 +32,8 @@ Returns a character string representing the formatted date-time value.
 \author{J.C. Fisher}
 
 \examples{
-\donttest{FormatDateTime(fmt = "\%d/\%m/\%Y")}
-}
+\donttest{new.fmt <- FormatDateTime(fmt = "\%A \%B \%d \%I:\%M \%p")
+FormatDateTime(Sys.Date())
+}}
 
 \keyword{misc}

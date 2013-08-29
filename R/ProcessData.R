@@ -35,7 +35,7 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
     # Incorporate polygon spatial domain
     is.ply <- !is.null(ply) && inherits(ply, "gpc.poly")
     if (is.ply && is.x && is.y) {
-      all.pts <- get.pts(ply)
+      all.pts <- rgeos::get.pts(ply)
       for (i in seq(along=all.pts)) {
         pts <- all.pts[[i]]
         is.in <- point.in.polygon(point.x=d$x, point.y=d$y,
@@ -69,7 +69,7 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
       xlim <- range(x, na.rm=TRUE)
       ylim <- range(y, na.rm=TRUE)
     } else {
-      bb <- get.bbox(ply)
+      bb <- rgeos::get.bbox(ply)
       xlim <- bb$x
       ylim <- bb$y
     }
@@ -117,8 +117,8 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
 
     GetSurface <- function(x, y, z, pts, n, m) {
       xyz <- matrix(data=c(x, y, z), ncol=3)[!is.na(z), ]
-      ans <- mba.points(xyz=xyz, xy.est=pts, n=n, m=m, h=h,
-                        extend=TRUE, verbose=FALSE)$xyz.est
+      ans <- MBA::mba.points(xyz=xyz, xy.est=pts, n=n, m=m, h=h,
+                             extend=TRUE, verbose=FALSE)$xyz.est
       xy <- cbind(x, y)
       domain <- if (is.null(ply)) as(xy[chull(xy), ], "gpc.poly") else ply
       CutoutPolygon(ans, domain)

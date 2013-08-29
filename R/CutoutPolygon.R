@@ -26,7 +26,7 @@ CutoutPolygon <- function(dat, ply=NULL) {
   if (is.null(dat$z))
     dat$z <- pnt.in.ply
 
-  d <- get.pts(ply)
+  d <- rgeos::get.pts(ply)
   holes <- vapply(d, function(x) x$hole, TRUE)
   d <- append(d[!holes], d[holes])
 
