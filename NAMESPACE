@@ -1,4 +1,5 @@
-importFrom(sp, point.in.polygon)
+import(tcltk, sp)
+
 importFrom(MBA, mba.points)
 importFrom(rgeos, read.polyfile, write.polyfile, get.pts, get.bbox, area.poly,
            union, setdiff, intersect)
