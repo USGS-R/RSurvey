@@ -460,7 +460,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
   tkgrid.configure(frame1.lst.1.1, sticky="nsew", columnspan=5)
   tkgrid.configure(frame1.ysc.1.6, sticky="ns")
   tkgrid.configure(frame1.but.2.1, frame1.but.2.2, padx=c(0, 4))
-  tkgrid.configure(frame1.chk.2.4, padx=c(10, 0))
+  tkgrid.configure(frame1.chk.2.4, padx=c(40, 0))
 
   tkgrid.columnconfigure(frame1, 4, weight=1, minsize=0)
   tkgrid.rowconfigure(frame1, 0, weight=1)
