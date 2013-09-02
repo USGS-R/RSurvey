@@ -18,7 +18,7 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
     txt <- paste0("data(", pkg.item, ", package=\"", pkg.name, "\", envir=e)")
     ds.name <- eval(parse(text=txt))
     rtn <<- list(d=eval(parse(text=paste("(", ds.name, ")")), envir=e),
-                 src=paste(pkg.name, ds.name, sep="::"))
+                 src=c(dataset=ds.name, package=pkg.name))
     tclvalue(tt.done.var) <- 1
   }
 

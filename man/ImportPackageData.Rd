@@ -19,7 +19,10 @@ ImportPackageData(classes = NULL, parent = NULL)
 }
 
 \value{
-The data set object.
+Returns a list with the following components:
+\item{d}{data.frame or matrix; data set.}
+\item{src}{character; a vector of length 2 that includes the dataset and
+  package names.}
 }
 
 \author{J.C. Fisher}
@@ -29,7 +32,7 @@ The data set object.
 }
 
 \examples{
-\donttest{d <- ImportPackageData(c("data.frame", "matrix"))}
+\donttest{ans <- ImportPackageData(c("data.frame", "matrix"))}
 }
 
 \keyword{IO}

@@ -1086,13 +1086,19 @@ OpenRSurvey <- function() {
 
   menu.help <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Help", menu=menu.help, underline=0)
-  tkadd(menu.help, "command", label="Help",
+  tkadd(menu.help, "command", label="Introduction",
         command=function() {
           print(help("OpenRSurvey", package="RSurvey"))
         })
   tkadd(menu.help, "command", label="Functions",
         command=function() {
           help(package="RSurvey")
+        })
+  tkadd(menu.help, "command", label="Dataset",
+        command=function() {
+          src <- Data(c("import", "source"))
+          if (!is.null(src) && length(src) == 2)
+            print(help(src[1], package=src[2]))
         })
 
   tkadd(menu.help, "separator")
