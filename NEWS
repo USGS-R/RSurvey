@@ -1,3 +1,7 @@
+Changes in Version 0.7-9
+
+  o  Redesigned the GUI layout in the Format function.
+
 Changes in Version 0.7-8
 
   o  Variables of class 'Date' are now handled correctly.

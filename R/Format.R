@@ -6,80 +6,78 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
 
   # Save conversion specification format
   SaveFormat <- function() {
+    opt <- as.integer(tclvalue(opt.var))
     fmt <- as.character(tclvalue(fmt.var))
-    if (as.character(tclvalue(sample.var)) == "") {
+    sam <- as.character(tclvalue(sample.var))
+    if (opt == 3L && sam == "") {
       msg <- paste0("Invalid format '", fmt, "'; please try again.")
       tkmessageBox(icon="error", message=msg, title="Error", type="ok",
                    parent=tt)
+      tkfocus(frame3.ent.1)
     } else {
-      new.fmt <<- fmt
+      new.fmt <<- ifelse(opt == 1L, "", fmt)
       tclvalue(tt.done.var) <- 1
     }
   }
 
-  # Translate format string, return TRUE if format is recognized
+  # Translate format string
 
   TranslateFormat <- function() {
-    if (nchar(fmt) < 2L)
-      return(FALSE)
-    if (substr(fmt, 1L, 1L) != "%")
-      return(FALSE)
+    tclvalue(opt.var) <- 1L
+    if (nchar(fmt) == 0L)
+      return()
+    tclvalue(opt.var) <- 3L
+
+    if (nchar(fmt) < 2L || substr(fmt, 1L, 1L) != "%")
+      return()
     code <- substr(fmt, nchar(fmt), nchar(fmt))
     if (inherits(sample, "integer")) {
       if (code != "d")
-        return(FALSE)
+        return()
     } else if (inherits(sample, "numeric")) {
       if (!code %in% c("f", "e"))
-        return(FALSE)
+        return()
     } else {
       if(code != "s")
-        return(FALSE)
+        return()
     }
 
     width <- ""
     precision <- ""
-
-    is.scientific <- if (code == "e") TRUE else FALSE
+    is.scientific <- ifelse(code == "e", TRUE, FALSE)
 
     len <- attr(regexpr("\\-", fmt), "match.length")
-    is.left <- if (len > 0L) TRUE else FALSE
+    is.left <- ifelse(len > 0L, TRUE, FALSE)
     if (len > 1L)
-      return(FALSE)
-
+      return()
     len <- attr(regexpr("\\.", fmt), "match.length")
-    is.period <- if (len > 0L) TRUE else FALSE
+    is.period <- ifelse(len > 0L, TRUE, FALSE)
     if (len > 1L | (is.period & code %in% c("d", "s")))
-      return(FALSE)
-
+      return()
     len <- attr(regexpr("[[:space:]]", fmt), "match.length")
-    is.space <- if (len > 0L) TRUE else FALSE
+    is.space <- ifelse(len > 0L, TRUE, FALSE)
     if (len > 1L | (is.space & code == "s"))
-      return(FALSE)
-
+      return()
     len <- attr(regexpr("\\+", fmt), "match.length")
-    is.sign <- if (len > 0L) TRUE else FALSE
+    is.sign <- ifelse(len > 0L, TRUE, FALSE)
     if (len > 1L | (is.sign & code == "s"))
-      return(FALSE)
+      return()
 
     is.pad <- FALSE
-
     if (nchar(fmt) > 2L) {
       fmt <- substr(fmt, 2L, nchar(fmt) - 1L)
-
       if (is.period) {
         fmt.split <- strsplit(fmt, "\\.")[[1L]]
         if (length(fmt.split) > 1L) {
           precision <- suppressWarnings(as.integer(fmt.split[2L]))
           if (is.na(precision))
-            return(FALSE)
+            return()
         }
         fmt <- fmt.split[1L]
       }
-
       fmt <- sub("[[:space:]]", "", fmt)
       fmt <- sub("\\+", "", fmt)
       fmt <- sub("\\-", "", fmt)
-
       if (nchar(fmt) > 1L) {
         if (substr(fmt, 1L, 1L) == "0") {
           is.pad <- TRUE
@@ -89,11 +87,11 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
       if (nchar(fmt) > 0L) {
         width <- suppressWarnings(as.integer(fmt))
         if (is.na(width))
-          return(FALSE)
+          return()
       }
     }
 
-    tclvalue(custom.var) <- FALSE
+    tclvalue(opt.var) <- 2L
     tclvalue(width.var) <- width
     tclvalue(precision.var) <- precision
     tclvalue(scientific.var) <- is.scientific
@@ -101,18 +99,17 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
     tclvalue(sign.var) <- is.sign
     tclvalue(space.var) <- is.space
     tclvalue(pad.var) <- is.pad
-
     BuildFormat()
-    return(TRUE)
+    return()
   }
 
   # Add string to conversion format entry
   AddString <- function(txt) {
-    if (as.logical(tcl(frame1.ent.1, "selection", "present")))
-      tcl(frame1.ent.1, "delete", "sel.first", "sel.last")
-    tkinsert(frame1.ent.1, "insert", txt)
+    if (as.logical(tcl(frame3.ent.1, "selection", "present")))
+      tcl(frame3.ent.1, "delete", "sel.first", "sel.last")
+    tkinsert(frame3.ent.1, "insert", txt)
     UpdateSample()
-    tkfocus(frame1.ent.1)
+    tkfocus(frame3.ent.1)
   }
 
   # Toggle GUI state based on custom check box
@@ -121,28 +118,13 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
 
-    is.custom <- as.logical(as.integer(tclvalue(custom.var)))
+    opt <- as.integer(tclvalue(opt.var))
 
-    s <- if (is.custom) "normal" else "readonly"
-    tkconfigure(frame1.ent.1, state=s)
-
-    s <- if (is.custom) "normal" else "disabled"
-    tkconfigure(frame1a.but.01, state=s)
-    tkconfigure(frame1a.but.02, state=s)
-    tkconfigure(frame1a.but.03, state=s)
-    tkconfigure(frame1a.but.04, state=s)
-    tkconfigure(frame1a.but.05, state=s)
-    tkconfigure(frame1a.but.06, state=s)
-    tkconfigure(frame1a.but.07, state=s)
-    tkconfigure(frame1a.but.08, state=s)
-    tkconfigure(frame1a.but.09, state=s)
-    tkconfigure(frame1a.but.10, state=s)
-
-    s <- if (is.custom) "readonly" else "normal"
+    s <- ifelse(opt == 2L, "normal", "readonly")
     tkconfigure(frame2.ent.1.2, state=s)
     tkconfigure(frame2.ent.1.4, state=s)
 
-    s <- if (is.custom) "disabled" else "normal"
+    s <- ifelse(opt == 2L, "normal",  "disabled")
     tkconfigure(frame2.lab.1.1, state=s)
     tkconfigure(frame2.lab.1.3, state=s)
     tkconfigure(frame2.chk.2.1, state=s)
@@ -151,28 +133,45 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
     tkconfigure(frame2.chk.5.1, state=s)
     tkconfigure(frame2.chk.6.1, state=s)
 
-    if (is.custom) {
-      tkfocus(frame1.ent.1)
-    } else {
+    s <- ifelse(opt == 3L, "normal", "readonly")
+    tkconfigure(frame3.ent.1, state=s)
+
+    s <- ifelse(opt == 3L, "normal", "disabled")
+    tkconfigure(frame3a.but.01, state=s)
+    tkconfigure(frame3a.but.02, state=s)
+    tkconfigure(frame3a.but.03, state=s)
+    tkconfigure(frame3a.but.04, state=s)
+    tkconfigure(frame3a.but.05, state=s)
+    tkconfigure(frame3a.but.06, state=s)
+    tkconfigure(frame3a.but.07, state=s)
+    tkconfigure(frame3a.but.08, state=s)
+    tkconfigure(frame3a.but.09, state=s)
+    tkconfigure(frame3a.but.10, state=s)
+
+    if (opt == 1L) {
+      UpdateSample()
+    } else if (opt == 2L) {
       BuildFormat()
-      if (is.numeric(sample) && !is.integer(sample))
+      if (inherits(sample, "numeric"))
         tkfocus(frame2.ent.1.4)
       else
         tkfocus(frame2.ent.1.2)
+    } else if (opt == 3L) {
+      UpdateSample()
+      tkfocus(frame3.ent.1)
     }
+    return()
   }
 
   # Update sample value
   UpdateSample <- function() {
+    opt <- as.integer(tclvalue(opt.var))
     fmt <- as.character(tclvalue(fmt.var))
-    if (fmt == "") {
+    if (fmt == "" || opt == 1L) {
       tclvalue(sample.var) <- format(sample)
     } else {
       ans <- try(sprintf(fmt, sample), silent=TRUE)
-      if (inherits(ans, "try-error"))
-        tclvalue(sample.var) <- ""
-      else
-        tclvalue(sample.var) <- ans
+      tclvalue(sample.var) <- ifelse(inherits(ans, "try-error"), "", ans)
     }
   }
 
@@ -183,16 +182,16 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
     width <- as.character(tclvalue(width.var))
 
     is.left <- as.logical(as.integer(tclvalue(left.var)))
-    left <- if (is.left) "-" else ""
+    left <- ifelse(is.left, "-", "")
 
     if (is.numeric(sample)) {
       is.space <- as.logical(as.integer(tclvalue(space.var)))
       is.pad   <- as.logical(as.integer(tclvalue(pad.var)))
       is.sign  <- as.logical(as.integer(tclvalue(sign.var)))
 
-      space <- if (is.space) " " else ""
-      pad <- if (is.pad & width != "") "0" else ""
-      sign <- if (is.sign) "+" else ""
+      space <- ifelse(is.space, " ", "")
+      pad <- ifelse((is.pad && width != ""), "0", "")
+      sign <- ifelse(is.sign, "+", "")
       period <- ""
       precision <- ""
 
@@ -206,7 +205,7 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
           period <- "."
 
         is.scientific <- as.logical(as.integer(tclvalue(scientific.var)))
-        letter <- if (is.scientific) "e" else "f"
+        letter <- ifelse(is.scientific, "e", "f")
       }
       fmt <- paste0("%", space, pad, left, sign, width, period, precision,
                     letter)
@@ -225,16 +224,18 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
 
   # Paste format from clipboard
   PasteFormat <- function() {
+    opt <- as.integer(tclvalue(opt.var))
+    if (opt != 3L)
+      return()
     cb <- try(scan(file="clipboard", what="character", sep="\n", quiet=TRUE),
               silent=TRUE)
     if (inherits(cb, "try-error"))
       return()
-    tclvalue(custom.var) <- TRUE
-    ToggleState()
     tclvalue(fmt.var) <- cb
     UpdateSample()
-    tkfocus(frame1.ent.1)
+    tkfocus(frame3.ent.1)
   }
+
 
   ## Main program
 
@@ -248,9 +249,9 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
 
   # Assign variables linked to Tk widgets
 
+  opt.var        <- tclVar()
   sample.var     <- tclVar()
-  fmt.var        <- tclVar()
-  custom.var     <- tclVar(0)
+  fmt.var        <- tclVar(fmt)
   width.var      <- tclVar()
   precision.var  <- tclVar()
   scientific.var <- tclVar(0)
@@ -260,11 +261,8 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
   pad.var        <- tclVar(0)
   tt.done.var    <- tclVar(0)
 
-  tclvalue(custom.var) <- TRUE
-  tclvalue(fmt.var) <- fmt
-
-  if (!TranslateFormat())
-    UpdateSample()
+  TranslateFormat()
+  UpdateSample()
 
   # Open GUI
 
@@ -296,79 +294,26 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
   tkgrid.configure(frame0.but.4, padx=c(4, 10))
   tkpack(frame0, fill="x", side="bottom", anchor="e")
 
-  # Frame 1, conversion specification format
+  # Frame 1, format using
 
   frame1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Conversion specification format")
+                          text="Format using")
 
-  frame1.ent.1 <- ttkentry(frame1, textvariable=fmt.var, width=30)
+  frame1.rbt.1.1 <- ttkradiobutton(frame1, variable=opt.var, value=1L,
+                                   text="Common format",
+                                   command=ToggleState)
+  frame1.rbt.1.2 <- ttkradiobutton(frame1, variable=opt.var, value=2L,
+                                   text="C-style options",
+                                   command=ToggleState)
+  frame1.rbt.1.3 <- ttkradiobutton(frame1, variable=opt.var, value=3L,
+                                   text="C-style string",
+                                   command=ToggleState)
 
-  frame1a <- ttkframe(frame1, relief="flat", borderwidth=0, padding=0)
+  tkgrid(frame1.rbt.1.1, frame1.rbt.1.2, frame1.rbt.1.3)
 
-  frame1a.but.01 <- ttkbutton(frame1a, width=2, text="%",
-                              command=function() AddString("%"))
-  frame1a.but.02 <- ttkbutton(frame1a, width=2, text="\u002b",
-                              command=function() AddString("+"))
-  frame1a.but.03 <- ttkbutton(frame1a, width=2, text="\u2212",
-                              command=function() AddString("-"))
-  frame1a.but.04 <- ttkbutton(frame1a, width=2, text=" ",
-                              command=function() AddString(" "))
-  frame1a.but.05 <- ttkbutton(frame1a, width=2, text="0",
-                              command=function() AddString("0"))
-  frame1a.but.06 <- ttkbutton(frame1a, width=2, text=".",
-                              command=function() AddString("."))
-  frame1a.but.07 <- ttkbutton(frame1a, width=2, text="f",
-                              command=function() AddString("f"))
-  frame1a.but.08 <- ttkbutton(frame1a, width=2, text="e",
-                              command=function() AddString("e"))
-  frame1a.but.09 <- ttkbutton(frame1a, width=2, text="d",
-                              command=function() AddString("d"))
-  frame1a.but.10 <- ttkbutton(frame1a, width=2, text="s",
-                              command=function() AddString("s"))
+  tkgrid.configure(frame1.rbt.1.2, padx=10)
 
-  frame1a.but.11 <- ttkbutton(frame1a, width=2, image=GetBitmapImage("copy"),
-                             command=CopyFormat)
-  frame1a.but.12 <- ttkbutton(frame1a, width=2, image=GetBitmapImage("paste"),
-                             command=PasteFormat)
-
-  frame1a.chk.13 <- ttkcheckbutton(frame1a, text="Custom\u2026",
-                                   variable=custom.var, command=ToggleState)
-
-  if (is.numeric(sample)) {
-    if (is.integer(sample))
-      tkgrid(frame1a.but.01, frame1a.but.02, frame1a.but.03, frame1a.but.04,
-             frame1a.but.05, frame1a.but.06, frame1a.but.07, frame1a.but.08,
-             frame1a.but.09, frame1a.but.10, frame1a.but.11, frame1a.but.12,
-             frame1a.chk.13, pady=c(2, 0), padx=c(0, 2))
-    else
-      tkgrid(frame1a.but.01, frame1a.but.02, frame1a.but.03, frame1a.but.04,
-             frame1a.but.05, frame1a.but.06, frame1a.but.07, frame1a.but.08,
-             frame1a.but.10, frame1a.but.11, frame1a.but.12, frame1a.chk.13,
-             pady=c(2, 0), padx=c(0, 2))
-
-
-  } else {
-    if (is.logical(sample))
-      tkgrid(frame1a.but.01, frame1a.but.02, frame1a.but.03, frame1a.but.04,
-             frame1a.but.05, frame1a.but.06, frame1a.but.09, frame1a.but.10,
-             frame1a.but.11, frame1a.but.12, frame1a.chk.13,
-             pady=c(2, 0), padx=c(0, 2))
-    else
-      tkgrid(frame1a.but.01, frame1a.but.02, frame1a.but.03, frame1a.but.04,
-             frame1a.but.05, frame1a.but.06, frame1a.but.10, frame1a.but.11,
-             frame1a.but.12, frame1a.chk.13, pady=c(2, 0), padx=c(0, 2))
-  }
-
-  tkgrid(frame1.ent.1)
-  tkgrid(frame1a, "x", pady=c(2, 0), sticky="w")
-  tkgrid.configure(frame1a.but.10, padx=c(0, 10))
-  tkgrid.configure(frame1a.chk.13, padx=c(10, 0))
-
-  tkgrid.configure(frame1.ent.1, sticky="we", columnspan=2, padx=c(0, 2))
-
-  tkgrid.columnconfigure(frame1, 1, weight=1)
-
-  tkpack(frame1, fill="x", padx=10, pady=c(10, 0))
+  tkpack(frame1, fill="x", padx=10, pady=10)
 
 # Frame 2
 
@@ -414,7 +359,74 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
     tkgrid(frame2.chk.6.1, columnspan=4, sticky="w", padx=c(10, 0))
   }
 
-  tkpack(frame2, padx=10, pady=10, anchor="w")
+  tkpack(frame2, padx=10, pady=0, anchor="w")
+
+  # Frame 3, conversion specification format
+
+  frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
+                          text="Conversion specification string")
+
+  frame3.ent.1 <- ttkentry(frame3, textvariable=fmt.var, width=30)
+
+  frame3a <- ttkframe(frame3, relief="flat", borderwidth=0, padding=0)
+
+  frame3a.but.01 <- ttkbutton(frame3a, width=2, text="%",
+                              command=function() AddString("%"))
+  frame3a.but.02 <- ttkbutton(frame3a, width=2, text="\u002b",
+                              command=function() AddString("+"))
+  frame3a.but.03 <- ttkbutton(frame3a, width=2, text="\u2212",
+                              command=function() AddString("-"))
+  frame3a.but.04 <- ttkbutton(frame3a, width=2, text=" ",
+                              command=function() AddString(" "))
+  frame3a.but.05 <- ttkbutton(frame3a, width=2, text="0",
+                              command=function() AddString("0"))
+  frame3a.but.06 <- ttkbutton(frame3a, width=2, text=".",
+                              command=function() AddString("."))
+  frame3a.but.07 <- ttkbutton(frame3a, width=2, text="f",
+                              command=function() AddString("f"))
+  frame3a.but.08 <- ttkbutton(frame3a, width=2, text="e",
+                              command=function() AddString("e"))
+  frame3a.but.09 <- ttkbutton(frame3a, width=2, text="d",
+                              command=function() AddString("d"))
+  frame3a.but.10 <- ttkbutton(frame3a, width=2, text="s",
+                              command=function() AddString("s"))
+
+  frame3a.but.11 <- ttkbutton(frame3a, width=2, image=GetBitmapImage("copy"),
+                             command=CopyFormat)
+  frame3a.but.12 <- ttkbutton(frame3a, width=2, image=GetBitmapImage("paste"),
+                             command=PasteFormat)
+
+  if (is.numeric(sample)) {
+    if (is.integer(sample))
+      tkgrid(frame3a.but.01, frame3a.but.02, frame3a.but.03, frame3a.but.04,
+             frame3a.but.05, frame3a.but.06, frame3a.but.07, frame3a.but.08,
+             frame3a.but.09, frame3a.but.10, frame3a.but.11, frame3a.but.12,
+             pady=c(2, 0), padx=c(0, 2))
+    else
+      tkgrid(frame3a.but.01, frame3a.but.02, frame3a.but.03, frame3a.but.04,
+             frame3a.but.05, frame3a.but.06, frame3a.but.07, frame3a.but.08,
+             frame3a.but.10, frame3a.but.11, frame3a.but.12,
+             pady=c(2, 0), padx=c(0, 2))
+  } else {
+    if (is.logical(sample))
+      tkgrid(frame3a.but.01, frame3a.but.02, frame3a.but.03, frame3a.but.04,
+             frame3a.but.05, frame3a.but.06, frame3a.but.09, frame3a.but.10,
+             frame3a.but.11, frame3a.but.12, pady=c(2, 0), padx=c(0, 2))
+    else
+      tkgrid(frame3a.but.01, frame3a.but.02, frame3a.but.03, frame3a.but.04,
+             frame3a.but.05, frame3a.but.06, frame3a.but.10, frame3a.but.11,
+             frame3a.but.12, pady=c(2, 0), padx=c(0, 2))
+  }
+
+  tkgrid(frame3.ent.1)
+  tkgrid(frame3a, "x", pady=c(2, 0), sticky="w")
+  tkgrid.configure(frame3a.but.10, padx=c(0, 10))
+
+  tkgrid.configure(frame3.ent.1, sticky="we", columnspan=2, padx=c(0, 2))
+
+  tkgrid.columnconfigure(frame3, 1, weight=1)
+
+  tkpack(frame3, fill="x", padx=10, pady=10)
 
   # Frame 3, sample
 
@@ -434,7 +446,7 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tkbind(frame1.ent.1, "<KeyRelease>", UpdateSample)
+  tkbind(frame3.ent.1, "<KeyRelease>", UpdateSample)
 
   tkbind(frame2.ent.1.2, "<KeyRelease>", BuildFormat)
   tkbind(frame2.ent.1.4, "<KeyRelease>", BuildFormat)
