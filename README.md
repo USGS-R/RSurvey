@@ -55,7 +55,7 @@ Load **RSurvey** in the current R session to activate the main GUI:
 
     > library(RSurvey)
 
-Example data sets are provided at
+Example data sets are provided in the following directory:
 
     > system.file('extdata', package = 'RSurvey')
 
