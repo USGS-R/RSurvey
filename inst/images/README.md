@@ -4,7 +4,7 @@ Images
 Image files in this directory are covered by the following public licenses:
 
 [cc]: <http://creativecommons.org/licenses/by-sa/3.0/ "Creative Commons"
-[gpl]: http://www.gnu.org/copyleft/gpl.html "GPL"
+[GPL]: http://www.gnu.org/copyleft/gpl.html "GPL"
 
 ---
 
@@ -27,4 +27,4 @@ Image files in this directory are covered by the following public licenses:
 
 **Image:** pch.gif  
 **Designer:** Jason C. Fisher  
-**License:** GNU General Public License ([gpl])
+**License:** GNU General Public License ([GPL])
