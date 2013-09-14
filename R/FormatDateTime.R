@@ -47,14 +47,17 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt="",
     tkconfigure(frame0.but.1, image=img,
                 command=function() ToggleTreeView(!open.nodes))
     tcl(frame1.tre, "item", id.dt, "-open", open.nodes)
-    tcl(frame1.tre, "item", id.tm, "-open", open.nodes)
+
     tcl(frame1.tre, "item", id.yr, "-open", open.nodes)
     tcl(frame1.tre, "item", id.mo, "-open", open.nodes)
-    tcl(frame1.tre, "item", id.dy, "-open", open.nodes)
-    tcl(frame1.tre, "item", id.hr, "-open", open.nodes)
-    tcl(frame1.tre, "item", id.mn, "-open", open.nodes)
-    tcl(frame1.tre, "item", id.sc, "-open", open.nodes)
     tcl(frame1.tre, "item", id.wk, "-open", open.nodes)
+    tcl(frame1.tre, "item", id.dy, "-open", open.nodes)
+    if (is.posixt) {
+      tcl(frame1.tre, "item", id.tm, "-open", open.nodes)
+      tcl(frame1.tre, "item", id.hr, "-open", open.nodes)
+      tcl(frame1.tre, "item", id.mn, "-open", open.nodes)
+      tcl(frame1.tre, "item", id.sc, "-open", open.nodes)
+    }
   }
 
   # Copy format to clipboard
@@ -88,7 +91,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt="",
   if (!is.character(fmt))
     stop("format argument must be of class character")
   is.posixt <- inherits(sample, "POSIXt")
-  
+
   cur.val <- NA
   new.fmt <- NULL
   img.plus  <- GetBitmapImage("plus")
