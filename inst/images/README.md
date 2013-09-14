@@ -3,7 +3,7 @@ Images
 
 Image files in this directory are covered by the 
 Creative Commons Attribution-Share Alike 3.0 license 
-([cc](http://creativecommons.org/licenses/by-sa/3.0/ "Creative Commons"))
+([cc](http://creativecommons.org/licenses/by-sa/3.0/ "Creative Commons")).
 
 ---
 
