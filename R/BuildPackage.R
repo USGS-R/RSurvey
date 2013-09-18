@@ -1,9 +1,9 @@
 # Writes a series of commands for creating an R package to a Windows batch file.
-# Software requirements for building R packages in Windows XP Pro:
-#   Download and install the Rtools installer (choose to update Search Path)
-#     http://www.murdoch-sutherland.com/Rtools/installer.html
+# Software requirements for building R packages in a Windows OS:
+#   Download and install the Rtools installer
+#     http://cran.r-project.org/bin/windows/Rtools/
 #   Download and install the MiKTeX installation program
-#     http://www.miktex.org/setup.html
+#     http://www.miktex.org/download
 
 BuildPackage <- function() {
   if (.Platform$OS.type != "windows")
