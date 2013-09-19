@@ -21,19 +21,21 @@ BuildPackage <- function() {
   path.cmd <- paste0(R.home(component="bin"), "/Rcmd")
   file.zip <- shQuote(paste0(pkg, "_*"))
 
-  cmd <- NULL
-  cmd <- append(cmd, paste0("RM -f ", getwd(), "/", pkg, "*"))
-  cmd <- append(cmd, paste(path.cmd, "REMOVE", pkg))
-  cmd <- append(cmd, paste("CP -r", path.pkg, shQuote("C:/")))
-  cmd <- append(cmd, paste("RMDIR /S /Q", path.chk))
-  cmd <- append(cmd, paste("RMDIR /S /Q", path.git))
-  cmd <- append(cmd, paste(path.cmd, "build", path.tmp, "--resave-data"))
-  cmd <- append(cmd, paste(path.cmd, "check", path.tar))
-  cmd <- append(cmd, paste(path.cmd, "INSTALL --build", path.tmp))
-  cmd <- append(cmd, paste("RMDIR /S /Q", path.tmp))
-  cmd <- append(cmd, paste("MOVE /Y", file.zip, path.pkg))
+  cs <- paste(Sys.getenv("COMSPEC"), "/c")
 
-  cmd <- paste(Sys.getenv("COMSPEC"), "/c", cmd)
+  cmd <- paste("CD /d", path.pkg)
+  cmd <- append(cmd, paste0(cs, " RM -f ", pkg, "*"))
+  cmd <- append(cmd, "CD /d C:/")
+  cmd <- append(cmd, paste(cs, path.cmd, "REMOVE", pkg))
+  cmd <- append(cmd, paste(cs, "CP -r", path.pkg, shQuote("C:/")))
+  cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.chk))
+  cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.git))
+  cmd <- append(cmd, paste(cs, path.cmd, "build", path.tmp, "--resave-data"))
+  cmd <- append(cmd, paste(cs, path.cmd, "check", path.tar))
+  cmd <- append(cmd, paste(cs, path.cmd, "INSTALL --build", path.tar))
+  cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.tmp))
+  cmd <- append(cmd, paste(cs, "MOVE /Y", file.zip, path.pkg))
+  cmd <- append(cmd, "pause")
 
   f <- tcl("tk_getSaveFile", defaultextension=".bat",
            title="Save Batch file As", initialfile=paste0(pkg, ".bat"),
@@ -43,5 +45,5 @@ BuildPackage <- function() {
   if (length(f) == 0)
     return()
 
-  cat(c("CD /d C:/", cmd, "pause"), file=f, sep="\n")
+  cat(cmd, file=f, sep="\n")
 }
