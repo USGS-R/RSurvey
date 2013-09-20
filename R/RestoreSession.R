@@ -8,9 +8,9 @@ RestoreSession <- function(path, save.objs, fun.call) {
       if("R" %in% dir(path=initial.dir, full.names=FALSE))
         initial.dir <- file.path(initial.dir, "R")
 
-      path <- tkchooseDirectory(initialdir=initial.dir,
-                                title="Choose R Source Directory...")
-      path <- tclvalue(path)
+      path <- tcltk::tkchooseDirectory(initialdir=initial.dir,
+                                       title="Choose R Source Directory...")
+      path <- tcltk::tclvalue(path)
       if (!nzchar(path))
         return()
 
@@ -31,17 +31,15 @@ RestoreSession <- function(path, save.objs, fun.call) {
   r.files <- list.files(path, pattern="[.][R]$", full.names=TRUE,
                         recursive=TRUE, ignore.case=TRUE)
 
-  graphics.off()
+  grDevices::graphics.off()
   rm(list=cur.objs, envir=as.environment(1))
 
   err.msg <- "\n"
 
   cat("\n")
   for (i in r.files) {
-    file.name <- tail(unlist(strsplit(i, "/")), 1)
-    obj <- substr(file.name, 1, nchar(file.name) - 2)
-
-    if (!obj %in% save.objs) {
+    file.name <- substr(basename(i), 1L, nchar(basename(i)) - 2L)
+    if (!file.name %in% save.objs) {
       ans <- try(source(i), silent=TRUE)
       if (inherits(ans, "try-error"))
         err.msg <- paste0(err.msg, i, "\n", ans)
