@@ -3,7 +3,7 @@ Version: 0.7-9
 Date: 2013-08-28
 Title: Analysis of Spatially Distributed Data
 Author: Jason C. Fisher
-Maintainer: Fisher, Jason <jfisher@usgs.gov>
+Maintainer: Jason C. Fisher <jfisher@usgs.gov>
 Depends: R (>= 3.0.0)
 Imports: tcltk, sp, rgeos, MBA
 Suggests: rgdal, tripack, colorspace, dichromat, rgl
