@@ -23,12 +23,12 @@ by choosing to customize the start-up options and specifying the SDI interface
 
 Open an R session and install **RSurvey** and its dependent packages from CRAN:
 
-    > install.packages('RSurvey')
+    > install.packages("RSurvey")
 
 In addition to the required packages, **RSurvey** uses functions in a number of
 recommended packages:
 [**rgl**](http://cran.r-project.org/web/packages/rgl/index.html "rgl")
-for 3D visualization, 
+for 3D visualization,
 [**rgdal**](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal")
 for Esri shapefile support,
 [**colorspace**](http://cran.r-project.org/web/packages/colorspace/index.html "colorspace")
@@ -46,7 +46,7 @@ a spreadsheet-like [Tcl/Tk](http://www.tcl.tk/ "Tcl/Tk") widget
 (typically included with the binary distribution of R).
 The following call will indicate whether tktable is available for use:
 
-    > tcltk::tclRequire('Tktable', warn = TRUE)
+    > tcltk::tclRequire("Tktable", warn = TRUE)
 
 Run
 ---
@@ -57,5 +57,5 @@ Load **RSurvey** in the current R session to activate the main GUI:
 
 Example data sets are provided in the following directory:
 
-    > system.file('extdata', package = 'RSurvey')
+    > system.file("extdata", package = "RSurvey")
 
