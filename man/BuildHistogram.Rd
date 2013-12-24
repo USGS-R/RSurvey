@@ -34,7 +34,8 @@ Does not return any value.
 \author{J.C. Fisher}
 
 \seealso{
-\code{\link{hist}}, \code{\link{plot.histogram}}, \code{\link{EditData}}
+\code{\link{hist}}, \code{\link{plot.histogram}}, \code{\link{rug}},
+\code{\link{density}}
 }
 
 \examples{
