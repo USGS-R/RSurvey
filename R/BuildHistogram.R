@@ -28,6 +28,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     }
 
     right <- as.logical(as.integer(tclvalue(right.var)))
+    obs <- as.logical(as.integer(tclvalue(obs.var)))
     freq <- as.logical(as.integer(tclvalue(freq.var)))
     obj <- try(hist(d[[idx]], breaks=breaks, right=right, plot=FALSE), silent=TRUE)
     if (inherits(obj, "try-error")) {
@@ -43,6 +44,15 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
         par(mar=c(5, 5, 2, 2) + 0.1)
       }
       plot(obj, col="light grey", freq=freq, main=NULL, xlab=xlab)
+      if (obs)
+        rug(d[[idx]], quiet=TRUE)
+      if (!freq) {
+        bandwidth <- as.numeric(tclvalue(bandwidth.var))
+        if (!is.na(bandwidth) && bandwidth > 0) {
+          dens <- density(d[[idx]], adjust=bandwidth)
+          lines(dens, col="blue")
+        }
+      }
     } else {
       obj$xname <- xlab
       txt <- paste(c(capture.output(obj), ""), collapse="\n")
@@ -51,14 +61,20 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     }
   }
 
-  # Adjust scale
-  AdjustScale <- function(x) {
+  # Adjust scale for number of cells
+  AdjustScaleSingle <- function(x) {
     idx <- as.integer(tcl(frame1.box.1.2, "current")) + 1L
     breaks <- as.integer(x * (maxs[idx] - 1) + 1)
     if (breaks != as.integer(tclvalue(single.var))) {
       tclvalue(single.var) <- breaks
       PlotHist()
     }
+  }
+
+  # Adjust scale for bandwidth in density estimate
+  AdjustScaleBandwidth <- function(x) {
+    tclvalue(bandwidth.var) <- round(as.numeric(x), digits=1)
+    PlotHist()
   }
 
   # Plot Histogram
@@ -68,15 +84,12 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   }
 
   # Toggle state on break options
-
-  ToggleState <- function() {
+  ToggleStateBreaks <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
-
     type <- as.integer(tclvalue(breaks.var))
     states <- rep(FALSE, 4)
     states[type] <- TRUE
-
     s <- if (states[1]) "readonly" else "disabled"
     tkconfigure(frame2.box.2.1, state=s)
     s <- if (states[2]) "!disabled" else "disabled"
@@ -85,7 +98,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     tkconfigure(frame2.ent.4.3, state=s)
     s <- if (states[3]) "normal" else "disabled"
     tkconfigure(frame2.ent.6.1, state=s)
-
     if (states[1]) {
       tkfocus(frame2.box.2.1)
     } else if (states[2]) {
@@ -93,7 +105,20 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     } else if (states[3]) {
       tkfocus(frame2.ent.6.1)
     }
+    PlotHist()
+  }
 
+  # Toggle state on bandwidth
+  ToggleStateBandwidth <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
+    freq <- as.logical(as.integer(tclvalue(freq.var)))
+    s <- if (freq) "disabled" else "!disabled"
+    tcl(frame4.scl.2.1, "state", s)
+    s <- if (freq) "disabled" else "normal"
+    tkconfigure(frame4.ent.2.3, state=s)
+    if (freq)
+      tkfocus(frame4.ent.2.3)
     PlotHist()
   }
 
@@ -145,10 +170,13 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
 
   breaks.var <- tclVar(1L)
   single.var <- tclVar(defs[var.default])
-  scale.var <- tclVar(xdef)
+  scale.sgl.var <- tclVar(xdef)
   vector.var <- tclVar()
   right.var <- tclVar(TRUE)
+  obs.var <- tclVar(FALSE)
   freq.var <- tclVar(TRUE)
+  bandwidth.var <- tclVar(1)
+  scale.bw.var <- tclVar(1)
 
   tt.done.var <- tclVar(0)
 
@@ -183,7 +211,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   tkgrid(frame0.but.1, frame0.but.2, "x", frame0.but.4, frame0.but.5, pady=10)
   tkgrid.configure(frame0.but.1, padx=c(10, 4))
   tkgrid.configure(frame0.but.5, padx=c(4, 10))
-  
+
   tkgrid.columnconfigure(frame0, 2, weight=1, minsize=15)
   tkpack(frame0, fill="x", expand=TRUE, side="bottom", anchor="e")
 
@@ -211,26 +239,25 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
 
   txt <- "A function to compute the number of cells for the histogram"
   frame2.rbt.1.1 <- ttkradiobutton(frame2, variable=breaks.var, value=1L,
-                                  text=txt, command=ToggleState)
+                                  text=txt, command=ToggleStateBreaks)
   frame2.box.2.1 <- ttkcombobox(frame2, state="readonly")
   tkconfigure(frame2.box.2.1, value=fun.names)
   tcl(frame2.box.2.1, "current", 0)
 
   txt <- "A single number giving the suggested number of cells"
   frame2.rbt.3.1 <- ttkradiobutton(frame2, variable=breaks.var, value=2L,
-                                  text=txt, command=ToggleState)
+                                  text=txt, command=ToggleStateBreaks)
   frame2.scl.4.1 <- tkwidget(frame2, "ttk::scale", from=0, to=1,
-                             orient="horizontal", variable=scale.var,
+                             orient="horizontal", variable=scale.sgl.var,
                              command=function(...) {
-                               AdjustScale(x=as.numeric(...))
+                               AdjustScaleSingle(x=as.numeric(...))
                              })
   frame2.ent.4.3 <- ttkentry(frame2, width=4, textvariable=single.var)
 
   txt <- "A vector giving the breakpoints between cells"
   frame2.rbt.5.1 <- ttkradiobutton(frame2, variable=breaks.var, value=3L,
-                                  text=txt, command=ToggleState)
+                                  text=txt, command=ToggleStateBreaks)
   frame2.ent.6.1 <- ttkentry(frame2, width=15, textvariable=vector.var)
-  
 
   tkgrid(frame2.rbt.1.1, sticky="w", columnspan=3)
   tkgrid(frame2.box.2.1, padx=c(20, 0), pady=c(0, 10), sticky="we",
@@ -240,31 +267,47 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   tkgrid(frame2.rbt.5.1, sticky="w", columnspan=3)
   tkgrid(frame2.ent.6.1, padx=c(20, 0), pady=c(0, 5), sticky="we",
          columnspan=3)
-  
-  tkgrid.configure(frame2.scl.4.1, columnspan=2, padx=c(20, 4))
 
+  tkgrid.configure(frame2.scl.4.1, columnspan=2, padx=c(20, 4))
   tkgrid.columnconfigure(frame2, 1, weight=1, minsize=50)
   tkpack(frame2, fill="x", expand=TRUE, padx=10, pady=5)
 
   # Frame 3
   frame3 <- ttkframe(tt, relief="flat")
   txt <- "The histogram cells are right-closed (left-open) intervals"
-  frame3.chk.1 <- ttkcheckbutton(frame3, text=txt, variable=right.var,
-                                 command=PlotHist)
-  tkgrid(frame3.chk.1, sticky="w")
+  frame3.chk.1.1 <- ttkcheckbutton(frame3, text=txt, variable=right.var,
+                                   command=PlotHist)
+  txt <- "Show individual observations"
+  frame3.chk.2.1 <- ttkcheckbutton(frame3, text=txt, variable=obs.var,
+                                   command=PlotHist)
+  tkgrid(frame3.chk.1.1, sticky="w")
+  tkgrid(frame3.chk.2.1, sticky="w")
   tkpack(frame3, fill="x", expand=TRUE, padx=20, pady=5)
 
   # Frame 4
+
   frame4 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Axis scaling")
+                          text="Axis scaling and density estimate")
   frame4.rbt.1.1 <- ttkradiobutton(frame4, variable=freq.var, value=TRUE,
-                                   text="Frequences (counts component)",
-                                   command=PlotHist)
+                                   text="Frequences",
+                                   command=ToggleStateBandwidth)
   frame4.rbt.1.2 <- ttkradiobutton(frame4, variable=freq.var, value=FALSE,
-                                   text="Probability densities",
-                                   command=PlotHist)
-  tkgrid(frame4.rbt.1.1, frame4.rbt.1.2)
+                                   text="Probability densities (adjust bandwidth)",
+                                   command=ToggleStateBandwidth)
+
+  frame4.scl.2.1 <- tkwidget(frame4, "ttk::scale", from=0, to=2,
+                             orient="horizontal", variable=scale.bw.var,
+                             command=function(...) {
+                               AdjustScaleBandwidth(x=as.numeric(...))
+                             })
+  frame4.ent.2.3 <- ttkentry(frame4, width=4, textvariable=bandwidth.var)
+
+  tkgrid(frame4.rbt.1.1, frame4.rbt.1.2, "x")
+  tkgrid(frame4.scl.2.1, "x", frame4.ent.2.3, pady=c(0, 5), sticky="we")
+
   tkgrid.configure(frame4.rbt.1.1, padx=c(0, 10))
+  tkgrid.configure(frame4.scl.2.1, columnspan=2, padx=c(20, 4))
+
   tkpack(frame4, fill="x", expand=TRUE, padx=10, pady=5)
 
   # Bind events
@@ -274,23 +317,38 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   tkbind(frame1.box.1.2, "<<ComboboxSelected>>",
          function() {
            idx <- as.integer(tcl(frame1.box.1.2, "current")) + 1L
-           x <- as.numeric(tclvalue(scale.var))
+           x <- as.numeric(tclvalue(scale.sgl.var))
            tclvalue(single.var) <- as.integer(x * (maxs[idx] - 1) + 1)
            PlotHist()
          })
   tkbind(frame2.box.2.1, "<<ComboboxSelected>>", PlotHist)
 
-  tkbind(frame2.ent.4.3, "<KeyRelease>",
+  tkbind(frame2.ent.4.3, "<Return>",
          function() {
            idx <- as.integer(tcl(frame1.box.1.2, "current")) + 1L
            ent <- as.integer(CheckEntry("integer", tclvalue(single.var)))
-           if (ent == "") {
+           if (is.na(ent)) {
              ent <- 1L
-           } else if (as.integer(ent) > maxs[idx]) {
+           } else if (ent > maxs[idx]) {
              ent <- maxs[idx]
            }
            tclvalue(single.var) <- ent
-           tclvalue(scale.var) <- (as.integer(ent) - 1) / (maxs[idx] - 1)
+           tclvalue(scale.sgl.var) <- (ent - 1) / (maxs[idx] - 1)
+           PlotHist()
+         })
+
+  tkbind(frame4.ent.2.3, "<Return>",
+         function() {
+           ent <- as.numeric(CheckEntry("numeric", tclvalue(bandwidth.var)))
+           if (is.na(ent)) {
+             ent <- 1L
+           } else if (ent < 0) {
+             ent <- 0
+           } else if (ent > 2) {
+             ent <- 2
+           }
+           tclvalue(bandwidth.var) <- ent
+           tclvalue(scale.bw.var) <- ent
            PlotHist()
          })
 
@@ -298,7 +356,8 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
 
   # GUI control
 
-  ToggleState()
+  ToggleStateBreaks()
+  ToggleStateBandwidth()
 
   tkfocus(tt)
   tkgrab(tt)
