@@ -917,7 +917,7 @@ OpenRSurvey <- function() {
 
   tkadd(menu.file, "separator")
   menu.file.import <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.import, "command", label="Text file, URL, or clipboard\u2026",
+  tkadd(menu.file.import, "command", label="Text file or clipboard\u2026",
         command=function() ReadData("txt"))
   tkadd(menu.file.import, "command", label="R package\u2026",
         command=function() ReadData("rpackage"))
