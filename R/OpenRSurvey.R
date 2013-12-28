@@ -919,10 +919,12 @@ OpenRSurvey <- function() {
   menu.file.import <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.import, "command", label="Text file or clipboard\u2026",
         command=function() ReadData("txt"))
-  tkadd(menu.file.import, "command", label="R package\u2026",
-        command=function() ReadData("rpackage"))
+  tkadd(menu.file.import, "command", label="Spreadsheet file\u2026",
+        command=function() print("notyet"))
   tkadd(menu.file.import, "command", label="R data file\u2026",
         command=function() ReadData("rda"))
+  tkadd(menu.file.import, "command", label="R package\u2026",
+        command=function() ReadData("rpackage"))
   tkadd(menu.file, "cascade", label="Import raw data from",
         menu=menu.file.import)
   menu.file.export <- tkmenu(tt, tearoff=0)
