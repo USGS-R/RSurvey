@@ -10,7 +10,7 @@
 
 .GetStyles <- function(path) {
   path.xl <- file.path(path, "xl")
-  f.styles <- list.files(path.xl, "styles.xml", full.names=TRUE)
+  f.styles <- list.files(path.xl, "styles.xml$", full.names=TRUE)
   styles <- xmlParse(f.styles)
   styles <- xpathApply(styles, "//x:xf[@xfId and @numFmtId]", xmlAttrs,
                        namespaces="x")
@@ -24,14 +24,17 @@
 
 .GetSheetNames <- function(path) {
   path.xl <- file.path(path, "xl")
-  f.workbook <- list.files(path.xl, "workbook.xml", full.names=TRUE)
+  f.workbook <- list.files(path.xl, "workbook.xml$", full.names=TRUE)
   sheets <- xmlToList(xmlParse(f.workbook))
   fun <- function(i) as.data.frame(as.list(i), stringsAsFactors=FALSE)
   sheets.lst <- lapply(sheets$sheets, fun)
-  sheets <- NULL
-  for (i in seq_along(sheets.lst)) {
-    sheets <- rbind(sheets, sheets.lst[[i]])
+  available.args <- unique(unlist(sapply(sheets.lst, names)))
+  fun <- function(i) {
+    missing.args <- available.args[which(!available.args %in% names(i))]
+    i[, missing.args] <- NA
+    return(i)
   }
+  sheets <- do.call("rbind", lapply(sheets.lst, fun))  # or use plyr::rbind.fill
   rownames(sheets) <- NULL
   sheets$id <- gsub("\\D", "", sheets$id)
   return(sheets)
@@ -145,7 +148,6 @@
 
 
 ImportSpreadsheetData <- function(parent=NULL) {
-
   if (!require("XML"))
     stop()
 
