@@ -1,15 +1,15 @@
-\name{ImportData}
+\name{ImportTextData}
 
-\alias{ImportData}
+\alias{ImportTextData}
 
-\title{Import Data}
+\title{Import Text Data}
 
 \description{
 A \acronym{GUI} for reading table formatted data from a text file.
 }
 
 \usage{
-ImportData(parent = NULL)
+ImportTextData(parent = NULL)
 }
 
 \arguments{
@@ -53,11 +53,11 @@ Sets the following components in \code{\link{Data}}:
 \item{comment}{character; a vector of comment strings.}
 \item{import}{list; saved \acronym{GUI} options.}
 Components of \code{import} include:
-\item{source}{character; the name of the file or package which the data is read 
+\item{source}{character; the name of the file or package which the data is read
   from.}
 \item{fmts}{logical; indicates whether the file contains the conversion
   specification format strings of the variables.}
-\item{cols}{logical; indicates whether the file contains the names of the 
+\item{cols}{logical; indicates whether the file contains the names of the
   variables.}
 \item{skip}{integer; the number of lines skiped before data is read.}
 \item{sep}{character; the field separator string.}
@@ -65,7 +65,7 @@ Components of \code{import} include:
 \item{na}{character; string interpreted as \code{\link{NA}} values.}
 \item{quote}{character; the set of quoting characters.}
 \item{comment}{character; comment character.}
-\item{encoding}{character; encoding that was assumed for input strings, see 
+\item{encoding}{character; encoding that was assumed for input strings, see
   \code{\link{Encoding}}.}
 \item{str.as.fact}{logical; should character variables be converted to factors?}
 }
@@ -81,7 +81,7 @@ Requires the Tcl package \href{http://tktable.sourceforge.net/}{Tktable}.
 \author{J.C. Fisher}
 
 \examples{
-\donttest{ImportData()}
+\donttest{ImportTextData()}
 }
 
 \keyword{IO}

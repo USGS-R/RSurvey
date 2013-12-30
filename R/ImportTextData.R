@@ -1,6 +1,6 @@
 # A GUI for reading table formatted data.
 
-ImportData <- function(parent=NULL) {
+ImportTextData <- function(parent=NULL) {
 
   ## Additional functions (subroutines)
 
@@ -576,7 +576,7 @@ ImportData <- function(parent=NULL) {
                             command=function() tclvalue(tt.done.var) <- 1)
   frame0.but.6 <- ttkbutton(frame0, width=12, text="Help",
                             command=function() {
-                              print(help("ImportData", package="RSurvey"))
+                              print(help("ImportTextData", package="RSurvey"))
                             })
   frame0.grp.7 <- ttksizegrip(frame0)
 

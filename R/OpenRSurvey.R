@@ -116,7 +116,7 @@ OpenRSurvey <- function() {
 
   ReadData <- function(file.type) {
     if (file.type == "txt") {
-      ImportData(tt)
+      ImportTextData(tt)
     } else {
       classes <- c("data.frame", "matrix")
 

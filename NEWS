@@ -50,8 +50,8 @@ Changes in Version 0.7-5
   o  RSurvey project files are specified using the *.RData file extension. The
      *.rda extension is reserved for R data files.
 
-  o  Functions ReadFile and WriteFile have been embedded into the ImportData and
-     ExportData functions, respectively.
+  o  Functions ReadFile and WriteFile have been embedded into the ImportTextData
+     and ExportData functions, respectively.
 
   o  Additional arguments have been added to the Export Data GUI.
 
