@@ -2,7 +2,7 @@
 .UnzipWorkbook <- function(f) {
   path <- tempfile("workbook")
   suppressWarnings(dir.create(path))
-  file.copy(f, path)
+  suppressWarnings(file.copy(f, path))
   f.tmp <- list.files(path, pattern=basename(f), full.names=TRUE)
   unzip(f.tmp, exdir=path)
   return(path)
@@ -69,6 +69,8 @@
 .ParseCellRange <- function(x) {
   if (!is.character(x))
     return()
+  if (x == "")
+    return(NA)
   cells <- strsplit(x, ":")[[1]]
   if (length(cells) != 2)
     return()
@@ -87,10 +89,11 @@
 .Letters2Columns <- function(x) {
   fun <- function(i) paste0(LETTERS, i)
   potential.cols <- c(LETTERS, as.vector(t(vapply(LETTERS, fun, rep("", 26)))))
-  return(match(x, potential.cols))
+  return(match(toupper(x), potential.cols))
 }
 
 .ReadWorksheet <- function(path, sheet.id, cell.range, header, str.as.fact) {
+
   styles <- .GetStyles(path)
   strings <- .GetSharedStrings(path)
   ws <- .GetWorksheet(path, sheet.id)
@@ -106,7 +109,6 @@
   d <- tapply(ws$v, list(ws$rows, ws$cols), identity)
   d.style <- tapply(ws$s, list(ws$rows, ws$cols), identity)
 
-  cell.range <- .ParseCellRange(cell.range)
   if (is.list(cell.range)) {
     rows <- match(cell.range$rows, rownames(d))
     cols <- match(cell.range$cols, colnames(d))
@@ -148,24 +150,197 @@
 
 
 ImportSpreadsheetData <- function(parent=NULL) {
+
+
+  GetDataFile <- function(f) {
+
+    if (missing(f)) {
+      txt <- "Open XML Spreadsheet File"
+      f <- GetFile(cmd="Open", exts="xlsx", win.title=txt, parent=tt)
+      if (is.null(f) || attr(f, "extension") != "xlsx")
+        return()
+    }
+
+    path <<- NULL
+    sheets <<- NULL
+    tkconfigure(frame0.but.1.2, state="disabled")
+    tkconfigure(frame2.lab.1.1, state="disabled")
+    tkconfigure(frame2.box.1.2, state="disabled", value="{}")
+    tcl(frame2.box.1.2, "current", 0)
+
+    if (f == "")
+      return()
+
+    path <- try(.UnzipWorkbook(f), silent=TRUE)
+    if (inherits(path, "try-error") || !is.character(path)) {
+      tkmessageBox(icon="error", message="Unable to access workbook.",
+                   detail=path, title="Error", type="ok", parent=tt)
+      return()
+    }
+
+    sheets <- try(.GetSheetNames(path), silent=TRUE)
+    if (inherits(sheets, "try-error")) {
+      tkmessageBox(icon="error", message="Unable to access worksheets.",
+                   detail=sheets, title="Error", type="ok", parent=tt)
+      return()
+    }
+
+    sheet.names <- as.character(sheets$name)
+    if (length(sheet.names) == 0)
+      sheet.names <- paste0("{", sheet.names, "}")
+    tkconfigure(frame0.but.1.2, state="normal")
+    tkconfigure(frame2.lab.1.1, state="normal")
+    tkconfigure(frame2.box.1.2, state="normal", value=sheet.names)
+    tcl(frame2.box.1.2, "current", 0)
+
+    path <<- path
+    sheets <<- sheets
+    tclvalue(source.var) <- f
+  }
+
+
+  LoadDataset <- function() {
+
+    if (is.null(path) || is.null(sheets))
+      return()
+
+    idx <- as.integer(tcl(frame2.box.1.2, "current")) + 1L
+    sheet.id <- sheets$id[idx]
+
+    cell.range <- .ParseCellRange(as.character(tclvalue(cell.range.var)))
+    if (is.null(cell.range)) {
+      tkmessageBox(icon="error", message="Unable to parse cell range.",
+                   title="Error", type="ok", parent=tt)
+      tkfocus(frame2.ent.2.2)
+      return()
+    }
+
+    header <- as.logical(as.integer(tclvalue(header.var)))
+    str.as.fact <- as.logical(as.integer(tclvalue(str.as.fact.var)))
+    src <- as.character(tclvalue(source.var))
+
+    tkconfigure(tt, cursor="watch")
+    tclServiceMode(FALSE)
+    on.exit(tkconfigure(tt, cursor="arrow"))
+    on.exit(tclServiceMode(TRUE), add=TRUE)
+
+    rtn <<- list(d=.ReadWorksheet(path, sheet.id, cell.range, header,
+                                  str.as.fact), src=src)
+    tclvalue(tt.done.var) <- 1
+  }
+
+
+
+
   if (!require("XML"))
     stop()
 
+  rtn <- NULL
+  path <- NULL
+  sheets <- NULL
 
-  f <- "C:/Users/jfisher/Desktop/xlsxToR/ex.data.xlsx"
-  path <- .UnzipWorkbook(f)
-  sheets <- .GetSheetNames(path)
-  sheets.name <- sheets$name
-
-
-  sheet.idx <- 2L
-  sheet.id <- sheets$id[sheet.idx]
-  cell.range <- "X2:AB20"
-  header <- TRUE
-  str.as.fact <- FALSE
+  # Assign variables linked to Tk widgets
+  source.var <- tclVar()
+  cell.range.var <- tclVar("")
+  header.var <- tclVar(0)
+  str.as.fact.var <- tclVar(0)
+  tt.done.var <- tclVar(0)
 
 
-  d <- .ReadWorksheet(path, sheet.id, cell.range, header, str.as.fact)
+  # Open GUI
+  tclServiceMode(FALSE)
+  tt <- tktoplevel()
+  if (!is.null(parent)) {
+    tkwm.transient(tt, parent)
+    geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
+    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
+                             "+", as.integer(geo[3]) + 25))
+  }
+  tktitle(tt) <- "Import Data From XML Spreadsheet File"
+  tkwm.resizable(tt, 1, 0)
+
+  # Frame 0, buttons
+  frame0 <- ttkframe(tt, relief="flat")
+  frame0.but.1.2 <- ttkbutton(frame0, width=12, text="Load",
+                              command=LoadDataset)
+  frame0.but.1.3 <- ttkbutton(frame0, width=12, text="Cancel",
+                              command=function() tclvalue(tt.done.var) <- 1)
+  frame0.but.1.4 <- ttkbutton(frame0, width=12, text="Help",
+                              command=function() {
+                                print(help("ImportSpreadsheetData",
+                                           package="RSurvey"))
+                              })
+  tkgrid("x", frame0.but.1.2, frame0.but.1.3, frame0.but.1.4, pady=c(15, 10))
+  tkgrid.configure(frame0.but.1.2, padx=c(10, 0))
+  tkgrid.configure(frame0.but.1.3, padx=4)
+  tkgrid.configure(frame0.but.1.4, padx=c(0, 10))
+  tkgrid.columnconfigure(frame0, 0, weight=1)
+  tkpack(frame0, fill="x", side="bottom", anchor="e")
+  tkconfigure(frame0.but.1.2, state="disabled")
 
 
+  # Frame 1, file locator
+  frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
+  frame1.lab.1.1 <- ttklabel(frame1, text="Import from")
+  frame1.ent.1.2 <- ttkentry(frame1, textvariable=source.var)
+  frame1.but.1.3 <- ttkbutton(frame1, width=8, text="Browse",
+                              command=function() GetDataFile())
+  tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.but.1.3, pady=c(10, 0))
+  tkgrid.configure(frame1.lab.1.1, sticky="w")
+  tkgrid.configure(frame1.ent.1.2, sticky="we", padx=2)
+  tkgrid.columnconfigure(frame1, 1, weight=1)
+  tkpack(frame1, fill="x", padx=10)
+
+
+  # Frame 2, worksheets
+  frame2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
+
+  txt <- "Select worksheet in workbook"
+  frame2.lab.1.1 <- ttklabel(frame2, text=txt, state="disabled")
+  txt <- "Cell range in worksheet (optional)"
+  frame2.lab.2.1 <- ttklabel(frame2, text=txt)
+  frame2.lab.2.3 <- ttklabel(frame2, text="e.g. 'B2:F18'")
+  frame2.box.1.2 <- ttkcombobox(frame2, width=12, state="disabled", value="{}")
+  frame2.ent.2.2 <- ttkentry(frame2, width=12, textvariable=cell.range.var)
+
+  tkgrid(frame2.lab.1.1, frame2.box.1.2, "x", pady=c(10, 0))
+  tkgrid(frame2.lab.2.1, frame2.ent.2.2, frame2.lab.2.3, pady=c(4, 0))
+  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, sticky="w", padx=c(0, 4))
+  tkgrid.configure(frame2.box.1.2, sticky="we", columnspan=2)
+  tkgrid.configure(frame2.ent.2.2, sticky="we")
+  tkgrid.configure(frame2.lab.2.3, padx=c(4, 0))
+  tkgrid.columnconfigure(frame2, 1, weight=1)
+  tkpack(frame2, fill="x", padx=10)
+
+
+  # Frame 3, header and factors
+  frame3 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
+  txt <- "Names of variables are in first row of table"
+  frame3.chk.1.1 <- ttkcheckbutton(frame3, variable=header.var, text=txt)
+  frame3.chk.2.1 <- ttkcheckbutton(frame3, variable=str.as.fact.var,
+                                   text="Convert strings to factors")
+  tkgrid(frame3.chk.1.1, sticky="w", pady=c(10, 0))
+  tkgrid(frame3.chk.2.1, sticky="w")
+  tkpack(frame3, fill="x", padx=10)
+
+
+  # Bind events
+  tclServiceMode(TRUE)
+
+  tkbind(frame1.ent.1.2, "<Return>",
+         function() GetDataFile(as.character(tclvalue(source.var))))
+
+
+  # GUI control
+
+  tkfocus(tt)
+  tkgrab(tt)
+  tkwait.variable(tt.done.var)
+
+  tclServiceMode(FALSE)
+  tkgrab.release(tt)
+  tkdestroy(tt)
+  tclServiceMode(TRUE)
+
+  invisible(rtn)
 }

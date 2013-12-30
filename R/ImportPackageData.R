@@ -347,7 +347,7 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
   tkgrid(frame1.lab.1.1, "x", "x", frame1.lab.1.4, "x", "x", pady=c(10, 0))
   tkgrid(frame1.lst.2.1, "x", frame1.ysc.2.3, frame1.lst.2.4, "x",
          frame1.ysc.2.6)
-  tkgrid(frame1.box.3.1, "x", "x", frame1.box.3.4, "x", "x", pady=c(4, 4))
+  tkgrid(frame1.box.3.1, "x", "x", frame1.box.3.4, "x", "x", pady=4)
   tkgrid(frame1.but.4.1, frame1.but.4.2, "x", frame1.but.4.4, frame1.chk.4.5,
          "x")
 

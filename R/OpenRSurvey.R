@@ -118,10 +118,9 @@ OpenRSurvey <- function() {
     if (file.type == "txt") {
       ImportTextData(tt)
     } else {
-      classes <- c("data.frame", "matrix")
 
-      if (file.type == "rpackage") {
-        ans <- ImportPackageData(classes, parent=tt)
+      if (file.type == "xlsx") {
+        ans <- ImportSpreadsheetData(parent=tt)
         d <- ans$d
         src <- ans$src
 
@@ -132,13 +131,19 @@ OpenRSurvey <- function() {
           return()
         d <- local({d.name <- load(file=f)
                     return(eval(parse(text=d.name[1])))})
-        if (!inherits(d, classes)) {
+        if (!inherits(d, c("data.frame", "matrix"))) {
           msg <- "R data set is not a valid object class."
           tkmessageBox(icon="error", message=msg, title="Error", type="ok",
                        parent=tt)
           return()
         }
         src <- f[1]
+
+      } else if (file.type == "rpackage") {
+        valid.classes <- c("data.frame", "matrix")
+        ans <- ImportPackageData(valid.classes, parent=tt)
+        d <- ans$d
+        src <- ans$src
       }
 
       if (is.null(d) || nrow(d) == 0 || ncol(d) == 0)
@@ -157,7 +162,17 @@ OpenRSurvey <- function() {
       m <- nrow(d)
       n <- ncol(d)
 
-      ids <- make.names(names(d), unique=TRUE)
+
+
+
+
+
+      ids <- names(d)  # TODO(jfisher): ensure unique values
+
+
+
+
+
       nams <- names(d)
       names(d) <- paste0("V", 1:n)
 
@@ -919,8 +934,8 @@ OpenRSurvey <- function() {
   menu.file.import <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.import, "command", label="Text file or clipboard\u2026",
         command=function() ReadData("txt"))
-  tkadd(menu.file.import, "command", label="Spreadsheet file\u2026",
-        command=function() print("notyet"))
+  tkadd(menu.file.import, "command", label="XML spreadsheet file\u2026",
+        command=function() ReadData("xlsx"))
   tkadd(menu.file.import, "command", label="R data file\u2026",
         command=function() ReadData("rda"))
   tkadd(menu.file.import, "command", label="R package\u2026",

@@ -2,10 +2,10 @@
 
 \alias{ImportSpreadsheetData}
 
-\title{Import Data from Spreadsheet}
+\title{Import Data from XML Spreadsheet}
 
 \description{
-A \acronym{GUI} for loading selected data sets from a spreadsheet file.
+A \acronym{GUI} for loading selected data sets from a Open XML Spreadsheet file.
 }
 
 \usage{
