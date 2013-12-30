@@ -108,7 +108,7 @@
 
   cell.range <- .ParseCellRange(cell.range)
   if (is.list(cell.range)) {
-    rows <- match(cell.range$rows, row.names(d))
+    rows <- match(cell.range$rows, rownames(d))
     cols <- match(cell.range$cols, colnames(d))
     if (length(rows) == 0 || length(cols) == 0)
       return()
