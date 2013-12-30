@@ -75,6 +75,8 @@
   cols <- .Letters2Columns(gsub("\\d", "", cells))
   if (any(is.na(cols)))
     return()
+  if (rows[1] > rows[2] || cols[1] > cols[2])
+    return()
   return(list(rows=as.character(seq(rows[1], rows[2])),
               cols=as.character(seq(cols[1], cols[2]))))
 }
@@ -103,8 +105,12 @@
 
   cell.range <- .ParseCellRange(cell.range)
   if (is.list(cell.range)) {
-    d <- d[cell.range$rows, cell.range$cols]
-    d.style <- d.style[cell.range$rows, cell.range$cols]
+    rows <- match(cell.range$rows, row.names(d))
+    cols <- match(cell.range$cols, colnames(d))
+    if (length(rows) == 0 || length(cols) == 0)
+      return()
+    d <- d[rows, cols]
+    d.style <- d.style[rows, cols]
   }
 
   if (header) {
@@ -140,7 +146,8 @@
 
 ImportSpreadsheetData <- function(parent=NULL) {
 
-  require(XML)
+  if (!require("XML"))
+    stop()
 
 
   f <- "C:/Users/jfisher/Desktop/xlsxToR/ex.data.xlsx"
