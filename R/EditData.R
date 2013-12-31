@@ -619,17 +619,9 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
 
   # Account for missing arguments
   if (is.null(col.names) || length(col.names) != n) {
-    col.names <- LETTERS[1:n]
-    if (any(is.na(col.names))) {
-      from <- seq(27, n, by=26)
-      for (i in seq(along=from)) {
-        to <- from[i] + 25
-        if (to > n)
-          to <- n
-        l <- paste0(LETTERS[i], LETTERS[1:(to - from[i] + 1L)])
-        col.names[from[i]:to] <- l
-      }
-    }
+    fun <- function(i) paste0(LETTERS, i)
+    col.names <- c(LETTERS, as.vector(t(vapply(LETTERS, fun, rep("", 26)))))
+    col.names <- col.names[1:n]
     colnames(d) <- col.names
   } else {
     col.names <- col.names[1:n]

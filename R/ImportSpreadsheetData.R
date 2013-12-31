@@ -8,17 +8,44 @@
   return(path)
 }
 
+.RbindFill <- function (lst) {  # substitute for plyr::rbind.fill
+  available.args <- unique(unlist(lapply(lst, names)))
+  fun <- function(i) {
+    missing.args <- available.args[which(!available.args %in% names(i))]
+    if (length(missing.args) > 0)
+      i[, missing.args] <- NA
+    return(i)
+  }
+  return(do.call("rbind", lapply(lst, fun)))
+}
+
 .GetStyles <- function(path) {
   path.xl <- file.path(path, "xl")
   f.styles <- list.files(path.xl, "styles.xml$", full.names=TRUE)
   styles <- xmlParse(f.styles)
+  custom.styles <- xpathApply(styles, "//x:numFmt[@numFmtId and @formatCode]",
+                              xmlAttrs, namespaces="x")
+  custom.styles <- as.data.frame(.RbindFill(custom.styles),
+                                 stringsAsFactors=FALSE)
+  custom.styles$numFmtId <- as.integer(custom.styles$numFmtId)
+  zeros <- sapply(1:11, function(i) paste(rep("0", i), collapse=""))
+  dt.fmt.codes <- c("yyyy\\-mm\\-dd\\ hh:mm:ss",
+                    paste0("yyyy\\-mm\\-dd\\ hh:mm:ss.", zeros),
+                    "yyyy\\-mm\\-dd",
+                    "mm/dd/yyyy\\ hh:mm:ss",
+                    paste0("mm/dd/yyyy\\ hh:mm:ss.", zeros),
+                    "m/d/yy\\ h:mm;@",
+                    "[$-409]dddd\\,\\ mmmm\ dd\\,\\ yyyy",
+                    "[$-409]m/d/yy\\ h:mm\\ AM/PM;@")
+  dt.ids <- custom.styles$numFmtId[custom.styles$formatCode %in% dt.fmt.codes]
   styles <- xpathApply(styles, "//x:xf[@xfId and @numFmtId]", xmlAttrs,
                        namespaces="x")
-  fun <- function(i) i[grepl("numFmtId", names(i))]
-  styles <- lapply(styles, fun)
-  fun <- function(i) i["numFmtId"]
-  styles <- as.integer(sapply(styles, fun))
+  styles <- lapply(styles, function(i) i[grepl("numFmtId", names(i))])
+  styles <- as.integer(sapply(styles, function(i) i["numFmtId"]))
   names(styles) <- seq_along(styles) - 1
+
+  styles[styles %in% dt.ids] <- 22
+
   return(styles)
 }
 
@@ -27,14 +54,7 @@
   f.workbook <- list.files(path.xl, "workbook.xml$", full.names=TRUE)
   sheets <- xmlToList(xmlParse(f.workbook))
   fun <- function(i) as.data.frame(as.list(i), stringsAsFactors=FALSE)
-  sheets.lst <- lapply(sheets$sheets, fun)
-  available.args <- unique(unlist(sapply(sheets.lst, names)))
-  fun <- function(i) {
-    missing.args <- available.args[which(!available.args %in% names(i))]
-    i[, missing.args] <- NA
-    return(i)
-  }
-  sheets <- do.call("rbind", lapply(sheets.lst, fun))  # or use plyr::rbind.fill
+  sheets <- .RbindFill(lapply(sheets$sheets, fun))
   rownames(sheets) <- NULL
   sheets$id <- gsub("\\D", "", sheets$id)
   return(sheets)
