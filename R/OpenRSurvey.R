@@ -162,18 +162,12 @@ OpenRSurvey <- function() {
       m <- nrow(d)
       n <- ncol(d)
 
-
-
-
-
-
-      ids <- names(d)  # TODO(jfisher): ensure unique values
-
-
-
-
-
       nams <- names(d)
+      ids <- nams
+      matched <- sapply(unique(ids), function(i) which(ids %in% i)[-1])
+      for (i in seq_along(matched))
+        ids[matched[[i]]] <- paste0(names(matched[i]), " (",
+                                    seq_along(matched[[i]]), ")")
       names(d) <- paste0("V", 1:n)
 
       cols <- list()
@@ -878,6 +872,8 @@ OpenRSurvey <- function() {
 
   # Check if suggested packages are loaded
   available.packages <- .packages(all.available=TRUE)
+  is.xml <- "XML" %in% available.packages &&
+            require("XML", warn.conflicts=FALSE, quietly=TRUE)
   is.rgl <- "rgl" %in% available.packages &&
             require("rgl", warn.conflicts=FALSE, quietly=TRUE)
   is.rgdal <- "rgdal" %in% available.packages &&
@@ -935,6 +931,7 @@ OpenRSurvey <- function() {
   tkadd(menu.file.import, "command", label="Text file or clipboard\u2026",
         command=function() ReadData("txt"))
   tkadd(menu.file.import, "command", label="XML spreadsheet file\u2026",
+        state=ifelse(is.xml, "normal", "disabled"),
         command=function() ReadData("xlsx"))
   tkadd(menu.file.import, "command", label="R data file\u2026",
         command=function() ReadData("rda"))

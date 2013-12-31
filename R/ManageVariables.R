@@ -32,16 +32,12 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     new.id <- nam
     old.id <- cols[[idx]]$id
     old.ids <- vapply(cols, function(i) i$id, "")
-
-
     i <- 1L
     hold.new.id <- new.id
     while (new.id %in% old.ids[-idx]) {
       new.id <- paste0(hold.new.id, " (", i, ")")
       i <- i + 1L
     }
-
-
     cols[[idx]]$id <<- new.id
     tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var),
                               idx - 1, idx - 1, new.id)
