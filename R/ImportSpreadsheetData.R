@@ -42,10 +42,8 @@
                        namespaces="x")
   styles <- lapply(styles, function(i) i[grepl("numFmtId", names(i))])
   styles <- as.integer(sapply(styles, function(i) i["numFmtId"]))
-  names(styles) <- seq_along(styles) - 1
-
-  styles[styles %in% dt.ids] <- 22
-
+  names(styles) <- seq_along(styles) - 1L
+  styles[styles %in% dt.ids] <- 22  # format code for date-time
   return(styles)
 }
 
@@ -97,7 +95,7 @@
   rows <- as.integer(gsub("\\D", "", cells))
   if (any(is.na(rows)))
     return()
-  cols <- .Letters2Columns(gsub("\\d", "", cells))
+  cols <- .Letters2Indexes(gsub("\\d", "", cells))
   if (any(is.na(cols)))
     return()
   if (rows[1] > rows[2] || cols[1] > cols[2])
@@ -106,10 +104,10 @@
               cols=as.character(seq(cols[1], cols[2]))))
 }
 
-.Letters2Columns <- function(x) {
+.Letters2Indexes <- function(x) {
   fun <- function(i) paste0(LETTERS, i)
-  potential.cols <- c(LETTERS, as.vector(t(vapply(LETTERS, fun, rep("", 26)))))
-  return(match(toupper(x), potential.cols))
+  all.cols <- c(LETTERS, as.vector(t(vapply(LETTERS, fun, rep("", 26)))))
+  return(match(toupper(x), all.cols))
 }
 
 .ReadWorksheet <- function(path, sheet.id, cell.range, header, str.as.fact) {
@@ -121,7 +119,7 @@
   matched.strings <- strings[match(ws$v[ws$t == "s" & !is.na(ws$t)],
                                    names(strings))]
   ws$v[!is.na(ws$t) & ws$t == "s"] <- matched.strings
-  ws$cols <- .Letters2Columns(gsub("\\d", "", ws$r))
+  ws$cols <- .Letters2Indexes(gsub("\\d", "", ws$r))
   ws$rows <- as.numeric(gsub("\\D", "", ws$r))
   if (!any(grepl("^s$", colnames(ws))))
     ws$s <- NA
@@ -142,6 +140,10 @@
     colnames(d) <- d[1, ]
     d <- d[-1, ]
     d.style <- d.style[-1, ]
+  } else {
+    fun <- function(i) paste0(LETTERS, i)
+    all.cols <- c(LETTERS, as.vector(t(vapply(LETTERS, fun, rep("", 26)))))
+    colnames(d) <- all.cols[as.integer(colnames(d))]
   }
   d <- as.data.frame(d, stringsAsFactors=FALSE)
   d.style <- as.data.frame(d.style, stringsAsFactors=FALSE)
@@ -318,7 +320,7 @@ ImportSpreadsheetData <- function(parent=NULL) {
   frame2.lab.1.1 <- ttklabel(frame2, text=txt, state="disabled")
   txt <- "Cell range in worksheet (optional)"
   frame2.lab.2.1 <- ttklabel(frame2, text=txt)
-  frame2.lab.2.3 <- ttklabel(frame2, width=9, text="e.g. B2:F18")
+  frame2.lab.2.3 <- ttklabel(frame2, width=9, text="e.g. B3:F18")
   frame2.box.1.2 <- ttkcombobox(frame2, width=16, state="disabled", value="{}")
   frame2.ent.2.2 <- ttkentry(frame2, width=16, textvariable=cell.range.var)
   tkgrid(frame2.lab.1.1, frame2.box.1.2, "x", pady=c(10, 0))
