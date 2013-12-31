@@ -100,12 +100,18 @@ ImportTextData <- function(parent=NULL) {
       if (!headers[2])
         nams <- rep("Unknown", n)
 
+      # Determine unique column names
+      ids <- nams
+      matched <- sapply(unique(ids), function(i) which(ids %in% i)[-1])
+      for (i in seq_along(matched))
+        ids[matched[[i]]] <- paste0(names(matched[i]), " (",
+                                    seq_along(matched[[i]]), ")")
+
       # Reset row names
       rownames(d) <- 1:nrow(d)
 
-      # Initialize variables
+      # Initialize columns list
       cols <- list()
-      ids <- NULL
 
       # Establish column types
       for (j in 1:n) {
@@ -134,22 +140,13 @@ ImportTextData <- function(parent=NULL) {
         }
 
         # Organize metadata
-        nam <- nams[j]
-        id <- nam
-        i <- 1L
-        hold.id <- id
-        while (id %in% ids) {
-          id <- paste0(hold.id, " (", i, ")")
-          i <- i + 1L
-        }
-        ids <- c(ids, id)
         cols[[j]] <- list()
-        cols[[j]]$id      <- id
-        cols[[j]]$name    <- nam
+        cols[[j]]$id      <- ids[j]
+        cols[[j]]$name    <- nams[j]
         cols[[j]]$format  <- if (is.null(fmt)) "" else fmt
         cols[[j]]$class   <- class(val)
         cols[[j]]$index   <- j
-        cols[[j]]$fun     <- paste0("\"", id, "\"")
+        cols[[j]]$fun     <- paste0("\"", ids[j], "\"")
         cols[[j]]$sample  <- na.omit(val)[1]
         cols[[j]]$summary <- paste(c("", capture.output(summary(val)),
                                      "", capture.output(str(val)),

@@ -270,7 +270,7 @@ ImportSpreadsheetData <- function(parent=NULL) {
                                 print(help("ImportSpreadsheetData",
                                            package="RSurvey"))
                               })
-  tkgrid("x", frame0.but.1.2, frame0.but.1.3, frame0.but.1.4, pady=c(15, 10))
+  tkgrid("x", frame0.but.1.2, frame0.but.1.3, frame0.but.1.4, pady=10)
   tkgrid.configure(frame0.but.1.2, padx=c(10, 0))
   tkgrid.configure(frame0.but.1.3, padx=4)
   tkgrid.configure(frame0.but.1.4, padx=c(0, 10))
@@ -294,21 +294,18 @@ ImportSpreadsheetData <- function(parent=NULL) {
 
   # Frame 2, worksheets
   frame2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
-
   txt <- "Select worksheet in workbook"
   frame2.lab.1.1 <- ttklabel(frame2, text=txt, state="disabled")
   txt <- "Cell range in worksheet (optional)"
   frame2.lab.2.1 <- ttklabel(frame2, text=txt)
-  frame2.lab.2.3 <- ttklabel(frame2, text="e.g. 'B2:F18'")
-  frame2.box.1.2 <- ttkcombobox(frame2, width=12, state="disabled", value="{}")
-  frame2.ent.2.2 <- ttkentry(frame2, width=12, textvariable=cell.range.var)
-
+  frame2.lab.2.3 <- ttklabel(frame2, width=9, text="e.g. B2:F18")
+  frame2.box.1.2 <- ttkcombobox(frame2, width=16, state="disabled", value="{}")
+  frame2.ent.2.2 <- ttkentry(frame2, width=16, textvariable=cell.range.var)
   tkgrid(frame2.lab.1.1, frame2.box.1.2, "x", pady=c(10, 0))
   tkgrid(frame2.lab.2.1, frame2.ent.2.2, frame2.lab.2.3, pady=c(4, 0))
-  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, sticky="w", padx=c(0, 4))
-  tkgrid.configure(frame2.box.1.2, sticky="we", columnspan=2)
-  tkgrid.configure(frame2.ent.2.2, sticky="we")
-  tkgrid.configure(frame2.lab.2.3, padx=c(4, 0))
+  tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, sticky="w", padx=c(0, 2))
+  tkgrid.configure(frame2.box.1.2, frame2.ent.2.2, sticky="we")
+  tkgrid.configure(frame2.lab.2.3, padx=c(2, 0))
   tkgrid.columnconfigure(frame2, 1, weight=1)
   tkpack(frame2, fill="x", padx=10)
 
