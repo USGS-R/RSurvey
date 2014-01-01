@@ -1,3 +1,5 @@
+# Import a worksheet from a Office Open XML workbook file (xlsx).
+
 
 .UnzipWorkbook <- function(f) {
   path <- tempfile("workbook")
@@ -6,6 +8,12 @@
   f.tmp <- list.files(path, pattern=basename(f), full.names=TRUE)
   unzip(f.tmp, exdir=path)
   return(path)
+}
+
+.TrimSpace <- function(x) {
+  if (is.character(x))
+    x <- gsub("(^ +)|( +$)", "", x)
+  return(x)
 }
 
 .RbindFill <- function (lst) {  # substitute for plyr::rbind.fill
@@ -133,16 +141,16 @@
     cols <- which(colnames(d) %in% cell.range$cols)
     if (length(rows) == 0 || length(cols) == 0)
       return()
-    d <- d[rows, cols]
-    d.style <- d.style[rows, cols]
+    d <- d[rows, cols, drop=FALSE]
+    d.style <- d.style[rows, cols, drop=FALSE]
   }
 
   if (header) {
     col.names <- d[1, ]
     col.names[is.na(col.names)] <- "Unknown"
-    colnames(d) <- col.names
-    d <- d[-1, ]
-    d.style <- d.style[-1, ]
+    colnames(d) <- .TrimSpace(col.names)
+    d <- d[-1, , drop=FALSE]
+    d.style <- d.style[-1, , drop=FALSE]
   } else {
     fun <- function(i) paste0(LETTERS, i)
     all.cols <- c(LETTERS, as.vector(t(vapply(LETTERS, fun, rep("", 26)))))
@@ -154,8 +162,8 @@
     cols <- apply(d, 2, function(i) !all(is.na(i)))
     if (length(rows) == 0 || length(cols) == 0)
       return()
-    d <- d[rows, cols]
-    d.style <- d.style[rows, cols]
+    d <- d[rows, cols, drop=FALSE]
+    d.style <- d.style[rows, cols, drop=FALSE]
   }
 
   d <- as.data.frame(d, stringsAsFactors=FALSE)
@@ -164,9 +172,9 @@
   fun <- function(i) as.numeric(names(which.max(table(i))))
   col.style <- sapply(d.style, fun)
   if (length(styles) > 0)
-    col.style[] <- styles[col.style + 1]
+    col.style[] <- styles[col.style + 1L]
 
-  origin.date <- "1899-12-30"
+  origin.date <- "1899-12-30"  # TODO(jfisher): mac os might be "1904-01-01"
   for (i in seq_along(col.style)) {
     if (col.style[i] %in% 14:17) {  # date
       d[, i] <- as.Date(as.numeric(d[, i]), origin=origin.date)
@@ -176,7 +184,7 @@
     } else if (col.style[i] %in% 22) {  # date-time
       d[, i] <- as.POSIXct(as.numeric(d[, i]), origin=origin.date)
     } else {
-      d[, i] <- type.convert(d[, i], as.is=!str.as.fact)
+      d[, i] <- type.convert(.TrimSpace(d[, i]), as.is=!str.as.fact)
     }
   }
   return(d)
@@ -185,7 +193,9 @@
 
 
 ImportSpreadsheetData <- function(parent=NULL) {
-
+  # Adapted from xlsxToR function (accessed on 2014-01-01):
+  # Schaun Wheeler <schaun.wheeler at gmail.com>
+  # https://gist.github.com/schaunwheeler/5825002#file-xlsxtor-r
 
   GetDataFile <- function(f) {
 
