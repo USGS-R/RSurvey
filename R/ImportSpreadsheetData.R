@@ -39,12 +39,16 @@
   zeros <- sapply(1:11, function(i) paste(rep("0", i), collapse=""))
   dt.fmt.codes <- c("yyyy\\-mm\\-dd\\ hh:mm:ss",
                     paste0("yyyy\\-mm\\-dd\\ hh:mm:ss.", zeros),
-                    "yyyy\\-mm\\-dd",
+                    "yyyy/mm/dd\\ hh:mm:ss",
+                    paste0("yyyy/mm/dd\\ hh:mm:ss.", zeros),
                     "mm/dd/yyyy\\ hh:mm:ss",
                     paste0("mm/dd/yyyy\\ hh:mm:ss.", zeros),
+                    "mm/dd/yy\\ hh:mm:ss",
+                    paste0("mm/dd/yy\\ hh:mm:ss.", zeros),
                     "m/d/yy\\ h:mm;@",
                     "[$-409]dddd\\,\\ mmmm\ dd\\,\\ yyyy",
-                    "[$-409]m/d/yy\\ h:mm\\ AM/PM;@")
+                    "[$-409]m/d/yy\\ h:mm\\ AM/PM;@",
+                    "yyyy\\-mm\\-dd")
   dt.ids <- custom.styles$numFmtId[custom.styles$formatCode %in% dt.fmt.codes]
   styles <- xpathApply(styles, "//x:xf[@xfId and @numFmtId]", xmlAttrs,
                        namespaces="x")
@@ -195,7 +199,7 @@
 ImportSpreadsheetData <- function(parent=NULL) {
   # Adapted from xlsxToR function (accessed on 2014-01-01):
   # Schaun Wheeler <schaun.wheeler at gmail.com>
-  # https://gist.github.com/schaunwheeler/5825002#file-xlsxtor-r
+  # https://gist.github.com/schaunwheeler/5825002
 
   GetDataFile <- function(f) {
 
