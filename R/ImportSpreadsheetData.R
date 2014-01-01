@@ -1,5 +1,8 @@
 # Import a worksheet from a Office Open XML workbook file (xlsx).
 
+# Adapted from xlsxToR function (accessed on 2014-01-01):
+# Schaun Wheeler <schaun.wheeler at gmail.com>
+# https://gist.github.com/schaunwheeler/5825002
 
 .UnzipWorkbook <- function(f) {
   path <- tempfile("workbook")
@@ -197,9 +200,6 @@
 
 
 ImportSpreadsheetData <- function(parent=NULL) {
-  # Adapted from xlsxToR function (accessed on 2014-01-01):
-  # Schaun Wheeler <schaun.wheeler at gmail.com>
-  # https://gist.github.com/schaunwheeler/5825002
 
   GetDataFile <- function(f) {
 
@@ -321,7 +321,7 @@ ImportSpreadsheetData <- function(parent=NULL) {
                                 print(help("ImportSpreadsheetData",
                                            package="RSurvey"))
                               })
-  tkgrid("x", frame0.but.1.2, frame0.but.1.3, frame0.but.1.4, pady=10)
+  tkgrid("x", frame0.but.1.2, frame0.but.1.3, frame0.but.1.4, pady=c(15, 10))
   tkgrid.configure(frame0.but.1.2, padx=c(10, 0))
   tkgrid.configure(frame0.but.1.3, padx=4)
   tkgrid.configure(frame0.but.1.4, padx=c(0, 10))
@@ -370,9 +370,14 @@ ImportSpreadsheetData <- function(parent=NULL) {
   frame3.chk.2.1 <- ttkcheckbutton(frame3, variable=header.var, text=txt)
   frame3.chk.3.1 <- ttkcheckbutton(frame3, variable=str.as.fact.var,
                                    text="Convert strings to factors")
+  txt <- paste("An attempt is made to preserve column classes; cell formats",
+               "are ignored.")
+  frame3.lab.4.1 <- ttklabel(frame3, text=txt, foreground="#A40802")
+
   tkgrid(frame3.chk.1.1, sticky="w", pady=c(10, 0))
   tkgrid(frame3.chk.2.1, sticky="w")
   tkgrid(frame3.chk.3.1, sticky="w")
+  tkgrid(frame3.lab.4.1, sticky="w", pady=c(10, 0))
   tkpack(frame3, fill="x", padx=10)
 
 
