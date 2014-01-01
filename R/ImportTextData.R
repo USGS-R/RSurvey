@@ -540,7 +540,7 @@ ImportTextData <- function(parent=NULL) {
   else
     skip.var <- tclVar(Data(c("import", "skip")))
   if (is.null(Data(c("import", "str.as.fact"))))
-    str.as.fact.var <- tclVar(TRUE)
+    str.as.fact.var <- tclVar(FALSE)
   else
     str.as.fact.var <- tclVar(Data(c("import", "str.as.fact")))
 

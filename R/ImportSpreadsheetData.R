@@ -110,7 +110,8 @@
   return(match(toupper(x), all.cols))
 }
 
-.ReadWorksheet <- function(path, sheet.id, cell.range, header, str.as.fact) {
+.ReadWorksheet <- function(path, sheet.id, cell.range, rm.all.na, header,
+                           str.as.fact) {
 
   styles <- .GetStyles(path)
   strings <- .GetSharedStrings(path)
@@ -128,8 +129,8 @@
   d.style <- tapply(ws$s, list(ws$rows, ws$cols), identity)
 
   if (is.list(cell.range)) {
-    rows <- match(cell.range$rows, rownames(d))
-    cols <- match(cell.range$cols, colnames(d))
+    rows <- which(rownames(d) %in% cell.range$rows)
+    cols <- which(colnames(d) %in% cell.range$cols)
     if (length(rows) == 0 || length(cols) == 0)
       return()
     d <- d[rows, cols]
@@ -137,7 +138,9 @@
   }
 
   if (header) {
-    colnames(d) <- d[1, ]
+    col.names <- d[1, ]
+    col.names[is.na(col.names)] <- "Unknown"
+    colnames(d) <- col.names
     d <- d[-1, ]
     d.style <- d.style[-1, ]
   } else {
@@ -145,6 +148,16 @@
     all.cols <- c(LETTERS, as.vector(t(vapply(LETTERS, fun, rep("", 26)))))
     colnames(d) <- all.cols[as.integer(colnames(d))]
   }
+
+  if (rm.all.na) {
+    rows <- apply(d, 1, function(i) !all(is.na(i)))
+    cols <- apply(d, 2, function(i) !all(is.na(i)))
+    if (length(rows) == 0 || length(cols) == 0)
+      return()
+    d <- d[rows, cols]
+    d.style <- d.style[rows, cols]
+  }
+
   d <- as.data.frame(d, stringsAsFactors=FALSE)
   d.style <- as.data.frame(d.style, stringsAsFactors=FALSE)
 
@@ -237,6 +250,7 @@ ImportSpreadsheetData <- function(parent=NULL) {
       return()
     }
 
+    rm.all.na <- as.logical(as.integer(tclvalue(rm.all.na.var)))
     header <- as.logical(as.integer(tclvalue(header.var)))
     str.as.fact <- as.logical(as.integer(tclvalue(str.as.fact.var)))
     src <- as.character(tclvalue(source.var))
@@ -246,8 +260,8 @@ ImportSpreadsheetData <- function(parent=NULL) {
     on.exit(tkconfigure(tt, cursor="arrow"))
     on.exit(tclServiceMode(TRUE), add=TRUE)
 
-    rtn <<- list(d=.ReadWorksheet(path, sheet.id, cell.range, header,
-                                  str.as.fact), src=src)
+    rtn <<- list(d=.ReadWorksheet(path, sheet.id, cell.range, rm.all.na,
+                                  header, str.as.fact), src=src)
     tclvalue(tt.done.var) <- 1
   }
 
@@ -264,6 +278,7 @@ ImportSpreadsheetData <- function(parent=NULL) {
   # Assign variables linked to Tk widgets
   source.var <- tclVar()
   cell.range.var <- tclVar("")
+  rm.all.na.var <- tclVar(0)
   header.var <- tclVar(0)
   str.as.fact.var <- tclVar(0)
   tt.done.var <- tclVar(0)
@@ -314,15 +329,15 @@ ImportSpreadsheetData <- function(parent=NULL) {
   tkpack(frame1, fill="x", padx=10)
 
 
-  # Frame 2, worksheets
+  # Frame 2, worksheet and cell range
   frame2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
   txt <- "Select worksheet in workbook"
   frame2.lab.1.1 <- ttklabel(frame2, text=txt, state="disabled")
   txt <- "Cell range in worksheet (optional)"
   frame2.lab.2.1 <- ttklabel(frame2, text=txt)
   frame2.lab.2.3 <- ttklabel(frame2, width=9, text="e.g. B3:F18")
-  frame2.box.1.2 <- ttkcombobox(frame2, width=16, state="disabled", value="{}")
-  frame2.ent.2.2 <- ttkentry(frame2, width=16, textvariable=cell.range.var)
+  frame2.box.1.2 <- ttkcombobox(frame2, width=20, state="disabled", value="{}")
+  frame2.ent.2.2 <- ttkentry(frame2, width=20, textvariable=cell.range.var)
   tkgrid(frame2.lab.1.1, frame2.box.1.2, "x", pady=c(10, 0))
   tkgrid(frame2.lab.2.1, frame2.ent.2.2, frame2.lab.2.3, pady=c(4, 0))
   tkgrid.configure(frame2.lab.1.1, frame2.lab.2.1, sticky="w", padx=c(0, 2))
@@ -334,12 +349,16 @@ ImportSpreadsheetData <- function(parent=NULL) {
 
   # Frame 3, header and factors
   frame3 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
+
+  txt <- "Remove row and columns which contain only missing values"
+  frame3.chk.1.1 <- ttkcheckbutton(frame3, variable=rm.all.na.var, text=txt)
   txt <- "Names of variables are in first row of table"
-  frame3.chk.1.1 <- ttkcheckbutton(frame3, variable=header.var, text=txt)
-  frame3.chk.2.1 <- ttkcheckbutton(frame3, variable=str.as.fact.var,
+  frame3.chk.2.1 <- ttkcheckbutton(frame3, variable=header.var, text=txt)
+  frame3.chk.3.1 <- ttkcheckbutton(frame3, variable=str.as.fact.var,
                                    text="Convert strings to factors")
   tkgrid(frame3.chk.1.1, sticky="w", pady=c(10, 0))
   tkgrid(frame3.chk.2.1, sticky="w")
+  tkgrid(frame3.chk.3.1, sticky="w")
   tkpack(frame3, fill="x", padx=10)
 
 
