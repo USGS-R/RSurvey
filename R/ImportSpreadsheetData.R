@@ -350,7 +350,7 @@ ImportSpreadsheetData <- function(parent=NULL) {
   # Frame 3, header and factors
   frame3 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
-  txt <- "Remove row and columns which contain only missing values"
+  txt <- "Remove rows and columns which contain only missing values"
   frame3.chk.1.1 <- ttkcheckbutton(frame3, variable=rm.all.na.var, text=txt)
   txt <- "Names of variables are in first row of table"
   frame3.chk.2.1 <- ttkcheckbutton(frame3, variable=header.var, text=txt)
