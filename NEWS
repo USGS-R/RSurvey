@@ -1,15 +1,16 @@
 Changes in Version 0.8-0
 
-  o  ImportSpreadsheetData function added to import a worksheet from an Office
+  o  Added ImportSpreadsheetData function, imports a worksheet from an Office
      Open XML Workbook file (xlsx).
 
   o  Show individual observations and density estimate in histogram plot.
 
 Changes in Version 0.7-9
 
-  o  Packages declared in Depends field were moved to the Imports field.
+  o  In the DESCRIPTION file, packages declared in the 'Depends' field were
+     moved to the 'Imports' field.
 
-  o  Redesigned the layout in the Format function GUI.
+  o  Redesigned GUI layout in the Format function.
 
 Changes in Version 0.7-8
 
@@ -29,23 +30,23 @@ Changes in Version 0.7-8
      string representation; for example, numeric objects were formatted using
      the '%f' string.
 
-  o  SummarizeVariable function removed and replaced with the more general
+  o  Removed SummarizeVariable function and replaced it with the more general
      base::summary and utils::str functions.
 
 Changes in Version 0.7-5
 
-  o  Graphics are now opened in a platform-independent way using the dev.new
+  o  Graphics opened in a platform-independent way using the grDevices::dev.new
      function.
 
   o  Function name changes: ViewText to EditText, and ViewData to EditData.
 
-  o  Calendar date and time variables are accurately converted to character
-     strings using the POSIXct2Character function.
+  o  Calendar date-time variables are accurately converted to character strings
+     using the POSIXct2Character function.
 
   o  Added ability to import, edit, and export comment string.
 
-  o  Added ability to edit raw data in a spreadsheet. Final edits are saved in
-     a change log.
+  o  Added ability to edit raw data in a spreadsheet with final edits are saved
+     in a change log.
 
   o  Added GUI for importing data from an R package. R data sets may also be
      imported from a file.
@@ -56,21 +57,21 @@ Changes in Version 0.7-5
   o  Functions ReadFile and WriteFile have been embedded into the ImportTextData
      and ExportData functions, respectively.
 
-  o  Additional arguments have been added to the Export Data GUI.
+  o  Additional arguments have been added to the ExportData GUI.
 
-  o  In Import Data GUI, added decimal and encoding arguments and custom entries
-     for separator, NA strings, and comment parameters.
+  o  In the ImportTextData GUI, added decimal and encoding arguments, and custom
+     entries for separator, NA strings, and comment parameters.
 
 Changes in Version 0.7-4
 
   o  Main GUI is launched automatically when RSurvey is loaded.
 
-  o  Added View Data for single variable.
+  o  Added ability to view single variable in the ImportTextData GUI.
 
-  o  No longer required to have a data set loaded to open the Data Management
-     GUI.
+  o  It is no longer required to have a data set loaded to open the
+     DataManagement GUI.
 
-  o  Fixed bug with finding unique values in Edit Function GUI.
+  o  Fixed bug with finding unique values in EditFunction GUI.
 
   o  The header line specifying variable names now comes before the format
      header line. Users need to update header lines in their input text files

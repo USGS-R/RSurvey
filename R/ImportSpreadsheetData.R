@@ -53,8 +53,8 @@
                     "[$-409]m/d/yy\\ h:mm\\ AM/PM;@",
                     "yyyy\\-mm\\-dd")
   dt.ids <- custom.styles$numFmtId[custom.styles$formatCode %in% dt.fmt.codes]
-  styles <- xpathApply(styles, "//x:xf[@xfId and @numFmtId]", xmlAttrs,
-                       namespaces="x")
+  styles <- xpathApply(styles, "//x:xf[@numFmtId and @xfId]",
+                       xmlAttrs, namespaces="x")
   styles <- lapply(styles, function(i) i[grepl("numFmtId", names(i))])
   styles <- as.integer(sapply(styles, function(i) i["numFmtId"]))
   names(styles) <- seq_along(styles) - 1L
@@ -142,6 +142,7 @@
 
   d <- tapply(ws$v, list(ws$rows, ws$cols), identity)
   d.style <- tapply(ws$s, list(ws$rows, ws$cols), identity)
+  d.style[is.na(d.style)] <- "0"  # set missing styles to General format string
 
   if (is.list(cell.range)) {
     rows <- which(rownames(d) %in% cell.range$rows)
@@ -177,9 +178,8 @@
   d.style <- as.data.frame(d.style, stringsAsFactors=FALSE)
 
   fun <- function(i) as.numeric(names(which.max(table(i))))
-  col.style <- sapply(d.style, fun)
-  if (length(styles) > 0)
-    col.style[] <- styles[col.style + 1L]
+  col.style <- vapply(d.style, fun, 0)
+  col.style[] <- styles[col.style + 1L]
 
   origin.date <- "1899-12-30"  # TODO(jfisher): mac os might be "1904-01-01"
   for (i in seq_along(col.style)) {
@@ -371,7 +371,7 @@ ImportSpreadsheetData <- function(parent=NULL) {
   frame3.chk.3.1 <- ttkcheckbutton(frame3, variable=str.as.fact.var,
                                    text="Convert strings to factors")
   txt <- paste("An attempt is made to preserve column classes; cell formats",
-               "are ignored.")
+               "are removed.")
   frame3.lab.4.1 <- ttklabel(frame3, text=txt, foreground="#A40802")
 
   tkgrid(frame3.chk.1.1, sticky="w", pady=c(10, 0))
