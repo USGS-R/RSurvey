@@ -467,16 +467,10 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertString("set.seed(124)"))
   menu.stats.ran <- tkmenu(tt, tearoff=0)
   nobs <- ifelse(is.null(value.length), "<integer>", value.length)
-  tkadd(menu.stats.ran, "command", label="Uniform distribution",
-        command=function() InsertString(paste0("runif(n = ", nobs, ", min = 0, max = 1)")))
-  tkadd(menu.stats.ran, "command", label="Binomial distribution",
-        command=function() InsertString(paste0("rbinom(n = ", nobs, ", size = 20, prob = 0.2)")))
-  tkadd(menu.stats.ran, "command", label="Poisson distribution",
-        command=function() InsertString(paste0("rpois(n = ", nobs, ", lambda = 3)")))
-  tkadd(menu.stats.ran, "command", label="Exponential distribution",
-        command=function() InsertString(paste0("rexp(n = ", nobs, ", rate = 1)")))
   tkadd(menu.stats.ran, "command", label="Normal distribution",
         command=function() InsertString(paste0("rnorm(n = ", nobs, ", mean = 0, sd = 1)")))
+  tkadd(menu.stats.ran, "command", label="Uniform distribution",
+        command=function() InsertString(paste0("runif(n = ", nobs, ", min = 0, max = 1)")))
   tkadd(menu.stats, "cascade", label="Random samples from a",
         menu=menu.stats.ran)
 
