@@ -199,7 +199,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     if (length(vars) == 0)
       vars <<- NULL
 
-    for (i in seq(along=vars)) {
+    for (i in seq_along(vars)) {
       if (vars[[i]] > idx)
         vars[[i]][1] <<- vars[[i]] - 1
     }
@@ -350,7 +350,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
     cols <<- cols[new.idxs]
 
-    for (i in seq(along=vars)) {
+    for (i in seq_along(vars)) {
       vars[[i]][1] <<- idxs[new.idxs %in% vars[[i]][1]]
     }
 
@@ -449,7 +449,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   # Assign the variables linked to Tk widgets
 
   list.var <- tclVar()
-  for (i in seq(along=ids))
+  for (i in seq_along(ids))
     tcl("lappend", list.var, ids[i])
 
   name.var  <- tclVar()

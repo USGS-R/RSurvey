@@ -347,7 +347,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
   # Assign variables linked to Tk widgets
 
   variables.var <- tclVar()
-  for (i in seq(along=col.ids))
+  for (i in seq_along(col.ids))
     tcl("lappend", variables.var, col.ids[i])
 
   sep.var       <- tclVar()

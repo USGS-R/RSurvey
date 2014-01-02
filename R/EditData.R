@@ -213,7 +213,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     if (nrow(undo.stack) == 0)
       undo.stack <<- NULL
     fmt.old.vals <- FormatValues(ij[, 1], ij[, 2], is.fmt=TRUE)
-    for (i in seq(along=cells))
+    for (i in seq_along(cells))
       tkset(frame3.tbl, cells[i], fmt.old.vals[i])
     SetActiveCell()
   }
@@ -234,7 +234,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     undo.stack <<- rbind(undo.stack, redo.stack[idxs, , drop=FALSE])
     redo.stack <<- redo.stack[-idxs, , drop=FALSE]
     fmt.new.vals <- FormatValues(ij[, 1], ij[, 2], is.fmt=TRUE)
-    for (i in seq(along=cells))
+    for (i in seq_along(cells))
       tkset(frame3.tbl, cells[i], fmt.new.vals[i])
     SetActiveCell()
   }
@@ -327,7 +327,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     SaveEdits(new.vals, i, j)
 
     new.vals <- FormatValues(i, j, is.fmt=TRUE)
-    for (i in seq(along=cells))
+    for (i in seq_along(cells))
       tkset(frame3.tbl, cells[i], new.vals[i])
     SetActiveCell()
   }
@@ -386,7 +386,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
 
       SaveEdits(new.vals, cells)
 
-      for (idx in seq(along=cells))
+      for (idx in seq_along(cells))
         tkset(frame3.tbl, cells[idx], new.vals[idx])
       SetActiveCell()
     }

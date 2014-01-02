@@ -364,7 +364,7 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
       points(x, y, pch=21, cex=cex.pts, col="black", bg="white", lwd=lwd)
     } else {
       col.pts <- if (rm.pnt.line) NA else "black"
-      for (i in seq(along=col)) {
+      for (i in seq_along(col)) {
         logic <- z >= levels[i] & z <= levels[i + 1]
         points(x[logic], y[logic], pch=21, cex=cex.pts, col=col.pts,
                bg=col[i], lwd=lwd)

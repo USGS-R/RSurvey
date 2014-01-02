@@ -1,10 +1,13 @@
 Changes in Version 0.8-0
 
+  o  ImportSpreadsheetData function added to import a worksheet from an Office
+     Open XML Workbook file (xlsx).
+
   o  Show individual observations and density estimate in histogram plot.
 
 Changes in Version 0.7-9
 
-  o  Packages delcared in Depends field are now in the Imports field.
+  o  Packages declared in Depends field were moved to the Imports field.
 
   o  Redesigned the layout in the Format function GUI.
 

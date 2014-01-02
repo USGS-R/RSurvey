@@ -49,7 +49,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
       if (!freq) {
         bandwidth <- as.numeric(tclvalue(bandwidth.var))
         if (!is.na(bandwidth) && bandwidth > 0) {
-          dens <- density(d[[idx]], adjust=bandwidth)
+          dens <- density(d[[idx]], adjust=bandwidth, na.rm=TRUE)
           lines(dens, col="blue")
         }
       }

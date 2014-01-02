@@ -36,7 +36,7 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
     is.ply <- !is.null(ply) && inherits(ply, "gpc.poly")
     if (is.ply && is.x && is.y) {
       all.pts <- rgeos::get.pts(ply)
-      for (i in seq(along=all.pts)) {
+      for (i in seq_along(all.pts)) {
         pts <- all.pts[[i]]
         is.in <- point.in.polygon(point.x=d$x, point.y=d$y,
                                   pol.x=pts$x, pol.y=pts$y)

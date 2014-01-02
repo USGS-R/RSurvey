@@ -206,7 +206,7 @@ OpenRSurvey <- function() {
   EstablishDefaultVars <- function() {
     vars <- list()
     idxs.n <- GetNumericCols(Data("cols"))
-    for (i in seq(along=idxs.n)) {
+    for (i in seq_along(idxs.n)) {
       if (is.null(vars$x)) {
         vars$x <- idxs.n[i]
       } else if (is.null(vars$y)) {
@@ -371,6 +371,13 @@ OpenRSurvey <- function() {
   AboutPackage <- function() {
     txt <- paste(readLines(about.path, n=-1L), collapse="\n")
     EditText(txt, read.only=TRUE, win.title="About",
+             is.fixed.width.font=FALSE, parent=tt)
+  }
+
+  # News
+  News <- function() {
+    txt <- paste(readLines(news.path, n=-1L), collapse="\n")
+    EditText(txt, read.only=TRUE, win.title="News",
              is.fixed.width.font=FALSE, parent=tt)
   }
 
@@ -631,7 +638,7 @@ OpenRSurvey <- function() {
         if (type == "p") {
           pts <- rgeos::get.pts(ply.new)
           logic <- rep(TRUE, nrow(dat))
-          for (i in seq(along=pts)) {
+          for (i in seq_along(pts)) {
               is.in <-  point.in.polygon(point.x=dat$x, point.y=dat$y,
                                          pol.x=pts[[i]]$x, pol.y=pts[[i]]$y) > 0
               is.in <- if (pts[[i]]$hole) !is.in else is.in
@@ -724,7 +731,7 @@ OpenRSurvey <- function() {
       Data("changelog", ans$changelog)
       memory.usage <- gc()
 
-      for (i in seq(along=cols)) {
+      for (i in seq_along(cols)) {
         obj <- EvalFunction(cols[[i]]$fun, cols)
         cols[[i]]$summary <- paste(c("", capture.output(summary(obj)), "",
                                      "", capture.output(str(obj)),
@@ -863,9 +870,11 @@ OpenRSurvey <- function() {
   if ("package:RSurvey" %in% search()) {
     image.path <- system.file("images", package="RSurvey")
     about.path <- system.file("DESCRIPTION", package="RSurvey")
+    news.path  <- system.file("NEWS", package="RSurvey")
   } else {
     image.path <- file.path(getwd(), "inst", "images")
     about.path <- file.path(getwd(), "DESCRIPTION")
+    news.path  <- file.path(getwd(), "News")
   }
   if (is.null(Data("default.dir")))
     Data("default.dir", getwd())
@@ -1114,6 +1123,7 @@ OpenRSurvey <- function() {
           if (!is.null(src) && length(src) == 2)
             print(help(src[1], package=src[2]))
         })
+  tkadd(menu.help, "command", label="News", command=News)
 
   tkadd(menu.help, "separator")
   menu.help.rep <- tkmenu(tt, tearoff=0)

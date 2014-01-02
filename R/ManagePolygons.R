@@ -195,7 +195,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
         poly.crop <<- new.names[which(old.names %in% poly.crop)]
     }
 
-    for (i in seq(along=new.names)) {
+    for (i in seq_along(new.names)) {
       tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var),
                                 i - 1, i - 1, new.names[i])
     }
@@ -274,7 +274,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       else
         new.idxs <- (1:n)[all.idxs %in% new.idxs]
     }
-    for (i in seq(along=polys))
+    for (i in seq_along(polys))
       tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var),
                                 i - 1, i - 1, names(polys)[i])
     tkselection.clear(frame1.lst, 0, "end")
@@ -313,7 +313,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       return()
     if (!is.list(f))
       f <- list(f)
-    for (i in seq(along=f)) {
+    for (i in seq_along(f)) {
       con <- file(f[[i]], "r", encoding=encoding)
       new.poly <- rgeos::read.polyfile(con, nohole=FALSE)
       close(con)

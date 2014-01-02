@@ -85,7 +85,7 @@ Autocrop <- function(mesh, max.len, max.itr=10000) {
   tri[tri[, "tr3"] == 0 & (tri[, "tr1"] != 0 & tri[, "tr2"] != 0), "node3"] <- 0
 
   arcs <- c()
-  for (i in seq(along=tri[,1])) {
+  for (i in seq_along(tri[,1])) {
     nodes.in.elem <- array(tri[i, c("node1", "node2", "node3")])
     if (0 %in% nodes.in.elem) {
       arcs <- rbind(arcs, nodes.in.elem[nodes.in.elem != 0])
@@ -102,7 +102,7 @@ Autocrop <- function(mesh, max.len, max.itr=10000) {
   sort.arcs <- arcs[1, ]
   arcs <- arcs[-1, ]
 
-  for (i in seq(along=arcs[,1])) {
+  for (i in seq_along(arcs[,1])) {
     node <- sort.arcs[length(sort.arcs)]
     has.shared.node <- arcs[, 1] %in% node | arcs[, 2] %in% node
 

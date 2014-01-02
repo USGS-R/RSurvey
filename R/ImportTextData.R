@@ -249,7 +249,7 @@ ImportTextData <- function(parent=NULL) {
       }
 
       # Remove columns containing all NA values
-      is.all.na <- vapply(seq(along=d), function(i) all(is.na(d[, i])), TRUE)
+      is.all.na <- vapply(seq_along(d), function(i) all(is.na(d[, i])), TRUE)
       d <- d[, !is.all.na, drop=FALSE]
       return(d)
 

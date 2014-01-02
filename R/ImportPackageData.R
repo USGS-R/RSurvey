@@ -146,7 +146,7 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
         pkg.items <- sort(pkg.items)
       tkselection.clear(frame1.lst.2.4, 0, "end")
       tclvalue(dataset.var) <- ""
-      for (i in seq(along=pkg.items))
+      for (i in seq_along(pkg.items))
         tcl("lappend", dataset.var, pkg.items[i])
       if (length(pkg.items) > 0) {
         tkselection.set(frame1.lst.2.4, 0)
@@ -203,7 +203,7 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
     }
     tkselection.clear(frame1.lst.2.1, 0, "end")
     tclvalue(package.var) <- ""
-    for (i in seq(along=pkg.names))
+    for (i in seq_along(pkg.names))
       tcl("lappend", package.var, pkg.names[i])
     tkselection.set(frame1.lst.2.1, 0)
     SelectPackage()

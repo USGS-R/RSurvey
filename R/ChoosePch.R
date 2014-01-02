@@ -89,7 +89,7 @@ ChoosePch <- function(pch=NA, parent=NULL) {
     op <- par(pty="s")
     plot(c(-1, m), c(-1, n), type="n", xlab="", ylab="", xaxs="i", yaxs="i")
     grid(2 * (m + 1), 2 * (n + 1), lty=1)
-    for (i in seq(along=pch.show))
+    for (i in seq_along(pch.show))
       points((i - 1) %% m, (n - 1) - ((i - 1) %/% n), pch=pch.show[i],
              col="black", bg="green", cex=cex[i])
     par(op)

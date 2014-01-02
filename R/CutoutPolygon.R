@@ -30,7 +30,7 @@ CutoutPolygon <- function(dat, ply=NULL) {
   holes <- vapply(d, function(x) x$hole, TRUE)
   d <- append(d[!holes], d[holes])
 
-  for (i in seq(along=d)) {
+  for (i in seq_along(d)) {
     pts <- d[[i]]
     in.poly <- point.in.polygon(point.x=x, point.y=y, pol.x=pts$x, pol.y=pts$y)
     mat.in.poly <- matrix(in.poly, nrow=nrows, ncol=ncols, byrow=FALSE)

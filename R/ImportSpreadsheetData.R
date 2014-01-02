@@ -1,4 +1,4 @@
-# Import a worksheet from a Office Open XML workbook file (xlsx).
+# Import a worksheet from an Office Open XML workbook file (xlsx).
 
 # Adapted from xlsxToR function (accessed on 2014-01-01):
 # Schaun Wheeler <schaun.wheeler at gmail.com>

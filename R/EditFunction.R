@@ -15,7 +15,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       fun <- txt
       pattern <- paste0("\"", ids, "\"")
       replacement <- paste0("DATA[[", 1:length(ids), "]]")
-      for (i in seq(along=ids))
+      for (i in seq_along(ids))
         fun <- gsub(pattern[i], replacement[i], fun, fixed=TRUE)
       fun <- paste0("function(DATA) {", fun, "}")
 
@@ -72,7 +72,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       show.ids <- ids
 
     tclvalue(variable.var) <- ""
-    for (i in seq(along=show.ids))
+    for (i in seq_along(show.ids))
       tcl("lappend", variable.var, show.ids[i])
 
     tkselection.clear(frame1.lst.2.1, 0, "end")
@@ -208,7 +208,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     var.vals.txt <- gsub("^\\s+|\\s+$", "", var.vals.txt)
 
     tclvalue(value.var) <- ""
-    for (i in seq(along=var.vals.txt))
+    for (i in seq_along(var.vals.txt))
       tcl("lappend", value.var, var.vals.txt[i])
     tkselection.clear(frame1.lst.4.1, 0, "end")
     tkconfigure(frame1.but.5.1, state="disabled")
@@ -286,7 +286,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   # Class types
   classes <- NULL
-  for (i in seq(along=cols)) {
+  for (i in seq_along(cols)) {
     if (!i %in% index)
       classes <- c(classes, cols[[i]]$class)
   }
@@ -298,7 +298,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   # Assign variables linked to Tk widgets
   variable.var <- tclVar()
-  for (i in seq(along=ids))
+  for (i in seq_along(ids))
     tcl("lappend", variable.var, ids[i])  # must be unique
   value.var <- tclVar()
   inverse.var <- tclVar(0)

@@ -113,7 +113,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
   if (n > 1)
     f <- list()
 
-  for (i in seq(along=ans)) {
+  for (i in seq_along(ans)) {
     val <- ans[i]
     ext <- GetFileExt(val)
     attr(val, "directory") <- dirname(val)
