@@ -236,7 +236,11 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
     cols[[idx]] <- list(id="", class="")
 
-    f <- EditFunction(cols, index=idx, value.length=nrow(Data("data.raw")),
+    value.length <- nrow(Data("data.raw"))
+    if (is.null(value.length) && length(cols) > 1)
+      value.length <- length(EvalFunction(cols[[1]]$fun, cols))
+
+    f <- EditFunction(cols, index=idx, value.length=value.length,
                       win.title="New Variable", parent=tt)
     if (is.null(f$fun) || f$fun == "")
       return()

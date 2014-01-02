@@ -442,29 +442,43 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertString("cumprod(<variable>)"))
   tkadd(menu.math, "cascade", label="Cumulative", menu=menu.math.cum)
 
-  menu.summary <- tkmenu(tt, tearoff=0)
-  tkadd(top.menu, "cascade", label="Summary", menu=menu.summary, underline=0)
-  tkadd(menu.summary, "command", label="Are all values true",
-        command=function() InsertString("all(<variable>, na.rm = FALSE)"))
-  tkadd(menu.summary, "command", label="Are any values true",
-        command=function() InsertString("any(<variable>, na.rm = FALSE)"))
-  tkadd(menu.summary, "separator")
-  tkadd(menu.summary, "command", label="Sum",
+  tkadd(menu.math, "separator")
+  tkadd(menu.math, "command", label="Sum",
         command=function() InsertString("sum(<variable>, na.rm = TRUE)"))
-  tkadd(menu.summary, "command", label="Product",
+  tkadd(menu.math, "command", label="Product",
         command=function() InsertString("prod(<variable>, na.rm = TRUE)"))
-  tkadd(menu.summary, "separator")
-  tkadd(menu.summary, "command", label="Minimum",
+
+  menu.stats <- tkmenu(tt, tearoff=0)
+  tkadd(top.menu, "cascade", label="Stats", menu=menu.stats, underline=0)
+  tkadd(menu.stats, "command", label="Minimum",
         command=function() InsertString("min(<variable>, na.rm = TRUE)"))
-  tkadd(menu.summary, "command", label="Maximum",
+  tkadd(menu.stats, "command", label="Maximum",
         command=function() InsertString("max(<variable>, na.rm = TRUE)"))
-  tkadd(menu.summary, "separator")
-  tkadd(menu.summary, "command", label="Mean",
+  tkadd(menu.stats, "separator")
+  tkadd(menu.stats, "command", label="Mean",
         command=function() InsertString("mean(<variable>, na.rm = TRUE)"))
-  tkadd(menu.summary, "command", label="Median",
+  tkadd(menu.stats, "command", label="Median",
         command=function() InsertString("median(<variable>, na.rm = TRUE)"))
-  tkadd(menu.summary, "command", label="Standard deviation",
+  tkadd(menu.stats, "command", label="Standard deviation",
         command=function() InsertString("sd(<variable>, na.rm = TRUE)"))
+
+  tkadd(menu.stats, "separator")
+  tkadd(menu.stats, "command", label="Specify seeds",
+        command=function() InsertString("set.seed(124)"))
+  menu.stats.ran <- tkmenu(tt, tearoff=0)
+  nobs <- ifelse(is.null(value.length), "<integer>", value.length)
+  tkadd(menu.stats.ran, "command", label="Uniform distribution",
+        command=function() InsertString(paste0("runif(n = ", nobs, ", min = 0, max = 1)")))
+  tkadd(menu.stats.ran, "command", label="Binomial distribution",
+        command=function() InsertString(paste0("rbinom(n = ", nobs, ", size = 20, prob = 0.2)")))
+  tkadd(menu.stats.ran, "command", label="Poisson distribution",
+        command=function() InsertString(paste0("rpois(n = ", nobs, ", lambda = 3)")))
+  tkadd(menu.stats.ran, "command", label="Exponential distribution",
+        command=function() InsertString(paste0("rexp(n = ", nobs, ", rate = 1)")))
+  tkadd(menu.stats.ran, "command", label="Normal distribution",
+        command=function() InsertString(paste0("rnorm(n = ", nobs, ", mean = 0, sd = 1)")))
+  tkadd(menu.stats, "cascade", label="Random samples from a",
+        menu=menu.stats.ran)
 
   menu.operator <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Operator", menu=menu.operator, underline=0)
@@ -518,6 +532,11 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkadd(menu.const.is, "command", label="Infinite",
         command=function() InsertString("is.infinite(<variable>)"))
   tkadd(menu.const, "cascade", label="Which elements are ", menu=menu.const.is)
+  tkadd(menu.const, "separator")
+  tkadd(menu.const, "command", label="Are all values true",
+        command=function() InsertString("all(<variable>, na.rm = FALSE)"))
+  tkadd(menu.const, "command", label="Are any values true",
+        command=function() InsertString("any(<variable>, na.rm = FALSE)"))
 
   menu.string <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="String", menu=menu.string, underline=0)
@@ -757,7 +776,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   # GUI control
 
-  tkfocus(frame2.txt.2.1)
+  tkfocus(tt)
 
   tkgrab(tt)
   tkwait.variable(tt.done.var)

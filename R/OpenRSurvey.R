@@ -766,15 +766,18 @@ OpenRSurvey <- function() {
     if (is.null(Data("data.pts"))) {
       cols <- Data("cols")
 
-      Eval <- function(v) {
+      Fun <- function(v) {
         if (is.null(v)) NULL else EvalFunction(cols[[v]]$fun, cols)
       }
-      d <- as.data.frame(lapply(var.names, function(i) Eval(vars[[i]])),
+      d <- as.data.frame(lapply(var.names, function(i) Fun(vars[[i]])),
                          stringsAsFactors=FALSE)
-      rows.str <- row.names(Data("data.raw"))
-      rows.int <- as.integer(rows.str)
-      is.int <- is.integer(rows.int) && !anyDuplicated(rows.int)
-      row.names(d) <- if (is.int) rows.int else rows.str
+
+      if (!is.null(Data("data.raw"))) {
+        rows.str <- row.names(Data("data.raw"))
+        rows.int <- as.integer(rows.str)
+        is.int <- is.integer(rows.int) && !anyDuplicated(rows.int)
+        row.names(d) <- if (is.int) rows.int else rows.str
+      }
       names(d) <- var.names
 
       query <- Data("query")

@@ -82,8 +82,8 @@
   path.xl <- file.path(path, "xl")
   f.workbook <- list.files(path.xl, "workbook.xml$", full.names=TRUE)
   sheets <- xmlToList(xmlParse(f.workbook))
-  fun <- function(i) as.data.frame(as.list(i), stringsAsFactors=FALSE)
-  sheets <- .RbindFill(lapply(sheets$sheets, fun))
+  Fun <- function(i) as.data.frame(as.list(i), stringsAsFactors=FALSE)
+  sheets <- .RbindFill(lapply(sheets$sheets, Fun))
   rownames(sheets) <- NULL
   sheets$id <- gsub("\\D", "", sheets$id)
   return(sheets)
@@ -94,8 +94,8 @@
   f.ws <- list.files(path.ws, paste0("sheet(", sheet.id, ")\\.xml$"),
                      full.names=TRUE)
   ws <- xmlRoot(xmlParse(f.ws))[["sheetData"]]
-  fun <- function(i) c("v"=xmlValue(i[["v"]]), xmlAttrs(i))
-  ws <- xpathApply(ws, "//x:c", fun, namespaces="x")
+  Fun <- function(i) c("v"=xmlValue(i[["v"]]), xmlAttrs(i))
+  ws <- xpathApply(ws, "//x:c", Fun, namespaces="x")
   rows <- unlist(lapply(seq_along(ws), function(i) rep(i, length(ws[[i]]))))
   ws <- unlist(ws)
   ws <- data.frame("row"=rows, "ind"=names(ws), "value"=ws,
@@ -135,8 +135,8 @@
 }
 
 .Letters2Indexes <- function(x) {
-  fun <- function(i) paste0(LETTERS, i)
-  all.cols <- c(LETTERS, as.vector(t(vapply(LETTERS, fun, rep("", 26)))))
+  Fun <- function(i) paste0(LETTERS, i)
+  all.cols <- c(LETTERS, as.vector(t(vapply(LETTERS, Fun, rep("", 26)))))
   return(match(toupper(x), all.cols))
 }
 
@@ -170,8 +170,8 @@
     d <- d[-1, , drop=FALSE]
     d.style <- d.style[-1, , drop=FALSE]
   } else {
-    fun <- function(i) paste0(LETTERS, i)
-    all.cols <- c(LETTERS, as.vector(t(vapply(LETTERS, fun, rep("", 26)))))
+    Fun <- function(i) paste0(LETTERS, i)
+    all.cols <- c(LETTERS, as.vector(t(vapply(LETTERS, Fun, rep("", 26)))))
     colnames(d) <- all.cols[as.integer(colnames(d))]
   }
   if (rm.all.na) {
@@ -184,8 +184,8 @@
   }
   d <- as.data.frame(d, stringsAsFactors=FALSE)
   d.style <- as.data.frame(d.style, stringsAsFactors=FALSE)
-  fun <- function(i) as.numeric(names(which.max(table(i))))
-  col.style <- vapply(d.style, fun, 0)
+  Fun <- function(i) as.numeric(names(which.max(table(i))))
+  col.style <- vapply(d.style, Fun, 0)
   col.style[] <- styles[col.style + 1L]
   origin <- "1899-12-30"  # TODO(jfisher): mac os might be "1904-01-01"
   for (i in seq_along(col.style)) {
