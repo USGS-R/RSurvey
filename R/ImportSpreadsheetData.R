@@ -39,26 +39,47 @@
   custom.styles <- as.data.frame(.RbindFill(custom.styles),
                                  stringsAsFactors=FALSE)
   custom.styles$numFmtId <- as.integer(custom.styles$numFmtId)
-  zeros <- sapply(1:11, function(i) paste(rep("0", i), collapse=""))
-  dt.fmt.codes <- c("yyyy\\-mm\\-dd\\ hh:mm:ss",
-                    paste0("yyyy\\-mm\\-dd\\ hh:mm:ss.", zeros),
-                    "yyyy/mm/dd\\ hh:mm:ss",
-                    paste0("yyyy/mm/dd\\ hh:mm:ss.", zeros),
-                    "mm/dd/yyyy\\ hh:mm:ss",
-                    paste0("mm/dd/yyyy\\ hh:mm:ss.", zeros),
-                    "mm/dd/yy\\ hh:mm:ss",
-                    paste0("mm/dd/yy\\ hh:mm:ss.", zeros),
-                    "m/d/yy\\ h:mm;@",
-                    "[$-409]dddd\\,\\ mmmm\ dd\\,\\ yyyy",
-                    "[$-409]m/d/yy\\ h:mm\\ AM/PM;@",
-                    "yyyy\\-mm\\-dd")
-  dt.ids <- custom.styles$numFmtId[custom.styles$formatCode %in% dt.fmt.codes]
+
+  zeros <- vapply(1:11, function(i) paste(rep("0", i), collapse=""), "")
+  fmt.codes.d  <- c("yyyy\\-mm\\-dd",
+                    "yyyy/mm/dd",
+                    "mm/dd/yy",
+                    "mm/dd/yyyy",
+                    "m/d/yyyy",
+                    "mm\\-dd\\-yy",
+                    "mm\\-dd\\-yyyy",
+                    "m\\-d\\-yyyy",
+                    "m\\-d\\-yy",
+                    "dd/mm/yy",
+                    "dd/mm/yyyy",
+                    "dd\\-mm\\-yy",
+                    "dd\\-mm\\-yyyy",
+                    "[$-409]dddd\\,\\ mmmm\ dd\\,\\ yyyy")
+  fmt.codes.t  <- c("hh:mm",
+                    "hh:mm:ss",
+                    paste("hh:mm:ss", zeros, sep="."),
+                    paste("h:mm:ss", zeros, sep="."),
+                    paste("mm:ss", zeros, sep="."))
+  fmt.codes.dt <- c("m/d/yy\\ h:mm;@",
+                    "[$-409]m/d/yy\\ h:mm\\ AM/PM;@")
+  for (i in fmt.codes.d) {
+    add.fmts <- vapply(fmt.codes.t, function(j) paste(i, j, sep="\\ "), "")
+    fmt.codes.dt <- c(fmt.codes.dt, add.fmts)
+  }
+  names(fmt.codes.dt) <- NULL
+  ids.d  <- custom.styles$numFmtId[custom.styles$formatCode %in% fmt.codes.d]
+  ids.t  <- custom.styles$numFmtId[custom.styles$formatCode %in% fmt.codes.t]
+  ids.dt <- custom.styles$numFmtId[custom.styles$formatCode %in% fmt.codes.dt]
+
   styles <- xpathApply(styles, "//x:xf[@numFmtId and @xfId]",
                        xmlAttrs, namespaces="x")
   styles <- lapply(styles, function(i) i[grepl("numFmtId", names(i))])
-  styles <- as.integer(sapply(styles, function(i) i["numFmtId"]))
+  styles <- vapply(styles, function(i) as.integer(i["numFmtId"]), 0L)
+
   names(styles) <- seq_along(styles) - 1L
-  styles[styles %in% dt.ids] <- 22  # format code for date-time
+  styles[styles %in% ids.d]  <- 14  # format code applied to custom date
+  styles[styles %in% ids.t]  <- 18  # format code applied to custom time
+  styles[styles %in% ids.dt] <- 22  # format code applied to custom date-time
   return(styles)
 }
 
@@ -80,8 +101,7 @@
   ws <- xmlRoot(xmlParse(f.ws))[["sheetData"]]
   fun <- function(i) c("v"=xmlValue(i[["v"]]), xmlAttrs(i))
   ws <- xpathApply(ws, "//x:c", fun, namespaces="x")
-  fun <- function(i) rep(i, length(ws[[i]]))
-  rows <- unlist(lapply(seq_along(ws), fun))
+  rows <- unlist(lapply(seq_along(ws), function(i) rep(i, length(ws[[i]]))))
   ws <- unlist(ws)
   ws <- data.frame("row"=rows, "ind"=names(ws), "value"=ws,
                    stringsAsFactors=FALSE)
@@ -181,15 +201,14 @@
   col.style <- vapply(d.style, fun, 0)
   col.style[] <- styles[col.style + 1L]
 
-  origin.date <- "1899-12-30"  # TODO(jfisher): mac os might be "1904-01-01"
+  origin <- "1899-12-30"  # TODO(jfisher): mac os might be "1904-01-01"
   for (i in seq_along(col.style)) {
     if (col.style[i] %in% 14:17) {  # date
-      d[, i] <- as.Date(as.numeric(d[, i]), origin=origin.date)
+      d[, i] <- as.Date(as.numeric(d[, i]), origin=origin)
     } else if (col.style[i] %in% c(18:21, 45:47)) {  # time
-      d[, i] <- as.POSIXct(as.numeric(d[, i]) * 86400, origin=origin.date,
-                           tz="GMT")
+      d[, i] <- as.POSIXct(as.numeric(d[, i]) * 86400, origin=origin, tz="GMT")
     } else if (col.style[i] %in% 22) {  # date-time
-      d[, i] <- as.POSIXct(as.numeric(d[, i]), origin=origin.date)
+      d[, i] <- as.POSIXct(as.numeric(d[, i]), origin=origin)
     } else {
       d[, i] <- type.convert(.TrimSpace(d[, i]), as.is=!str.as.fact)
     }
