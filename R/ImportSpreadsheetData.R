@@ -39,29 +39,26 @@
   custom.styles <- as.data.frame(.RbindFill(custom.styles),
                                  stringsAsFactors=FALSE)
   custom.styles$numFmtId <- as.integer(custom.styles$numFmtId)
-
   zeros <- vapply(1:11, function(i) paste(rep("0", i), collapse=""), "")
-  fmt.codes.d  <- c("yyyy\\-mm\\-dd",
-                    "yyyy/mm/dd",
-                    "mm/dd/yy",
-                    "mm/dd/yyyy",
-                    "m/d/yyyy",
-                    "mm\\-dd\\-yy",
-                    "mm\\-dd\\-yyyy",
-                    "m\\-d\\-yyyy",
-                    "m\\-d\\-yy",
-                    "dd/mm/yy",
-                    "dd/mm/yyyy",
-                    "dd\\-mm\\-yy",
-                    "dd\\-mm\\-yyyy",
-                    "[$-409]dddd\\,\\ mmmm\ dd\\,\\ yyyy")
-  fmt.codes.t  <- c("hh:mm",
-                    "hh:mm:ss",
-                    paste("hh:mm:ss", zeros, sep="."),
-                    paste("h:mm:ss", zeros, sep="."),
-                    paste("mm:ss", zeros, sep="."))
-  fmt.codes.dt <- c("m/d/yy\\ h:mm;@",
-                    "[$-409]m/d/yy\\ h:mm\\ AM/PM;@")
+  fmt.codes.d <- c("yyyy\\-mm\\-dd",
+                   "yyyy/mm/dd",
+                   "mm/dd/yy",
+                   "mm/dd/yyyy",
+                   "m/d/yyyy",
+                   "mm\\-dd\\-yy",
+                   "mm\\-dd\\-yyyy",
+                   "m\\-d\\-yyyy",
+                   "m\\-d\\-yy",
+                   "dd/mm/yy",
+                   "dd/mm/yyyy",
+                   "dd\\-mm\\-yy",
+                   "dd\\-mm\\-yyyy",
+                   "[$-409]dddd\\,\\ mmmm\ dd\\,\\ yyyy")
+  fmt.codes.t <- c("hh:mm",
+                   "hh:mm:ss", paste("hh:mm:ss", zeros, sep="."),
+                   "h:mm:ss", paste("h:mm:ss", zeros, sep="."),
+                   "mm:ss", paste("mm:ss", zeros, sep="."))
+  fmt.codes.dt <- c("m/d/yy\\ h:mm;@", "[$-409]m/d/yy\\ h:mm\\ AM/PM;@")
   for (i in fmt.codes.d) {
     add.fmts <- vapply(fmt.codes.t, function(j) paste(i, j, sep="\\ "), "")
     fmt.codes.dt <- c(fmt.codes.dt, add.fmts)
@@ -70,16 +67,14 @@
   ids.d  <- custom.styles$numFmtId[custom.styles$formatCode %in% fmt.codes.d]
   ids.t  <- custom.styles$numFmtId[custom.styles$formatCode %in% fmt.codes.t]
   ids.dt <- custom.styles$numFmtId[custom.styles$formatCode %in% fmt.codes.dt]
-
-  styles <- xpathApply(styles, "//x:xf[@numFmtId and @xfId]",
-                       xmlAttrs, namespaces="x")
+  styles <- xpathApply(styles, "//x:xf[@numFmtId and @xfId]", xmlAttrs,
+                       namespaces="x")
   styles <- lapply(styles, function(i) i[grepl("numFmtId", names(i))])
   styles <- vapply(styles, function(i) as.integer(i["numFmtId"]), 0L)
-
   names(styles) <- seq_along(styles) - 1L
-  styles[styles %in% ids.d]  <- 14  # format code applied to custom date
-  styles[styles %in% ids.t]  <- 18  # format code applied to custom time
-  styles[styles %in% ids.dt] <- 22  # format code applied to custom date-time
+  styles[styles %in% ids.d]  <- 14  # date
+  styles[styles %in% ids.t]  <- 18  # time
+  styles[styles %in% ids.dt] <- 22  # date-time
   return(styles)
 }
 
@@ -147,11 +142,9 @@
 
 .ReadWorksheet <- function(path, sheet.id, cell.range, rm.all.na, header,
                            str.as.fact) {
-
   styles <- .GetStyles(path)
   strings <- .GetSharedStrings(path)
   ws <- .GetWorksheet(path, sheet.id)
-
   matched.strings <- strings[match(ws$v[ws$t == "s" & !is.na(ws$t)],
                                    names(strings))]
   ws$v[!is.na(ws$t) & ws$t == "s"] <- matched.strings
@@ -159,11 +152,9 @@
   ws$rows <- as.numeric(gsub("\\D", "", ws$r))
   if (!any(grepl("^s$", colnames(ws))))
     ws$s <- NA
-
   d <- tapply(ws$v, list(ws$rows, ws$cols), identity)
   d.style <- tapply(ws$s, list(ws$rows, ws$cols), identity)
   d.style[is.na(d.style)] <- "0"  # set missing styles to General format string
-
   if (is.list(cell.range)) {
     rows <- which(rownames(d) %in% cell.range$rows)
     cols <- which(colnames(d) %in% cell.range$cols)
@@ -172,7 +163,6 @@
     d <- d[rows, cols, drop=FALSE]
     d.style <- d.style[rows, cols, drop=FALSE]
   }
-
   if (header) {
     col.names <- d[1, ]
     col.names[is.na(col.names)] <- "Unknown"
@@ -184,7 +174,6 @@
     all.cols <- c(LETTERS, as.vector(t(vapply(LETTERS, fun, rep("", 26)))))
     colnames(d) <- all.cols[as.integer(colnames(d))]
   }
-
   if (rm.all.na) {
     rows <- apply(d, 1, function(i) !all(is.na(i)))
     cols <- apply(d, 2, function(i) !all(is.na(i)))
@@ -193,14 +182,11 @@
     d <- d[rows, cols, drop=FALSE]
     d.style <- d.style[rows, cols, drop=FALSE]
   }
-
   d <- as.data.frame(d, stringsAsFactors=FALSE)
   d.style <- as.data.frame(d.style, stringsAsFactors=FALSE)
-
   fun <- function(i) as.numeric(names(which.max(table(i))))
   col.style <- vapply(d.style, fun, 0)
   col.style[] <- styles[col.style + 1L]
-
   origin <- "1899-12-30"  # TODO(jfisher): mac os might be "1904-01-01"
   for (i in seq_along(col.style)) {
     if (col.style[i] %in% 14:17) {  # date
@@ -217,42 +203,37 @@
 }
 
 
-
 ImportSpreadsheetData <- function(parent=NULL) {
 
-  GetDataFile <- function(f) {
+  ## Additional functions (subroutines)
 
+  GetDataFile <- function(f) {
     if (missing(f)) {
       txt <- "Open XML Spreadsheet File"
       f <- GetFile(cmd="Open", exts="xlsx", win.title=txt, parent=tt)
       if (is.null(f) || attr(f, "extension") != "xlsx")
         return()
     }
-
     path <<- NULL
     sheets <<- NULL
     tkconfigure(frame0.but.1.2, state="disabled")
     tkconfigure(frame2.lab.1.1, state="disabled")
     tkconfigure(frame2.box.1.2, state="disabled", value="{}")
     tcl(frame2.box.1.2, "current", 0)
-
     if (f == "")
       return()
-
     path <- try(.UnzipWorkbook(f), silent=TRUE)
     if (inherits(path, "try-error") || !is.character(path)) {
       tkmessageBox(icon="error", message="Unable to access workbook.",
                    detail=path, title="Error", type="ok", parent=tt)
       return()
     }
-
     sheets <- try(.GetSheetNames(path), silent=TRUE)
     if (inherits(sheets, "try-error")) {
       tkmessageBox(icon="error", message="Unable to access worksheets.",
                    detail=sheets, title="Error", type="ok", parent=tt)
       return()
     }
-
     sheet.names <- as.character(sheets$name)
     if (length(sheet.names) == 0)
       sheet.names <- paste0("{", sheet.names, "}")
@@ -260,21 +241,16 @@ ImportSpreadsheetData <- function(parent=NULL) {
     tkconfigure(frame2.lab.1.1, state="normal")
     tkconfigure(frame2.box.1.2, state="normal", value=sheet.names)
     tcl(frame2.box.1.2, "current", 0)
-
     path <<- path
     sheets <<- sheets
     tclvalue(source.var) <- f
   }
 
-
   LoadDataset <- function() {
-
     if (is.null(path) || is.null(sheets))
       return()
-
     idx <- as.integer(tcl(frame2.box.1.2, "current")) + 1L
     sheet.id <- sheets$id[idx]
-
     cell.range <- .ParseCellRange(as.character(tclvalue(cell.range.var)))
     if (is.null(cell.range)) {
       tkmessageBox(icon="error", message="Unable to parse cell range.",
@@ -282,40 +258,38 @@ ImportSpreadsheetData <- function(parent=NULL) {
       tkfocus(frame2.ent.2.2)
       return()
     }
-
     rm.all.na <- as.logical(as.integer(tclvalue(rm.all.na.var)))
     header <- as.logical(as.integer(tclvalue(header.var)))
     str.as.fact <- as.logical(as.integer(tclvalue(str.as.fact.var)))
     src <- as.character(tclvalue(source.var))
-
     tkconfigure(tt, cursor="watch")
     tclServiceMode(FALSE)
     on.exit(tkconfigure(tt, cursor="arrow"))
     on.exit(tclServiceMode(TRUE), add=TRUE)
-
     rtn <<- list(d=.ReadWorksheet(path, sheet.id, cell.range, rm.all.na,
                                   header, str.as.fact), src=src)
     tclvalue(tt.done.var) <- 1
   }
 
 
+  ## Main program
 
-
+  # Load dependent package
   if (!require("XML"))
     stop()
 
+  # Initialize variables
   rtn <- NULL
   path <- NULL
   sheets <- NULL
 
   # Assign variables linked to Tk widgets
-  source.var <- tclVar()
-  cell.range.var <- tclVar("")
-  rm.all.na.var <- tclVar(0)
-  header.var <- tclVar(0)
+  source.var      <- tclVar()
+  cell.range.var  <- tclVar("")
+  rm.all.na.var   <- tclVar(0)
+  header.var      <- tclVar(0)
   str.as.fact.var <- tclVar(0)
-  tt.done.var <- tclVar(0)
-
+  tt.done.var     <- tclVar(0)
 
   # Open GUI
   tclServiceMode(FALSE)
@@ -348,7 +322,6 @@ ImportSpreadsheetData <- function(parent=NULL) {
   tkpack(frame0, fill="x", side="bottom", anchor="e")
   tkconfigure(frame0.but.1.2, state="disabled")
 
-
   # Frame 1, file locator
   frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
   frame1.lab.1.1 <- ttklabel(frame1, text="Import from")
@@ -360,7 +333,6 @@ ImportSpreadsheetData <- function(parent=NULL) {
   tkgrid.configure(frame1.ent.1.2, sticky="we", padx=2)
   tkgrid.columnconfigure(frame1, 1, weight=1)
   tkpack(frame1, fill="x", padx=10)
-
 
   # Frame 2, worksheet and cell range
   frame2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
@@ -379,10 +351,8 @@ ImportSpreadsheetData <- function(parent=NULL) {
   tkgrid.columnconfigure(frame2, 1, weight=1)
   tkpack(frame2, fill="x", padx=10)
 
-
-  # Frame 3, header and factors
+  # Frame 3, options
   frame3 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
-
   txt <- "Remove rows and columns which contain only missing values"
   frame3.chk.1.1 <- ttkcheckbutton(frame3, variable=rm.all.na.var, text=txt)
   txt <- "Names of variables are in first row of table"
@@ -392,31 +362,24 @@ ImportSpreadsheetData <- function(parent=NULL) {
   txt <- paste("An attempt is made to preserve column classes; cell formats",
                "are removed.")
   frame3.lab.4.1 <- ttklabel(frame3, text=txt, foreground="#A40802")
-
   tkgrid(frame3.chk.1.1, sticky="w", pady=c(10, 0))
   tkgrid(frame3.chk.2.1, sticky="w")
   tkgrid(frame3.chk.3.1, sticky="w")
   tkgrid(frame3.lab.4.1, sticky="w", pady=c(10, 0))
   tkpack(frame3, fill="x", padx=10)
 
-
   # Bind events
   tclServiceMode(TRUE)
-
   tkbind(frame1.ent.1.2, "<Return>",
          function() GetDataFile(as.character(tclvalue(source.var))))
 
-
   # GUI control
-
   tkfocus(tt)
   tkgrab(tt)
   tkwait.variable(tt.done.var)
-
   tclServiceMode(FALSE)
   tkgrab.release(tt)
   tkdestroy(tt)
   tclServiceMode(TRUE)
-
   invisible(rtn)
 }
