@@ -21,32 +21,21 @@ Windows users should set R to operate as an SDI application during installation
 by choosing to customize the start-up options and specifying the SDI interface
 (not the default).
 
-Open an R session and install **RSurvey** and its dependent packages from CRAN:
+Open an R session and install **RSurvey** and its dependent packages from CRAN 
+using the following command:
 
     > install.packages("RSurvey")
 
 In addition to the required packages, **RSurvey** uses functions in a number of
-recommended packages:
-[**rgl**](http://cran.r-project.org/web/packages/rgl/index.html "rgl")
-for 3D visualization,
-[**rgdal**](http://cran.r-project.org/web/packages/rgdal/index.html "rgdal")
-for Esri shapefile support,
-[**colorspace**](http://cran.r-project.org/web/packages/colorspace/index.html "colorspace")
-for color palettes based on HCL colors,
-[**dichromat**](http://cran.r-project.org/web/packages/dichromat/index.html "dichromat")
-for color-blind safe color palettes,
-[**XML**](http://cran.r-project.org/web/packages/XML/index.html "XML")
-for reading Office Open XML workbook files, and
-[**tripack**](http://cran.r-project.org/web/packages/tripack/index.html "tripack")
-for auto-cropping. Note that the license for **tripack** explicitly forbids
-commercial use. If any of these recommended packages are missing, **RSurvey**
-will offer to install them when it first starts up.
+recommended packages. If any of these recommended packages are missing, 
+**RSurvey** will offer to install them when it first starts up. Note that the 
+license for the dependent package **tripack** explicitly forbids commercial use.
 
 Support for displaying table data is provided by
 [tktable](http://tktable.sourceforge.net/ "tktable"),
 a spreadsheet-like [Tcl/Tk](http://www.tcl.tk/ "Tcl/Tk") widget
 (typically included with the binary distribution of R).
-The following call will indicate whether tktable is available for use:
+The following command will indicate whether tktable is available for use:
 
     > tcltk::tclRequire("Tktable", warn = TRUE)
 
@@ -61,3 +50,4 @@ Example data sets are provided in the following directory:
 
     > system.file("extdata", package = "RSurvey")
 
+or online at <https://github.com/jfisher-usgs/RSurvey/tree/master/inst/extdata/>.
