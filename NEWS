@@ -1,5 +1,8 @@
 Changes in Version 0.8-0
 
+  o  Fixed bug that converted all exported data to character class when writing
+     Shapefiles and R data files.
+
   o  Added ImportSpreadsheetData function, imports a worksheet from an Office
      Open XML Workbook file (xlsx).
 
