@@ -48,12 +48,12 @@ ExportData <- function(file.type="txt", parent=NULL) {
     n <- length(col.idxs)
     m <- length(row.idxs)
     d <- matrix(NA, nrow=m, ncol=n)
+    if (file.type != "txt")
+      d <- as.data.frame(d)
 
     for (i in 1:n) {
       obj <- EvalFunction(col.funs[i], cols)[row.idxs]
-
-      # Format variables
-      if (file.type == "txt") {
+      if (file.type == "txt") {  # Format variables
         fmt <- col.fmts[i]
         if (fmt == "") {
           obj <- format(obj, na.encode=FALSE)
@@ -73,7 +73,6 @@ ExportData <- function(file.type="txt", parent=NULL) {
       }
       d[, i] <- obj
     }
-
     row.names(d) <- row.nams
 
     if (is.null(Data("export")))
@@ -196,12 +195,12 @@ ExportData <- function(file.type="txt", parent=NULL) {
     } else if (file.type == "shp") {
       # Names are finicky for shapefiles, rules are convoluted,
       # that is, 8-bit names and no periods
-      new.col.ids <- gsub("\\.", "", make.names(substr(col.ids, 1, 7),
-                          unique=TRUE))
-      colnames(d) <- new.col.ids
+      col.ids.8bit <- gsub("\\.", "", make.names(substr(col.ids, 1, 7),
+                           unique=TRUE))
+      colnames(d) <- col.ids.8bit
       idx.x <- which(col.ids %in% id.x)
       idx.y <- which(col.ids %in% id.y)
-      coordinates(d) <- new.col.ids[c(idx.x, idx.y)]
+      coordinates(d) <- col.ids.8bit[c(idx.x, idx.y)]
       dsn <- dirname(file.name)
       layer <- basename(file.name)
       ext <- tolower(tail(unlist(strsplit(layer, "\\."))[-1], 1))

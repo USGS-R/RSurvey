@@ -564,7 +564,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
     SaveActiveEdits()
-    names(d) <- make.names(col.names, unique=TRUE)
+    names(d) <- col.names
     if (type == "str") {
       txt <- capture.output(str(d))
       win.title <- "Structure"
