@@ -21,15 +21,16 @@ Windows users should set R to operate as an SDI application during installation
 by choosing to customize the start-up options and specifying the SDI interface
 (not the default).
 
-Open an R session and install **RSurvey** and its dependent packages from CRAN 
+Open an R session and install **RSurvey** and its dependent packages from CRAN
 using the following command:
 
     > install.packages("RSurvey")
 
 In addition to the required packages, **RSurvey** uses functions in a number of
-recommended packages. If any of these recommended packages are missing, 
-**RSurvey** will offer to install them when it first starts up. Note that the 
-license for the dependent package **tripack** explicitly forbids commercial use.
+recommended packages. If any of these recommended packages are missing,
+**RSurvey** will offer to install them when it first starts up. Note that the
+license for the recommended package **tripack** explicitly forbids commercial
+use.
 
 Support for displaying table data is provided by
 [tktable](http://tktable.sourceforge.net/ "tktable"),

@@ -395,6 +395,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   menu.convert.date <- tkmenu(tt, tearoff=0)
   tkadd(menu.convert.date, "command", label="Integer",
         command=function() InsertString("as.integer(<variable>)"))
+  tkadd(menu.convert.date, "command", label="POSIXct",
+        command=function() InsertString("as.POSIXct(<variable>)"))
   tkadd(menu.convert, "cascade", label="Date to", menu=menu.convert.date)
 
   menu.math <- tkmenu(tt, tearoff=0)

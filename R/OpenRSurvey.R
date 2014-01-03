@@ -369,16 +369,12 @@ OpenRSurvey <- function() {
 
   # About package
   AboutPackage <- function() {
-    txt <- paste(readLines(about.path, n=-1L), collapse="\n")
-    EditText(txt, read.only=TRUE, win.title="About",
-             is.fixed.width.font=FALSE, parent=tt)
-  }
-
-  # News
-  News <- function() {
-    txt <- paste(readLines(news.path, n=-1L), collapse="\n")
-    EditText(txt, read.only=TRUE, win.title="News",
-             is.fixed.width.font=FALSE, parent=tt)
+    txt <- readLines(info.path, n=-1L)
+    pkg.version <- strsplit(txt[grep("^Version:", txt)], " ")[[1]][2]
+    pkg.date <- strsplit(txt[grep("^Date:", txt)], " ")[[1]][2]
+    msg <- paste0("RSurvey package ", pkg.version, " (", pkg.date, ")")
+    tkmessageBox(icon="info", message=msg, title="Information", type="ok",
+                 parent=tt)
   }
 
   # Manage polygons
@@ -872,12 +868,10 @@ OpenRSurvey <- function() {
   # Establish default directories and load packages
   if ("package:RSurvey" %in% search()) {
     image.path <- system.file("images", package="RSurvey")
-    about.path <- system.file("DESCRIPTION", package="RSurvey")
-    news.path  <- system.file("NEWS", package="RSurvey")
+    info.path <- system.file("DESCRIPTION", package="RSurvey")
   } else {
     image.path <- file.path(getwd(), "inst", "images")
-    about.path <- file.path(getwd(), "DESCRIPTION")
-    news.path  <- file.path(getwd(), "News")
+    info.path <- file.path(getwd(), "DESCRIPTION")
   }
   if (is.null(Data("default.dir")))
     Data("default.dir", getwd())
@@ -1112,11 +1106,7 @@ OpenRSurvey <- function() {
 
   menu.help <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Help", menu=menu.help, underline=0)
-  tkadd(menu.help, "command", label="Introduction",
-        command=function() {
-          print(help("OpenRSurvey", package="RSurvey"))
-        })
-  tkadd(menu.help, "command", label="Functions",
+  tkadd(menu.help, "command", label="Documentation",
         command=function() {
           help(package="RSurvey")
         })
@@ -1126,7 +1116,6 @@ OpenRSurvey <- function() {
           if (!is.null(src) && length(src) == 2)
             print(help(src[1], package=src[2]))
         })
-  tkadd(menu.help, "command", label="News", command=News)
 
   tkadd(menu.help, "separator")
   menu.help.rep <- tkmenu(tt, tearoff=0)
