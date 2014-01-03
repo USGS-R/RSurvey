@@ -242,7 +242,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     if ("POSIXt" %in% var.class) {
       if (var.fmt == "")
         var.fmt <- "%Y-%m-%d %H:%M:%S"
-      txt <- paste0("as.POSIXct(\"", val, "\", format = \"", var.fmt, "\")")
+      txt <- paste0("as.POSIXct(\"", val, "\", format = \"", var.fmt,
+                    "\", tz = \"GMT\")")
     } else if ("Date" %in% var.class) {
       if (var.fmt == "")
         var.fmt <- "%Y-%m-%d"
@@ -362,7 +363,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkadd(menu.convert.char, "command", label="Logical",
         command=function() InsertString("as.logical(<variable>)"))
   tkadd(menu.convert.char, "command", label="POSIXct",
-        command=function() InsertString("as.POSIXct(strptime(<variable>, format = \"<format>\"))"))
+        command=function() InsertString("as.POSIXct(strptime(<variable>, format = \"<format>\", tz = \"GMT\"))"))
   tkadd(menu.convert.char, "command", label="Date",
         command=function() InsertString("as.Date(<variable>, format = \"<format>\")"))
   tkadd(menu.convert, "cascade", label="Character to", menu=menu.convert.char)
@@ -376,12 +377,12 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
   menu.convert.num <- tkmenu(tt, tearoff=0)
   tkadd(menu.convert.num, "command", label="POSIXct",
-        command=function() InsertString("as.POSIXct(<variable>, origin = \"1970-01-01 00:00:00.00\")"))
+        command=function() InsertString("as.POSIXct(<variable>, origin = \"1970-01-01 00:00:00.00\", tz = \"GMT\")"))
   tkadd(menu.convert, "cascade", label="Numeric to", menu=menu.convert.num)
 
   menu.convert.int <- tkmenu(tt, tearoff=0)
   tkadd(menu.convert.int, "command", label="POSIXct",
-        command=function() InsertString("as.POSIXct(<variable>, origin = \"1970-01-01 00:00:00\")"))
+        command=function() InsertString("as.POSIXct(<variable>, origin = \"1970-01-01 00:00:00\", tz = \"GMT\")"))
   tkadd(menu.convert.int, "command", label="Date",
         command=function() InsertString("as.Date(<variable>, origin = \"1899-12-30\")"))
   tkadd(menu.convert, "cascade", label="Integer to", menu=menu.convert.int)
@@ -402,7 +403,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkadd(menu.convert.date, "command", label="Integer",
         command=function() InsertString("as.integer(<variable>)"))
   tkadd(menu.convert.date, "command", label="POSIXct",
-        command=function() InsertString("as.POSIXct(<variable>)"))
+        command=function() InsertString("as.POSIXct(<variable>, tz = \"GMT\")"))
   tkadd(menu.convert, "cascade", label="Date to", menu=menu.convert.date)
 
   menu.math <- tkmenu(tt, tearoff=0)

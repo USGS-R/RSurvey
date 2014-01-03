@@ -134,7 +134,7 @@ ImportTextData <- function(parent=NULL) {
             }
           }
           if (is.time)
-            val <- as.POSIXct(date.time)
+            val <- as.POSIXct(date.time, tz="GMT")
           else
             val <- type.convert(val, as.is=!str.as.fact)
         }

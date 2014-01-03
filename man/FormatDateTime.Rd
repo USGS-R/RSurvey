@@ -10,7 +10,7 @@ class \dQuote{POSIXt} or \dQuote{Date}.
 }
 
 \usage{
-FormatDateTime(sample = as.POSIXct("1991-08-25 20:57:08"), fmt = "",
+FormatDateTime(sample = as.POSIXct("1991-08-25 20:57:08", tz = "GMT"), fmt = "",
                parent = NULL)
 }
 

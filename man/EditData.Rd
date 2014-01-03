@@ -55,7 +55,7 @@ Requires the Tcl package
 n <- 1000L
 V1 <- sample(c(1:9, NA), n, replace = TRUE)
 V2 <- sample(LETTERS, n, replace = TRUE)
-V3 <- as.POSIXct(rnorm(n, mean = 0, sd = 1e6), origin = "2010-01-01")
+V3 <- as.POSIXct(rnorm(n, mean = 0, sd = 1e6), origin = "2010-01-01", tz = "GMT")
 V4 <- sample(V1 * pi, n)
 d <- data.frame(V1, V2, V3, V4)
 col.names <- c("Integers", "Letters", "DateTime", "Numeric")

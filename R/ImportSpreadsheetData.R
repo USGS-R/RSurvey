@@ -189,12 +189,10 @@
   col.style[] <- styles[col.style + 1L]
   origin <- "1899-12-30"  # TODO(jfisher): mac os might be "1904-01-01"
   for (i in seq_along(col.style)) {
-    if (col.style[i] %in% 14:17) {  # date
+    if (col.style[i] %in% 14:17) {  # date-time
       d[, i] <- as.Date(as.numeric(d[, i]), origin=origin)
-    } else if (col.style[i] %in% c(18:21, 45:47)) {  # time
+    } else if (col.style[i] %in% c(18:21, 22, 45:47)) {
       d[, i] <- as.POSIXct(as.numeric(d[, i]) * 86400, origin=origin, tz="GMT")
-    } else if (col.style[i] %in% 22) {  # date-time
-      d[, i] <- as.POSIXct(as.numeric(d[, i]), origin=origin)
     } else {
       d[, i] <- type.convert(.TrimSpace(d[, i]), as.is=!str.as.fact)
     }

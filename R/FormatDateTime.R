@@ -1,7 +1,7 @@
 # Build calendar date and time string formats.
 
-FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt="",
-                           parent=NULL) {
+FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08", tz="GMT"),
+                           fmt="", parent=NULL) {
 
   ## Additional functions (subroutines)
 

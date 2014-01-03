@@ -73,7 +73,7 @@ z <- c(-0.9, -1.2, -2.4, -2.4, -0.4, 0.1, 2)
 t <- c("4/23/2009 10:43", "4/24/2009 11:20", "4/24/2009 12:08",
        "4/24/2009 12:50", "4/24/2009 13:51", "4/24/2009 14:24",
        "4/24/2009 14:44")
-t <- as.POSIXct(t, format = "\%m/\%d/\%Y \%H:\%M")
+t <- as.POSIXct(t, format = "\%m/\%d/\%Y \%H:\%M", tz = "GMT")
 
 data.raw <- as.data.frame(list(x = x, y = y, z = z, t = t))
 data.pts <- ProcessData(data.raw, type = "p")

@@ -75,12 +75,16 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
       new.vals[new.vals %in% ""] <- NA
       if (inherits(obj, "POSIXt")) {
         fmt <- gsub("%OS[[:digit:]]+", "%OS", col.formats[column])
+        if (fmt == "")
+          fmt <- "%Y-%m-%d %H:%M:%S"
         new.vals <- strptime(new.vals, format=fmt)
         if (inherits(obj, "POSIXct"))
-          new.vals <- as.POSIXct(new.vals)
+          new.vals <- as.POSIXct(new.vals, tz="GMT")
       } else if (inherits(obj, "Date")) {
         fmt <- col.formats[column]
-        new.vals <- as.Date(new.vals, format=ifelse(fmt == "", "%Y-%m-%d", fmt))
+        if (fmt == "")
+          fmt <- "%Y-%m-%d"
+        new.vals <- as.Date(new.vals, format=fmt)
       } else if (inherits(obj, "factor")) {
         levels(d[, column]) <<- unique(c(levels(d[, column]),
                                          na.omit(unique(new.vals))))
