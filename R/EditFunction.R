@@ -240,7 +240,13 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     if ("factor" %in% var.class && is.na(suppressWarnings(as.numeric(val))))
       var.class <- "character"
     if ("POSIXt" %in% var.class) {
+      if (var.fmt == "")
+        var.fmt <- "%Y-%m-%d %H:%M:%S"
       txt <- paste0("as.POSIXct(\"", val, "\", format = \"", var.fmt, "\")")
+    } else if ("Date" %in% var.class) {
+      if (var.fmt == "")
+        var.fmt <- "%Y-%m-%d"
+      txt <- paste0("as.Date(\"", val, "\", format = \"", var.fmt, "\")")
     } else if ("integer" %in% var.class &&
                !val %in% c("NA", "NaN", "Inf", "-Inf")) {
       txt <- paste0(val, "L")
