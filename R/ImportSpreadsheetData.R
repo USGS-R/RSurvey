@@ -1,8 +1,8 @@
 # Import a worksheet from an Office Open XML workbook file (xlsx).
 
-# Adapted from xlsxToR function (accessed on 2014-01-01):
-# Schaun Wheeler <schaun.wheeler at gmail.com>
-# https://gist.github.com/schaunwheeler/5825002
+# Derived from xlsxToR function, accessed on 2014-01-01:
+#   Schaun Wheeler <schaun.wheeler at gmail.com>
+#   https://gist.github.com/schaunwheeler/5825002
 
 .UnzipWorkbook <- function(f) {
   path <- tempfile("workbook")
@@ -203,8 +203,6 @@
 
 ImportSpreadsheetData <- function(parent=NULL) {
 
-  ## Additional functions (subroutines)
-
   GetDataFile <- function(f) {
     if (missing(f)) {
       txt <- "Open XML Spreadsheet File"
@@ -249,6 +247,7 @@ ImportSpreadsheetData <- function(parent=NULL) {
       return()
     idx <- as.integer(tcl(frame2.box.1.2, "current")) + 1L
     sheet.id <- sheets$id[idx]
+    worksheet <- sheets$name[idx]
     cell.range <- .ParseCellRange(as.character(tclvalue(cell.range.var)))
     if (is.null(cell.range)) {
       tkmessageBox(icon="error", message="Unable to parse cell range.",
@@ -259,13 +258,15 @@ ImportSpreadsheetData <- function(parent=NULL) {
     rm.all.na <- as.logical(as.integer(tclvalue(rm.all.na.var)))
     header <- as.logical(as.integer(tclvalue(header.var)))
     str.as.fact <- as.logical(as.integer(tclvalue(str.as.fact.var)))
-    src <- as.character(tclvalue(source.var))
+    pathname <- as.character(tclvalue(source.var))
     tkconfigure(tt, cursor="watch")
     tclServiceMode(FALSE)
     on.exit(tkconfigure(tt, cursor="arrow"))
     on.exit(tclServiceMode(TRUE), add=TRUE)
     rtn <<- list(d=.ReadWorksheet(path, sheet.id, cell.range, rm.all.na,
-                                  header, str.as.fact), src=src)
+                                  header, str.as.fact),
+                 src=c(pathname=pathname, worksheet=worksheet,
+                       accessed=format(Sys.time())))
     tclvalue(tt.done.var) <- 1
   }
 

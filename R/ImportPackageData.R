@@ -18,7 +18,8 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
     txt <- paste0("data(", pkg.item, ", package=\"", pkg.name, "\", envir=e)")
     ds.name <- eval(parse(text=txt))
     rtn <<- list(d=eval(parse(text=paste("(", ds.name, ")")), envir=e),
-                 src=c(dataset=ds.name, package=pkg.name))
+                 src=c(dataset=ds.name, package=pkg.name,
+                       accessed=format(Sys.time())))
     tclvalue(tt.done.var) <- 1
   }
 
@@ -229,15 +230,13 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
   all.ds <- suppressWarnings(data(package=all.pkgs)$results)
   all.pkgs <- sort(unique(all.ds[, "Package"]))
 
-  ds.list <- sapply(all.pkgs,
-                    function(i) all.ds[all.ds[, "Package"] == i,
-                                       c("Item", "Title"), drop=FALSE],
-                    simplify=FALSE)
+  Fun <- function(i) all.ds[all.ds[, "Package"] == i, c("Item", "Title"),
+                            drop=FALSE]
+  ds.list <- sapply(all.pkgs, Fun, simplify=FALSE)
 
   ds.class <- list()
 
-  pkg.type.vals <- c("Show all packages", "Loaded packages",
-                     "Unloaded packages")
+  pkg.type.vals <- paste(c("Show all", "Loaded", "Unloaded"), "packages")
   ds.class.vals <- "{}"
 
   pkg.names <- NULL

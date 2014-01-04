@@ -21,8 +21,8 @@ ImportPackageData(classes = NULL, parent = NULL)
 \value{
 Returns a list with the following components:
 \item{d}{data.frame or matrix; data set.}
-\item{src}{character; a vector of length 2 that includes the dataset and
-  package names.}
+\item{src}{character; a vector of length 3 that includes the dataset name,
+  package name, and access date.}
 }
 
 \author{J.C. Fisher}

@@ -137,7 +137,7 @@ OpenRSurvey <- function() {
                        parent=tt)
           return()
         }
-        src <- f[1]
+        src <- c(pathname=f[1], accessed=format(Sys.time()))
 
       } else if (file.type == "rpackage") {
         valid.classes <- c("data.frame", "matrix")
@@ -218,8 +218,23 @@ OpenRSurvey <- function() {
     Data("vars", vars)
   }
 
-  # Set button state
-  ButtonState <- function(vars) {
+
+
+
+
+  # Toggle widget state
+
+  ToggleState <- function(vars) {
+
+    # Menus
+
+    src <- Data(c("import", "source"))
+    is.src.pkg <- !is.null(src) && "package" %in% names(src)
+    tkentryconfigure(menu.help, 1,
+                     state=ifelse(is.src.pkg, "normal", "disabled"))
+
+    # Buttons
+
     is.xy <- !is.null(vars$x) && !is.null(vars$y)
     tkconfigure(frame2.but.1.1, state=ifelse(is.xy, "normal", "disabled"))
     is.2d <- is.xy && !is.null(vars$z)
@@ -227,6 +242,10 @@ OpenRSurvey <- function() {
     is.3d <- is.2d && is.rgl
     tkconfigure(frame2.but.1.3, state=ifelse(is.3d, "normal", "disabled"))
   }
+
+
+
+
 
   # Set variables
 
@@ -249,7 +268,7 @@ OpenRSurvey <- function() {
       tkconfigure(frame1.box.3.2, value="")
       tkconfigure(frame1.box.4.2, value="")
       tkconfigure(frame1.box.5.2, value="")
-      ButtonState(vars)
+      ToggleState(vars)
       if (is.null(cols))
         return()
     }
@@ -274,7 +293,7 @@ OpenRSurvey <- function() {
     if (!is.null(vars$vy))
       tcl(frame1.box.5.2, "current", which(vars$vy == idxs.n))
 
-    ButtonState(vars)
+    ToggleState(vars)
   }
 
   # Refresh variables
@@ -305,7 +324,7 @@ OpenRSurvey <- function() {
       Data("data.pts", NULL)
       Data("data.grd", NULL)
     }
-    ButtonState(vars)
+    ToggleState(vars)
   }
 
   # Manage variables
@@ -865,7 +884,7 @@ OpenRSurvey <- function() {
             "    set in the command line or by clicking in the Menu:\n",
             "    Edit - GUI Preferences: SDI, then Save and restart R.\n\n")
 
-  # Establish default directories and load packages
+  # Establish default directories
   if ("package:RSurvey" %in% search()) {
     image.path <- system.file("images", package="RSurvey")
     info.path <- system.file("DESCRIPTION", package="RSurvey")
@@ -1113,8 +1132,7 @@ OpenRSurvey <- function() {
   tkadd(menu.help, "command", label="Dataset",
         command=function() {
           src <- Data(c("import", "source"))
-          if (!is.null(src) && length(src) == 2)
-            print(help(src[1], package=src[2]))
+          print(help(src["dataset"], package=src["package"]))
         })
 
   tkadd(menu.help, "separator")
@@ -1262,7 +1280,7 @@ OpenRSurvey <- function() {
 ##tkpack(frame2, fill="x", expand=TRUE, padx=10)
   tkpack(frame2, fill="x", expand=TRUE, padx=10, pady=c(0, 10))
 
-  # Frame 3, view
+  # TODO(jfisher): Frame 3, view
 
   frame3 <- tkframe(tt, relief="flat")
 

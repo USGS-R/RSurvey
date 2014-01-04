@@ -34,7 +34,8 @@ a format string of "\%.5f" applied to the mathematical constant \emph{pi}
 results in "3.14159". Calendar date and time objects of class \code{POSIXct} are
 defined by the ISO C99 / POSIX standard, see \code{\link{strftime}};
 for example, "02/26/2010 02:05:39 PM" is represented using
-"\%d/\%m/\%Y \%I:\%M:\%S \%p".
+"\%d/\%m/\%Y \%I:\%M:\%S \%p". The default time zone is Coordinated Universal
+Time (UTC).
 
 Comments located above data records and header lines are preserved; all other
 comments are ignored. Requires the specification of a comment character.
@@ -53,8 +54,8 @@ Sets the following components in \code{\link{Data}}:
 \item{comment}{character; a vector of comment strings.}
 \item{import}{list; saved \acronym{GUI} options.}
 Components of \code{import} include:
-\item{source}{character; the name of the file or package which the data is read
-  from.}
+\item{source}{character; a vector of length 2 that includes the pathname of the
+  text file and access date.}
 \item{fmts}{logical; indicates whether the file contains the conversion
   specification format strings of the variables.}
 \item{cols}{logical; indicates whether the file contains the names of the
@@ -67,7 +68,8 @@ Components of \code{import} include:
 \item{comment}{character; comment character.}
 \item{encoding}{character; encoding that was assumed for input strings, see
   \code{\link{Encoding}}.}
-\item{str.as.fact}{logical; should character variables be converted to factors?}
+\item{str.as.fact}{logical; if \code{TRUE}, character variables are converted to
+  factors.}
 }
 
 \note{

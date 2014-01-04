@@ -556,7 +556,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     SaveActiveEdits()
     ow <- options()$width
     options(width=300)
-    txt <- paste(c(capture.output(GetEdits()), ""), collapse="\n")
+    txt <- paste(capture.output(GetEdits()), collapse="\n")
     options(width=ow)
     EditText(txt, read.only=TRUE, win.title="Change log",
              is.fixed.width.font=TRUE, parent=tt)
