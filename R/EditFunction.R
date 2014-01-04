@@ -472,7 +472,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         command=function() InsertString("sd(<variable>, na.rm = TRUE)"))
 
   tkadd(menu.stats, "separator")
-  tkadd(menu.stats, "command", label="Specify seeds",
+  tkadd(menu.stats, "command", label="Set seed",
         command=function() InsertString("set.seed(124)"))
   menu.stats.ran <- tkmenu(tt, tearoff=0)
   nobs <- ifelse(is.null(value.length), "<integer>", value.length)

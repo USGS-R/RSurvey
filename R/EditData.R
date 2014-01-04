@@ -558,7 +558,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     options(width=300)
     txt <- paste(c(capture.output(GetEdits()), ""), collapse="\n")
     options(width=ow)
-    EditText(txt, read.only=TRUE, win.title="Changelog",
+    EditText(txt, read.only=TRUE, win.title="Change log",
              is.fixed.width.font=TRUE, parent=tt)
   }
 
@@ -751,7 +751,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
         command=function() ViewData("summary"))
   if (!read.only) {
     tkadd(menu.view, "separator")
-    tkadd(menu.view, "command", label="Changelog", command=ViewChangeLog)
+    tkadd(menu.view, "command", label="Change log", command=ViewChangeLog)
   }
 
   # Search menu
