@@ -381,7 +381,8 @@ OpenRSurvey <- function() {
 
   # Session information
   SessionInfo <- function() {
-    txt <- paste(c(capture.output(sessionInfo()), ""), collapse="\n")
+    txt <- paste(c(capture.output(print(sessionInfo(), locale=FALSE)), ""),
+                 collapse="\n")
     EditText(txt, read.only=TRUE, win.title="Session Information",
              is.fixed.width.font=FALSE, parent=tt)
   }

@@ -278,13 +278,13 @@ ImportSpreadsheetData <- function(parent=NULL) {
     stop()
 
   # Initialize variables
-  rtn <- NULL
-  path <- NULL
+  rtn    <- NULL
+  path   <- NULL
   sheets <- NULL
 
   # Assign variables linked to Tk widgets
   source.var      <- tclVar()
-  cell.range.var  <- tclVar("")
+  cell.range.var  <- tclVar()
   rm.all.na.var   <- tclVar(0)
   header.var      <- tclVar(0)
   str.as.fact.var <- tclVar(0)
