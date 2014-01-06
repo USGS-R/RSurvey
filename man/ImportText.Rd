@@ -1,15 +1,15 @@
-\name{ImportTextData}
+\name{ImportText}
 
-\alias{ImportTextData}
+\alias{ImportText}
 
-\title{Import Text Data}
+\title{Import Data from Text File}
 
 \description{
 A \acronym{GUI} for reading table formatted data from a text file.
 }
 
 \usage{
-ImportTextData(parent = NULL)
+ImportText(parent = NULL)
 }
 
 \arguments{
@@ -83,7 +83,7 @@ Requires the Tcl package \href{http://tktable.sourceforge.net/}{Tktable}.
 \author{J.C. Fisher}
 
 \examples{
-\donttest{ImportTextData()}
+\donttest{ImportText()}
 }
 
 \keyword{IO}

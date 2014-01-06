@@ -5,9 +5,11 @@
 #   Download and install the MiKTeX installation program
 #     http://www.miktex.org/download
 
-BuildPackage <- function() {
+BuildPackage <- function(check.cran=FALSE) {
   if (.Platform$OS.type != "windows")
     stop(call.=FALSE, "This function requires a Windows platform.")
+
+  option <- ifelse(check.cran, "--as-cran", "")
 
   pkg <- basename(getwd())
   description <- readLines("DESCRIPTION")
@@ -31,7 +33,7 @@ BuildPackage <- function() {
   cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.chk))
   cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.git))
   cmd <- append(cmd, paste(cs, path.cmd, "build", path.tmp, "--resave-data"))
-  cmd <- append(cmd, paste(cs, path.cmd, "check --as-cran", path.tar))
+  cmd <- append(cmd, paste(cs, path.cmd, "check", option, path.tar))
   cmd <- append(cmd, paste(cs, path.cmd, "INSTALL --build", path.tar))
   cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.tmp))
   cmd <- append(cmd, paste(cs, "MOVE /Y", file.zip, path.pkg))

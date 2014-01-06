@@ -201,7 +201,7 @@
 }
 
 
-ImportSpreadsheetData <- function(parent=NULL) {
+ImportSpreadsheet <- function(parent=NULL) {
 
   GetDataFile <- function(f) {
     if (missing(f)) {
@@ -310,7 +310,7 @@ ImportSpreadsheetData <- function(parent=NULL) {
                               command=function() tclvalue(tt.done.var) <- 1)
   frame0.but.1.4 <- ttkbutton(frame0, width=12, text="Help",
                               command=function() {
-                                print(help("ImportSpreadsheetData",
+                                print(help("ImportSpreadsheet",
                                            package="RSurvey"))
                               })
   tkgrid("x", frame0.but.1.2, frame0.but.1.3, frame0.but.1.4, pady=c(15, 10))

@@ -116,11 +116,11 @@ OpenRSurvey <- function() {
 
   ReadData <- function(file.type) {
     if (file.type == "txt") {
-      ImportTextData(tt)
+      ImportText(tt)
     } else {
 
       if (file.type == "xlsx") {
-        ans <- ImportSpreadsheetData(parent=tt)
+        ans <- ImportSpreadsheet(parent=tt)
         d <- ans$d
         src <- ans$src
 
@@ -141,7 +141,7 @@ OpenRSurvey <- function() {
 
       } else if (file.type == "rpackage") {
         valid.classes <- c("data.frame", "matrix")
-        ans <- ImportPackageData(valid.classes, parent=tt)
+        ans <- ImportPackage(valid.classes, parent=tt)
         d <- ans$d
         src <- ans$src
       }

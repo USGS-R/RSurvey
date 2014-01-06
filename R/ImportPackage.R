@@ -1,6 +1,6 @@
 # A GUI for importing data sets from R packages.
 
-ImportPackageData <- function(classes=NULL, parent=NULL) {
+ImportPackage <- function(classes=NULL, parent=NULL) {
 
   ## Additional functions (subroutines)
 
@@ -276,7 +276,7 @@ ImportPackageData <- function(classes=NULL, parent=NULL) {
                               command=function() tclvalue(tt.done.var) <- 1)
   frame0.but.1.4 <- ttkbutton(frame0, width=12, text="Help",
                               command=function() {
-                                print(help("ImportPackageData",
+                                print(help("ImportPackage",
                                            package="RSurvey"))
                               })
   frame0.grp.1.5 <- ttksizegrip(frame0)

@@ -1,15 +1,15 @@
-\name{ImportPackageData}
+\name{ImportPackage}
 
-\alias{ImportPackageData}
+\alias{ImportPackage}
 
-\title{Import Data from Package}
+\title{Import Data from R Package}
 
 \description{
 A \acronym{GUI} for loading selected data sets from R packages.
 }
 
 \usage{
-ImportPackageData(classes = NULL, parent = NULL)
+ImportPackage(classes = NULL, parent = NULL)
 }
 
 \arguments{
@@ -32,7 +32,7 @@ Returns a list with the following components:
 }
 
 \examples{
-\donttest{ans <- ImportPackageData(c("data.frame", "matrix"))}
+\donttest{ans <- ImportPackage(c("data.frame", "matrix"))}
 }
 
 \keyword{IO}

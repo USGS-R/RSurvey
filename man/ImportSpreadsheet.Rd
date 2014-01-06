@@ -1,8 +1,8 @@
-\name{ImportSpreadsheetData}
+\name{ImportSpreadsheet}
 
-\alias{ImportSpreadsheetData}
+\alias{ImportSpreadsheet}
 
-\title{Import Data from XML Spreadsheet}
+\title{Import Data from XML Spreadsheet File}
 
 \description{
 A \acronym{GUI} for loading selected data sets from an Open XML Spreadsheet
@@ -10,7 +10,7 @@ file.
 }
 
 \usage{
-ImportSpreadsheetData(parent = NULL)
+ImportSpreadsheet(parent = NULL)
 }
 
 \arguments{
@@ -36,7 +36,7 @@ This code was derived from Schaun Wheeler's
 }
 
 \examples{
-\donttest{ans <- ImportSpreadsheetData()}
+\donttest{ans <- ImportSpreadsheet()}
 }
 
 \keyword{IO}

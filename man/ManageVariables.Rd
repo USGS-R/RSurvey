@@ -40,7 +40,7 @@ to a specific variable, and contains the following components:
 \item{fun}{character; the expression evaluated when computing the variables
   vector of values.}
 \item{index}{integer; the variables component index number in the
-  \code{data.raw} data frame, see \code{\link{ImportTextData}}. Only required
+  \code{data.raw} data frame, see \code{\link{ImportText}}. Only required
   for variables directly linked to data columns in \code{data.raw}.}
 \item{class}{character; the data class of the vector object.}
 \item{summary}{list; a summary of the variables descriptive statistics (see

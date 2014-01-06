@@ -9,7 +9,12 @@ Writes a series of commands for creating an \R package to a Windows batch file.
 }
 
 \usage{
-BuildPackage()
+BuildPackage(check.cran = FALSE)
+}
+
+\arguments{
+\item{check.cran}{logical; if \code{TRUE}, uses command-line options similar to
+  \acronym{CRAN}.}
 }
 
 \details{
