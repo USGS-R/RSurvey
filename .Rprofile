@@ -1,15 +1,18 @@
 l <- readLines(file.path(getwd(), "DESCRIPTION"))
 
-depends <- sub("^Depends: ", "", l[substr(l, 1L, 7L) == "Depends"])
-depends <- strsplit(depends, ",")[[1]][-1]
+id <- "Depends"
+txt <- sub(paste0("^", id, ": "), "", l[substr(l, 1L, nchar(id)) == id])
+pkgs <- strsplit(txt, ",")[[1]][-1]
 
-imports <- sub("^Imports: ", "", l[substr(l, 1L, 7L) == "Imports"])
-imports <- if (length(imports) > 0) strsplit(imports, ",")[[1]] else NULL
+id <- "Imports"
+txt <- sub(paste0("^", id, ": "), "", l[substr(l, 1L, nchar(id)) == id])
+pkgs <- c(pkgs, if (length(txt) > 0) strsplit(txt, ",")[[1]] else NULL)
 
-suggests <- sub("^Suggests: ", "", l[substr(l, 1L, 8L) == "Suggests"])
-suggests <- if (length(suggests) > 0) strsplit(suggests, ",")[[1]] else NULL
+id <- "Suggests"
+txt <- sub(paste0("^", id, ": "), "", l[substr(l, 1L, nchar(id)) == id])
+pkgs <- c(pkgs, if (length(txt) > 0) strsplit(txt, ",")[[1]] else NULL)
 
-packages <- sub("^\\s+", "", c(depends, imports, suggests))
+packages <- sub("^\\s+", "", pkgs)
 
 options(defaultPackages=c(getOption("defaultPackages"), packages))
 

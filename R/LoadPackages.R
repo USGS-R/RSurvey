@@ -37,7 +37,8 @@ LoadPackages <- function() {
   ## Main program
 
   # Suggested packages
-  pkgs <- c("rgdal", "tripack", "colorspace", "dichromat", "rgl")
+  txt <- readLines(system.file("DESCRIPTION", package="RSurvey"))
+  pkgs <- sub(",$", "", strsplit(txt[grep("^Suggests:", txt)], " ")[[1]][-1])
 
   # Account for missing packages
 

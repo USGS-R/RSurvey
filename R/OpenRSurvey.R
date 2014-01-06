@@ -381,7 +381,7 @@ OpenRSurvey <- function() {
 
   # Session information
   SessionInfo <- function() {
-    txt <- paste(c(capture.output(print(sessionInfo(), locale=FALSE)), ""),
+    txt <- paste(c(capture.output(print(sessionInfo(), locale=TRUE)), ""),
                  collapse="\n")
     EditText(txt, read.only=TRUE, win.title="Session Information",
              is.fixed.width.font=FALSE, parent=tt)
@@ -389,7 +389,7 @@ OpenRSurvey <- function() {
 
   # About package
   AboutPackage <- function() {
-    txt <- readLines(info.path, n=-1L)
+    txt <- readLines(info.path)
     pkg.version <- strsplit(txt[grep("^Version:", txt)], " ")[[1]][2]
     pkg.date <- strsplit(txt[grep("^Date:", txt)], " ")[[1]][2]
     msg <- paste0("RSurvey package ", pkg.version, " (", pkg.date, ")")
@@ -897,17 +897,11 @@ OpenRSurvey <- function() {
     Data("default.dir", getwd())
 
   # Check if suggested packages are loaded
-  available.packages <- .packages(all.available=TRUE)
-  is.xml <- "XML" %in% available.packages &&
-            require("XML", warn.conflicts=FALSE, quietly=TRUE)
-  is.rgl <- "rgl" %in% available.packages &&
-            require("rgl", warn.conflicts=FALSE, quietly=TRUE)
-  is.rgdal <- "rgdal" %in% available.packages &&
-              require("rgdal", warn.conflicts=FALSE, quietly=TRUE)
-  is.tripack <- "tripack" %in% available.packages &&
-                require("tripack", warn.conflicts=FALSE, quietly=TRUE)
-  is.colorspace <- "colorspace" %in% available.packages &&
-                   require("colorspace", warn.conflicts=FALSE, quietly=TRUE)
+  is.xml <- suppressWarnings(require("XML", quietly=TRUE))
+  is.rgl <- suppressWarnings(require("rgl", quietly=TRUE))
+  is.rgdal <- suppressWarnings(require("rgdal", quietly=TRUE))
+  is.tripack <- suppressWarnings(require("tripack", quietly=TRUE))
+  is.colorspace <- suppressWarnings(require("colorspace", quietly=TRUE))
 
   # Set options
   SetCsi()

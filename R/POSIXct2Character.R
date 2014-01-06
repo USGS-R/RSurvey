@@ -1,12 +1,11 @@
 # Convert objects from POSIXct to character class
 
 POSIXct2Character <- function(obj, fmt="%Y-%m-%d %H:%M:%OS3") {
-  match.location <- gregexpr("%OS[[:digit:]]+", fmt)[[1]]
-  if (match.location > 0) {
+  pos <- gregexpr("%OS[[:digit:]]+", fmt)[[1]]
+  if (pos > 0) {
     dec.digits <- as.integer(substr(fmt,
-                                    match.location + 3L,
-                                    match.location + attr(match.location,
-                                                          "match.length")))
+                                    pos + 3L,
+                                    pos + attr(pos, "match.length")))
     obj <- as.POSIXlt(obj)
     obj$sec <- round(obj$sec, dec.digits) + 10^(-dec.digits - 1L)
   }

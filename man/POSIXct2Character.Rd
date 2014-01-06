@@ -44,11 +44,11 @@ solution provided
 }
 
 \examples{
-val <- c("11/10/2011 07:49:36.3",
+obj <- c("11/10/2011 07:49:36.3",
          "04/01/2013 17:22:08.139",
          "01/06/2013 01:02:16.333",
          "12/14/2038 15:42:04.577895")
-date.time <- as.POSIXct(val, format="\%m/\%d/\%Y \%H:\%M:\%OS", tz = "GMT")
+date.time <- as.POSIXct(obj, format="\%m/\%d/\%Y \%H:\%M:\%OS", tz = "GMT")
 
 options("digits.secs" = 3)
 format(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS")
