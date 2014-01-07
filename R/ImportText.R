@@ -1,4 +1,5 @@
-# A GUI for reading table formatted data from a text file or paste operation.
+# A GUI for reading table formatted data from a text file or copy-paste
+# operation.
 
 ImportText <- function(parent=NULL) {
 

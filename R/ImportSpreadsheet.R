@@ -39,7 +39,8 @@
   custom.styles <- as.data.frame(.RbindFill(custom.styles),
                                  stringsAsFactors=FALSE)
   custom.styles$numFmtId <- as.integer(custom.styles$numFmtId)
-  zeros <- vapply(1:11, function(i) paste(rep("0", i), collapse=""), "")
+  n <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
+  zeros <- vapply(1:n, function(i) paste(rep("0", i), collapse=""), "")
   fmt.codes.d <- c("yyyy\\-mm\\-dd",
                    "yyyy/mm/dd",
                    "mm/dd/yy",
@@ -321,7 +322,7 @@ ImportSpreadsheet <- function(parent=NULL) {
   tkpack(frame0, fill="x", side="bottom", anchor="e")
   tkconfigure(frame0.but.1.2, state="disabled")
 
-  # Frame 1, file locator
+  # Frame 1, file
   frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
   frame1.lab.1.1 <- ttklabel(frame1, text="Import from")
   frame1.ent.1.2 <- ttkentry(frame1, textvariable=source.var)
