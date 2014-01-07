@@ -102,7 +102,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
       ans <- c(ans, sub(pat, "\\2", res))
       res <- sub(pat, "\\1\\3", res)
     }
-    ans <- c(ans, strsplit(res, " ", fixed = TRUE)[[1]])
+    ans <- c(ans, strsplit(res, " ", fixed=TRUE)[[1]])
     ans <- ans[nzchar(ans)]
   } else {
     ans <- res

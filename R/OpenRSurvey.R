@@ -42,7 +42,7 @@ OpenRSurvey <- function() {
   # Save binary project file
   SaveProj <- function() {
     if (!is.null(Data("proj.file"))) {
-      if (file.access(Data("proj.file"), mode = 0) != 0)
+      if (file.access(Data("proj.file"), mode=0) != 0)
         Data("proj.file", NULL)
     }
     if (is.null(Data("proj.file"))) {
