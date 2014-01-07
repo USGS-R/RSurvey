@@ -95,12 +95,13 @@
   f.ws <- list.files(path.ws, paste0("sheet(", sheet.id, ")\\.xml$"),
                      full.names=TRUE)
   ws <- xmlRoot(xmlParse(f.ws))[["sheetData"]]
-  Fun <- function(i) c("v"=xmlValue(i[["v"]]), xmlAttrs(i))
+  if (xmlSize(ws) == 0)
+    stop("selected worksheet is empty.", call.=FALSE)
+  Fun <- function(i) c(v=xmlValue(i[["v"]]), xmlAttrs(i))
   ws <- xpathApply(ws, "//x:c", Fun, namespaces="x")
   rows <- unlist(lapply(seq_along(ws), function(i) rep(i, length(ws[[i]]))))
   ws <- unlist(ws)
-  ws <- data.frame("row"=rows, "ind"=names(ws), "value"=ws,
-                   stringsAsFactors=FALSE)
+  ws <- data.frame(row=rows, ind=names(ws), value=ws, stringsAsFactors=FALSE)
   ws <- reshape(ws, idvar="row", timevar="ind", direction="wide")
   colnames(ws) <- gsub("^value\\.", "", colnames(ws))
   return(ws)
@@ -160,7 +161,7 @@
     rows <- which(rownames(d) %in% cell.range$rows)
     cols <- which(colnames(d) %in% cell.range$cols)
     if (length(rows) == 0 || length(cols) == 0)
-      return()
+      stop("cell range results in empty data table.", call.=FALSE)
     d <- d[rows, cols, drop=FALSE]
     d.style <- d.style[rows, cols, drop=FALSE]
   }
@@ -179,7 +180,7 @@
     rows <- apply(d, 1, function(i) !all(is.na(i)))
     cols <- apply(d, 2, function(i) !all(is.na(i)))
     if (length(rows) == 0 || length(cols) == 0)
-      return()
+      stop("removing missing values results in empty data table.", call.=FALSE)
     d <- d[rows, cols, drop=FALSE]
     d.style <- d.style[rows, cols, drop=FALSE]
   }
@@ -236,7 +237,7 @@ ImportSpreadsheet <- function(parent=NULL) {
       sheet.names <- paste0("{", sheet.names, "}")
     tkconfigure(frame0.but.1.2, state="normal")
     tkconfigure(frame2.lab.1.1, state="normal")
-    tkconfigure(frame2.box.1.2, state="normal", value=sheet.names)
+    tkconfigure(frame2.box.1.2, state="readonly", value=sheet.names)
     tcl(frame2.box.1.2, "current", 0)
     path <<- path
     sheets <<- sheets
@@ -264,10 +265,15 @@ ImportSpreadsheet <- function(parent=NULL) {
     tclServiceMode(FALSE)
     on.exit(tkconfigure(tt, cursor="arrow"))
     on.exit(tclServiceMode(TRUE), add=TRUE)
-    rtn <<- list(d=.ReadWorksheet(path, sheet.id, cell.range, rm.all.na,
-                                  header, str.as.fact),
-                 src=c(pathname=pathname, worksheet=worksheet,
-                       accessed=format(Sys.time())))
+    d <- try(.ReadWorksheet(path, sheet.id, cell.range, rm.all.na, header,
+                            str.as.fact), silent=TRUE)
+    if (inherits(d, "try-error")) {
+      tkmessageBox(icon="error", message="Unable to read worksheet.",
+                   title="Error", type="ok", detail=d, parent=tt)
+      return()
+    }
+    rtn <<- list(d=d, src=c(pathname=pathname, worksheet=worksheet,
+                            accessed=format(Sys.time())))
     tclvalue(tt.done.var) <- 1
   }
 

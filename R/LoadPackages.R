@@ -82,7 +82,7 @@ LoadPackages <- function() {
     txt <- paste("The following package(s) used by RSurvey are missing:\n",
                  paste(paste0("\'", missing.pkgs, "\'"), collapse=", "), "",
                  "Some features will not be available without these packages.",
-                 "Install these packages from CRAN?", sep="\n")
+                 "Should these packages be installed from CRAN?", sep="\n")
     frame1.lab.1.1 <- ttklabel(frame1, image=rlogo.var, background="white")
     frame1.lab.1.2 <- ttklabel(frame1, text=txt, justify="left",
                                background="white")
