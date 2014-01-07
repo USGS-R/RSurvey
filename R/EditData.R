@@ -606,6 +606,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     stop("invalid data frame")
   if (!inherits(changelog, c("NULL", "data.frame")))
     stop("invalid changelog")
+
+  # Save old changelog
   changelog.old <- changelog
 
   # Table dimensions

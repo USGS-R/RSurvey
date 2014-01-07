@@ -31,10 +31,6 @@ This code was derived from Schaun Wheeler's
 \href{https://gist.github.com/schaunwheeler/5825002}{xlsxToR} function.
 }
 
-\seealso{
-\code{\link{data}}
-}
-
 \examples{
 \donttest{ans <- ImportSpreadsheet()}
 }
