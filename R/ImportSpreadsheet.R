@@ -13,23 +13,6 @@
   return(path)
 }
 
-.TrimSpace <- function(x) {
-  if (is.character(x))
-    x <- gsub("(^ +)|( +$)", "", x)
-  return(x)
-}
-
-.RbindFill <- function (lst) {  # substitute for plyr::rbind.fill
-  available.args <- unique(unlist(lapply(lst, names)))
-  fun <- function(i) {
-    missing.args <- available.args[which(!available.args %in% names(i))]
-    if (length(missing.args) > 0)
-      i[, missing.args] <- NA
-    return(i)
-  }
-  return(do.call("rbind", lapply(lst, fun)))
-}
-
 .GetStyles <- function(path) {
   path.xl <- file.path(path, "xl")
   f.styles <- list.files(path.xl, "styles.xml$", full.names=TRUE)
@@ -116,34 +99,8 @@
   return(strings)
 }
 
-.ParseCellRange <- function(x) {
-  if (!is.character(x))
-    return()
-  if (x == "")
-    return(NA)
-  cells <- strsplit(x, ":")[[1]]
-  if (length(cells) != 2)
-    return()
-  rows <- as.integer(gsub("\\D", "", cells))
-  if (any(is.na(rows)))
-    return()
-  cols <- .Letters2Indexes(gsub("\\d", "", cells))
-  if (any(is.na(cols)))
-    return()
-  if (rows[1] > rows[2] || cols[1] > cols[2])
-    return()
-  return(list(rows=as.character(seq(rows[1], rows[2])),
-              cols=as.character(seq(cols[1], cols[2]))))
-}
-
-.Letters2Indexes <- function(x) {
-  Fun <- function(i) paste0(LETTERS, i)
-  all.cols <- c(LETTERS, as.vector(t(vapply(LETTERS, Fun, rep("", 26)))))
-  return(match(toupper(x), all.cols))
-}
-
-.ReadWorksheet <- function(path, sheet.id, cell.range, rm.all.na, header,
-                           str.as.fact) {
+.ReadWorksheet <- function(path, sheet.id, cell.range, header, rm.col.na,
+                           rm.row.na, save.row.no, str.as.fact) {
   styles <- .GetStyles(path)
   strings <- .GetSharedStrings(path)
   ws <- .GetWorksheet(path, sheet.id)
@@ -176,13 +133,21 @@
     all.cols <- c(LETTERS, as.vector(t(vapply(LETTERS, Fun, rep("", 26)))))
     colnames(d) <- all.cols[as.integer(colnames(d))]
   }
-  if (rm.all.na) {
-    rows <- apply(d, 1, function(i) !all(is.na(i)))
+  if (rm.col.na) {
     cols <- apply(d, 2, function(i) !all(is.na(i)))
-    if (length(rows) == 0 || length(cols) == 0)
-      stop("removing missing values results in empty data table.", call.=FALSE)
-    d <- d[rows, cols, drop=FALSE]
-    d.style <- d.style[rows, cols, drop=FALSE]
+    if (length(cols) == 0)
+      stop("removing columns with all missing values results in empty table.",
+           call.=FALSE)
+    d <- d[, cols, drop=FALSE]
+    d.style <- d.style[, cols, drop=FALSE]
+  }
+  if (rm.row.na) {
+    rows <- apply(d, 1, function(i) !all(is.na(i)))
+    if (length(rows) == 0)
+      stop("removing rows with all missing values results in empty table.",
+           call.=FALSE)
+    d <- d[rows, , drop=FALSE]
+    d.style <- d.style[rows, , drop=FALSE]
   }
   d <- as.data.frame(d, stringsAsFactors=FALSE)
   d.style <- as.data.frame(d.style, stringsAsFactors=FALSE)
@@ -199,7 +164,52 @@
       d[, i] <- type.convert(.TrimSpace(d[, i]), as.is=!str.as.fact)
     }
   }
+  if (!save.row.no)
+    row.names(d) <- 1:nrow(d)
   return(d)
+}
+
+.TrimSpace <- function(x) {
+  if (is.character(x))
+    x <- gsub("(^ +)|( +$)", "", x)
+  return(x)
+}
+
+.RbindFill <- function (lst) {  # substitute for plyr::rbind.fill
+  available.args <- unique(unlist(lapply(lst, names)))
+  fun <- function(i) {
+    missing.args <- available.args[which(!available.args %in% names(i))]
+    if (length(missing.args) > 0)
+      i[, missing.args] <- NA
+    return(i)
+  }
+  return(do.call("rbind", lapply(lst, fun)))
+}
+
+.ParseCellRange <- function(x) {
+  if (!is.character(x))
+    return()
+  if (x == "")
+    return(NA)
+  cells <- strsplit(x, ":")[[1]]
+  if (length(cells) != 2)
+    return()
+  rows <- as.integer(gsub("\\D", "", cells))
+  if (any(is.na(rows)))
+    return()
+  cols <- .Letters2Indexes(gsub("\\d", "", cells))
+  if (any(is.na(cols)))
+    return()
+  if (rows[1] > rows[2] || cols[1] > cols[2])
+    return()
+  return(list(rows=as.character(seq(rows[1], rows[2])),
+              cols=as.character(seq(cols[1], cols[2]))))
+}
+
+.Letters2Indexes <- function(x) {
+  Fun <- function(i) paste0(LETTERS, i)
+  all.cols <- c(LETTERS, as.vector(t(vapply(LETTERS, Fun, rep("", 26)))))
+  return(match(toupper(x), all.cols))
 }
 
 
@@ -257,16 +267,18 @@ ImportSpreadsheet <- function(parent=NULL) {
       tkfocus(frame2.ent.2.2)
       return()
     }
-    rm.all.na <- as.logical(as.integer(tclvalue(rm.all.na.var)))
-    header <- as.logical(as.integer(tclvalue(header.var)))
+    header      <- as.logical(as.integer(tclvalue(header.var)))
+    rm.col.na   <- as.logical(as.integer(tclvalue(rm.col.na.var)))
+    rm.row.na   <- as.logical(as.integer(tclvalue(rm.row.na.var)))
+    save.row.no <- as.logical(as.integer(tclvalue(save.row.no.var)))
     str.as.fact <- as.logical(as.integer(tclvalue(str.as.fact.var)))
     pathname <- as.character(tclvalue(source.var))
     tkconfigure(tt, cursor="watch")
     tclServiceMode(FALSE)
     on.exit(tkconfigure(tt, cursor="arrow"))
     on.exit(tclServiceMode(TRUE), add=TRUE)
-    d <- try(.ReadWorksheet(path, sheet.id, cell.range, rm.all.na, header,
-                            str.as.fact), silent=TRUE)
+    d <- try(.ReadWorksheet(path, sheet.id, cell.range, header, rm.col.na,
+                            rm.row.na, save.row.no, str.as.fact), silent=TRUE)
     if (inherits(d, "try-error")) {
       tkmessageBox(icon="error", message="Unable to read worksheet.",
                    title="Error", type="ok", detail=d, parent=tt)
@@ -292,8 +304,10 @@ ImportSpreadsheet <- function(parent=NULL) {
   # Assign variables linked to Tk widgets
   source.var      <- tclVar()
   cell.range.var  <- tclVar()
-  rm.all.na.var   <- tclVar(0)
   header.var      <- tclVar(0)
+  rm.col.na.var   <- tclVar(0)
+  rm.row.na.var   <- tclVar(0)
+  save.row.no.var <- tclVar(0)
   str.as.fact.var <- tclVar(0)
   tt.done.var     <- tclVar(0)
 
@@ -359,19 +373,25 @@ ImportSpreadsheet <- function(parent=NULL) {
 
   # Frame 3, options
   frame3 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
-  txt <- "Remove rows and columns which contain only missing values"
-  frame3.chk.1.1 <- ttkcheckbutton(frame3, variable=rm.all.na.var, text=txt)
-  txt <- "Names of variables are in first row of table"
-  frame3.chk.2.1 <- ttkcheckbutton(frame3, variable=header.var, text=txt)
-  frame3.chk.3.1 <- ttkcheckbutton(frame3, variable=str.as.fact.var,
-                                   text="Convert strings to factors")
+  txt <- "Column names are located in the first row of the data table"
+  frame3.chk.1.1 <- ttkcheckbutton(frame3, variable=header.var, text=txt)
+  txt <- "Remove columns which contain only missing values"
+  frame3.chk.2.1 <- ttkcheckbutton(frame3, variable=rm.col.na.var, text=txt)
+  txt <- "Remove rows which contain only missing values"
+  frame3.chk.3.1 <- ttkcheckbutton(frame3, variable=rm.row.na.var, text=txt)
+  txt <- "Preserve row numbering in worksheet"
+  frame3.chk.4.1 <- ttkcheckbutton(frame3, variable=save.row.no.var, text=txt)
+  txt <- "Convert strings to factors"
+  frame3.chk.5.1 <- ttkcheckbutton(frame3, variable=str.as.fact.var, text=txt)
   txt <- paste("An attempt is made to preserve column classes; cell formats",
                "are removed.")
-  frame3.lab.4.1 <- ttklabel(frame3, text=txt, foreground="#A40802")
+  frame3.lab.6.1 <- ttklabel(frame3, text=txt, foreground="#A40802")
   tkgrid(frame3.chk.1.1, sticky="w", pady=c(10, 0))
   tkgrid(frame3.chk.2.1, sticky="w")
   tkgrid(frame3.chk.3.1, sticky="w")
-  tkgrid(frame3.lab.4.1, sticky="w", pady=c(10, 0))
+  tkgrid(frame3.chk.4.1, sticky="w")
+  tkgrid(frame3.chk.5.1, sticky="w")
+  tkgrid(frame3.lab.6.1, sticky="w", pady=c(10, 0))
   tkpack(frame3, fill="x", padx=10)
 
   # Bind events
