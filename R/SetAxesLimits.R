@@ -2,7 +2,7 @@
 
 SetAxesLimits <- function(lim=NULL, parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Update limits
 

@@ -3,7 +3,7 @@
 ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
                            encoding=getOption("encoding"), parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Save polygon
   SavePolygon <- function(type) {

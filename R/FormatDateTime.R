@@ -3,7 +3,7 @@
 FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08", tz="GMT"),
                            fmt="", parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Save format
   SaveFormat <- function() {

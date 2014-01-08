@@ -1,17 +1,17 @@
 # A GUI for viewing and editing table formatted data.
 
-EditData <- function(d, col.names=colnames(d), col.formats=NULL,
+EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
                      read.only=FALSE, changelog=NULL, win.title="Edit Data",
                      parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Save table and close
   SaveTable <- function() {
     tclServiceMode(FALSE)
-    on.exit(tclServiceMode(TRUE))
     SaveActiveEdits()
     changelog <<- GetEdits()
+    tclServiceMode(TRUE)
     tclvalue(tt.done.var) <- 1
   }
 
@@ -36,8 +36,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     fmt.vals <- rep(NA, length(i))
     for (column in unique(j)) {
       idxs <- j %in% column
-      vals <- d[i[idxs], column]
-      obj <- d[1, column]
+      vals <- d[[column]][i[idxs]]
+      obj <- d[[column]][1]
       is.time <- inherits(obj, c("POSIXt", "Date"))
       fmt <- ifelse (is.fmt || is.time, col.formats[column], "")
       if (is.time) {
@@ -70,14 +70,14 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     }
     for (column in unique(j)) {
       idxs <- which(j == column)
-      obj <- d[1, column]
+      obj <- d[[column]][1]
       new.vals <- vals[idxs]
       new.vals[new.vals %in% ""] <- NA
       if (inherits(obj, "POSIXt")) {
         fmt <- gsub("%OS[[:digit:]]+", "%OS", col.formats[column])
         if (fmt == "")
           fmt <- "%Y-%m-%d %H:%M:%S"
-        new.vals <- strptime(new.vals, format=fmt)
+        new.vals <- strptime(new.vals, format=fmt, tz="GMT")
         if (inherits(obj, "POSIXct"))
           new.vals <- as.POSIXct(new.vals, tz="GMT")
       } else if (inherits(obj, "Date")) {
@@ -86,17 +86,19 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
           fmt <- "%Y-%m-%d"
         new.vals <- as.Date(new.vals, format=fmt)
       } else if (inherits(obj, "factor")) {
-        levels(d[, column]) <<- unique(c(levels(d[, column]),
+        levels(d[[column]]) <<- unique(c(levels(d[[column]]),
                                          na.omit(unique(new.vals))))
       } else {
         new.vals <- suppressWarnings(as(new.vals, class(obj)[1]))
       }
-      d[i[idxs], column] <<- new.vals
+      d[[column]][i[idxs]] <<- new.vals
     }
   }
 
   # Save edits in active cell
   SaveActiveEdits <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     cell <- as.character(tkindex(frame3.tbl, "active"))
     ij <- as.integer(strsplit(cell, ",")[[1]])
     i <- ij[1]
@@ -117,7 +119,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     cell <- as.character(tkindex(frame3.tbl, "active"))
     ij <- as.integer(strsplit(cell, ",")[[1]])
     new.val <- as.character(S)
-    if (identical(new.val, CheckEntry(class(d[ij[1], ij[2]]), new.val))) {
+    if (identical(new.val, CheckEntry(class(d[[ij[2]]][ij[1]]), new.val))) {
       tkset(frame3.tbl, cell, as.character(P))
       is.valid <- TRUE
     } else {
@@ -133,7 +135,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     i <- ij[1]
     j <- ij[2]
     new.val <- as.character(S)
-    if (identical(new.val, CheckEntry(class(d[i, j]), new.val))) {
+    if (identical(new.val, CheckEntry(class(d[[j]][i]), new.val))) {
       tclvalue(value.var) <- as.character(S)
       is.valid <- TRUE
     } else {
@@ -343,7 +345,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     active.cell <- as.character(tkindex(frame3.tbl, "active"))
     old.ij <- as.integer(strsplit(active.cell, ",")[[1]])
     i <- old.ij[1]
-    if (i > 0 & i < (nrow(d) + 1L))
+    if (i > 0 & i < (m + 1L))
       i <- i + 1L
     j <- old.ij[2]
     if (i == 0 | j == 0)
@@ -406,9 +408,6 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
       return()
 
     if (is.null(matched.cells)) {
-      n <- ncol(d)
-      m <- nrow(d)
-
       is.match.word <- search.defaults$is.match.word
       ignore.case <- ifelse (search.defaults$is.match.case, FALSE, TRUE)
       fixed <- ifelse (search.defaults$is.reg.exps, FALSE, TRUE)
@@ -517,15 +516,17 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
   # Get edits
 
   GetEdits <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
     s <- NULL
     if (is.null(changelog) & (is.null(undo.stack) || nrow(undo.stack) == 0))
       return(s)
 
     if (!is.null(changelog)) {
-      changelog$cell <- paste(match(changelog$record, row.names(d)),
+      changelog$cell <- paste(match(changelog$record, row.names),
                               match(changelog$variable, col.names), sep=",")
       changelog <- changelog[, c("timestamp", "cell", "old", "new")]
-      undo.stack <- rbind(undo.stack, changelog)
+      undo.stack <- rbind(changelog, undo.stack)
     }
 
     for (i in unique(undo.stack$cell)) {
@@ -534,7 +535,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
                                          drop=FALSE]
       m <- nrow(undo.stack.cell)
       cell <- as.integer(strsplit(undo.stack.cell$cell, ",")[[1]])
-      obj <- d[cell[1], cell[2]]
+      obj <- d[[cell[2]]][cell[1]]
       old <- undo.stack.cell$old[1]
       new <- undo.stack.cell$new[m]
 
@@ -560,6 +561,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     options(width=ow)
     EditText(txt, read.only=TRUE, win.title="Change log",
              is.fixed.width.font=TRUE, parent=tt)
+    return()
   }
 
   # View structure or summary
@@ -572,12 +574,13 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
       txt <- capture.output(str(d))
       win.title <- "Structure"
     } else if (type == "summary") {
-      txt <- capture.output(summary(d))
+      txt <- capture.output(lapply(d, summary))
       win.title <- "Summary"
     }
     txt <- paste(c(txt, ""), collapse="\n")
     EditText(txt, read.only=TRUE, win.title=win.title,
              is.fixed.width.font=TRUE, parent=tt)
+    return()
   }
 
   # Resize column
@@ -601,20 +604,28 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
                "try-error"))
     stop("TkTable is not available")
 
-  # Check validity of arguments
-  if (!inherits(d, c("matrix", "data.frame")))
-    stop("invalid data frame")
-  if (!inherits(changelog, c("NULL", "data.frame")))
-    stop("invalid changelog")
+  # Check validity of data table
+  if (!inherits(d, c("list", "matrix", "data.frame")))
+    stop("invalid class for data table")
+  rtn.class <- class(d)
+  if (!inherits(d, "list")) {
+    if (is.null(row.names))
+      row.names <- rownames(d)
+    d <- as.list(d)
+  }
 
-  # Save old changelog
-  changelog.old <- changelog
-
-  # Table dimensions
-  m <- nrow(d)
-  n <- ncol(d)
+  # Check dimensions of data table
+  n <- length(d)
+  m <- unique(vapply(d, length, 0))
+  if (length(m) != 1)
+    stop("components of list have unequal lengths")
   if (m == 0 || n == 0)
     return()
+
+  # Check validity of changelog
+  if (!inherits(changelog, c("NULL", "data.frame")))
+    stop("invalid changelog")
+  changelog.old <- changelog
 
   # Numerical precision
   num.digits <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
@@ -631,7 +642,7 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     Fun <- function(i) paste0(LETTERS, i)
     col.names <- c(LETTERS, as.vector(t(vapply(LETTERS, Fun, rep("", 26)))))
     col.names <- col.names[1:n]
-    colnames(d) <- col.names
+    names(d) <- col.names
   } else {
     col.names <- col.names[1:n]
     col.names[is.na(col.names)] <- ""
@@ -644,11 +655,8 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
     col.formats[is.na(col.formats)] <- ""
   }
 
-  if (length(rownames(d)) == m)
-    row.names <- rownames(d)
-  else
+  if (is.null(row.names) || length(row.names) != m)
     row.names <- 1:m
-  row.names <- gsub("(^ +)|( +$)", "", as.character(row.names))
 
   # Determine width and height of column 0 and row 0, respectively
   col.0.width  <- max(nchar(row.names)) + 1L
@@ -1064,11 +1072,22 @@ EditData <- function(d, col.names=colnames(d), col.formats=NULL,
   tkwait.variable(tt.done.var)
 
   tclServiceMode(FALSE)
+  if (identical(changelog.old, changelog)) {
+    d <- NULL
+  } else {
+    if (rtn.class == "data.frame") {
+      d <- as.data.frame(d, row.names=row.names, stringsAsFactors=FALSE)
+    } else if (rtn.class == "matrix") {
+      d <- do.call(cbind, d)
+      rownames(d) <- row.names
+    }
+  }
+
   tkgrab.release(tt)
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  if (identical(changelog.old, changelog))
+  if (is.null(d))
     invisible(NULL)
   else
     invisible(list(d=d, changelog=changelog))

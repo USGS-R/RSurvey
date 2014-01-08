@@ -3,7 +3,7 @@
 EditText <- function(txt, read.only=FALSE, win.title="View Text",
                      is.fixed.width.font=FALSE, parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Close GUI and return edited text
   SaveText <- function() {

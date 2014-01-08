@@ -2,7 +2,7 @@
 
 ExportData <- function(file.type="txt", parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Final export of data to file
 

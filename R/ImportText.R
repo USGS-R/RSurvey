@@ -3,7 +3,7 @@
 
 ImportText <- function(parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Read table
 
@@ -127,7 +127,8 @@ ImportText <- function(parent=NULL) {
             sys.time.str <- format(Sys.time(), format=fmt)
             if (!sys.time.str %in% c("", gsub("%%", "%", fmt))) {
               posix.fmt <- gsub("%OS[[:digit:]]+", "%OS", fmt)
-              date.time <- try(as.POSIXlt(val, format=posix.fmt), silent=TRUE)
+              date.time <- try(as.POSIXlt(val, tz="GMT", format=posix.fmt),
+                               silent=TRUE)
               if (!inherits(date.time, "try-error") && !all(is.na(date.time))) {
                 date.time.str <- POSIXct2Character(date.time, fmt)
                 is.time <- TRUE

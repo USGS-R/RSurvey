@@ -2,7 +2,7 @@
 
 ChoosePch <- function(pch=NA, parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Save pch and quit
    SavePch <- function() {

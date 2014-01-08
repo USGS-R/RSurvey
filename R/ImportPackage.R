@@ -2,7 +2,7 @@
 
 ImportPackage <- function(classes=NULL, parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Load data set
   LoadDataset <- function() {

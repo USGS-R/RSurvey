@@ -2,7 +2,7 @@
 
 AddAxis <- function(side, lim, ticks.inside=FALSE, minor.ticks=FALSE, ...) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Locate minor tickmark locations
 

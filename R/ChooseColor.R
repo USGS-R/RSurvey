@@ -2,7 +2,7 @@
 
 ChooseColor <- function(col, parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Save color and quit
   SaveColor <- function() {

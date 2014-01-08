@@ -2,7 +2,7 @@
 
 Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Update entry
   UpdateEntry <- function() {

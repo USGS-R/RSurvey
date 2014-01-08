@@ -2,7 +2,7 @@
 
 SetInterpolation <- function(parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Update parameter values
 

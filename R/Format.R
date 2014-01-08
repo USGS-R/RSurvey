@@ -2,7 +2,7 @@
 
 Format <- function(sample=pi, fmt="", parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Save conversion specification format
   SaveFormat <- function() {

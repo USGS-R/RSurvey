@@ -3,7 +3,7 @@
 SetPolygonLimits <- function(poly.names=NULL, poly.data=NULL, poly.crop=NULL,
                              parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Save new polygons
   SaveNames <- function() {

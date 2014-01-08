@@ -2,7 +2,7 @@
 
 OpenRSurvey <- function() {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Close GUI
   CloseGUI <- function() {
@@ -725,8 +725,8 @@ OpenRSurvey <- function() {
       vars <- Data("vars")
       nams <- names(Data("data.pts"))
       fmts <- vapply(nams, function(i) cols[[vars[[i]]]]$format, "")
-      try(EditData(Data("data.pts"), col.formats=fmts, col.names=nams,
-                   read.only=TRUE, win.title="Processed Data", parent=tt))
+      EditData(Data("data.pts"), col.formats=fmts, col.names=nams,
+               read.only=TRUE, win.title="Processed Data", parent=tt)
 
     } else {  # edit raw data
       if (is.null(Data("data.raw")))
@@ -742,6 +742,9 @@ OpenRSurvey <- function() {
                       win.title="Raw Data", parent=tt)
       if (is.null(ans))
         return()
+
+      tclServiceMode(FALSE)
+      on.exit(tclServiceMode(TRUE), add=TRUE)
 
       Data("data.raw", ans$d)
       Data("changelog", ans$changelog)

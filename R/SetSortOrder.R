@@ -2,7 +2,7 @@
 
 SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Save sort order
   SaveSortOrder <- function() {

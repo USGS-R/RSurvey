@@ -4,7 +4,7 @@
 
 LoadPackages <- function() {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Install missing packages from CRAN mirror
   InstallPackages <- function() {

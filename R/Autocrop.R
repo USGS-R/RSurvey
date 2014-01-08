@@ -2,7 +2,7 @@
 
 Autocrop <- function(mesh, max.len, max.itr=10000) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Return outer elements with arc lengths greater than max.len
 

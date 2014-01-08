@@ -2,7 +2,7 @@
 
 SetConfiguration <- function(parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   UpdatePar <- function() {
     val <- as.numeric(tclvalue(width.var))

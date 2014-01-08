@@ -2,7 +2,7 @@
 
 ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Save changes and close GUI
   SaveChanges <- function(type) {
@@ -373,32 +373,34 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   CallEditData <- function(type="data.frame") {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
+
     idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0)
       return()
     SaveNb()
 
+    tclServiceMode(FALSE)
     nams <- vapply(cols, function(i) i$id, "")
     fmts <- vapply(cols, function(i) i$format, "")
     funs <- vapply(cols, function(i) i$fun, "")
 
-    idxs <- if (type == "data") idx else 1L:length(cols)
-    d <- as.data.frame(lapply(idxs, function(i) EvalFunction(funs[i], cols)),
-                       stringsAsFactors=FALSE)
-    rows.str <- row.names(Data("data.raw"))
-    rows.int <- as.integer(rows.str)
-    is.int <- is.integer(rows.int) && !anyDuplicated(rows.int)
-    row.names(d) <- if (is.int) rows.int else rows.str
-    raw.idxs <- na.omit(vapply(cols, function(i) i$index, 1L))
-    if (all(idxs %in% raw.idxs)) {
+    idxs <- if (type == "data") idx else seq_along(cols)
+    d <- lapply(idxs, function(i) EvalFunction(funs[i], cols))
+    row.names <- rownames(Data("data.raw"))
+
+    raw.data.idxs <- na.omit(vapply(cols, function(i) i$index, 1L))
+    if (all(idxs %in% raw.data.idxs)) {
       win.title <- "Raw Data"
-    } else if (all(!idxs %in% raw.idxs)) {
+    } else if (all(!idxs %in% raw.data.idxs)) {
       win.title <- "Derived Data"
     } else {
       win.title <- "Raw and Derived Data"
     }
-    EditData(d, nams[idxs], fmts[idxs], read.only=TRUE,
-             win.title=win.title, parent=tt)
+    tclServiceMode(TRUE)
+    EditData(d, col.names=nams[idxs], col.formats=fmts[idxs],
+             row.names=row.names, read.only=TRUE, win.title=win.title,
+             parent=tt)
+    return()
   }
 
   # Build historgram

@@ -2,7 +2,7 @@
 
 BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Calculate and plot histogram
 

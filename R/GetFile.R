@@ -4,7 +4,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
                     initialfile=NULL, defaultextension=NULL, win.title=cmd,
                     multi=FALSE, parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Determine file extension
   GetFileExt <- function(x) {
@@ -19,7 +19,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
   # Initialize file filters
   all.filters <- list(bmp   = "Windows Bitmap",
                       bz2   = "Compressed Text",
-                      csv   = "Text Files",
+                      csv   = "Text",
                       eps   = "Encapsulated Postscript",
                       gz    = "Compressed Text",
                       pdf   = "PDF",

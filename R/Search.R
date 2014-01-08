@@ -2,7 +2,7 @@
 
 Search <- function(is.replace=FALSE, defaults=NULL, parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Return find and replace parameters
   ReturnParameters <- function(is.replace.first=FALSE) {

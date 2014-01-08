@@ -2,7 +2,7 @@
 
 AutocropRegion <- function(d, parent=NULL, ...) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Save polygon and exit GUI
 

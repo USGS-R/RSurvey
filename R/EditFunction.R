@@ -4,7 +4,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                          value.class=NULL, win.title="Edit Function",
                          parent=NULL) {
 
-  ## Additional functions (subroutines)
+  ## Additional functions
 
   # Save function
   SaveFunction <- function() {
