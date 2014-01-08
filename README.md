@@ -51,4 +51,3 @@ Example data sets are provided in the following directory:
 
     > system.file("extdata", package = "RSurvey")
 
-or online at <https://github.com/jfisher-usgs/RSurvey/tree/master/inst/extdata/>.
