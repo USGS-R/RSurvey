@@ -549,8 +549,16 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         })
   tkadd(menu.string, "command", label="Extract substring",
         command=function() {
-          InsertString(paste("substr(<variable>, start = <first element>,",
-                             "stop = <last element>)"))
+          InsertString(paste("substr(<variable>, start = <first>,",
+                             "stop = <last>)"))
+        })
+  tkadd(menu.string, "command", label="Number of characters",
+        command=function() {
+          InsertString("nchar(<variable>)")
+        })
+  tkadd(menu.string, "command", label="Which elements are non-empty strings",
+        command=function() {
+          InsertString("nzchar(<variable>)")
         })
 
   menu.tools <- tkmenu(tt, tearoff=0)
