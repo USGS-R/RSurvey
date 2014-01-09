@@ -130,7 +130,7 @@ ImportText <- function(parent=NULL) {
               date.time <- try(as.POSIXlt(val, tz="GMT", format=posix.fmt),
                                silent=TRUE)
               if (!inherits(date.time, "try-error") && !all(is.na(date.time))) {
-                date.time.str <- POSIXct2Character(date.time, fmt)
+                date.time.str <- POSIXct2Character(date.time, fmt, tz="GMT")
                 is.time <- TRUE
               }
             }

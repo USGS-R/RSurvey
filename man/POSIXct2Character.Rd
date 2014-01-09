@@ -9,12 +9,14 @@ Convert objects from \code{\link{POSIXct}} to \code{\link{character}} class.
 }
 
 \usage{
-POSIXct2Character(obj, fmt = "\%Y-\%m-\%d \%H:\%M:\%OS3")
+POSIXct2Character(obj, fmt = "\%Y-\%m-\%d \%H:\%M:\%OS3", tz = "")
 }
 
 \arguments{
 \item{obj}{POSIXct; vector of calendar dates and times.}
 \item{fmt}{character; the conversion specification format.}
+\item{tz}{character; a timezone specification, defaults to the current
+  timezone.}
 }
 
 \value{
@@ -54,11 +56,11 @@ options("digits.secs" = 3)
 format(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS")
 format(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS3")
 
-POSIXct2Character(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS3")
-POSIXct2Character(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS4")
-POSIXct2Character(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS2")
+POSIXct2Character(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS3", tz = "GMT")
+POSIXct2Character(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS4", tz = "GMT")
+POSIXct2Character(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS2", tz = "GMT")
 
-POSIXct2Character(date.time, fmt = "\%H:\%M:\%OS3 \%Y-\%m-\%d")
+POSIXct2Character(date.time, fmt = "\%H:\%M:\%OS3 \%Y-\%m-\%d", tz = "GMT")
 }
 
 \keyword{manip}

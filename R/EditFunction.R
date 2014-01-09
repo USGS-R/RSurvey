@@ -549,8 +549,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         })
   tkadd(menu.string, "command", label="Extract substring",
         command=function() {
-          InsertString(paste("substr(<variable>, start = <first>,",
-                             "stop = <last>)"))
+          InsertString(paste("substr(<variable>, start = 1, stop = 2)"))
         })
   tkadd(menu.string, "command", label="Number of characters",
         command=function() {

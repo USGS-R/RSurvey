@@ -994,10 +994,10 @@ OpenRSurvey <- function() {
 
   tkadd(menu.edit, "command", label="Manage variables\u2026",
         command=CallManageVariables)
+  tkadd(menu.edit, "command", label="Raw data editor\u2026",
+        command=function() CallEditData(read.only=FALSE))
   tkadd(menu.edit, "command", label="Comment\u2026",
         command=EditComment)
-  tkadd(menu.edit, "command", label="Raw data\u2026",
-        command=function() CallEditData(read.only=FALSE))
 
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Filter data records\u2026",
