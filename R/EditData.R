@@ -13,6 +13,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
     changelog <<- GetEdits()
     tclServiceMode(TRUE)
     tclvalue(tt.done.var) <- 1
+    return()
   }
 
   # Get single cell value for table
@@ -89,6 +90,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
       }
       d[[column]][i[idxs]] <<- new.vals
     }
+    return()
   }
 
   # Save edits in active cell
@@ -108,6 +110,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
       undo.stack <<- rbind(undo.stack, e)
       redo.stack <<- NULL
     }
+    return()
   }
 
   # Validate entry value
@@ -148,6 +151,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
     if (!read.only)
       tkset(frame3.tbl, cell, fmt.val)
     tclvalue(value.var) <- as.character(fmt.val)
+    return()
   }
 
   # Change active cell
@@ -195,6 +199,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
       tktag.raise(frame3.tbl, "active_readonly", "sel")
     }
     SetActiveCell()
+    return()
   }
 
   # Undo edit
@@ -218,6 +223,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
     for (i in seq_along(cells))
       tkset(frame3.tbl, cells[i], fmt.old.vals[i])
     SetActiveCell()
+    return()
   }
 
   # Redo edit
@@ -239,6 +245,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
     for (i in seq_along(cells))
       tkset(frame3.tbl, cells[i], fmt.new.vals[i])
     SetActiveCell()
+    return()
   }
 
   # Bypass copy command
@@ -265,6 +272,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
     mat.vals <- matrix(vals, nrow=ni, ncol=nj, byrow=TRUE)
     write.table(mat.vals, file="clipboard", sep="\t", eol="\n",
                 row.names=FALSE, col.names=FALSE)
+    return()
   }
 
   # Bypass cut command
@@ -287,6 +295,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
     for (cell in cells)
       tkset(frame3.tbl, cell, "NA")
     SetActiveCell()
+    return()
   }
 
   # Bypass paste command
@@ -328,6 +337,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
     for (i in seq_along(cells))
       tkset(frame3.tbl, cells[i], new.vals[i])
     SetActiveCell()
+    return()
   }
 
   # Bypass return command
@@ -347,6 +357,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
     tkactivate(frame3.tbl, new.ij)
     tkselection.set(frame3.tbl, new.ij)
     tksee(frame3.tbl, new.ij)
+    return()
   }
 
   # Search data table
@@ -367,28 +378,31 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
 
     Find("next", is.replace)
 
-    if (is.replace & (!is.null(matched.cells) && nrow(matched.cells) > 0)) {
-      if (ans$is.replace.first)
-        matched.cells <<- matched.cells[1, , drop=FALSE]
-      cells <- paste0(matched.cells[, 1], ",", matched.cells[, 2])
+    are.matches <- !is.null(matched.cells) && nrow(matched.cells) > 0
+    if (!(is.replace && are.matches))
+      return()
 
-      old.vals <- FormatValues(matched.cells[, 1], matched.cells[, 2])
-      new.vals <- gsub(ans$find.what, ans$replace.with, old.vals,
-                       ignore.case=!ans$is.match.case, perl=ans$is.perl,
-                       fixed=!ans$is.reg.exps, useBytes=FALSE)
+    if (ans$is.replace.first)
+      matched.cells <<- matched.cells[1, , drop=FALSE]
+    cells <- paste0(matched.cells[, 1], ",", matched.cells[, 2])
 
-      e <- data.frame(timestamp=Sys.time(), cell=cells, old=old.vals,
-                      new=new.vals, stringsAsFactors=FALSE)
-      undo.stack <<- rbind(undo.stack, e)
-      redo.stack <<- NULL
-      matched.cells <<- NULL
+    old.vals <- FormatValues(matched.cells[, 1], matched.cells[, 2])
+    new.vals <- gsub(ans$find.what, ans$replace.with, old.vals,
+                     ignore.case=!ans$is.match.case, perl=ans$is.perl,
+                     fixed=!ans$is.reg.exps, useBytes=FALSE)
 
-      SaveEdits(new.vals, cells)
+    e <- data.frame(timestamp=Sys.time(), cell=cells, old=old.vals,
+                    new=new.vals, stringsAsFactors=FALSE)
+    undo.stack <<- rbind(undo.stack, e)
+    redo.stack <<- NULL
+    matched.cells <<- NULL
 
-      for (idx in seq_along(cells))
-        tkset(frame3.tbl, cells[idx], new.vals[idx])
-      SetActiveCell()
-    }
+    SaveEdits(new.vals, cells)
+
+    for (idx in seq_along(cells))
+      tkset(frame3.tbl, cells[idx], new.vals[idx])
+    SetActiveCell()
+    return()
   }
 
   # Find value in data table
@@ -419,30 +433,36 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
 
       if (is.match.word) {  # determine search function
         if (ignore.case)
-          Fun <- function(i) which(tolower(i) == tolower(pattern))
+          PatternMatch <- function(i) which(tolower(i) == tolower(pattern))
         else
-          Fun <- function(i) which(i == pattern)
+          PatternMatch <- function(i) which(i == pattern)
       } else {
-        Fun <- function(i) grep(pattern, i, ignore.case=ignore.case,
-                                fixed=fixed, perl=perl, useBytes=FALSE,
-                                invert=FALSE)
+        PatternMatch <- function(i) grep(pattern, i, ignore.case=ignore.case,
+                                         fixed=fixed, perl=perl, useBytes=FALSE,
+                                         invert=FALSE)
       }
-      matched.idxs <- NULL
       nrows <- nrow(ij)
-      first.idx <- 1L
-      nchunk <- 50000L
-      repeat {
-        last.idx <- first.idx + nchunk - 1L
-        if (last.idx > nrows)
-          last.idx <- nrows
-        idxs <- first.idx:last.idx
-        x <- FormatValues(ij[idxs, 1], ij[idxs, 2])
-        matched.idxs <- c(matched.idxs, idxs[suppressWarnings(Fun(x))])
-        if (last.idx == nrows)
-          break
-        else
-          first.idx <- last.idx + 1L
+      chunk.size <- 50000L
+
+
+
+      idxs <- seq_len(nrows)
+      chunks <- split(idxs, ceiling(idxs / chunk.size))
+      is.pb <- length(chunks) > 1
+      if (is.pb)
+        pb <- ProgressBar(label="Something", maximum=nrows, parent=tt)
+      Fun <- function(i) {
+        if (is.pb)
+          SetProgressBar(pb, value=i[1])
+        i[suppressWarnings(PatternMatch(FormatValues(ij[i, 1], ij[i, 2])))]
       }
+      matched.idxs <- c(lapply(chunks, Fun), recursive=TRUE)
+      if (is.pb) {
+        pb$DestroyWindow()
+        tkfocus(tt)
+      }
+
+
 
       if (length(matched.idxs) == 0L) {
         msg <- paste0("Search string \'", pattern, "\' not found.")

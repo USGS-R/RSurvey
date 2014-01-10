@@ -1,8 +1,12 @@
 # A progress bar for providing feedback; derived from
 # tcltk::tkProgressBar (v3.0.2)
 
+# Display a progress bar in a dialog box
+
 ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
                          parent=NULL) {
+
+  ## Additional functions
 
   MoveProgressBar <- function (x) {
     if (!is.finite(x) || x < 0 || x > maximum)
@@ -32,6 +36,7 @@ ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
     tclvalue(.lab) <- x
   }
 
+  ## Main program
 
   tclServiceMode(FALSE)
 
@@ -71,6 +76,7 @@ ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
   return(structure(lst, class="ProgressBar"))
 }
 
+# Update the value of the progress bar
 
 SetProgressBar <- function (pb, value, label=NULL) {
   tclServiceMode(FALSE)
