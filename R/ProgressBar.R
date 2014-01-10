@@ -1,5 +1,5 @@
 # A progress bar for providing feedback; derived from
-# tcltk::tkProgressBar (Tcl8.4.15/Tk8.4.15)
+# tcltk::tkProgressBar (v3.0.2; Tcl/Tk v8.5.8)
 
 ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
                          parent=NULL) {
@@ -61,12 +61,12 @@ ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
   lst <- list(GetValue=GetValue, MoveProgressBar=MoveProgressBar,
               SetLabel=SetLabel, DestroyWindow=DestroyWindow,
               GetWindowState=GetWindowState, label=label)
-  return(structure(lst, class="ttkProgressBar"))
+  return(structure(lst, class="ProgressBar"))
 }
 
 
 SetProgressBar <- function (pb, value, label=NULL) {
-  if (!inherits(pb, "ttkProgressBar"))
+  if (!inherits(pb, "ProgressBar"))
     stop()
   old.value <- pb$GetValue()
   pb$MoveProgressBar(value)
