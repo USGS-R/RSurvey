@@ -1,6 +1,6 @@
 # Import a worksheet from an Office Open XML workbook file (xlsx).
 
-# Derived from xlsxToR function, accessed on 2014-01-01:
+# Derived with permission from xlsxToR function, accessed on 2014-01-01:
 #   Schaun Wheeler <schaun.wheeler at gmail.com>
 #   https://gist.github.com/schaunwheeler/5825002
 
