@@ -27,7 +27,7 @@ Returns a list with the following components:
 \author{J.C. Fisher}
 
 \references{
-This code was derived from Schaun Wheeler's
+This code was derived with permission from Schaun Wheeler's
 \href{https://gist.github.com/schaunwheeler/5825002}{xlsxToR} function.
 }
 
