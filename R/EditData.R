@@ -420,49 +420,48 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
       fixed <- ifelse(search.defaults$is.reg.exps, FALSE, TRUE)
       perl <- search.defaults$is.perl
       is.search.sel <- search.defaults$is.search.sel
+
       if (is.search.sel) {
-        sel.cells <- as.character(tcl(frame3.tbl, "tag", "cell", "sel"))
-        sel.split <- strsplit(sel.cells, ",")
-        ij <- cbind(as.integer(vapply(sel.split, function(i) i[1], "")),
-                    as.integer(vapply(sel.split, function(i) i[2], "")))
-        ij <- ij[ij[, 1] > 0 & ij[, 2] > 0, ]
-        ij <- ij[order(ij[, 1]), ]
+        cells <- as.character(tcl(frame3.tbl, "tag", "cell", "sel"))
+        ncells <- length(cells)
       } else {
-        ij <- cbind(rep(1:m, each=n), rep(1:n, m))
+        ncells <- m * n
       }
 
-      if (is.match.word) {  # determine search function
+      chunk.size <- 10000L
+      nsteps <- ceiling(ncells / chunk.size)
+      pb <- ProgressBar(label="Indexing search results\u2026", maximum=ncells,
+                        nsteps=nsteps, parent=tt)
+      chunks <- split(seq_len(ncells), ceiling(seq_len(ncells) / chunk.size))
+
+      if (is.search.sel) {
+        cells <- strsplit(cells, ",", fixed=TRUE)
+        cells <- list(i=as.integer(vapply(cells, function(i) i[1], "")),
+                      j=as.integer(vapply(cells, function(i) i[2], "")))
+        ord <- order(cells$i)
+        cells <- lapply(cells, function(i) i[ord])
+      } else {
+        cells <- list(i=rep(seq_len(m), each=n), j=rep(seq_len(n), m))
+      }
+
+      if (is.match.word) {
         if (ignore.case)
-          PatternMatch <- function(i) which(tolower(i) == tolower(pattern))
+          Match <- function(i) which(tolower(i) == tolower(pattern))
         else
-          PatternMatch <- function(i) which(i == pattern)
+          Match <- function(i) which(i == pattern)
       } else {
-        PatternMatch <- function(i) grep(pattern, i, ignore.case=ignore.case,
-                                         fixed=fixed, perl=perl, useBytes=FALSE,
-                                         invert=FALSE)
+        Match <- function(i) grep(pattern, i, ignore.case=ignore.case,
+                                  fixed=fixed, perl=perl)
       }
-      nrows <- nrow(ij)
-      chunk.size <- 50000L
-
-
-
-      idxs <- seq_len(nrows)
-      chunks <- split(idxs, ceiling(idxs / chunk.size))
-      is.pb <- length(chunks) > 1
-      if (is.pb)
-        pb <- ProgressBar(label="Something", maximum=nrows, parent=tt)
       Fun <- function(i) {
-        if (is.pb)
-          SetProgressBar(pb, value=i[1])
-        i[suppressWarnings(PatternMatch(FormatValues(ij[i, 1], ij[i, 2])))]
+        ans <- try(SetProgressBar(pb, value=chunks[[i]][1], step=i),
+                   silent=TRUE)
+        if (inherits(ans, "try-error"))
+          return()
+        chunks[[i]][Match(FormatValues(cells$i[chunks[[i]]],
+                                       cells$j[chunks[[i]]]))]
       }
-      matched.idxs <- c(lapply(chunks, Fun), recursive=TRUE)
-      if (is.pb) {
-        pb$DestroyWindow()
-        tkfocus(tt)
-      }
-
-
+      matched.idxs <- c(lapply(seq_along(chunks), Fun), recursive=TRUE)
 
       if (length(matched.idxs) == 0L) {
         msg <- paste0("Search string \'", pattern, "\' not found.")
@@ -472,7 +471,8 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
       }
 
       if (is.search.sel) {
-        matched.cells <<- ij[matched.idxs, , drop=FALSE]
+        cells <- lapply(cells, function(i) i[matched.idxs])
+        matched.cells <<- do.call(cbind, cells)
       } else {
         col.div <- matched.idxs / n
         i <- as.integer(ceiling(col.div))
@@ -1001,7 +1001,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
                          colstretchmode="none", rowstretchmode="none",
                          drawmode="single", flashmode=0, rowseparator="\n",
                          colseparator="\t", selectmode="extended",
-                         selecttitle=1, insertofftime=0, anchor="nw",
+                         selecttitle=0, insertofftime=0, anchor="nw",
                          highlightthickness=0, cache=1, validate=1,
                          font="TkFixedFont", exportselection=0,
                          browsecommand=function(s, S) ChangeActiveCell(s, S),

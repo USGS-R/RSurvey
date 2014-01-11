@@ -10,9 +10,10 @@ A progress bar that shows the status of long-running operations.
 }
 
 \usage{
-ProgressBar(win.title = "Progress Bar", label = "", maximum = 100, parent = NULL)
+ProgressBar(win.title = "Progress Bar", label = "", maximum = 100,
+            nsteps = NULL, min.nsteps = 10L, parent = NULL)
 
-SetProgressBar(pb, value, label = NULL)
+SetProgressBar(pb, value, label = NULL, step = NULL)
 }
 
 \arguments{
@@ -20,11 +21,14 @@ SetProgressBar(pb, value, label = NULL)
 \item{label}{character; a string to display in the dialog box.}
 \item{maximum}{numeric; the maximum value for the progress bar. The minimum
   value is \code{0}.}
+\item{nsteps}{numeric; something...}
+\item{min.nsteps}{numeric; something...}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 \item{pb}{ProgressBar; an object returned from \code{ProgressBar}
   (see \sQuote{Value}).}
-\item{value}{tkwin; value for the progress bar, between \code{0} and
+\item{value}{numeric; value for the progress bar, between \code{0} and
   \code{maximum}.}
+\item{step}{numeric; somethin...}
 }
 
 \value{
@@ -37,9 +41,10 @@ For \code{ProgressBar} an object of class \code{"ProgressBar"} and mode
 \item{DestroyWindow}{function; closes the dialog box.}
 \item{GetWindowState}{function; returns \code{FALSE} if the dialog box has been
   closed, otherwise \code{TRUE}.}
+\item{nsteps}{numeric; see \sQuote{Arguments}.}
 
-For \code{SetProgressBar}, the previous value of the progress bar. \code{NA} is
-returned if the progress bar has been closed.
+For \code{SetProgressBar}, the previous value of the progress bar. An error is
+returned if the progress has terminated prematurely.
 }
 
 \author{J.C. Fisher}
@@ -52,15 +57,15 @@ This code was derived from the \code{\link[tcltk]{tkProgressBar}} function.
 \examples{\donttest{
 maximum <- 10
 txt <- "Estimated time to completion is"
-pb <- ProgressBar(label = paste(txt, "being calculated\u2026"), maximum = maximum)
+pb <- ProgressBar(label = paste(txt, "being calculated\u2026"),
+                  maximum = maximum, nsteps = maximum)
 
 for (i in 1:maximum) {
   est.time <- system.time(Sys.sleep(1))["elapsed"] * (maximum - i)
-  ans <- SetProgressBar(pb, value = i, label = paste(txt, round(est.time), "secs"))
-  if (is.na(ans)) {
-    cat("Progress bar ended prematurely.\n")
+  ans <- try(SetProgressBar(pb, value = i, label = paste(txt, round(est.time), "secs"),
+                            step=i))
+  if (inherits(ans, "try-error"))
     break
-  }
 }
 }}
 

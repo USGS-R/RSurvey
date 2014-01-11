@@ -4,7 +4,7 @@
 # Display a progress bar in a dialog box
 
 ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
-                         parent=NULL) {
+                         nsteps=NULL, min.nsteps=10L, parent=NULL) {
 
   ## Additional functions
 
@@ -29,6 +29,8 @@ ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
       tkdestroy(.tt)
       .is.destroyed <<- TRUE
     }
+    if (!is.null(parent))
+      tkfocus(parent)
     tclServiceMode(TRUE)
   }
 
@@ -37,6 +39,9 @@ ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
   }
 
   ## Main program
+
+  if (is.numeric(nsteps) && is.numeric(min.nsteps) && nsteps < min.nsteps)
+    return()
 
   tclServiceMode(FALSE)
 
@@ -72,22 +77,25 @@ ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
 
   lst <- list(GetValue=GetValue, MoveProgressBar=MoveProgressBar,
               SetLabel=SetLabel, DestroyWindow=DestroyWindow,
-              GetWindowState=GetWindowState)
+              GetWindowState=GetWindowState, nsteps=nsteps)
   return(structure(lst, class="ProgressBar"))
 }
 
 # Update the value of the progress bar
 
-SetProgressBar <- function (pb, value, label=NULL) {
+SetProgressBar <- function (pb, value, label=NULL, step=NULL) {
+  if (!inherits(pb, "ProgressBar"))
+    return()
   tclServiceMode(FALSE)
   on.exit(tclServiceMode(TRUE))
-  if (!inherits(pb, "ProgressBar"))
-    stop("invalid class for 'pb'")
   if (!pb$GetWindowState())
-    return(NA)
+    stop("progress bar terminated prematurely")
   old.value <- pb$GetValue()
   pb$MoveProgressBar(value)
   if (!is.null(label))
     pb$SetLabel(label)
+  if (is.numeric(step) && is.numeric(pb$nsteps) && step == pb$nsteps)
+    pb$DestroyWindow()
+
   invisible(old.value)
 }
