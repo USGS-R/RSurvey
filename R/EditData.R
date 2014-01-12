@@ -49,7 +49,8 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
       } else {
         if (fmt == "")
           fmt.vals[idxs] <- format(vals, trim=TRUE, nsmall=num.digits,
-                                   drop0trailing=TRUE, scientific=FALSE)
+                                   scientific=ifelse(is.fmt, NA, FALSE),
+                                   drop0trailing=TRUE)
         else
           fmt.vals[idxs] <- sprintf(fmt, vals)
       }
