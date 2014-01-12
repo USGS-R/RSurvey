@@ -94,8 +94,7 @@ SetProgressBar <- function (pb, value, label=NULL, step=NULL) {
   pb$MoveProgressBar(value)
   if (!is.null(label))
     pb$SetLabel(label)
-  if (is.numeric(step) && is.numeric(pb$nsteps) && step == pb$nsteps)
+  if (is.numeric(step) && is.numeric(pb$nsteps) && step >= pb$nsteps)
     pb$DestroyWindow()
-
   invisible(old.value)
 }

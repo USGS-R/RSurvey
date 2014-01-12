@@ -19,16 +19,19 @@ SetProgressBar(pb, value, label = NULL, step = NULL)
 \arguments{
 \item{win.title}{character; a string to display as the title of the dialog box.}
 \item{label}{character; a string to display in the dialog box.}
-\item{maximum}{numeric; the maximum value for the progress bar. The minimum
+\item{maximum}{numeric; maximum value for the progress bar. The minimum
   value is \code{0}.}
-\item{nsteps}{numeric; something...}
-\item{min.nsteps}{numeric; something...}
+\item{nsteps}{numeric; total number of increments the progress bar will
+  make.}
+\item{min.nsteps}{numeric; minimum number of increments. If greater than
+  \code{nsteps}, the dialog box is not opened.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 \item{pb}{ProgressBar; an object returned from \code{ProgressBar}
   (see \sQuote{Value}).}
 \item{value}{numeric; value for the progress bar, between \code{0} and
   \code{maximum}.}
-\item{step}{numeric; somethin...}
+\item{step}{numeric; number of progress bar increments. If equal to
+  \code{nsteps}, the dialog box will close.}
 }
 
 \value{
@@ -56,14 +59,13 @@ This code was derived from the \code{\link[tcltk]{tkProgressBar}} function.
 
 \examples{\donttest{
 maximum <- 10
-txt <- "Estimated time to completion is"
-pb <- ProgressBar(label = paste(txt, "being calculated\u2026"),
-                  maximum = maximum, nsteps = maximum)
+label <- "Estimated time to completion is being calculated\u2026"
+pb <- ProgressBar(label = label, maximum = maximum, nsteps = maximum)
 
 for (i in 1:maximum) {
   est.time <- system.time(Sys.sleep(1))["elapsed"] * (maximum - i)
-  ans <- try(SetProgressBar(pb, value = i, label = paste(txt, round(est.time), "secs"),
-                            step=i))
+  label <- paste("Estimated time to completion is", round(est.time), "secs")
+  ans <- try(SetProgressBar(pb, value = i, label = label, step = i))
   if (inherits(ans, "try-error"))
     break
 }
