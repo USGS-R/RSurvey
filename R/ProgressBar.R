@@ -44,6 +44,7 @@ ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
     return()
 
   tclServiceMode(FALSE)
+  on.exit(tclServiceMode(TRUE))
 
   .tt <-tktoplevel()
   if (!is.null(parent)) {
@@ -69,8 +70,6 @@ ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
   tkgrid(frame0.pbr, sticky="we", pady=c(10, 15))
   tkgrid(frame0.but, sticky="e")
   tkpack(frame0, fill="x", padx=10, pady=10)
-
-  tclServiceMode(TRUE)
 
   tkbind(.tt, "<Destroy>", DestroyWindow)
   tkfocus(.tt)

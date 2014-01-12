@@ -49,7 +49,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
       } else {
         if (fmt == "")
           fmt.vals[idxs] <- format(vals, trim=TRUE, nsmall=num.digits,
-                                   drop0trailing=TRUE)
+                                   drop0trailing=TRUE, scientific=FALSE)
         else
           fmt.vals[idxs] <- sprintf(fmt, vals)
       }
@@ -373,8 +373,10 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
     on.exit(tkconfigure(tt, cursor="arrow"), add=TRUE)
 
     tclvalue(pattern.var) <- ans$find.what
-    search.defaults <<- ans
-    matched.cells <<- NULL
+    if (!identical(ans, search.defaults)) {
+      search.defaults <<- ans
+      matched.cells <<- NULL
+    }
 
     Find("next", is.replace)
 
@@ -438,8 +440,8 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
         cells <- strsplit(cells, ",", fixed=TRUE)
         cells <- list(i=as.integer(vapply(cells, function(i) i[1], "")),
                       j=as.integer(vapply(cells, function(i) i[2], "")))
-        ord <- order(cells$i)
-        cells <- lapply(cells, function(i) i[ord])
+        desc.i.order <- order(cells$i)
+        cells <- lapply(cells, function(i) i[desc.i.order])
       } else {
         cells <- list(i=rep(seq_len(m), each=n), j=rep(seq_len(n), m))
       }
@@ -471,15 +473,15 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
       }
 
       if (is.search.sel) {
-        cells <- lapply(cells, function(i) i[matched.idxs])
-        matched.cells <<- do.call(cbind, cells)
+        cells <- do.call(cbind, lapply(cells, function(i) i[matched.idxs]))
       } else {
         col.div <- matched.idxs / n
         i <- as.integer(ceiling(col.div))
         j <- as.integer(round(n * (col.div - trunc(col.div))))
         j[j == 0L] <- n
-        matched.cells <<- cbind(i, j)
+        cells <- cbind(i, j)
       }
+      matched.cells <<- cells
     }
 
     active.i <- as.integer(tcl(frame3.tbl, "tag", "row", "active"))
@@ -619,6 +621,13 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
       j <- as.integer(border.col)
       tcl(frame3.tbl, "width", j, col.width[j])
     }
+  }
+
+  # Change cell selection
+  ChangeCellSelection <- function () {
+    is.search.sel <- search.defaults$is.search.sel
+    if (is.logical(is.search.sel) && is.search.sel)
+      matched.cells <<- NULL
   }
 
 
@@ -1070,6 +1079,12 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
   tkbind(frame3.tbl, "<Control-z>", UndoEdit)
   tkbind(frame3.tbl, "<Control-y>", RedoEdit)
   tkbind(frame3.tbl, "<Double-Button-1>", function(x, y) ResizeColumn(x, y))
+
+  tkevent.add("<<TableSelect>>", "<ButtonRelease>",
+              "<Control-slash>", "<Shift-Control-Home>", "<Shift-Control-End>",
+              "<Shift-Up>", "<Shift-Down>", "<Shift-Right>", "<Shift-Left>",
+              "<Up>", "<Down>", "<Right>", "<Left>")
+  tkbind(frame3.tbl, "<<TableSelect>>", ChangeCellSelection)
 
   D <- ""  # hack to force 'D' to be something other than a function
   tkbind(frame3.tbl, "<MouseWheel>",
