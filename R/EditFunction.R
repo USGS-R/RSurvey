@@ -14,7 +14,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     } else {
       fun <- txt
       pattern <- paste0("\"", ids, "\"")
-      replacement <- paste0("DATA[[", 1:length(ids), "]]")
+      replacement <- paste0("DATA[[", seq_len(length(ids)), "]]")
       for (i in seq_along(ids))
         fun <- gsub(pattern[i], replacement[i], fun, fixed=TRUE)
       fun <- paste0("function(DATA) {", fun, "}")

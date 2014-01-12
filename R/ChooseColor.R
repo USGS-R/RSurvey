@@ -32,8 +32,8 @@ ChooseColor <- function(col, parent=NULL) {
 
   # Build color chart
   BuildColorChart <- function() {
-    for (i in 1:m) {
-      for (j in 1:n) {
+    for (i in seq_len(m)) {
+      for (j in seq_len(n)) {
         DrawChartPolygon(i, j, fill=d[i, j], outline="black", tag="")
       }
     }
@@ -329,7 +329,7 @@ ChooseColor <- function(col, parent=NULL) {
 
   # Initialize hue, saturation, value, and alpha color components
   col.rgb <- col2rgb(col.hex, alpha=TRUE)
-  col.hsv <- rgb2hsv(col.rgb[1:3], maxColorValue=255)
+  col.hsv <- rgb2hsv(col.rgb[seq_len(3)], maxColorValue=255)
   nh <- col.hsv[1]
   ns <- col.hsv[2]
   nv <- col.hsv[3]

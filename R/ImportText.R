@@ -58,7 +58,7 @@ ImportText <- function(parent=NULL) {
           # Use formats to determine column classes
           n <- ncol(h)
           col.classes <- rep("character", n)
-          for (j in 1:n) {
+          for (j in seq_len(n)) {
             fmt <- fmts[j]
 
             test <- try(sprintf(fmt, 1), silent=TRUE)
@@ -109,13 +109,13 @@ ImportText <- function(parent=NULL) {
                                     seq_along(matched[[i]]), ")")
 
       # Reset row names
-      rownames(d) <- 1:nrow(d)
+      rownames(d) <- seq_len(nrow(d))
 
       # Initialize columns list
       cols <- list()
 
       # Establish column types
-      for (j in 1:n) {
+      for (j in seq_len(n)) {
         val <- d[, j]
         fmt <- if (is.na(fmts[j])) NULL else fmts[j]
 
@@ -338,12 +338,13 @@ ImportText <- function(parent=NULL) {
     if (insert.cols > 0)
       tkinsert(frame4.tbl, "cols", "end", insert.cols)
 
-    for (j in 1:ncol(d))
-      sapply(1:nrow(d), function(i)
+    for (j in seq_len(ncol(d)))
+      sapply(seq_len(nrow(d)), function(i)
         table.var[[i - 1, j - 1]] <- as.tclObj(d[i, j], drop=TRUE))
 
-    for (i in 1:ncol(d)) {
-      len <- max(nchar(gsub("\t", "    ", d[1:nrows, i])), na.omit=TRUE) + 1L
+    for (i in seq_len(ncol(d))) {
+      len <- max(nchar(gsub("\t", "    ", d[seq_len(nrows), i])),
+                 na.omit=TRUE) + 1L
       if (len < 10L) {
         len <- 10L
       } else if (len > 100L) {

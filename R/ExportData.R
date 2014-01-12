@@ -19,7 +19,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
     vars <- Data("vars")
     cols <- Data("cols")
 
-    all.col.ids <- vapply(1:length(cols), function(i) cols[[i]]$id, "")
+    all.col.ids <- vapply(seq_len(length(cols)), function(i) cols[[i]]$id, "")
     if (file.type == "shp") {
       id.x <- all.col.ids[vars$x]
       id.y <- all.col.ids[vars$y]
@@ -43,7 +43,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
         stop("length of row names different from length of row indexes")
     } else {
       row.nams <- row.names(Data("data.raw"))
-      row.idxs <- 1:length(row.nams)
+      row.idxs <- seq_len(length(row.nams))
     }
     n <- length(col.idxs)
     m <- length(row.idxs)
@@ -51,7 +51,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
     if (file.type != "txt")
       d <- as.data.frame(d)
 
-    for (i in 1:n) {
+    for (i in seq_len(n)) {
       obj <- EvalFunction(col.funs[i], cols)[row.idxs]
       if (file.type == "txt") {  # Format variables
         fmt <- col.fmts[i]

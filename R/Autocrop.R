@@ -60,7 +60,7 @@ Autocrop <- function(mesh, max.len, max.itr=10000) {
                                      c("pt1", "pt2")))
 
   tri <- tripack::triangles(mesh)
-  tri <- cbind(elem=1:nrow(tri), tri)
+  tri <- cbind(elem=seq_len(nrow(tri)), tri)
 
   itr <- 0
   old.tri <- new.tri <- tri

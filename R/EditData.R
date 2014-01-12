@@ -321,7 +321,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
     active.ij <- as.integer(strsplit(active.cell, ",")[[1]])
     m <- nrow(new.vals)
     n <- ncol(new.vals)
-    ij <- cbind(rep(1:m, n), rep(1:n, each=m))
+    ij <- cbind(rep(seq_len(m), n), rep(seq_len(n), each=m))
     new.vals <- new.vals[ij]
     ij[, 1] <- ij[, 1] + active.ij[1] - 1L
     ij[, 2] <- ij[, 2] + active.ij[2] - 1L
@@ -677,22 +677,22 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
   if (is.null(col.names) || length(col.names) != n) {
     Fun <- function(i) paste0(LETTERS, i)
     col.names <- c(LETTERS, as.vector(t(vapply(LETTERS, Fun, rep("", 26)))))
-    col.names <- col.names[1:n]
+    col.names <- col.names[seq_len(n)]
     names(d) <- col.names
   } else {
-    col.names <- col.names[1:n]
+    col.names <- col.names[seq_len(n)]
     col.names[is.na(col.names)] <- ""
     col.names <- gsub("(^ +)|( +$)", "", col.names)
   }
   if (is.null(col.formats)) {
     col.formats <- rep("", n)
   } else {
-    col.formats <- as.character(col.formats[1:n])
+    col.formats <- as.character(col.formats[seq_len(n)])
     col.formats[is.na(col.formats)] <- ""
   }
 
   if (is.null(row.names) || length(row.names) != m)
-    row.names <- 1:m
+    row.names <- seq_len(m)
 
   # Determine width and height of column 0 and row 0, respectively
   col.0.width  <- max(nchar(row.names)) + 1L
@@ -707,7 +707,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
       nchar.title <- max(vapply(strsplit(col.names[j], "\n"),
                                 function(i) nchar(i), 0L))
     max.rows <- if (m > 200L) 200L else m
-    nchar.data <- max(nchar(FormatValues(1:max.rows, rep(j, max.rows),
+    nchar.data <- max(nchar(FormatValues(seq_len(max.rows), rep(j, max.rows),
                                          is.fmt=TRUE)))
     len <- max(c(nchar.title, nchar.data)) + 1L
     if (len < 10L) {
@@ -1027,7 +1027,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
 
   tcl(frame3.tbl, "width",  0, col.0.width)
   tcl(frame3.tbl, "height", 0, row.0.height)
-  for (j in 1:n)
+  for (j in seq_len(n))
     tcl(frame3.tbl, "width", j, col.width[j])
 
   tkgrid(frame3.tbl, frame3.ysc)

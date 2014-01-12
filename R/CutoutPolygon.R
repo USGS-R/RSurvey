@@ -46,8 +46,8 @@ CutoutPolygon <- function(dat, ply=NULL) {
 
   rm.cols <- rm.rows <- NULL
 
-  cols <- 1:ncol(dat$z)
-  rows <- 1:nrow(dat$z)
+  cols <- seq_len(ncol(dat$z))
+  rows <- seq_len(nrow(dat$z))
 
   for (i in rows) {
     if (all(is.na(dat$z[i,])))

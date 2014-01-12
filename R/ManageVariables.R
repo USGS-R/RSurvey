@@ -48,7 +48,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
       str.1 <- paste0("\"", old.id, "\"")
       str.2 <- paste0("\"", new.id, "\"")
       funs <- sapply(cols, function(i) gsub(str.1, str.2, i$fun, fixed=TRUE))
-      sapply(1:length(cols), function(i) cols[[i]]$fun <<- funs[[i]])
+      sapply(seq_len(length(cols)), function(i) cols[[i]]$fun <<- funs[[i]])
       new.fun <- cols[[idx]]$fun
       if (!identical(old.fun, new.fun)) {
         tkconfigure(frame2.txt.4.2, state="normal")
@@ -326,7 +326,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
       return()
 
     n <- length(cols)
-    idxs <- 1:n
+    idxs <- seq_len(n)
 
     if (type == "back") {
       if (idx == 1)
@@ -341,13 +341,13 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     } else if (type == "backward") {
       if (idx == 1)
         return()
-      new.idxs <- 1:n
+      new.idxs <- seq_len(n)
       new.idxs[c(idx - 1L, idx)] <- c(idx, idx - 1L)
       new.idx <- idx - 1L
     } else if (type == "forward") {
       if (idx == n)
         return()
-      new.idxs <- 1:n
+      new.idxs <- seq_len(n)
       new.idxs[c(idx, idx + 1L)] <- c(idx + 1L, idx)
       new.idx <- idx + 1L
     }
@@ -360,7 +360,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
     ids <- vapply(cols, function(i) i$id, "")
 
-    for (i in 1:n)
+    for (i in seq_len(n))
       tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var),
                                 i - 1, i - 1, ids[i])
     tkselection.clear(frame1.lst, 0, "end")

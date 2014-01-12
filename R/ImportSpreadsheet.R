@@ -23,7 +23,7 @@
                                  stringsAsFactors=FALSE)
   custom.styles$numFmtId <- as.integer(custom.styles$numFmtId)
   n <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
-  zeros <- vapply(1:n, function(i) paste(rep("0", i), collapse=""), "")
+  zeros <- vapply(seq_len(n), function(i) paste(rep("0", i), collapse=""), "")
   fmt.codes.d <- c("yyyy\\-mm\\-dd",
                    "yyyy/mm/dd",
                    "mm/dd/yy",
@@ -165,7 +165,7 @@
     }
   }
   if (!save.row.no)
-    row.names(d) <- 1:nrow(d)
+    row.names(d) <- seq_len(nrow(d))
   return(d)
 }
 

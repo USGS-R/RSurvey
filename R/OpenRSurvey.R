@@ -168,10 +168,10 @@ OpenRSurvey <- function() {
       for (i in seq_along(matched))
         ids[matched[[i]]] <- paste0(names(matched[i]), " (",
                                     seq_along(matched[[i]]), ")")
-      names(d) <- paste0("V", 1:n)
+      names(d) <- paste0("V", seq_len(n))
 
       cols <- list()
-      for (i in 1:n) {
+      for (i in seq_len(n)) {
         cols[[i]] <- list()
         cols[[i]]$id      <- ids[i]
         cols[[i]]$name    <- nams[i]

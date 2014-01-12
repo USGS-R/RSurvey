@@ -42,9 +42,9 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   # Draw image
   DrawImage <- function() {
     tkcreate(frame1.cvs, "image", center, anchor="center", image=img.var)
-    for (i in 1:nrow(x.lines))
+    for (i in seq_len(nrow(x.lines)))
       tkcreate(frame1.cvs, "line", x.lines[i, ], fill="#CCCCCC", tag="grid")
-    for (i in 1:nrow(y.lines))
+    for (i in seq_len(nrow(y.lines)))
       tkcreate(frame1.cvs, "line", y.lines[i, ], fill="#CCCCCC", tag="grid")
   }
 

@@ -221,7 +221,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
     if (n == 0)
       return()
     nams <- names(polys)
-    idxs <- (1:n) - 1
+    idxs <- (seq_len(n)) - 1L
     sel <- as.integer(tkcurselection(frame1.lst))
     if (type == "all") {
       tkselection.set(frame1.lst, 0, max(idxs))
@@ -242,15 +242,15 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       return()
     if (type == "back") {
       polys <<- append(polys[idxs], polys[-idxs])
-      new.idxs <- 1:length(idxs)
+      new.idxs <- seq_len(length(idxs))
     } else if (type == "front") {
       polys <<- append(polys[-idxs], polys[idxs])
       new.idxs <- (length(polys) - length(idxs) + 1):length(polys)
     } else if (type == "backward") {
       n <- length(polys)
       new.idxs <- idxs
-      all.idxs <- 1:n
-      for (i in 1:n) {
+      all.idxs <- seq_len(n)
+      for (i in all.idxs) {
         if (i %in% new.idxs)
           all.idxs[c(i - 1, i)] <- all.idxs[c(i, i - 1)]
       }
@@ -258,12 +258,12 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       if (length(new.idxs) == 0)
         new.idxs <- 1
       else
-        new.idxs <- (1:n)[all.idxs %in% new.idxs]
+        new.idxs <- seq_len(n)[all.idxs %in% new.idxs]
     } else if (type == "forward") {
       n <- length(polys)
       new.idxs <- idxs
-      all.idxs <- 1:n
-      for (i in rev(1:n)) {
+      all.idxs <- seq_len(n)
+      for (i in rev(all.idxs)) {
           if (i %in% new.idxs)
             all.idxs[c(i, i + 1)] <- all.idxs[c(i + 1, i)]
       }
@@ -272,7 +272,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       if (length(new.idxs) == 0)
         new.idxs <- n
       else
-        new.idxs <- (1:n)[all.idxs %in% new.idxs]
+        new.idxs <- seq_len(n)[all.idxs %in% new.idxs]
     }
     for (i in seq_along(polys))
       tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var),
