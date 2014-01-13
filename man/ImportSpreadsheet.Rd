@@ -6,7 +6,7 @@
 
 \description{
 A \acronym{GUI} for loading selected data sets from an Open XML Spreadsheet
-file.
+file (*.xlsx).
 }
 
 \usage{
