@@ -1,6 +1,17 @@
 Changes in Version 0.8-1
 
-  o  Something.
+  o  Fixed bug associated with searching for a pattern in selected data cells
+     (EditData). A new cell selection was not resetting the search index.
+
+  o  Improved handling of time zones in variables of class 'POSIXt'.
+
+  o  Added the ProgressBar function to show the status for long-running
+     operations. The progress bar is used when indexing search results.
+
+  o  In the EditData function, the class of the object used to populate the
+     table has been changed from a 'data.frame' to a 'list' with vector
+     components of equal length. This change has resulted in a noticeable
+     performance boost for the function.
 
 Changes in Version 0.8-0
 

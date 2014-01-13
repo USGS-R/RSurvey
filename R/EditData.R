@@ -701,7 +701,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
 
   # Determine column widths
   col.width <- NULL
-  for (j in 1L:n) {
+  for (j in seq_len(n)) {
     if (col.names[j] == "")
       nchar.title <- 0
     else
