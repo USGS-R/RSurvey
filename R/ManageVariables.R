@@ -48,7 +48,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
       str.1 <- paste0("\"", old.id, "\"")
       str.2 <- paste0("\"", new.id, "\"")
       funs <- sapply(cols, function(i) gsub(str.1, str.2, i$fun, fixed=TRUE))
-      sapply(seq_len(length(cols)), function(i) cols[[i]]$fun <<- funs[[i]])
+      sapply(seq_along(cols), function(i) cols[[i]]$fun <<- funs[[i]])
       new.fun <- cols[[idx]]$fun
       if (!identical(old.fun, new.fun)) {
         tkconfigure(frame2.txt.4.2, state="normal")

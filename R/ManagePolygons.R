@@ -242,7 +242,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       return()
     if (type == "back") {
       polys <<- append(polys[idxs], polys[-idxs])
-      new.idxs <- seq_len(length(idxs))
+      new.idxs <- seq_along(idxs)
     } else if (type == "front") {
       polys <<- append(polys[-idxs], polys[idxs])
       new.idxs <- (length(polys) - length(idxs) + 1):length(polys)

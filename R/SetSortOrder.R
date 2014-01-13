@@ -38,7 +38,7 @@ SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
   idx <- 0
   if (!is.null(sort.on)) {
     idx <- as.integer(sort.on)
-    if (!is.na(idx) && idx %in% seq_len(length(col.ids)))
+    if (!is.na(idx) && idx %in% seq_along(col.ids))
       idx <- idx
     decreasing <- attr(sort.on, "decreasing")
     if (!is.null(decreasing))
