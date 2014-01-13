@@ -177,13 +177,13 @@
 
 .RbindFill <- function (lst) {  # substitute for plyr::rbind.fill
   available.args <- unique(unlist(lapply(lst, names)))
-  fun <- function(i) {
+  Fun <- function(i) {
     missing.args <- available.args[which(!available.args %in% names(i))]
     if (length(missing.args) > 0)
       i[, missing.args] <- NA
     return(i)
   }
-  return(do.call("rbind", lapply(lst, fun)))
+  return(do.call("rbind", lapply(lst, Fun)))
 }
 
 .ParseCellRange <- function(x) {

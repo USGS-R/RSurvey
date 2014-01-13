@@ -70,9 +70,8 @@ If \code{type = "g"} returns a list with components:
 x <- c(7.8, 5, 2.2, 3.7, NA, -1.6, -7.5)
 y <- c(-2.3, -4.7, -2.2, -2.3, -3.4, -1.6, -7.5)
 z <- c(-0.9, -1.2, -2.4, -2.4, -0.4, 0.1, 2)
-t <- c("4/23/2009 10:43", "4/24/2009 11:20", "4/24/2009 12:08",
-       "4/24/2009 12:50", "4/24/2009 13:51", "4/24/2009 14:24",
-       "4/24/2009 14:44")
+t <- c("4/23/2009 10:43", "4/24/2009 11:20", "4/24/2009 12:08", "4/24/2009 12:50",
+       "4/24/2009 13:51", "4/24/2009 14:24", "4/24/2009 14:44")
 t <- as.POSIXct(t, format = "\%m/\%d/\%Y \%H:\%M", tz = "GMT")
 
 data.raw <- as.data.frame(list(x = x, y = y, z = z, t = t))
@@ -81,8 +80,7 @@ data.grd <- ProcessData(data.pts, type = "g")
 
 ply <- as(cbind(c(-4, 2, -6), c(-7, -3, -3)), "gpc.poly")
 grid.res <- list(x = 0.2, y = 0.5)
-data.grd <- ProcessData(data.pts, type = "g", ply = ply,
-                        grid.res = grid.res)
+data.grd <- ProcessData(data.pts, type = "g", ply = ply, grid.res = grid.res)
 }
 
 \keyword{manip}

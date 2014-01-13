@@ -60,8 +60,7 @@ The \code{vars} object is a list with components:
 \examples{
 \donttest{data(ex.project)
 Data(replace.all = ex.project)
-ManageVariables(ex.project$cols, ex.project$vars, ex.project$query,
-                ex.project$changelog)}
+ManageVariables(ex.project$cols, ex.project$vars, ex.project$query, ex.project$changelog)}
 }
 
 \keyword{misc}

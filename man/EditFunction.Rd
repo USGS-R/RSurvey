@@ -50,8 +50,7 @@ Data("data.raw", d)
 cols <- list()
 cols[[1]] <- list(id = "X", index = 1, fun = "\"X\"")
 cols[[2]] <- list(id = "Y", index = 2, fun = "\"Y\"")
-cols[[3]] <- list(id = "New Variable",
-                  fun = "\"X\" + \"Y\"")
+cols[[3]] <- list(id = "New Variable", fun = "\"X\" + \"Y\"")
 EditFunction(cols, index = 3)
 }}
 

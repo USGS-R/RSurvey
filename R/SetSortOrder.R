@@ -35,11 +35,9 @@ SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
   tt.done.var    <- tclVar(0)
 
   # Set variables
-  idx <- 0
-  if (!is.null(sort.on)) {
+  idx <- 0L
+  if (is.integer(sort.on) && idx %in% seq_along(col.ids)) {
     idx <- as.integer(sort.on)
-    if (!is.na(idx) && idx %in% seq_along(col.ids))
-      idx <- idx
     decreasing <- attr(sort.on, "decreasing")
     if (!is.null(decreasing))
       tclvalue(decreasing.var) <- as.logical(decreasing)

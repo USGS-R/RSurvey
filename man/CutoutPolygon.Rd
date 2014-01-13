@@ -40,8 +40,7 @@ Returns a list containing the following components:
 ply <- as(cbind(c(2, 8, 9, 6, 3), c(3, 1, 4, 8, 6)), "gpc.poly")
 x <- seq(0, 10, 0.1)
 y <- seq(0, 10, 0.1)
-z <- matrix(runif(length(x) * length(y)), nrow = length(y),
-            ncol = length(x))
+z <- matrix(runif(length(x) * length(y)), nrow = length(y), ncol = length(x))
 
 d <- list(x = x, y = y, z = z)
 filled.contour(d, plot.axes = {axis(1); axis(2)})
