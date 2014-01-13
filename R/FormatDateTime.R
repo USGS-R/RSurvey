@@ -1,12 +1,20 @@
 # Build calendar date and time string formats.
 
-FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08", tz="GMT"),
-                           fmt="", parent=NULL) {
+FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt="",
+                           parent=NULL) {
 
   ## Additional functions
 
   # Save format
   SaveFormat <- function() {
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE))
+    if (as.character(tclvalue(sample.var)) == "") {
+      msg <- "Format results in empty character string, please try again."
+      tkmessageBox(icon="error", message=msg, title="Error", type="ok",
+                   parent=tt)
+      return()
+    }
     fmt <- as.character(tclvalue(fmt.var))
     new.fmt <<- fmt
     tclvalue(tt.done.var) <- 1
@@ -222,6 +230,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08", tz="GMT"),
     id.hr <- tkinsert(frame1.tre, "", "end", tags="bg", text="hour")
     id.mn <- tkinsert(frame1.tre, "", "end", tags="bg", text="minute")
     id.sc <- tkinsert(frame1.tre, "", "end", tags="bg", text="second")
+    id.tz <- tkinsert(frame1.tre, "", "end", tags="bg", text="timezone")
     tkinsert(frame1.tre, id.tm, "end", tags="bg", text="hour minute second",
              values=c("%H:%M:%S", format(sample, format="%H:%M:%S")))
     tkinsert(frame1.tre, id.tm, "end", tags="bg", text="hour minute fractional-second",
@@ -247,6 +256,9 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08", tz="GMT"),
     tkinsert(frame1.tre, id.sc, "end",  tags="bg",
              text="millisecond precision",
              values=c("%OS3", format(sample, format="%OS3")))
+     tkinsert(frame1.tre, id.tz, "end",  tags="bg",
+             text="time zone (output only)",
+             values=c("%Z", format(sample, format="%Z")))
   }
 
   tktag.configure(frame1.tre, "bg", background="white")
@@ -334,9 +346,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08", tz="GMT"),
   tclServiceMode(TRUE)
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
-
   tkbind(frame1.tre, "<<TreeviewSelect>>", SelectionChange)
-
   tkbind(frame2a.ent, "<KeyRelease>", UpdateSample)
 
   # GUI control

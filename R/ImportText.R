@@ -127,16 +127,15 @@ ImportText <- function(parent=NULL) {
             sys.time.str <- format(Sys.time(), format=fmt)
             if (!sys.time.str %in% c("", gsub("%%", "%", fmt))) {
               posix.fmt <- gsub("%OS[[:digit:]]+", "%OS", fmt)
-              date.time <- try(as.POSIXlt(val, tz="GMT", format=posix.fmt),
-                               silent=TRUE)
+              date.time <- try(as.POSIXlt(val, format=posix.fmt), silent=TRUE)
               if (!inherits(date.time, "try-error") && !all(is.na(date.time))) {
-                date.time.str <- POSIXct2Character(date.time, fmt, tz="GMT")
+                date.time.str <- POSIXct2Character(date.time, fmt)
                 is.time <- TRUE
               }
             }
           }
           if (is.time)
-            val <- as.POSIXct(date.time, tz="GMT")
+            val <- as.POSIXct(date.time)
           else
             val <- type.convert(val, as.is=!str.as.fact)
         }

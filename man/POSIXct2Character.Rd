@@ -9,14 +9,12 @@ Convert objects from \code{\link{POSIXct}} to \code{\link{character}} class.
 }
 
 \usage{
-POSIXct2Character(obj, fmt = "\%Y-\%m-\%d \%H:\%M:\%OS3", tz = "")
+POSIXct2Character(x, fmt = "\%Y-\%m-\%d \%H:\%M:\%OS3")
 }
 
 \arguments{
-\item{obj}{POSIXct; vector of calendar dates and times.}
+\item{x}{POSIXct; vector of calendar dates and times.}
 \item{fmt}{character; the conversion specification format.}
-\item{tz}{character; a timezone specification, defaults to the current
-  timezone.}
 }
 
 \value{
@@ -46,21 +44,19 @@ solution provided
 }
 
 \examples{
-obj <- c("11/10/2011 07:49:36.3",
-         "04/01/2013 17:22:08.139",
-         "01/06/2013 01:02:16.333",
-         "12/14/2038 15:42:04.577895")
-date.time <- as.POSIXct(obj, format="\%m/\%d/\%Y \%H:\%M:\%OS", tz = "GMT")
+txt <- c("11/10/2011 07:49:36.3", "04/01/2013 17:22:08.123",
+         "01/06/2013 01:02:16.123", "12/14/2038 15:42:04.123456")
+date.time <- as.POSIXct(txt, format = "\%m/\%d/\%Y \%H:\%M:\%OS")
 
 options("digits.secs" = 3)
 format(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS")
 format(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS3")
 
-POSIXct2Character(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS3", tz = "GMT")
-POSIXct2Character(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS4", tz = "GMT")
-POSIXct2Character(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS2", tz = "GMT")
+POSIXct2Character(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS3")
+POSIXct2Character(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS4")
+POSIXct2Character(date.time, fmt = "\%d/\%m/\%Y \%H:\%M:\%OS2")
 
-POSIXct2Character(date.time, fmt = "\%H:\%M:\%OS3 \%Y-\%m-\%d", tz = "GMT")
+POSIXct2Character(date.time, fmt = "\%H:\%M:\%OS3 \%Y-\%m-\%d")
 }
 
 \keyword{manip}

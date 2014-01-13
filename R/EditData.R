@@ -43,7 +43,7 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
       fmt <- ifelse(is.fmt || is.time, col.formats[column], "")
       if (is.time) {
         if ("POSIXt" %in% col.class)
-          fmt.vals[idxs] <- POSIXct2Character(vals, fmt=fmt, tz="GMT")
+          fmt.vals[idxs] <- POSIXct2Character(vals, fmt=fmt)
         else
           fmt.vals[idxs] <- format(vals, format=fmt)
       } else {
@@ -75,9 +75,10 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
         fmt <- gsub("%OS[[:digit:]]+", "%OS", col.formats[column])
         if (fmt == "")
           fmt <- "%Y-%m-%d %H:%M:%S"
-        new.vals <- strptime(new.vals, format=fmt, tz="GMT")
+        tz <- attr(d[[column]], "tzone")
+        new.vals <- strptime(new.vals, format=fmt, tz=tz)
         if ("POSIXct" %in% col.class)
-          new.vals <- as.POSIXct(new.vals, tz="GMT")
+          new.vals <- as.POSIXct(new.vals, tz=tz)
       } else if ("Date" %in% col.class) {
         fmt <- col.formats[column]
         if (fmt == "")

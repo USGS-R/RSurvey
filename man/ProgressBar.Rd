@@ -19,18 +19,18 @@ SetProgressBar(pb, value, label = NULL, step = NULL)
 \arguments{
 \item{win.title}{character; a string to display as the title of the dialog box.}
 \item{label}{character; a string to display in the dialog box.}
-\item{maximum}{numeric; maximum value for the progress bar. The minimum
+\item{maximum}{numeric; the maximum value for the progress bar. The minimum
   value is \code{0}.}
-\item{nsteps}{numeric; total number of increments the progress bar will
+\item{nsteps}{numeric; the total number of increments the progress bar will
   make.}
-\item{min.nsteps}{numeric; minimum number of increments. If greater than
+\item{min.nsteps}{numeric; the minimum number of increments. If greater than
   \code{nsteps}, the dialog box is not opened.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 \item{pb}{ProgressBar; an object returned from \code{ProgressBar}
   (see \sQuote{Value}).}
-\item{value}{numeric; value for the progress bar, between \code{0} and
+\item{value}{numeric; the value for the progress bar, between \code{0} and
   \code{maximum}.}
-\item{step}{numeric; number of progress bar increments. If equal to
+\item{step}{numeric; the number of progress bar increments. If equal to
   \code{nsteps}, the dialog box will close.}
 }
 
@@ -62,7 +62,7 @@ maximum <- 10
 label <- "Estimated time to completion is being calculated\u2026"
 pb <- ProgressBar(label = label, maximum = maximum, nsteps = maximum)
 
-for (i in 1:maximum) {
+for (i in seq_len(maximum)) {
   est.time <- system.time(Sys.sleep(1))["elapsed"] * (maximum - i)
   label <- paste("Estimated time to completion is", round(est.time), "secs")
   ans <- try(SetProgressBar(pb, value = i, label = label, step = i))
