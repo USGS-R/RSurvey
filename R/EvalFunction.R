@@ -8,7 +8,7 @@ EvalFunction <- function(txt, cols) {
       if (is.na(cols[[i]]$index))
         d[[i]] <- EvalFunction(cols[[i]]$fun, cols)
       else
-        d[[i]] <- Data("data.raw")[, cols[[i]]$index]
+        d[[i]] <- Data("data.raw")[[cols[[i]]$index]]
     }
   }
   fun <- txt

@@ -236,7 +236,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
     cols[[idx]] <- list(id="", class="")
 
-    value.length <- nrow(Data("data.raw"))
+    value.length <- length(Data("rows")$names)
     if (is.null(value.length) && length(cols) > 1)
       value.length <- length(EvalFunction(cols[[1]]$fun, cols))
 
@@ -267,7 +267,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     if (length(idx) == 0)
       return()
 
-    f <- EditFunction(cols, index=idx, value.length=nrow(Data("data.raw")),
+    f <- EditFunction(cols, index=idx, value.length=length(Data("rows")$names),
                       parent=tt)
 
     if (is.null(f$fun))
@@ -386,7 +386,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
     idxs <- if (type == "data") idx else seq_along(cols)
     d <- lapply(idxs, function(i) EvalFunction(funs[i], cols))
-    row.names <- rownames(Data("data.raw"))
+    row.names <- Data("rows")$names
 
     raw.data.idxs <- na.omit(vapply(cols, function(i) i$index, 1L))
     if (all(idxs %in% raw.data.idxs)) {

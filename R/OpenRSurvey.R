@@ -141,9 +141,9 @@ OpenRSurvey <- function() {
 
       } else if (file.type == "rpackage") {
         valid.classes <- c("data.frame", "matrix")
-        ans <- ImportPackage(valid.classes, parent=tt)
-        d <- ans$d
-        src <- ans$src
+        d <- ImportPackage(valid.classes, parent=tt)
+        src <- d$src
+        d <- d$d
       }
 
       if (is.null(d) || nrow(d) == 0 || ncol(d) == 0)
@@ -157,13 +157,20 @@ OpenRSurvey <- function() {
           return()
       }
 
-      if (inherits(d, "matrix"))
-        d <- as.data.frame(d, stringsAsFactors=FALSE)
       m <- nrow(d)
       n <- ncol(d)
+      row.names <- rownames(d)
+      col.names <- colnames(d)
 
-      nams <- names(d)
-      ids <- nams
+      if (inherits(d, "matrix")) {
+        rownames(d) <- NULL
+        colnames(d) <- NULL
+        d <- split(d, rep(seq_len(ncol(d)), each=nrow(d)))
+      } else if (inherits(d, "data.frame")) {
+        d <- as.list(d)
+      }
+
+      ids <- col.names
       matched <- sapply(unique(ids), function(i) which(ids %in% i)[-1])
       for (i in seq_along(matched))
         ids[matched[[i]]] <- paste0(names(matched[i]), " (",
@@ -174,19 +181,21 @@ OpenRSurvey <- function() {
       for (i in seq_len(n)) {
         cols[[i]] <- list()
         cols[[i]]$id      <- ids[i]
-        cols[[i]]$name    <- nams[i]
+        cols[[i]]$name    <- col.names[i]
         cols[[i]]$format  <- ""
-        cols[[i]]$class   <- class(d[, i])
+        cols[[i]]$class   <- class(d[[i]])
         cols[[i]]$index   <- i
         cols[[i]]$fun     <- paste0("\"", ids[i], "\"")
-        cols[[i]]$sample  <- na.omit(d[, i])[1]
-        cols[[i]]$summary <- paste(c("", capture.output(summary(d[, i])),
-                                     "", capture.output(str(d[, i])),
+        cols[[i]]$sample  <- na.omit(d[[i]])[1]
+        cols[[i]]$summary <- paste(c("", capture.output(summary(d[[i]])),
+                                     "", capture.output(str(d[[i]])),
                                      ""), collapse="\n")
       }
+
       Data(clear.data=TRUE)
       Data("comment", comment(d))
       Data("data.raw", d)
+      Data("rows", list(names=row.names))
       Data("cols", cols)
       Data("import", list(source=src))
     }
@@ -217,9 +226,6 @@ OpenRSurvey <- function() {
     }
     Data("vars", vars)
   }
-
-
-
 
 
   # Toggle widget state
@@ -731,13 +737,14 @@ OpenRSurvey <- function() {
     } else {  # edit raw data
       if (is.null(Data("data.raw")))
         return()
+      rows <- Data("rows")
       cols <- Data("cols")
       idxs <- na.omit(vapply(cols, function(i) i$index, 0L))
       nams <- vapply(cols, function(i) i$id, "")
       fmts <- vapply(cols, function(i) i$format, "")
 
-      ans <- EditData(Data("data.raw")[, idxs, drop=FALSE],
-                      col.formats=fmts[idxs], col.names=nams[idxs],
+      ans <- EditData(Data("data.raw")[idxs], col.names=nams[idxs],
+                      row.names=rows$names, col.formats=fmts[idxs],
                       read.only=FALSE, changelog=Data("changelog"),
                       win.title="Raw Data", parent=tt)
       if (is.null(ans))
@@ -792,10 +799,10 @@ OpenRSurvey <- function() {
                          stringsAsFactors=FALSE)
 
       if (!is.null(Data("data.raw"))) {
-        rows.str <- row.names(Data("data.raw"))
+        rows.str <- Data("rows")$names
         rows.int <- as.integer(rows.str)
         is.int <- is.integer(rows.int) && !anyDuplicated(rows.int)
-        row.names(d) <- if (is.int) rows.int else rows.str
+        rownames(d) <- if (is.int) rows.int else rows.str
       }
       names(d) <- var.names
 
@@ -841,7 +848,7 @@ OpenRSurvey <- function() {
   BuildQuery <- function() {
     if (is.null(Data("data.raw")))
       return()
-    n <- nrow(Data("data.raw"))
+    n <- length(Data("rows")$names)
     if (n == 0)
       return()
     cols <- Data("cols")

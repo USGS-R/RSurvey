@@ -1,6 +1,6 @@
 # A GUI for viewing and editing table formatted data.
 
-EditData <- function(d, col.names=names(d), row.names=rownames(d),
+EditData <- function(d, col.names=names(d), row.names=NULL,
                      col.formats=NULL, read.only=FALSE, changelog=NULL,
                      win.title="Edit Data", parent=NULL) {
 
@@ -641,14 +641,22 @@ EditData <- function(d, col.names=names(d), row.names=rownames(d),
   if (inherits(is.tktable, "try-error"))
     stop("TkTable is not available")
 
-  # Check validity of data table
+  # Check validity of arguments
   if (!inherits(d, c("list", "matrix", "data.frame")))
     stop("invalid class for data table")
   rtn.class <- class(d)
   if (!inherits(d, "list")) {
     d.rownames <- rownames(d)
     d.colnames <- colnames(d)
-    d <- as.list(d)
+    if (inherits(d, "matrix")) {
+      rownames(d) <- NULL
+      colnames(d) <- NULL
+      d <- split(d, rep(seq_len(ncol(d)), each=nrow(d)))
+    } else {
+      d <- as.list(d)
+    }
+    if (is.null(row.names))
+      row.names <- d.rownames
   }
 
   # Check dimensions of data table

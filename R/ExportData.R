@@ -18,6 +18,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
     # Organize data
     vars <- Data("vars")
     cols <- Data("cols")
+    rows <- Data("rows")
 
     all.col.ids <- vapply(seq_along(cols), function(i) cols[[i]]$id, "")
     if (file.type == "shp") {
@@ -38,11 +39,11 @@ ExportData <- function(file.type="txt", parent=NULL) {
 
     if (is.proc) {
       row.nams <- row.names(Data("data.pts"))
-      row.idxs <- which(row.nams %in% row.names(Data("data.raw")))
+      row.idxs <- which(row.nams %in% rows$names)
       if (length(row.nams) != length(row.idxs))
         stop("length of row names different from length of row indexes")
     } else {
-      row.nams <- row.names(Data("data.raw"))
+      row.nams <- rows$names
       row.idxs <- seq_along(row.nams)
     }
     n <- length(col.idxs)

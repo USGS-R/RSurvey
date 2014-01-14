@@ -53,13 +53,13 @@ ImportText <- function(parent=NULL) {
 
         i <- 1L
         if (headers[1]) {
-          fmts <- as.character(h[i, ])
+          col.formats <- as.character(h[i, ])
 
           # Use formats to determine column classes
           n <- ncol(h)
           col.classes <- rep("character", n)
           for (j in seq_len(n)) {
-            fmt <- fmts[j]
+            fmt <- col.formats[j]
 
             test <- try(sprintf(fmt, 1), silent=TRUE)
             is.error <- inherits(test, "try-error")
@@ -76,12 +76,12 @@ ImportText <- function(parent=NULL) {
               }
             }
           }
-          col.classes[fmts %in% "%Y-%m-%d %H:%M:%S"] <- "POSIXct"
+          col.classes[col.formats %in% "%Y-%m-%d %H:%M:%S"] <- "POSIXct"
           i <- i + 1L
         }
         if (headers[2]) {
-          nams <- as.character(h[i, ])
-          nams[is.na(nams)] <- "Unknown"
+          col.names <- as.character(h[i, ])
+          col.names[is.na(col.names)] <- "Unknown"
         }
 
         skip <- 0L
@@ -94,22 +94,23 @@ ImportText <- function(parent=NULL) {
       if (inherits(d, "try-error"))
         return(d)
 
-      # Initialize missing headers
+      # Table dimensions
+      m <- nrow(d)
       n <- ncol(d)
+
+      # Initialize missing headers
       if (!headers[1])
-        fmts <- rep(NA, n)
+        col.formats <- rep(NA, n)
       if (!headers[2])
-        nams <- rep("Unknown", n)
+        col.names <- rep("Unknown", n)
 
       # Determine unique column names
-      ids <- nams
+      ids <- col.names
       matched <- sapply(unique(ids), function(i) which(ids %in% i)[-1])
       for (i in seq_along(matched))
         ids[matched[[i]]] <- paste0(names(matched[i]), " (",
                                     seq_along(matched[[i]]), ")")
 
-      # Reset row names
-      rownames(d) <- seq_len(nrow(d))
 
       # Initialize columns list
       cols <- list()
@@ -117,7 +118,7 @@ ImportText <- function(parent=NULL) {
       # Establish column types
       for (j in seq_len(n)) {
         val <- d[, j]
-        fmt <- if (is.na(fmts[j])) NULL else fmts[j]
+        fmt <- if (is.na(col.formats[j])) NULL else col.formats[j]
 
         # Determine if character variables are POSIXct class
         # TODO(jfisher): ensure variable is date-time
@@ -143,8 +144,8 @@ ImportText <- function(parent=NULL) {
         # Organize metadata
         cols[[j]] <- list()
         cols[[j]]$id      <- ids[j]
-        cols[[j]]$name    <- nams[j]
-        cols[[j]]$format  <- if (is.null(fmt)) "" else fmt
+        cols[[j]]$name    <- col.names[j]
+        cols[[j]]$format  <- ifelse(is.null(fmt), "", fmt)
         cols[[j]]$class   <- class(val)
         cols[[j]]$index   <- j
         cols[[j]]$fun     <- paste0("\"", ids[j], "\"")
@@ -155,15 +156,16 @@ ImportText <- function(parent=NULL) {
         d[, j] <- val
       }
 
-      # Save data
       Data("comment", comments)
-      Data("data.raw", d)
+      Data("data.raw", as.list(d))
+      Data("rows", list(names=seq_len(m)))
       Data("cols", cols)
+
       memory.usage <- gc()
     })
 
     ans <- paste("\nTime required to import data:",
-                 format(elapsed.time["elapsed"]), "seconds\n", "\n")
+                 format(elapsed.time["elapsed"]), "secs\n", "\n")
     return(ans)
   }
 
