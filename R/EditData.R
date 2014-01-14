@@ -1,8 +1,8 @@
 # A GUI for viewing and editing table formatted data.
 
-EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
-                     read.only=FALSE, changelog=NULL, win.title="Edit Data",
-                     parent=NULL) {
+EditData <- function(d, col.names=names(d), row.names=rownames(d),
+                     col.formats=NULL, read.only=FALSE, changelog=NULL,
+                     win.title="Edit Data", parent=NULL) {
 
   ## Additional functions
 
@@ -646,8 +646,8 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
     stop("invalid class for data table")
   rtn.class <- class(d)
   if (!inherits(d, "list")) {
-    if (is.null(row.names))
-      row.names <- rownames(d)
+    d.rownames <- rownames(d)
+    d.colnames <- colnames(d)
     d <- as.list(d)
   }
 
@@ -1119,10 +1119,13 @@ EditData <- function(d, col.names=names(d), col.formats=NULL, row.names=NULL,
     d <- NULL
   } else {
     if (rtn.class == "data.frame") {
-      d <- as.data.frame(d, row.names=row.names, stringsAsFactors=FALSE)
+      class(d) <- "data.frame"  # see warning in utils::read.table (R v3.0.2)
+      rownames(d) <- d.rownames
+      colnames(d) <- d.colnames
     } else if (rtn.class == "matrix") {
       d <- do.call(cbind, d)
-      rownames(d) <- row.names
+      rownames(d) <- d.rownames
+      colnames(d) <- d.colnames
     }
   }
 

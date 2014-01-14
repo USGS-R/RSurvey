@@ -9,7 +9,7 @@ A \acronym{GUI} for viewing and editing table formatted data.
 }
 
 \usage{
-EditData(d, col.names = names(d), col.formats = NULL, row.names = NULL,
+EditData(d, col.names = names(d), row.names = rownames(d), col.formats = NULL,
          read.only = FALSE, changelog = NULL, win.title = "Edit Data",
          parent = NULL)
 }
@@ -17,9 +17,9 @@ EditData(d, col.names = names(d), col.formats = NULL, row.names = NULL,
 \arguments{
 \item{d}{list, matrix, or data.frame; the data used to populate the table.}
 \item{col.names}{character; a vector of column names.}
+\item{row.names}{character; a vector of row names.}
 \item{col.formats}{character; a vector of format conversion specification
   strings (optional), see \code{\link{sprintf}} and \code{\link{strftime}}.}
-\item{row.names}{character; a vector of row names.}
 \item{read.only}{logical; specifies whether the table is in read only mode.}
 \item{changelog}{data.frame; history of all data table edits (see
   \sQuote{Value}).}
