@@ -397,8 +397,8 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
       win.title <- "Raw and Derived Data"
     }
     tclServiceMode(TRUE)
-    EditData(d, col.names=nams[idxs], col.formats=fmts[idxs],
-             row.names=row.names, read.only=TRUE, win.title=win.title,
+    EditData(d, col.names=nams[idxs], row.names=row.names,
+             col.formats=fmts[idxs], read.only=TRUE, win.title=win.title,
              parent=tt)
     return()
   }
