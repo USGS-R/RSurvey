@@ -43,8 +43,8 @@ to a specific variable, and contains the following components:
   \code{data.raw} data frame, see \code{\link{ImportText}}. Only required
   for variables directly linked to data columns in \code{data.raw}.}
 \item{class}{character; the data class of the vector object.}
-\item{summary}{list; a summary of the variables descriptive statistics (see
-  \code{\link{summary}}).}
+\item{summary}{summaryDefault; a summary of the variables descriptive statistics
+  (see \code{\link{summary}}).}
 \item{comments}{character; user comments.}
 The \code{vars} object is a list with components:
 \item{x, y, z, vx, vy, sort.on}{integer; the index number of the corresponding

@@ -591,8 +591,8 @@ EditData <- function(d, col.names=names(d), row.names=NULL,
     return()
   }
 
-  # View structure or summary
-  ViewData <- function(type) {
+  # View structure and summary information
+  ViewInfo <- function(type) {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
     ow <- options(width=200)$width
@@ -801,9 +801,9 @@ EditData <- function(d, col.names=names(d), row.names=NULL,
   menu.view <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
   tkadd(menu.view, "command", label="Structure",
-        command=function() ViewData("str"))
+        command=function() ViewInfo("str"))
   tkadd(menu.view, "command", label="Summary",
-        command=function() ViewData("summary"))
+        command=function() ViewInfo("summary"))
   if (!read.only) {
     tkadd(menu.view, "separator")
     tkadd(menu.view, "command", label="Change log", command=ViewChangeLog)

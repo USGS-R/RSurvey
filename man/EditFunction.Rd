@@ -33,9 +33,9 @@ pre-existing data frame or query building.
 \value{
 Returns a list with two four components:
 \code{fun}, the user defined function (when evaluated, this string must be parseable);
-\code{class}, the object class of the evaluated function;
-\code{summary}, a numeric summary; and
-\code{sample} of the object.
+\code{class}, the object class for the evaluated function;
+\code{summary}, the default summary for the evaluated function; and
+\code{sample}, the first non-missing value for the evaluated function.
 }
 
 \author{J.C. Fisher}

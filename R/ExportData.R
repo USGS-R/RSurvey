@@ -76,7 +76,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
     if (file.type == "txt") {
       d <- do.call(cbind, d)  # matrix
     } else {
-      class(d) <- "data.frame"
+      class(d) <- "data.frame"  # see warning in utils::read.table (R v3.0.2)
     }
     rownames(d) <- row.names
 

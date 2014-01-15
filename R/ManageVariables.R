@@ -80,12 +80,8 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     cols[[idx]]$fun <<- new.fun
 
     # Save summary string
-    if (!identical(old.fun, new.fun)) {
-      obj <- EvalFunction(new.fun, cols)
-      cols[[idx]]$summary <<- paste(c("", capture.output(summary(obj)),
-                                      "", capture.output(str(obj)),
-                                      ""), collapse="\n")
-    }
+    if (!identical(old.fun, new.fun))
+      cols[[idx]]$summary <- summary(EvalFunction(new.fun, cols))
 
     # Save name
     SetVarId(idx)
@@ -128,9 +124,10 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     # Update summary
     tkconfigure(frame3.txt, state="normal")
     tcl(frame3.txt, "delete", "1.0", "end")
-    sum.str <- cols[[idx]]$summary
-    if (!is.null(sum.str))
-      tkinsert(frame3.txt, "end", sum.str)
+    if (!is.null(cols[[idx]]$summary)) {
+      txt <- paste(c("", capture.output(cols[[idx]]$summary)), collapse="\n")
+      tkinsert(frame3.txt, "end", txt)
+    }
     tkconfigure(frame3.txt, state="disabled")
   }
 

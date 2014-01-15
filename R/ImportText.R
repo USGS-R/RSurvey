@@ -150,9 +150,7 @@ ImportText <- function(parent=NULL) {
         cols[[j]]$index   <- j
         cols[[j]]$fun     <- paste0("\"", ids[j], "\"")
         cols[[j]]$sample  <- na.omit(val)[1]
-        cols[[j]]$summary <- paste(c("", capture.output(summary(val)),
-                                     "", capture.output(str(val)),
-                                     ""), collapse="\n")
+        cols[[j]]$summary <- summary(val)
         d[, j] <- val
       }
 
