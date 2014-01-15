@@ -38,23 +38,21 @@ ExportData <- function(file.type="txt", parent=NULL) {
     # Identify data set and records
 
     if (is.proc) {
-      row.nams <- row.names(Data("data.pts"))
-      row.idxs <- which(row.nams %in% rows$names)
-      if (length(row.nams) != length(row.idxs))
+      row.names <- row.names(Data("data.pts"))
+      row.idxs <- which(row.names %in% rows$names)
+      if (length(row.names) != length(row.idxs))
         stop("length of row names different from length of row indexes")
     } else {
-      row.nams <- rows$names
-      row.idxs <- seq_along(row.nams)
+      row.names <- rows$names
+      row.idxs <- seq_along(row.names)
     }
     n <- length(col.idxs)
     m <- length(row.idxs)
-    d <- matrix(NA, nrow=m, ncol=n)
-    if (file.type != "txt")
-      d <- as.data.frame(d)
 
+    d <- list()
     for (i in seq_len(n)) {
       obj <- EvalFunction(col.funs[i], cols)[row.idxs]
-      if (file.type == "txt") {  # Format variables
+      if (file.type == "txt") {
         fmt <- col.fmts[i]
         if (fmt == "") {
           obj <- format(obj, na.encode=FALSE)
@@ -72,9 +70,15 @@ ExportData <- function(file.type="txt", parent=NULL) {
           }
         }
       }
-      d[, i] <- obj
+      d[[i]] <- obj
     }
-    row.names(d) <- row.nams
+
+    if (file.type == "txt") {
+      d <- do.call(cbind, d)  # matrix
+    } else {
+      class(d) <- "data.frame"
+    }
+    rownames(d) <- row.names
 
     if (is.null(Data("export")))
       Data("export", list())
@@ -201,6 +205,8 @@ ExportData <- function(file.type="txt", parent=NULL) {
       colnames(d) <- col.ids.8bit
       idx.x <- which(col.ids %in% id.x)
       idx.y <- which(col.ids %in% id.y)
+      is.coord.na <- is.na(d[, idx.x]) | is.na(d[, idx.y])
+      d <- d[!is.coord.na, ]  # remove coordinates containing missing values
       coordinates(d) <- col.ids.8bit[c(idx.x, idx.y)]
       dsn <- dirname(file.name)
       layer <- basename(file.name)
