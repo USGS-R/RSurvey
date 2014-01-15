@@ -1,8 +1,8 @@
 # A GUI for viewing and editing table formatted data.
 
-EditData <- function(d, col.names=names(d), row.names=NULL,
-                     col.formats=NULL, read.only=FALSE, changelog=NULL,
-                     win.title="Edit Data", parent=NULL) {
+EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
+                     read.only=FALSE, changelog=NULL, win.title="Data",
+                     parent=NULL) {
 
   ## Additional functions
 

@@ -177,7 +177,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     }
     if (!is.na(cols[[idx]]$index)) {
       msg <- paste0("Variable \"", cols[[idx]]$id,
-                    "\" corresponds with raw data.\n\n",
+                    "\" corresponds with menu.view.unpr data.\n\n",
                     "Are you sure you want to remove it?")
       ans <- tkmessageBox(icon="question", message=msg, title="Question",
                           type="yesno", parent=tt)
@@ -366,76 +366,22 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   }
 
   # View data for selected variable
-
-  CallEditData <- function(type="data.frame") {
+  CallEditData <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
-
+    tclServiceMode(FALSE)
+    on.exit(tclServiceMode(TRUE), add=TRUE)
     idx <- as.integer(tkcurselection(frame1.lst)) + 1L
     if (length(idx) == 0)
       return()
     SaveNb()
-
-    tclServiceMode(FALSE)
-    nams <- vapply(cols, function(i) i$id, "")
-    fmts <- vapply(cols, function(i) i$format, "")
-    funs <- vapply(cols, function(i) i$fun, "")
-
-    idxs <- if (type == "data") idx else seq_along(cols)
-    d <- lapply(idxs, function(i) EvalFunction(funs[i], cols))
-    row.names <- Data("rows")$names
-
-    raw.data.idxs <- na.omit(vapply(cols, function(i) i$index, 1L))
-    if (all(idxs %in% raw.data.idxs)) {
-      win.title <- "Raw Data"
-    } else if (all(!idxs %in% raw.data.idxs)) {
-      win.title <- "Derived Data"
-    } else {
-      win.title <- "Raw and Derived Data"
-    }
-    tclServiceMode(TRUE)
-    EditData(d, col.names=nams[idxs], row.names=row.names,
-             col.formats=fmts[idxs], read.only=TRUE, win.title=win.title,
-             parent=tt)
+    d <- list(EvalFunction(cols[[idx]]$fun, cols))
+    EditData(d, col.names=cols[[idx]]$id, row.names=Data("rows")$names,
+             col.formats=cols[[idx]]$format, read.only=TRUE,
+             win.title="View Data", parent=tt)
     return()
   }
 
-  # Build historgram
-
-  CallBuildHistogram <- function() {
-    tkconfigure(tt, cursor="watch")
-    on.exit(tkconfigure(tt, cursor="arrow"))
-    SaveNb()
-    idx <- as.integer(tkcurselection(frame1.lst)) + 1L
-    if (length(idx) == 0)
-      return()
-
-    is.num <- vapply(cols,
-                     function(i) any(c("numeric", "integer") %in% i$class),
-                     TRUE)
-    idxs <- which(is.num)
-    if (length(idxs) == 0) {
-      msg <- paste("A histogram may only be built for continous variables;",
-                   "that is, variables of class \"numeric\" or \"integer\".")
-      tkmessageBox(icon="info", message=msg, title="Histogram", type="ok",
-                   parent=tt)
-      return()
-    }
-
-    ids  <- vapply(cols, function(i) i$id, "")
-    funs <- vapply(cols, function(i) i$fun, "")
-
-    d <- lapply(idxs, function(i) EvalFunction(funs[i], cols))
-
-    var.names <- ids[idxs]
-    if (idx %in% idxs)
-      var.default <- ids[idx]
-    else
-      var.default <- var.names[1]
-
-    BuildHistogram(d, var.names=var.names, var.default=var.default, parent=tt)
-    tkfocus(tt)
-  }
 
   ## Main program
 
@@ -484,13 +430,6 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
         command=SaveNewVar)
   tkadd(menu.edit, "command", label="Delete", command=DeleteVar)
 
-  menu.view <- tkmenu(tt, tearoff=0, relief="flat")
-  tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
-  tkadd(menu.view, "command", label="Selected variable",
-        command=function() CallEditData("data"))
-  tkadd(menu.view, "command", label="All variables",
-        command=function() CallEditData())
-
   menu.arrange <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Arrange", menu=menu.arrange, underline=0)
   tkadd(menu.arrange, "command", label="Send to top",
@@ -501,11 +440,6 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
         accelerator="Ctrl+]", command=function() Arrange("forward"))
   tkadd(menu.arrange, "command", label="Bring to bottom",
         accelerator="Shift+Ctrl+]", command=function() Arrange("front"))
-
-  menu.graph <- tkmenu(tt, tearoff=0)
-  tkadd(top.menu, "cascade", label="Plot", menu=menu.graph, underline=0)
-  tkadd(menu.graph, "command", label="Histogram\u2026",
-        command=CallBuildHistogram)
 
   tkconfigure(tt, menu=top.menu)
 
@@ -521,7 +455,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   frame0.but.4 <- ttkbutton(frame0, width=2, image=GetBitmapImage("bottom"),
                             command=function() Arrange("front"))
   frame0.but.5 <- ttkbutton(frame0, width=2, image=GetBitmapImage("view"),
-                            command=function() CallEditData("data"))
+                            command=CallEditData)
   frame0.but.6 <- ttkbutton(frame0, width=2, image=GetBitmapImage("plus"),
                             command=SaveNewVar)
   frame0.but.7 <- ttkbutton(frame0, width=2, image=GetBitmapImage("delete"),

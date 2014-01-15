@@ -4,6 +4,8 @@
 #     http://cran.r-project.org/bin/windows/Rtools/
 #   Download and install the MiKTeX installation program
 #     http://www.miktex.org/download
+#   Download and install qpdf-<version>-bin-mingw64.zip
+#     http://qpdf.sourceforge.net/
 
 BuildPackage <- function(check.cran=FALSE) {
   if (.Platform$OS.type != "windows")
