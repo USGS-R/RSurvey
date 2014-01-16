@@ -1,11 +1,10 @@
 # Writes a series of commands for creating an R package to a Windows batch file.
-# Software requirements for building R packages in a Windows OS:
-#   Download and install the Rtools installer
-#     http://cran.r-project.org/bin/windows/Rtools/
-#   Download and install the MiKTeX installation program
-#     http://www.miktex.org/download
-#   Download and install qpdf-<version>-bin-mingw64.zip
-#     http://qpdf.sourceforge.net/
+# Software requirements for building R packages in a Windows OS include:
+#   Rtools;      http://cran.r-project.org/bin/windows/Rtools/
+#   MiKTeX;      http://www.miktex.org/download
+#   QPDF;        http://qpdf.sourceforge.net/
+#   Ghostscript; http://www.ghostscript.com/
+# Place QPDF and Ghostscript in the 'Path' environmental variable.
 
 BuildPackage <- function(check.cran=FALSE) {
   if (.Platform$OS.type != "windows")

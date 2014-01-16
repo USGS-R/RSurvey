@@ -511,18 +511,6 @@ OpenRSurvey <- function() {
     chk
   }
 
-  # Plot histogram
-  PlotHistogram <- function() {
-    CallProcessData()
-    tkconfigure(tt, cursor="watch")
-    on.exit(tkconfigure(tt, cursor="arrow"))
-    if (is.null(Data("data.pts")))
-      return()
-    d <- Data("data.pts")
-    d <- d[, names(d) != "sort.on"]
-    BuildHistogram(d, var.names=names(d), parent=tt)
-  }
-
   # Plot point or 2d surface data
 
   CallPlot2d <- function(type, build.poly=FALSE) {
@@ -730,7 +718,7 @@ OpenRSurvey <- function() {
       col.names <- names(Data("data.pts"))
       col.formats <- vapply(col.names, function(i) cols[[vars[[i]]]]$format, "")
       EditData(Data("data.pts"), col.names=col.names, col.formats=col.formats,
-               read.only=TRUE, win.title="View Data", parent=tt)
+               read.only=TRUE, win.title="View Processed Data", parent=tt)
 
     } else {  # edit raw data
       if (is.null(Data("data.raw")))
@@ -745,7 +733,7 @@ OpenRSurvey <- function() {
       ans <- EditData(Data("data.raw")[idxs], col.names=col.names,
                       row.names=rows$names, col.formats=col.formats,
                       read.only=FALSE, changelog=old.changelog,
-                      win.title="Edit Data", parent=tt)
+                      win.title="Edit Raw Data", parent=tt)
       if (is.null(ans))
         return()
 
@@ -964,10 +952,10 @@ OpenRSurvey <- function() {
   tkadd(menu.file.import, "command", label="XML spreadsheet file\u2026",
         state=ifelse(is.xml, "normal", "disabled"),
         command=function() ReadData("xlsx"))
-  tkadd(menu.file.import, "command", label="R data file\u2026",
-        command=function() ReadData("rda"))
   tkadd(menu.file.import, "command", label="R package\u2026",
         command=function() ReadData("rpackage"))
+  tkadd(menu.file.import, "command", label="R data file\u2026",
+        command=function() ReadData("rda"))
   tkadd(menu.file, "cascade", label="Import data from",
         menu=menu.file.import)
   menu.file.export <- tkmenu(tt, tearoff=0)
@@ -1002,7 +990,7 @@ OpenRSurvey <- function() {
 
   tkadd(menu.edit, "command", label="Manage variables\u2026",
         command=CallManageVariables)
-  tkadd(menu.edit, "command", label="Data editor\u2026",
+  tkadd(menu.edit, "command", label="Raw data editor\u2026",
         command=function() CallEditData(read.only=FALSE))
   tkadd(menu.edit, "command", label="Comment\u2026",
         command=EditComment)
@@ -1043,20 +1031,18 @@ OpenRSurvey <- function() {
 
   menu.view <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
-
+  menu.view.raw <- tkmenu(tt, tearoff=0)
+  tkadd(menu.view.raw, "command", label="All variables",
+        command=function() print("notyet"))
+  tkadd(menu.view.raw, "command", label="State variables",
+        command=function() print("notyet"))
+  tkadd(menu.view, "cascade", label="Raw data for", menu=menu.view.raw)
   menu.view.pr <- tkmenu(tt, tearoff=0)
   tkadd(menu.view.pr, "command", label="All variables",
         command=function() print("notyet"))
   tkadd(menu.view.pr, "command", label="State variables",
         command=function() CallEditData(read.only=TRUE))
-  tkadd(menu.view, "cascade", label="Processed records for", menu=menu.view.pr)
-
-  menu.view.unpr <- tkmenu(tt, tearoff=0)
-  tkadd(menu.view.unpr, "command", label="All variables",
-        command=function() print("notyet"))
-  tkadd(menu.view.unpr, "command", label="State variables",
-        command=function() print("notyet"))
-  tkadd(menu.view, "cascade", label="Unprocessed records for", menu=menu.view.unpr)
+  tkadd(menu.view, "cascade", label="Processed data for", menu=menu.view.pr)
 
 
 
@@ -1099,9 +1085,6 @@ OpenRSurvey <- function() {
 
   menu.graph <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
-
-  tkadd(menu.graph, "command", label="Plot histogram\u2026",
-        command=PlotHistogram)
   tkadd(menu.graph, "command", label="Plot scatterplot",
         command=function() {
           CallPlot2d(type="p")
@@ -1114,7 +1097,6 @@ OpenRSurvey <- function() {
   tkadd(menu.graph, "command", label="Plot 3D-interpolated map",
         state=ifelse(is.rgl, "normal", "disabled"),
         command=CallPlot3d)
-
   tkadd(menu.graph, "separator")
   tkadd(menu.graph, "command", label="Set axes limits\u2026",
         command=function() {
@@ -1125,7 +1107,6 @@ OpenRSurvey <- function() {
         command=function() {
           Data("lim.axes", NULL)
         })
-
   tkadd(menu.graph, "separator")
   tkadd(menu.graph, "command", label="Configuration",
         command=function() {
@@ -1139,7 +1120,6 @@ OpenRSurvey <- function() {
           if (!is.null(pal))
             Data("color.palette", pal)
         })
-
   tkadd(menu.graph, "separator")
   tkadd(menu.graph, "command", label="Close all graphic devices",
         accelerator="Ctrl+F4", command=CloseDevices)

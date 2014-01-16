@@ -56,7 +56,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     } else {
       obj$xname <- xlab
       txt <- paste(c(capture.output(obj), ""), collapse="\n")
-      EditText(txt, read.only=TRUE, win.title="Histogram Data",
+      EditText(txt, read.only=TRUE, win.title="Histogram Description",
                is.fixed.width.font=TRUE, parent=tt)
     }
   }
@@ -134,25 +134,32 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   if (!is.list(d) || length(d) == 0L)
     stop()
 
-  is.num <- which(vapply(d, function(i) inherits(i, c("numeric", "integer")),
-                         TRUE))
-  d <- d[is.num]
-  if (length(d) == 0L)
-    stop()
-
-  if (is.null(var.names)) {
+  if (!is.character(var.names) || length(var.names) != length(d)) {
     var.names <- names(d)
     if (is.null(var.names))
       var.names <- paste0("Unknown (", length(d), ")")
   }
 
-  if (is.character(var.default)) {
-    var.default <- which(var.default == var.names)
-    if (length(var.default) == 0)
-      var.default <- 1L
+  d <- lapply(d, function(i) try(as.numeric(i), silent=TRUE))
+
+  Fun <- function(i) !(inherits(i, "try-error") | all(is.na(i)))
+  is.num <- vapply(d, Fun, TRUE)
+  d <- d[is.num]
+  if (length(d) == 0L) {
+    msg <- "None of the variables can be converted to class 'numeric'."
+    tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
+    return()
   }
-  if (!is.integer(var.default) && !var.default %in% var.names)
-    stop()
+  var.names <- var.names[is.num]
+
+  if (inherits(var.default, c("character", "integer"))) {
+    if (is.character(var.default))
+      var.default <- which(var.default[1] == var.names)
+    if (length(var.default) != 1L || !var.default %in% seq_len(length(d)))
+      var.default <- 1L
+  } else {
+    var.default <- 1L
+  }
 
   # Set limits and default value
   maxs <- vapply(d, function(i) length(unique(i)), 0L)
@@ -191,7 +198,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
                              "+", as.integer(geo[3]) + 25))
   }
-  tktitle(tt) <- "Histogram"
+  tktitle(tt) <- "Build Histogram"
   tkwm.resizable(tt, 1, 0)
 
   # Frame 0

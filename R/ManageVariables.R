@@ -378,7 +378,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     d <- list(EvalFunction(cols[[idx]]$fun, cols))
     EditData(d, col.names=cols[[idx]]$id, row.names=Data("rows")$names,
              col.formats=cols[[idx]]$format, read.only=TRUE,
-             win.title="View Data", parent=tt)
+             win.title="View Raw Data", parent=tt)
     return()
   }
 
@@ -429,6 +429,10 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   tkadd(menu.edit, "command", label="New\u2026", accelerator="Ctrl+n",
         command=SaveNewVar)
   tkadd(menu.edit, "command", label="Delete", command=DeleteVar)
+
+  menu.view <- tkmenu(tt, tearoff=0, relief="flat")
+  tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
+  tkadd(menu.view, "command", label="Raw data", command=CallEditData)
 
   menu.arrange <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Arrange", menu=menu.arrange, underline=0)

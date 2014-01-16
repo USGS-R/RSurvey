@@ -584,8 +584,14 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     on.exit(tkconfigure(tt, cursor="arrow"))
     ow <- options(width=200)$width
     on.exit(options(width=ow), add=TRUE)
+
     SaveActiveEdits()
-    txt <- paste(capture.output(GetEdits()), collapse="\n")
+    changelog <- GetEdits()
+
+    tclServiceMode(FALSE)
+    txt <- paste(capture.output(changelog), collapse="\n")
+    tclServiceMode(TRUE)
+
     EditText(txt, read.only=TRUE, win.title="Change log",
              is.fixed.width.font=TRUE, parent=tt)
     return()
@@ -632,6 +638,13 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
       matched.cells <<- NULL
   }
 
+  # Plot histogram
+  PlotHistogram <- function() {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
+    SaveActiveEdits()
+    BuildHistogram(d, var.names=col.names, parent=tt)
+  }
 
 
   ## Main program
@@ -926,6 +939,12 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
           menu=menu.nav.in)
   }
 
+  # Graph menu
+  menu.graph <- tkmenu(tt, tearoff=0)
+  tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
+  tkadd(menu.graph, "command", label="Build histogram\u2026",
+        command=PlotHistogram)
+
   # Finish top menu
   tkconfigure(tt, menu=top.menu)
 
@@ -1000,8 +1019,8 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
 
   tkgrid.configure(frame2.ent.2.2, frame2.ent.1.2, padx=c(0, 2))
   tkgrid.configure(frame2.lab.2.1, frame2.lab.1.1, padx=c(0, 2), sticky="w")
-  tkgrid.configure(frame2.but.1.3, columnspan=2, padx=c(0, 10), sticky="we")
-  tkgrid.configure(frame2.but.2.4, padx=c(2, 10))
+  tkgrid.configure(frame2.but.1.3, columnspan=2, padx=c(0, 70), sticky="we")
+  tkgrid.configure(frame2.but.2.4, padx=c(2, 70))
 
   tkpack(frame2, side="bottom", anchor="nw", padx=c(10, 0))
 
