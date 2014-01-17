@@ -4,13 +4,9 @@
 
 \title{Set Axes Limits}
 
-\description{
-A \acronym{GUI} for specifying axes limits.
-}
+\description{A \acronym{GUI} for specifying axes limits.}
 
-\usage{
-SetAxesLimits(lim = NULL, parent = NULL)
-}
+\usage{SetAxesLimits(lim = NULL, parent = NULL)}
 
 \arguments{
 \item{lim}{list; contains the current plotting limits, see \sQuote{Value}.}
@@ -38,8 +34,6 @@ Returns a list containing the following components:
 
 \author{J.C. Fisher}
 
-\examples{
-\donttest{SetAxesLimits()}
-}
+\examples{\donttest{SetAxesLimits()}}
 
 \keyword{misc}

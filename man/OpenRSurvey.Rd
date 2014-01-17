@@ -8,9 +8,7 @@
 Opens the main graphical user interface (\acronym{GUI}) for \pkg{RSurvey}.
 }
 
-\usage{
-OpenRSurvey()
-}
+\usage{OpenRSurvey()}
 
 \details{
 All functions within \pkg{RSurvey} are accessible through this \acronym{GUI}.
@@ -25,8 +23,6 @@ Quaries and sets the \code{vars} component of \code{\link{Data}}. The
 
 \author{J.C. Fisher}
 
-\examples{
-\donttest{OpenRSurvey()}
-}
+\examples{\donttest{OpenRSurvey()}}
 
 \keyword{misc}

@@ -4,13 +4,9 @@
 
 \title{Import Data from R Package}
 
-\description{
-A \acronym{GUI} for loading selected data sets from R packages.
-}
+\description{A \acronym{GUI} for loading selected data sets from R packages.}
 
-\usage{
-ImportPackage(classes = NULL, parent = NULL)
-}
+\usage{ImportPackage(classes = NULL, parent = NULL)}
 
 \arguments{
 \item{classes}{character; the object classes of data sets that can be
@@ -27,12 +23,8 @@ Returns a list with the following components:
 
 \author{J.C. Fisher}
 
-\seealso{
-\code{\link{data}}
-}
+\seealso{\code{\link{data}}}
 
-\examples{
-\donttest{ans <- ImportPackage(c("data.frame", "matrix"))}
-}
+\examples{\donttest{ans <- ImportPackage(c("data.frame", "matrix"))}}
 
 \keyword{IO}

@@ -9,13 +9,9 @@ A \acronym{GUI} for specifying window geometry and universal plotting
 parameters.
 }
 
-\usage{
-SetConfiguration(parent = NULL)
-}
+\usage{SetConfiguration(parent = NULL)}
 
-\arguments{
-\item{parent}{tkwin; the \acronym{GUI} parent window.}
-}
+\arguments{\item{parent}{tkwin; the \acronym{GUI} parent window.}}
 
 \value{
 Queries and sets the following components of \code{\link{Data}}:
@@ -56,14 +52,10 @@ Queries and sets the following components of \code{\link{Data}}:
   not drawn; its default is \code{FALSE}.}
 }
 
-\note{
-Re-importing data does not affect values specified in this \acronym{GUI}.
-}
+\note{Re-importing data does not affect values specified in this \acronym{GUI}.}
 
 \author{J.C. Fisher}
 
-\examples{
-\donttest{SetConfiguration()}
-}
+\examples{\donttest{SetConfiguration()}}
 
 \keyword{misc}

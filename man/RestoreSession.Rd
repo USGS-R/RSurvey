@@ -24,18 +24,12 @@ An updated \R session compiled from \file{.R} source code files located in
 \code{path} and its recursive directories.
 }
 
-\note{
-Restoring \code{\link{Data}} clears its components.
-}
+\note{Restoring \code{\link{Data}} clears its components.}
 
 \author{J.C. Fisher}
 
-\seealso{
-\code{\link{list.files}}, \code{\link{source}}
-}
+\seealso{\code{\link{list.files}}, \code{\link{source}}}
 
-\examples{
-\dontrun{RestoreSession()}
-}
+\examples{\dontrun{RestoreSession()}}
 
 \keyword{internal}

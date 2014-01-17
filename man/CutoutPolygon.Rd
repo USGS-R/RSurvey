@@ -8,9 +8,7 @@
 This function excludes gridded data located outside a given polygon.
 }
 
-\usage{
-CutoutPolygon(dat, ply = NULL)
-}
+\usage{CutoutPolygon(dat, ply = NULL)}
 
 \arguments{
 \item{dat}{list; with components \code{x}, \code{y}, and \code{z},
@@ -32,9 +30,7 @@ Returns a list containing the following components:
 
 \author{J.C. Fisher}
 
-\seealso{
-\code{\link{point.in.polygon}}
-}
+\seealso{\code{\link{point.in.polygon}}}
 
 \examples{
 ply <- as(cbind(c(2, 8, 9, 6, 3), c(3, 1, 4, 8, 6)), "gpc.poly")

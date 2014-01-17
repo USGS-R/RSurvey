@@ -4,13 +4,9 @@
 
 \title{Manage Variables}
 
-\description{
-A \acronym{GUI} for managing variables in the data table.
-}
+\description{A \acronym{GUI} for managing variables in the data table.}
 
-\usage{
-ManageVariables(cols, vars, query, changelog, parent = NULL)
-}
+\usage{ManageVariables(cols, vars, query, changelog, parent = NULL)}
 
 \arguments{
 \item{cols}{list; see \sQuote{Value}.}
@@ -57,10 +53,10 @@ The \code{vars} object is a list with components:
 
 \author{J.C. Fisher}
 
-\examples{
-\donttest{data(ex.project)
+\examples{\donttest{
+data(ex.project)
 Data(replace.all = ex.project)
-ManageVariables(ex.project$cols, ex.project$vars, ex.project$query, ex.project$changelog)}
-}
+ManageVariables(ex.project$cols, ex.project$vars, ex.project$query, ex.project$changelog)
+}}
 
 \keyword{misc}

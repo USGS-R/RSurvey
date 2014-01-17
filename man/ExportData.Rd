@@ -8,9 +8,7 @@
 A \acronym{GUI} for exporting data to text files, shapefiles, or R data files.
 }
 
-\usage{
-ExportData(file.type = "txt", parent = NULL)
-}
+\usage{ExportData(file.type = "txt", parent = NULL)}
 
 \arguments{
 \item{file.type}{character; the output file type: either
@@ -54,14 +52,12 @@ Saves the \acronym{GUI} options in the \code{export} component of
   data is written (R data only).}
 }
 
-\seealso{
-\code{\link{write.table}}, \code{\link{save}}, \code{writeOGR}
-}
+\seealso{\code{\link{write.table}}, \code{\link{save}}, \code{writeOGR}}
 
 \author{J.C. Fisher}
 
-\examples{
-\donttest{data(ex.project)
+\examples{\donttest{
+data(ex.project)
 Data(replace.all = ex.project)
 ExportData(file.type = "txt")
 }}

@@ -10,9 +10,7 @@ A \acronym{GUI} for specifying the interpolation algorithms input parameters.
 
 \usage{SetInterpolation(parent = NULL)}
 
-\arguments{
-\item{parent}{tkwin; the \acronym{GUI} parent window.}
-}
+\arguments{\item{parent}{tkwin; the \acronym{GUI} parent window.}}
 
 \value{
 Queries and sets the following components in \code{\link{Data}}:
@@ -33,12 +31,8 @@ values.
 
 \author{J.C. Fisher}
 
-\seealso{
-\code{\link{mba.points}}
-}
+\seealso{\code{\link{mba.points}}}
 
-\examples{
-\donttest{SetInterpolation()}
-}
+\examples{\donttest{SetInterpolation()}}
 
 \keyword{misc}

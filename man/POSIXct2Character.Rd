@@ -8,18 +8,14 @@
 Convert objects from \code{\link{POSIXct}} to \code{\link{character}} class.
 }
 
-\usage{
-POSIXct2Character(x, fmt = "\%Y-\%m-\%d \%H:\%M:\%OS3")
-}
+\usage{POSIXct2Character(x, fmt = "\%Y-\%m-\%d \%H:\%M:\%OS3")}
 
 \arguments{
 \item{x}{POSIXct; vector of calendar dates and times.}
 \item{fmt}{character; the conversion specification format.}
 }
 
-\value{
-Returns a character vector representing time.
-}
+\value{Returns a character vector representing time.}
 
 \note{
 R incorrectly formats objects of calss \code{\link{POSIXct}} with fractional
@@ -39,9 +35,7 @@ solution provided
 \href{http://stackoverflow.com/questions/15383057/accurately-converting-from-character-posixct-character-with-sub-millisecond-da}{here}.
 }
 
-\seealso{
-\code{\link{strptime}}
-}
+\seealso{\code{\link{strptime}}}
 
 \examples{
 txt <- c("11/10/2011 07:49:36.3", "04/01/2013 17:22:08.123",

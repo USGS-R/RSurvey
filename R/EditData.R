@@ -586,12 +586,8 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     on.exit(options(width=ow), add=TRUE)
 
     SaveActiveEdits()
-    changelog <- GetEdits()
-
-    tclServiceMode(FALSE)
-    txt <- paste(capture.output(changelog), collapse="\n")
-    tclServiceMode(TRUE)
-
+    Sys.sleep(3)
+    txt <- paste(capture.output(GetEdits()), collapse="\n")
     EditText(txt, read.only=TRUE, win.title="Change log",
              is.fixed.width.font=TRUE, parent=tt)
     return()

@@ -4,9 +4,7 @@
 
 \title{Edit Text}
 
-\description{
-A \acronym{GUI} for viewing and editing text.
-}
+\description{A \acronym{GUI} for viewing and editing text.}
 
 \usage{
 EditText(txt, read.only = FALSE, win.title = "View Text",
@@ -21,14 +19,10 @@ EditText(txt, read.only = FALSE, win.title = "View Text",
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
-\details{
-Something
-}
-
 \author{J.C. Fisher}
 
-\examples{
-\donttest{txt <- c("\"Hills cherish the ambition",
+\examples{\donttest{
+txt <- c("\"Hills cherish the ambition",
          "    to turn into partial",
          "   differential equations\"",
          "",

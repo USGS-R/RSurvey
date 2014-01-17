@@ -9,9 +9,7 @@ A \acronym{GUI} for specifying input parameters of the \code{\link{hist}}
 function.
 }
 
-\usage{
-BuildHistogram(d, var.names = NULL, var.default = 1L, parent = NULL)
-}
+\usage{BuildHistogram(d, var.names = NULL, var.default = 1L, parent = NULL)}
 
 \arguments{
 \item{d}{list, data.frame, matrix, or numeric; vector(s) of values for which the
@@ -23,23 +21,16 @@ BuildHistogram(d, var.names = NULL, var.default = 1L, parent = NULL)
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
-\details{
-Plot histogram and view results.
-}
+\details{Plot histogram and view results.}
 
-\value{
-Does not return any value.
-}
+\value{Does not return any value.}
 
 \author{J.C. Fisher}
 
-\seealso{
-\code{\link{hist}}, \code{\link{plot.histogram}}, \code{\link{rug}},
-\code{\link{density}}
-}
+\seealso{\code{\link{hist}}, \code{\link{plot.histogram}}}
 
-\examples{
-\donttest{data(ex.project)
+\examples{\donttest{
+data(ex.project)
 BuildHistogram(ex.project$data.pts)
 }}
 

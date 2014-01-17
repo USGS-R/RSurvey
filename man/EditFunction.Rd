@@ -4,9 +4,7 @@
 
 \title{Edit Function}
 
-\description{
-A \acronym{GUI} for defining functions in the \R language.
-}
+\description{A \acronym{GUI} for defining functions in the \R language.}
 
 \usage{
 EditFunction(cols, index = NULL, fun = NULL, value.length = NULL,
@@ -40,9 +38,7 @@ Returns a list with two four components:
 
 \author{J.C. Fisher}
 
-\seealso{
-\code{\link{EvalFunction}}
-}
+\seealso{\code{\link{EvalFunction}}}
 
 \examples{\donttest{
 d <- list(x = 1:10, y = 10:1)

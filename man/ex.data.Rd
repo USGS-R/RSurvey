@@ -10,9 +10,7 @@
 This is an example data set that is typically used to test \pkg{RSurvey}.
 }
 
-\usage{
-ex.data
-}
+\usage{ex.data}
 
 \format{
 A data frame with 50 rows and the following columns:
@@ -29,13 +27,11 @@ A data frame with 50 rows and the following columns:
   \item{Date}{Date; vector.}
   \item{Time}{POSIXct; vector.}
   \item{Character}{factor; vector.}
-}
-}
+}}
 
-\examples{
-\donttest{data(ex.data)
+\examples{\donttest{
+data(ex.data)
 summary(ex.data)
-}
-}
+}}
 
 \keyword{datasets}

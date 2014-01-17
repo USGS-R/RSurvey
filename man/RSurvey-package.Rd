@@ -4,9 +4,7 @@
 
 \docType{package}
 
-\title{
-Analysis of Spatially Distributed Data
-}
+\title{Analysis of Spatially Distributed Data}
 
 \description{
 This package is a processing program for spatially distributed data.
@@ -23,8 +21,6 @@ The set of standards used for coding \pkg{RSurvey} is documented in
 \href{http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html}{Google's R Style Guide}.
 }
 
-\examples{
-\donttest{library(RSurvey)}
-}
+\examples{\donttest{library(RSurvey)}}
 
 \keyword{package}

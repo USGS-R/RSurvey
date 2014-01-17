@@ -8,23 +8,17 @@
 Parses and evaluates a character string representation of an RSurvey expression.
 }
 
-\usage{
-EvalFunction(txt, cols)
-}
+\usage{EvalFunction(txt, cols)}
 
 \arguments{
-\item{txt}{character; a string representation of an \R function;
-  see \sQuote{Details}.}
+\item{txt}{character; a string representation of an \R function; see
+  \sQuote{Details}.}
 \item{cols}{list; see \code{\link{ManageVariables}}.}
 }
 
-\value{
-The result of evaluating the text epression.
-}
+\value{The result of evaluating the text epression.}
 
-\seealso{
-\code{\link{parse}}, \code{\link{eval}}
-}
+\seealso{\code{\link{parse}}, \code{\link{eval}}}
 
 \author{J.C. Fisher}
 

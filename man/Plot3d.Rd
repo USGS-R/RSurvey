@@ -4,9 +4,7 @@
 
 \title{Plot 3D Surface using OpenGL}
 
-\description{
-Draws a three-dimensional (\acronym{3D}) surface plot.
-}
+\description{Draws a three-dimensional (\acronym{3D}) surface plot.}
 
 \usage{
 Plot3d(x = NULL, y = NULL, z = NULL,
@@ -59,11 +57,10 @@ around the x-axis, and zooms the display, respectively.
 
 \author{J.C. Fisher}
 
-\examples{
-\donttest{data(ex.project)
+\examples{\donttest{
+data(ex.project)
 Plot3d(ex.project$data.grd)
 rgl::rgl.quit()
-}
-}
+}}
 
 \keyword{hplot}

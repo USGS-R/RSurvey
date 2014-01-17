@@ -4,13 +4,9 @@
 
 \title{Control Content in Entry Widget}
 
-\description{
-Content control for character strings based object class.
-}
+\description{Content control for character strings based object class.}
 
-\usage{
-CheckEntry(obj.class, ent.str = "")
-}
+\usage{CheckEntry(obj.class, ent.str = "")}
 
 \arguments{
 \item{obj.class}{character; object class.}
@@ -19,7 +15,7 @@ CheckEntry(obj.class, ent.str = "")
 
 \details{
 The allowed object classes include: \var{real}, \var{integer}, and
-\var{logical}.
+  \var{logical}.
 }
 
 \value{
@@ -27,10 +23,6 @@ A character string with strict adherence to the format for the object class.
 }
 
 \author{J.C. Fisher}
-
-\seealso{
-\code{\link{tkentry}}
-}
 
 \examples{
 CheckEntry("numeric", "3.14ab")

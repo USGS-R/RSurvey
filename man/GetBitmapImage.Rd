@@ -4,17 +4,11 @@
 
 \title{Create Icon Bitmap Image}
 
-\description{
-Create a small \acronym{Tk} bitmap image.
-}
+\description{Create a small \acronym{Tk} bitmap image.}
 
-\usage{
-GetBitmapImage(type)
-}
+\usage{GetBitmapImage(type)}
 
-\arguments{
-\item{type}{character; icon image type, see \sQuote{Details}.}
-}
+\arguments{\item{type}{character; icon image type, see \sQuote{Details}.}}
 
 \details{
 Icon image types include: \var{left}, \var{right}, \var{up}, \var{down},
@@ -26,18 +20,14 @@ A recommended editor for bitmap design is Paul Obermeier's
 \href{http://www.posoft.de/html/poBitmapMain.html}{poBitmap} tool.
 }
 
-\value{
-An image of class \code{\link{tclObj}}.
-}
+\value{An image of class \code{\link{tclObj}}.}
 
 \author{J.C. Fisher}
 
-\seealso{
-\code{\link{tkimage.create}}
-}
+\seealso{\code{\link{tkimage.create}}}
 
-\examples{
-\donttest{types <- c("left", "right", "up", "down", "top", "bottom", "upleft", "upright",
+\examples{\donttest{
+types <- c("left", "right", "up", "down", "top", "bottom", "upleft", "upright",
            "downleft", "downright", "next", "previous", "copy", "paste", "find",
            "delete", "view", "info", "plus", "minus", "print", "histogram")
 Fun <- function(k) print(types[k])

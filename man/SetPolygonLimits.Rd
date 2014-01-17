@@ -4,9 +4,7 @@
 
 \title{Set Polygon Limits}
 
-\description{
-A \acronym{GUI} for specifying polygon limits.
-}
+\description{A \acronym{GUI} for specifying polygon limits.}
 
 \usage{
 SetPolygonLimits(poly.names = NULL, poly.data = NULL, poly.crop = NULL,
@@ -22,14 +20,10 @@ SetPolygonLimits(poly.names = NULL, poly.data = NULL, poly.crop = NULL,
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
-\value{
-Returns a list with components \code{poly.data} and \code{poly.crop}.
-}
+\value{Returns a list with components \code{poly.data} and \code{poly.crop}.}
 
 \author{J.C. Fisher}
 
-\examples{
-\donttest{SetPolygonLimits(c("Polygon1", "Polygon2", "Polygon3"))}
-}
+\examples{\donttest{SetPolygonLimits(c("Polygon1", "Polygon2", "Polygon3"))}}
 
 \keyword{misc}

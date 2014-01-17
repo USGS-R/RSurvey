@@ -4,9 +4,7 @@
 
 \title{Process Data}
 
-\description{
-This function performs data processing on the state variables.
-}
+\description{This function performs data processing on the state variables.}
 
 \usage{
 ProcessData(d, type = "p", coerce.rows = NULL, ply = NULL,

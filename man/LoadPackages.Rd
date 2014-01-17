@@ -11,15 +11,11 @@ package from \href{http://cran.r-project.org/}{CRAN} using an existing network
 connection.
 }
 
-\usage{
-LoadPackages()
-}
+\usage{LoadPackages()}
 
 \author{J.C. Fisher}
 
-\seealso{
-\code{\link{install.packages}}, \code{\link{require}}
-}
+\seealso{\code{\link{install.packages}}, \code{\link{require}}}
 
 \examples{\donttest{LoadPackages()}}
 

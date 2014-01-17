@@ -9,9 +9,7 @@ A \acronym{GUI} for specifying input parameters of the \code{\link{Autocrop}}
 function.
 }
 
-\usage{
-AutocropRegion(d, parent = NULL, ...)
-}
+\usage{AutocropRegion(d, parent = NULL, ...)}
 
 \arguments{
 \item{d}{data.frame; a data table with required coordinate components
@@ -31,18 +29,12 @@ A point plot is drawn showing the resulting polygon based on user defined
 input parameters.
 }
 
-\value{
-Returns a polygon object of \code{\link{gpc.poly-class}}.
-}
+\value{Returns a polygon object of \code{\link{gpc.poly-class}}.}
 
 \author{J.C. Fisher}
 
-\seealso{
-\code{Autocrop}
-}
-
-\examples{
-\donttest{data(tritest, package = "tripack")
+\examples{\donttest{
+data(tritest, package = "tripack")
 AutocropRegion(as.data.frame(tritest), asp = 1)
 }}
 

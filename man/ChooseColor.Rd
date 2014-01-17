@@ -4,13 +4,9 @@
 
 \title{Set Graphic Color}
 
-\description{
-A \acronym{GUI} for selecting a graphic color.
-}
+\description{A \acronym{GUI} for selecting a graphic color.}
 
-\usage{
-ChooseColor(col, parent = NULL)
-}
+\usage{ChooseColor(col, parent = NULL)}
 
 \arguments{
 \item{col}{character; the initial color, see \sQuote{Value}.}
@@ -26,12 +22,8 @@ giving a value in the range \code{00} to \code{FF}.
 
 \author{J.C. Fisher}
 
-\seealso{
-\code{\link{col2rgb}}
-}
+\seealso{\code{\link{col2rgb}}}
 
-\examples{
-\donttest{ChooseColor(col = "#669933")}
-}
+\examples{\donttest{ChooseColor(col = "#669933")}}
 
 \keyword{misc}

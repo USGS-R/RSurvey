@@ -8,9 +8,7 @@
 A \acronym{GUI} for specifying the variable used to sort the data set.
 }
 
-\usage{
-SetSortOrder(col.ids, sort.on = NULL, parent = NULL)
-}
+\usage{SetSortOrder(col.ids, sort.on = NULL, parent = NULL)}
 
 \arguments{
 \item{col.ids}{character; a vector of variable names.}
@@ -30,9 +28,7 @@ they are removed.
 
 \author{J.C. Fisher}
 
-\seealso{
-\code{\link{order}}
-}
+\seealso{\code{\link{order}}}
 
 \examples{\donttest{
 col.ids <- c("Variable1", "Variable2", "Variable3")

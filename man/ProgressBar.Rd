@@ -5,9 +5,7 @@
 
 \title{Progress Bar}
 
-\description{
-A progress bar that shows the status of long-running operations.
-}
+\description{A progress bar that shows the status of long-running operations.}
 
 \usage{
 ProgressBar(win.title = "Progress Bar", label = "", maximum = 100,
@@ -51,7 +49,6 @@ returned if the progress has terminated prematurely.
 }
 
 \author{J.C. Fisher}
-
 
 \references{
 This code was derived from the \code{\link[tcltk]{tkProgressBar}} function.

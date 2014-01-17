@@ -9,13 +9,9 @@ A \acronym{GUI} for loading selected data sets from an Open XML Spreadsheet
 file (*.xlsx).
 }
 
-\usage{
-ImportSpreadsheet(parent = NULL)
-}
+\usage{ImportSpreadsheet(parent = NULL)}
 
-\arguments{
-\item{parent}{tkwin; the \acronym{GUI} parent window.}
-}
+\arguments{\item{parent}{tkwin; the \acronym{GUI} parent window.}}
 
 \value{
 Returns a list with the following components:
@@ -31,8 +27,6 @@ This code was derived with permission from Schaun Wheeler's
 \href{https://gist.github.com/schaunwheeler/5825002}{xlsxToR} function.
 }
 
-\examples{
-\donttest{ans <- ImportSpreadsheet()}
-}
+\examples{\donttest{ans <- ImportSpreadsheet()}}
 
 \keyword{IO}

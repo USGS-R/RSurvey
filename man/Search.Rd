@@ -8,18 +8,12 @@
 A \acronym{GUI} for establishing find and replace arguments in a data table.
 }
 
-\usage{
-Search(is.replace = FALSE, defaults = NULL, parent = NULL)
-}
+\usage{Search(is.replace = FALSE, defaults = NULL, parent = NULL)}
 
 \arguments{
 \item{is.replace}{logical; if \code{TRUE}, the replace component is included.}
 \item{defaults}{list; see \sQuote{Value}.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
-}
-
-\details{
-Something
 }
 
 \value{
@@ -29,9 +23,9 @@ A \code{list} with the following components:
   \item{is.match.word}{logical; should matches be restricted to whole words
     only?}
   \item{is.match.case}{logical; is the search case sensitive?}
-  \item{is.reg.exps}{logical; should the search be made using
+  \item{is.reg.exps}{logical; if \code{TRUE}, the search is made using
     \link{regular expression} (that is, a pattern that describes a set of
-    strings)?}
+    strings).}
   \item{is.search.col}{logical; is the search limited to a single column?}
   \item{is.perl}{logical; should Perl style regular expressions be used?}
   \item{is.replace.first}{logical; replace only the first instance?}
@@ -40,8 +34,6 @@ A \code{list} with the following components:
 
 \author{J.C. Fisher}
 
-\examples{
-\donttest{ans <- Search()}
-}
+\examples{\donttest{ans <- Search()}}
 
 \keyword{misc}

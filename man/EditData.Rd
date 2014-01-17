@@ -4,9 +4,7 @@
 
 \title{Edit Data}
 
-\description{
-A \acronym{GUI} for viewing and editing table formatted data.
-}
+\description{A \acronym{GUI} for viewing and editing table formatted data.}
 
 \usage{
 EditData(d, col.names = names(d), row.names = NULL, col.formats = NULL,
@@ -19,7 +17,7 @@ EditData(d, col.names = names(d), row.names = NULL, col.formats = NULL,
 \item{col.names}{character; a vector of column names.}
 \item{row.names}{character; a vector of row names.}
 \item{col.formats}{character; a vector of format conversion specification
-  strings (optional), see \code{\link{sprintf}} and \code{\link{strftime}}.}
+  strings, see \code{\link{sprintf}} and \code{\link{strftime}}.}
 \item{read.only}{logical; specifies whether the table is in read only mode.}
 \item{changelog}{data.frame; history of all data table edits (see
   \sQuote{Value}).}
@@ -51,8 +49,10 @@ Requires the Tcl package
 
 \author{J.C. Fisher}
 
-\examples{
-\donttest{tcltk::tclRequire("Tktable", warn = TRUE)
+\seealso{\code{\link{BuildHistogram}}}
+
+\examples{\donttest{
+tcltk::tclRequire("Tktable", warn = TRUE)
 
 n <- 1000L
 V1 <- sample(c(1:9, NA), n, replace = TRUE)

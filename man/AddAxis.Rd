@@ -4,9 +4,7 @@
 
 \title{Add an Axis to a Plot}
 
-\description{
-Adds an axis to the current plot.
-}
+\description{Adds an axis to the current plot.}
 
 \usage{
 AddAxis(side, lim, ticks.inside = FALSE, minor.ticks = FALSE, ...)
@@ -31,10 +29,7 @@ The plot sides are designated as: 1 = below, 2 = left, 3 = above, and 4 = right.
 
 \author{J.C. Fisher}
 
-\seealso{
-\code{\link{axis}}, \code{\link{axis.POSIXct}},
-\code{\link{seq}}, \code{\link{pretty}}
-}
+\seealso{\code{\link{axis}}, \code{\link{axis.POSIXct}}}
 
 \examples{
 x <- as.POSIXlt("2001/1/1") + 700 * sort(runif(10))

@@ -8,9 +8,7 @@
 Approximate the shape of an area defined by a set of points in a plane.
 }
 
-\usage{
-Autocrop(mesh, max.len, max.itr = 10000)
-}
+\usage{Autocrop(mesh, max.len, max.itr = 10000)}
 
 \arguments{
 \item{mesh}{tri; a Delaunay triangulation.}
@@ -25,18 +23,14 @@ All triangles with arc lengths greater than an established maximum length are
 removed; a polygon is created from the union of the remaining triangles.
 }
 
-\value{
-Returns a polygon object of \code{\link{gpc.poly-class}}.
-}
+\value{Returns a polygon object of \code{\link{gpc.poly-class}}.}
 
-\seealso{
-\code{\link{AutocropRegion}}
-}
+\seealso{\code{\link{AutocropRegion}}}
 
 \author{J.C. Fisher}
 
-\examples{
-\donttest{data(tritest, package = "tripack")
+\examples{\donttest{
+data(tritest, package = "tripack")
 mesh <- tripack::tri.mesh(tritest$x, tritest$y)
 plot(mesh)
 ply <- Autocrop(mesh, max.len = 0.5, max.itr = 100)

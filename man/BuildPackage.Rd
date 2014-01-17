@@ -8,9 +8,7 @@
 Writes a series of commands for creating an \R package to a Windows batch file.
 }
 
-\usage{
-BuildPackage(check.cran = FALSE)
-}
+\usage{BuildPackage(check.cran = FALSE)}
 
 \arguments{
 \item{check.cran}{logical; if \code{TRUE}, uses command-line options similar to
@@ -25,8 +23,6 @@ The user is tasked with executing the batch file (\file{.bat}).
 
 \author{J.C. Fisher}
 
-\examples{
-\dontrun{BuildPackage()}
-}
+\examples{\dontrun{BuildPackage()}}
 
 \keyword{internal}

@@ -4,17 +4,11 @@
 
 \title{Import Data from Text File}
 
-\description{
-A \acronym{GUI} for reading table formatted data from a text file.
-}
+\description{A \acronym{GUI} for reading table formatted data from a text file.}
 
-\usage{
-ImportText(parent = NULL)
-}
+\usage{ImportText(parent = NULL)}
 
-\arguments{
-\item{parent}{tkwin; the \acronym{GUI} parent window.}
-}
+\arguments{\item{parent}{tkwin; the \acronym{GUI} parent window.}}
 
 \details{
 This \acronym{GUI} is a wrapper for the \code{\link{read.table}} function.
@@ -71,18 +65,12 @@ Components of \code{import} include:
   factors.}
 }
 
-\note{
-Requires the Tcl package \href{http://tktable.sourceforge.net/}{Tktable}.
-}
+\note{Requires the Tcl package \href{http://tktable.sourceforge.net/}{Tktable}.}
 
-\seealso{
-\code{\link{read.table}}
-}
+\seealso{\code{\link{read.table}}}
 
 \author{J.C. Fisher}
 
-\examples{
-\donttest{ImportText()}
-}
+\examples{\donttest{ImportText()}}
 
 \keyword{IO}

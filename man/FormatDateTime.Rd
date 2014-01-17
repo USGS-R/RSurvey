@@ -21,18 +21,14 @@ FormatDateTime(sample = as.POSIXct("1991-08-25 20:57:08"), fmt = "",
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
-\value{
-Returns a character string representing the formatted date-time value.
-}
+\value{Returns a character string representing the formatted date-time value.}
 
-\seealso{
-\code{\link{strptime}}, \code{\link{format}}
-}
+\seealso{\code{\link{strptime}}, \code{\link{format}}}
 
 \author{J.C. Fisher}
 
-\examples{
-\donttest{new.fmt <- FormatDateTime(fmt = "\%A \%B \%d \%I:\%M \%p")
+\examples{\donttest{
+new.fmt <- FormatDateTime(fmt = "\%A \%B \%d \%I:\%M \%p")
 FormatDateTime(Sys.Date())
 }}
 

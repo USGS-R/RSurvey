@@ -4,9 +4,7 @@
 
 \title{Select File to Open or Save As}
 
-\description{
-A \acronym{GUI} for selecting files to open or save.
-}
+\description{A \acronym{GUI} for selecting files to open or save.}
 
 \usage{
 GetFile(cmd = "Open", file = NULL, exts = NULL, initialdir = NULL,
@@ -45,8 +43,6 @@ Otherwise, a list is returned containing a character object for each file.
 
 \author{J.C. Fisher}
 
-\examples{
-\donttest{GetFile()}
-}
+\examples{\donttest{GetFile()}}
 
 \keyword{file}
