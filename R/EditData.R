@@ -61,8 +61,8 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   # Save edits to data frame
   SaveEdits <- function(vals, i, j) {
     if (is.character(i)) {
-      ij <- t(vapply(i, function(x) as.integer(strsplit(x, ",")[[1]]),
-                     c(0, 0)))
+      Fun <- function(x) as.integer(strsplit(x, ",")[[1]])
+      ij <- t(vapply(i, Fun, c(0L, 0L)))
       i <- ij[, 1]
       j <- ij[, 2]
     }
@@ -73,20 +73,19 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
       new.vals[new.vals %in% ""] <- NA
       if ("POSIXt" %in% col.class) {
         fmt <- gsub("%OS[[:digit:]]+", "%OS", col.formats[column])
-        if (fmt == "")
-          fmt <- "%Y-%m-%d %H:%M:%S"
+        fmt <- ifelse(fmt == "", "%Y-%m-%d %H:%M:%S", fmt)
         tz <- attr(d[[column]], "tzone")
         new.vals <- strptime(new.vals, format=fmt, tz=tz)
         if ("POSIXct" %in% col.class)
           new.vals <- as.POSIXct(new.vals, tz=tz)
       } else if ("Date" %in% col.class) {
         fmt <- col.formats[column]
-        if (fmt == "")
-          fmt <- "%Y-%m-%d"
-        new.vals <- as.Date(new.vals, format=fmt)
+        new.vals <- as.Date(new.vals, format=ifelse(fmt == "", "%Y-%m-%d", fmt))
       } else if ("factor" %in% col.class) {
-        levels(d[[column]]) <<- unique(c(levels(d[[column]]),
-                                         na.omit(unique(new.vals))))
+        old.levels <- levels(d[[column]])
+        new.levels <- unique(c(old.levels, na.omit(new.vals)))
+        if (!all(new.levels %in% old.levels))
+          levels(d[[column]]) <<- new.levels
       } else {
         new.vals <- suppressWarnings(as(new.vals, col.class[1]))
       }
@@ -97,21 +96,20 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
 
   # Save edits in active cell
   SaveActiveEdits <- function() {
-    tclServiceMode(FALSE)
-    on.exit(tclServiceMode(TRUE))
     cell <- as.character(tkindex(frame3.tbl, "active"))
     ij <- as.integer(strsplit(cell, ",")[[1]])
     i <- ij[1]
     j <- ij[2]
     old.val <- FormatValues(i, j)
     new.val <- paste(as.character(tkget(frame3.tbl, cell)), collapse=" ")
-    if (!identical(new.val, old.val)) {
-      SaveEdits(new.val, i, j)
-      e <- data.frame(timestamp=Sys.time(), cell=cell, old=old.val,
-                      new=FormatValues(i, j), stringsAsFactors=FALSE)
-      undo.stack <<- rbind(undo.stack, e)
-      redo.stack <<- NULL
-    }
+    if (identical(new.val, old.val))
+      return()
+    SaveEdits(new.val, i, j)
+    new.val <- FormatValues(i, j)
+    e <- data.frame(timestamp=Sys.time(), cell=cell, old=old.val, new=new.val,
+                    stringsAsFactors=FALSE)
+    undo.stack <<- rbind(undo.stack, e)
+    redo.stack <<- NULL
     return()
   }
 
@@ -548,8 +546,6 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   # Get edits
 
   GetEdits <- function() {
-    tclServiceMode(FALSE)
-    on.exit(tclServiceMode(TRUE))
     s <- NULL
     if (is.null(changelog) & (is.null(undo.stack) || nrow(undo.stack) == 0))
       return(s)
@@ -584,10 +580,10 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     on.exit(tkconfigure(tt, cursor="arrow"))
     ow <- options(width=200)$width
     on.exit(options(width=ow), add=TRUE)
-
     SaveActiveEdits()
-    Sys.sleep(3)
-    txt <- paste(capture.output(GetEdits()), collapse="\n")
+    Sys.sleep(1)
+    edits <- GetEdits()
+    txt <- paste(capture.output(edits), collapse="\n")
     EditText(txt, read.only=TRUE, win.title="Change log",
              is.fixed.width.font=TRUE, parent=tt)
     return()

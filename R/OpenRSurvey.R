@@ -85,6 +85,7 @@ OpenRSurvey <- function() {
       SaveProj()
     }
     Data(clear.proj=TRUE)
+    gc()
     SetVars()
     return(ans)
   }
