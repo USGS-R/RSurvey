@@ -576,6 +576,8 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
 
   # View changelog
   ViewChangeLog <- function() {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
     ow <- options(width=200)$width
     on.exit(options(width=ow), add=TRUE)
     txt <- paste(capture.output(GetEdits()), collapse="\n")
@@ -637,9 +639,9 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   # GUI requires TkTable
   is.tktable <- try(tcl("package", "present", "Tktable"), silent=TRUE)
   if (inherits(is.tktable, "try-error"))
-    stop("TkTable is not available")
+    stop("tkTable is not available")
 
-  # Check validity of arguments
+  # Check validity of data
   if (!inherits(d, c("list", "matrix", "data.frame")))
     stop("invalid class for data table")
   rtn.class <- class(d)
@@ -677,28 +679,30 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   matched.cells <- NULL
 
   # Number of rows and columns in the viewable table
-  nrows <- if (m > 15L) 15L else m
-  ncols <- if (n >  6L)  6L else n
+  nrows <- ifelse(m > 15L, 15L, m)
+  ncols <- ifelse(n > 6L, 6L, n)
 
   # Account for missing arguments
-  if (is.null(col.names) || length(col.names) != n) {
+
+  if (is.character(col.names) && length(col.names) == n) {
+    col.names <- col.names[seq_len(n)]
+    col.names[is.na(col.names)] <- ""
+    col.names <- gsub("(^ +)|( +$)", "", col.names)
+  } else {
     Fun <- function(i) paste0(LETTERS, i)
     col.names <- c(LETTERS, as.vector(t(vapply(LETTERS, Fun, rep("", 26)))))
     col.names <- col.names[seq_len(n)]
     names(d) <- col.names
-  } else {
-    col.names <- col.names[seq_len(n)]
-    col.names[is.na(col.names)] <- ""
-    col.names <- gsub("(^ +)|( +$)", "", col.names)
-  }
-  if (is.null(col.formats)) {
-    col.formats <- rep("", n)
-  } else {
-    col.formats <- as.character(col.formats[seq_len(n)])
-    col.formats[is.na(col.formats)] <- ""
   }
 
-  if (is.null(row.names) || length(row.names) != m)
+  if (is.character(col.formats) && length(col.formats) == n) {
+    col.formats <- as.character(col.formats[seq_len(n)])
+    col.formats[is.na(col.formats)] <- ""
+  } else {
+    col.formats <- rep("", n)
+  }
+
+  if (!inherits(row.names, c("integer", "character")) || length(row.names) != m)
     row.names <- seq_len(m)
 
   # Determine width and height of column 0 and row 0, respectively
@@ -711,18 +715,16 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     if (col.names[j] == "")
       nchar.title <- 0
     else
-      nchar.title <- max(vapply(strsplit(col.names[j], "\n"),
-                                function(i) nchar(i), 0L))
-    max.rows <- if (m > 200L) 200L else m
+      nchar.title <- max(vapply(strsplit(col.names[j], "\n"), nchar, 0L))
+    max.rows <- ifelse(m > 200L, 200L, m)
     nchar.data <- max(nchar(FormatValues(seq_len(max.rows), rep(j, max.rows),
                                          is.fmt=TRUE)))
-    len <- max(c(nchar.title, nchar.data)) + 1L
-    if (len < 10L) {
-      len <- 10L
-    } else if (len > 100L) {
-      len <- 100L
+    col.width[j] <- max(c(nchar.title, nchar.data)) + 1L
+    if (col.width[j] < 10L) {
+      col.width[j] <- 10L
+    } else if (col.width[j] > 80L) {
+      col.width[j] <- 80L
     }
-    col.width[j] <- len
   }
 
   # Assigin global variables
