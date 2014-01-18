@@ -576,14 +576,9 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
 
   # View changelog
   ViewChangeLog <- function() {
-    tkconfigure(tt, cursor="watch")
-    on.exit(tkconfigure(tt, cursor="arrow"))
     ow <- options(width=200)$width
     on.exit(options(width=ow), add=TRUE)
-    SaveActiveEdits()
-    Sys.sleep(1)
-    edits <- GetEdits()
-    txt <- paste(capture.output(edits), collapse="\n")
+    txt <- paste(capture.output(GetEdits()), collapse="\n")
     EditText(txt, read.only=TRUE, win.title="Change log",
              is.fixed.width.font=TRUE, parent=tt)
     return()
@@ -595,7 +590,6 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     on.exit(tkconfigure(tt, cursor="arrow"))
     ow <- options(width=200)$width
     on.exit(options(width=ow), add=TRUE)
-    SaveActiveEdits()
     names(d) <- col.names
     if (type == "str") {
       txt <- capture.output(str(d))
@@ -634,7 +628,6 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   PlotHistogram <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
-    SaveActiveEdits()
     BuildHistogram(d, var.names=col.names, parent=tt)
   }
 
