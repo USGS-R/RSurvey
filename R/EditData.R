@@ -16,6 +16,25 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     return()
   }
 
+  # Save edits in active cell
+  SaveActiveEdits <- function() {
+    cell <- as.character(tkindex(frame3.tbl, "active"))
+    ij <- as.integer(strsplit(cell, ",")[[1]])
+    i <- ij[1]
+    j <- ij[2]
+    old.val <- FormatValues(i, j)
+    new.val <- paste(as.character(tkget(frame3.tbl, cell)), collapse=" ")
+    if (identical(new.val, old.val))
+      return()
+    SaveEdits(new.val, i, j)
+    new.val <- FormatValues(i, j)
+    e <- data.frame(timestamp=Sys.time(), cell=cell, old=old.val, new=new.val,
+                    stringsAsFactors=FALSE)
+    undo.stack <<- rbind(undo.stack, e)
+    redo.stack <<- NULL
+    return()
+  }
+
   # Get single cell value for table
   GetCellValue <- function(r, c) {
     i <- as.integer(r)
@@ -38,7 +57,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     for (column in unique(j)) {
       idxs <- j %in% column
       vals <- d[[column]][i[idxs]]
-      col.class <- class(d[[column]])
+      col.class <- class(vals)
       is.time <- any(c("POSIXt", "Date") %in% col.class)
       fmt <- ifelse(is.fmt || is.time, col.formats[column], "")
       if (is.time) {
@@ -70,7 +89,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
       idxs <- which(j == column)
       col.class <- class(d[[column]])
       new.vals <- vals[idxs]
-      new.vals[new.vals %in% ""] <- NA
+      new.vals[new.vals == ""] <- NA
       if ("POSIXt" %in% col.class) {
         fmt <- gsub("%OS[[:digit:]]+", "%OS", col.formats[column])
         fmt <- ifelse(fmt == "", "%Y-%m-%d %H:%M:%S", fmt)
@@ -91,25 +110,6 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
       }
       d[[column]][i[idxs]] <<- new.vals
     }
-    return()
-  }
-
-  # Save edits in active cell
-  SaveActiveEdits <- function() {
-    cell <- as.character(tkindex(frame3.tbl, "active"))
-    ij <- as.integer(strsplit(cell, ",")[[1]])
-    i <- ij[1]
-    j <- ij[2]
-    old.val <- FormatValues(i, j)
-    new.val <- paste(as.character(tkget(frame3.tbl, cell)), collapse=" ")
-    if (identical(new.val, old.val))
-      return()
-    SaveEdits(new.val, i, j)
-    new.val <- FormatValues(i, j)
-    e <- data.frame(timestamp=Sys.time(), cell=cell, old=old.val, new=new.val,
-                    stringsAsFactors=FALSE)
-    undo.stack <<- rbind(undo.stack, e)
-    redo.stack <<- NULL
     return()
   }
 
@@ -261,17 +261,15 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     nj <- jlim[2] - jlim[1] + 1L
     ij.all <- cbind(rep(ilim[1]:ilim[2], nj), rep(jlim[1]:jlim[2], each=ni))
     cells.all <- paste(ij.all[, 1], ij.all[, 2], sep=",")
-    is.multi.sel <- !all(cells.all %in% cells)
-    if (is.multi.sel) {
+    if (!all(cells.all %in% cells)) {
       msg <- "The copy command cannot be used on multiple selections."
       tkmessageBox(icon="info", message=msg, title="Copy", type="ok",
                    parent=tt)
       return()
     }
     vals <- FormatValues(ij[, 1], ij[, 2])
-    mat.vals <- matrix(vals, nrow=ni, ncol=nj, byrow=TRUE)
-    write.table(mat.vals, file="clipboard", sep="\t", eol="\n",
-                row.names=FALSE, col.names=FALSE)
+    write.table(matrix(vals, nrow=ni, ncol=nj, byrow=TRUE), file="clipboard",
+                sep="\t", eol="\n", row.names=FALSE, col.names=FALSE)
     return()
   }
 
@@ -309,8 +307,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     if (inherits(new.vals, "try-error"))
       return()
     match.length <- attr(regexpr("\t", new.vals, fixed=TRUE), "match.length")
-    is.multi.sel <- !all(match.length == match.length[1])
-    if (is.multi.sel) {
+    if (!all(match.length == match.length[1])) {
       msg <- paste("Clipboard contains text string copied from multiple",
                    "selections and is unsuitable for pasting.")
       tkmessageBox(icon="info", message=msg, title="Paste", type="ok",
@@ -561,7 +558,6 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
                                          drop=FALSE]
       m <- nrow(undo.stack.cell)
       cell <- as.integer(strsplit(undo.stack.cell$cell, ",")[[1]])
-      obj <- d[[cell[2]]][cell[1]]
       old <- undo.stack.cell$old[1]
       new <- undo.stack.cell$new[m]
       if (identical(old, new))
@@ -593,15 +589,12 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     ow <- options(width=200)$width
     on.exit(options(width=ow), add=TRUE)
     names(d) <- col.names
-    if (type == "str") {
+    if (type == "Structure")
       txt <- capture.output(str(d))
-      win.title <- "Structure"
-    } else if (type == "summary") {
+    else
       txt <- capture.output(lapply(d, summary))
-      win.title <- "Summary"
-    }
     txt <- paste(c(txt, ""), collapse="\n")
-    EditText(txt, read.only=TRUE, win.title=win.title,
+    EditText(txt, read.only=TRUE, win.title=type,
              is.fixed.width.font=TRUE, parent=tt)
     return()
   }
@@ -675,9 +668,6 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   # Numerical precision
   num.digits <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
 
-  # Initialize search results
-  matched.cells <- NULL
-
   # Number of rows and columns in the viewable table
   nrows <- ifelse(m > 15L, 15L, m)
   ncols <- ifelse(n > 6L, 6L, n)
@@ -722,14 +712,15 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     col.width[j] <- max(c(nchar.title, nchar.data)) + 1L
     if (col.width[j] < 10L) {
       col.width[j] <- 10L
-    } else if (col.width[j] > 80L) {
-      col.width[j] <- 80L
+    } else if (col.width[j] > 50L) {
+      col.width[j] <- 50L
     }
   }
 
   # Assigin global variables
   undo.stack <- NULL
   redo.stack <- NULL
+  matched.cells <- NULL
   search.defaults <- list(is.match.word=FALSE, is.match.case=TRUE,
                           is.reg.exps=FALSE, is.search.sel=FALSE,
                           is.perl=FALSE)
@@ -742,18 +733,14 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   tt.done.var <- tclVar(0)
 
   # Open GUI
-
   tclServiceMode(FALSE)
-
   tt <- tktoplevel()
-
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
     tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
                              "+", as.integer(geo[3]) + 25))
   }
-
   tktitle(tt) <- win.title
 
   # Start top menu
@@ -801,9 +788,9 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   menu.view <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
   tkadd(menu.view, "command", label="Structure",
-        command=function() ViewInfo("str"))
+        command=function() ViewInfo("Structure"))
   tkadd(menu.view, "command", label="Summary",
-        command=function() ViewInfo("summary"))
+        command=function() ViewInfo("Summary"))
   if (!read.only) {
     tkadd(menu.view, "separator")
     tkadd(menu.view, "command", label="Change log", command=ViewChangeLog)
@@ -936,15 +923,13 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   tkconfigure(tt, menu=top.menu)
 
   # Frame 0
-
   frame0 <- ttkframe(tt, relief="flat")
-
   frame0.ent.1.1 <- ttkentry(frame0, width=10, font="TkFixedFont",
                              state=if (read.only) "readonly" else "normal",
                              textvariable=value.var, validate="key",
-                             validatecommand=function(P, S)
-                                               ValidateEntryValue(P, S))
-
+                             validatecommand=function(P, S) {
+                                               ValidateEntryValue(P, S)
+                                             })
   tkgrid(frame0.ent.1.1, padx=c(10, 25), pady=c(10, 4), sticky="we")
   tkgrid.columnconfigure(frame0, 0, weight=1)
   tkpack(frame0, fill="x", side="top")
