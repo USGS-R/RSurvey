@@ -219,7 +219,7 @@ ImportSpreadsheet <- function(parent=NULL) {
     if (missing(f)) {
       txt <- "Open XML Spreadsheet File"
       f <- GetFile(cmd="Open", exts="xlsx", win.title=txt, parent=tt)
-      if (is.null(f) || attr(f, "extension") != "xlsx")
+      if (is.null(f))
         return()
     }
     path <<- NULL

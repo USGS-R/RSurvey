@@ -172,7 +172,8 @@ OpenRSurvey <- function() {
       }
 
       ids <- col.names
-      matched <- sapply(unique(ids), function(i) which(ids %in% i)[-1])
+      matched <- lapply(unique(ids), function(i) which(ids %in% i)[-1])
+      names(matched) <- unique(ids)
       for (i in seq_along(matched))
         ids[matched[[i]]] <- paste0(names(matched[i]), " (",
                                     seq_along(matched[[i]]), ")")

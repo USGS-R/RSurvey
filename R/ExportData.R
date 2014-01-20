@@ -92,17 +92,16 @@ ExportData <- function(file.type="txt", parent=NULL) {
       is.rows <- as.logical(as.integer(tclvalue(row.names.var)))
       is.quot <- as.logical(as.integer(tclvalue(quote.var)))
       is.comm <- as.logical(as.integer(tclvalue(comment.var)))
-      is.comp <- as.logical(as.integer(tclvalue(compress.var)))
-      is.clog <- as.logical(as.integer(tclvalue(changelog.var)))
+      is.log  <- as.logical(as.integer(tclvalue(changelog.var)))
 
-      sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
-      dec <- dec0[as.integer(tcl(frame3.box.1.5, "current")) + 1]
-      nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
-      qme <- qme0[as.integer(tcl(frame3.box.2.5, "current")) + 1]
-      com <- com0[as.integer(tcl(frame3.box.3.2, "current")) + 1]
-
-      enc <- enc0[as.integer(tcl(frame4.box.2.2, "current")) + 1]
-      eol <- eol0[as.integer(tcl(frame4.box.3.2, "current")) + 1]
+      sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1L]
+      dec <- dec0[as.integer(tcl(frame3.box.1.5, "current")) + 1L]
+      nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1L]
+      qme <- qme0[as.integer(tcl(frame3.box.2.5, "current")) + 1L]
+      com <- com0[as.integer(tcl(frame3.box.3.2, "current")) + 1L]
+      enc <- enc0[as.integer(tcl(frame4.box.2.2, "current")) + 1L]
+      eol <- eol0[as.integer(tcl(frame4.box.3.2, "current")) + 1L]
+      zip <- zip0[as.integer(tcl(frame4.box.4.2, "current")) + 1L]
 
       if (is.na(sep))
         sep <- as.character(tclvalue(sep.var))
@@ -115,14 +114,10 @@ ExportData <- function(file.type="txt", parent=NULL) {
         com <- as.character(tclvalue(com.var))
 
       # Write changelog
-      if (is.clog) {
-        dir.name <- dirname(file.name)
-        base.name <- sub(".bz2$", "", basename(file.name))
-        base.name <- unlist(strsplit(base.name, "\\."))
-        if (length(base.name) > 1)
-          base.name <- base.name[-length(base.name)]
+      if (is.log) {
+        base.name <- sub(paste0("\\.", zip, "$"), "", basename(file.name))
         base.name <- paste0(base.name, ".log")
-        f.log <- file.path(dir.name, base.name)
+        f.log <- file.path(dirname(file.name), base.name)
         if (file.access(f.log, mode=0) == 0) {
           msg <- paste0("\'", base.name, "\' already exists.\n\n",
                         "Do you want to replace it?")
@@ -136,11 +131,16 @@ ExportData <- function(file.type="txt", parent=NULL) {
                     qmethod=qme, fileEncoding=enc)
       }
 
-      # Set data file connection
-      if (is.comp)
+      # Set connection
+      if (zip == "gz") {
+        con <- gzfile(description=file.name, open="w", encoding=enc)
+      } else if (zip == "bz2") {
         con <- bzfile(description=file.name, open="w", encoding=enc)
-      else
+      } else if (zip == "xz") {
+        con <- xzfile(description=file.name, open="w", encoding=enc)
+      } else {
         con <- file(description=file.name, open="w", encoding=enc)
+      }
       if (!inherits(con, "connection"))
         stop("Connection error")
       on.exit(close(con), add=TRUE)
@@ -193,8 +193,8 @@ ExportData <- function(file.type="txt", parent=NULL) {
       Data(c("export", "quote"), is.quot)
       Data(c("export", "encoding"), enc)
       Data(c("export", "eol"), eol)
-      Data(c("export", "compressed"), is.comp)
-      Data(c("export", "changelog"), is.clog)
+      Data(c("export", "zip"), zip)
+      Data(c("export", "changelog"), is.log)
 
     # Write shapefile
     } else if (file.type == "shp") {
@@ -251,12 +251,9 @@ ExportData <- function(file.type="txt", parent=NULL) {
   # Get file
   GetDataFile <- function() {
     if (file.type == "txt") {
-      is.comp <- as.logical(as.integer(tclvalue(compress.var)))
-      if (is.comp) {
-        default.ext <- "bz2"
-        exts <- "bz2"
-      } else {
-        sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
+      zip <- zip0[as.integer(tcl(frame4.box.4.2, "current")) + 1L]
+      if (zip == "") {
+        sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1L]
         if ("," %in% sep) {
           default.ext <- "csv"
           exts <- "csv"
@@ -267,6 +264,9 @@ ExportData <- function(file.type="txt", parent=NULL) {
           default.ext <- "txt"
           exts <- c("txt", "tsv", "csv")
         }
+      } else {
+        default.ext <- zip
+        exts <- zip
       }
     } else if (file.type == "shp") {
       default.ext <- "shp"
@@ -279,27 +279,22 @@ ExportData <- function(file.type="txt", parent=NULL) {
                  defaultextension=default.ext)
     if (is.null(f))
       return()
-    if (attr(f, "extension") == "csv")
-      tclvalue(sep.var) <- ","
     tclvalue(file.var) <- f
     ToggleExport()
   }
 
-  # Toggle bz2 extension on file entry
+  # Toggle file extension
   ToggleExtension <- function() {
     f <- as.character(tclvalue(file.var))
-    n <- nchar(f)
-    if (nchar(f) < 3L)
+    if (f == "")
       return()
-    is.bz2 <- substr(f, n - 2L, n) == ".bz2"
-    is.comp <- as.logical(as.integer(tclvalue(compress.var)))
-    f.new <- f
-    if (is.comp & !is.bz2)
-      f.new <- paste0(f, ".bz2")
-    if (!is.comp & is.bz2)
-      f.new <- substr(f, 1L, n - 3L)
-    if (!identical(f, f.new))
-      tclvalue(file.var) <- f.new
+    ext <- attr(GetFile(file=f), "extension")
+    zip <- zip0[as.integer(tcl(frame4.box.4.2, "current")) + 1L]
+    for (i in zip0)
+      f <- sub(paste0("\\.", i, "$"), "", f)
+    if (zip != ext)
+      tclvalue(file.var) <- ifelse(zip == "", f, paste(f, zip, sep="."))
+    return()
   }
 
   # Toggle state of export button
@@ -350,6 +345,9 @@ ExportData <- function(file.type="txt", parent=NULL) {
   eol0 <- c("\n", "\r", "\r\n")
   eol1 <- c("LF ( \\n )", "CR ( \\r )", "CR+LF ( \\r\\n )")
 
+  zip0 <- c("", "gz", "bz2", "xz")
+  zip1 <- c("None", "gzip", "bzip2", "xz")
+
   # Assign variables linked to Tk widgets
 
   variables.var <- tclVar()
@@ -386,10 +384,6 @@ ExportData <- function(file.type="txt", parent=NULL) {
     quote.var <- tclVar(FALSE)
   else
     quote.var <- tclVar(Data(c("export", "quote")))
-  if (is.null(Data(c("export", "compress"))))
-    compress.var <- tclVar(FALSE)
-  else
-    compress.var <- tclVar(Data(c("export", "compress")))
   if (is.null(Data(c("export", "changelog"))))
     changelog.var <- tclVar(FALSE)
   else
@@ -400,7 +394,6 @@ ExportData <- function(file.type="txt", parent=NULL) {
     ascii.var <- tclVar(Data(c("export", "ascii")))
 
   # Open GUI
-
   tclServiceMode(FALSE)
   tt <- tktoplevel()
   if (!is.null(parent)) {
@@ -409,7 +402,6 @@ ExportData <- function(file.type="txt", parent=NULL) {
     tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
                              "+", as.integer(geo[3]) + 25))
   }
-
   tktitle(tt) <- "Export Data"
 
   # Frame 0, export and cancel buttons
@@ -428,7 +420,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
   tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4, frame0.grp.5)
   tkgrid.columnconfigure(frame0, 0, weight=1)
   tkgrid.configure(frame0.but.2, frame0.but.3, frame0.but.4,
-                   padx=c(0, 4), pady=c(4, 10))
+                   padx=c(0, 4), pady=c(0, 10))
   tkgrid.configure(frame0.but.4, columnspan=2, padx=c(0, 10))
   tkgrid.configure(frame0.grp.5, sticky="se")
 
@@ -607,13 +599,12 @@ ExportData <- function(file.type="txt", parent=NULL) {
 
   frame4.lab.2.1 <- ttklabel(frame4, text="Encoding")
   frame4.lab.3.1 <- ttklabel(frame4, text="End-of-line")
+  frame4.lab.4.1 <- ttklabel(frame4, text="Compression")
   frame4.box.2.2 <- ttkcombobox(frame4, width=17, state="readonly", value=enc1)
   frame4.box.3.2 <- ttkcombobox(frame4, width=17, state="readonly", value=eol1)
-  txt <- "Include changelog ( *.log )"
+  frame4.box.4.2 <- ttkcombobox(frame4, width=17, state="readonly", value=zip1)
+  txt <- "Export change log ( *.log )"
   frame4.chk.2.3 <- ttkcheckbutton(frame4, variable=changelog.var, text=txt)
-  txt <- "Compress using bzip2"
-  frame4.chk.3.3 <- ttkcheckbutton(frame4, variable=compress.var, text=txt,
-                                   command=ToggleExtension)
 
   tkgrid(frame4.ent.1.1, "x", "x", "x", frame4.but.1.5)
   tkgrid.configure(frame4.ent.1.1, sticky="we", columnspan=4, padx=c(0, 2))
@@ -621,20 +612,25 @@ ExportData <- function(file.type="txt", parent=NULL) {
   if (file.type == "txt") {
     tkgrid(frame4.lab.2.1, frame4.box.2.2, frame4.chk.2.3, pady=c(4, 0),
            sticky="w")
-    tkgrid(frame4.lab.3.1, frame4.box.3.2, frame4.chk.3.3, pady=c(4, 4),
-           sticky="w")
-    tkgrid.configure(frame4.lab.2.1, frame4.lab.3.1, padx=c(0, 2))
-    tkgrid.configure(frame4.chk.2.3, frame4.chk.3.3, padx=c(40, 0),
-                     columnspan=2)
+    tkgrid(frame4.lab.3.1, frame4.box.3.2, "x", pady=c(4, 0), sticky="w")
+    tkgrid(frame4.lab.4.1, frame4.box.4.2, "x", pady=c(4, 0), sticky="w")
+    tkgrid.configure(frame4.lab.2.1, frame4.lab.3.1, frame4.lab.4.1,
+                     padx=c(0, 2))
+    tkgrid.configure(frame4.chk.2.3, padx=c(20, 0), columnspan=2)
 
     tcl(frame4.box.2.2, "current", 0)
     tcl(frame4.box.3.2, "current", 0)
+    tcl(frame4.box.4.2, "current", 0)
 
-    if (!is.null(Data(c("export", "encoding"))))
+    if (is.character(Data(c("export", "encoding"))))
       tcl(frame4.box.2.2, "current",
-          match(Data(c("export", "encoding")), enc0) - 1)
-    if (!is.null(Data(c("export", "eol"))))
-      tcl(frame4.box.3.2, "current", match(Data(c("export", "eol")), eol0) - 1)
+          match(Data(c("export", "encoding")), enc0) - 1L)
+    if (is.character(Data(c("export", "eol"))))
+      tcl(frame4.box.3.2, "current",
+          match(Data(c("export", "eol")), eol0) - 1L)
+    if (is.character(Data(c("export", "zip"))))
+      tcl(frame4.box.4.2, "current",
+          match(Data(c("export", "zip")), zip0) - 1L)
 
     if (is.null(Data("changelog"))) {
       tclvalue(changelog.var) <- 0
@@ -690,6 +686,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
                tkconfigure(frame3.ent.3.3, state="disabled")
              }
            })
+    tkbind(frame4.box.4.2, "<<ComboboxSelected>>", ToggleExtension)
   }
 
   # GUI control

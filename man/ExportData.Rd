@@ -44,8 +44,10 @@ Saves the \acronym{GUI} options in the \code{export} component of
   (text only).}
 \item{eol}{character; the character to print at the end of each line
   (text only).}
-\item{compressed}{logical; indicate whether the file should be
-  compressed using \href{http://www.bzip.org/}{bzip2} (text only).}
+\item{zip}{character; indicate whether the file should be
+  compressed using \href{http://www.gzip.org/}{gzip},
+  \href{http://www.bzip.org/}{bzip2}, or
+  \href{http://tukaani.org/xz/format.html}{xz} (text only).}
 \item{changelog}{logical; indicate if a separate text file should be
   written with the change log (text only).}
 \item{ascii}{logical; if \code{TRUE}, an \acronym{ASCII} representation of the

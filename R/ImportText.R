@@ -106,11 +106,11 @@ ImportText <- function(parent=NULL) {
 
       # Determine unique column names
       ids <- col.names
-      matched <- sapply(unique(ids), function(i) which(ids %in% i)[-1])
+      matched <- lapply(unique(ids), function(i) which(ids %in% i)[-1])
+      names(matched) <- unique(ids)
       for (i in seq_along(matched))
         ids[matched[[i]]] <- paste0(names(matched[i]), " (",
                                     seq_along(matched[[i]]), ")")
-
 
       # Initialize columns list
       cols <- list()
@@ -184,13 +184,10 @@ ImportText <- function(parent=NULL) {
       con <- try(url(description=src, open=opn, encoding=enc), silent=TRUE)
     } else {
       ext <- attr(GetFile(file=src), "extension")
-      if (ext == "gz") {
+      if (ext %in% c("gz", "bz2", "xz"))
         con <- try(gzfile(description=src, open=opn, encoding=enc), silent=TRUE)
-      } else if (ext == "bz2") {
-        con <- try(bzfile(description=src, open=opn, encoding=enc), silent=TRUE)
-      } else {
+      else
         con <- try(file(description=src, open=opn, encoding=enc), silent=TRUE)
-      }
     }
     return(con)
   }
@@ -346,8 +343,8 @@ ImportText <- function(parent=NULL) {
                  na.omit=TRUE) + 1L
       if (len < 10L) {
         len <- 10L
-      } else if (len > 100L) {
-        len <- 100L
+      } else if (len > 50L) {
+        len <- 50L
       }
       tcl(frame4.tbl, "width", i - 1L, len)
     }
@@ -398,7 +395,7 @@ ImportText <- function(parent=NULL) {
 
   # Data file
   GetDataFile <- function() {
-    exts <- c("tsv", "csv", "txt", "bz2", "gz")
+    exts <- c("tsv", "csv", "txt", "gz", "bz2", "xz")
     f <- GetFile(cmd="Open", exts=exts, win.title="Open Data File", parent=tt)
     tkfocus(tt)
     if (is.null(f))
@@ -407,7 +404,7 @@ ImportText <- function(parent=NULL) {
     tclvalue(nrow.var) <- ""
     cb <<- NULL
     ext <- attr(f, "extension")
-    if (ext %in% c("bz2", "gz")) {
+    if (ext %in% c("gz", "bz2", "xz")) {
       nam <- sub("[.][^.]*$", "", basename(f))
       ext <- tail(unlist(strsplit(nam, "\\."))[-1], 1)
       if (length(ext) == 0L)

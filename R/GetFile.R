@@ -37,7 +37,9 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
                       tiff  = "TIFF",
                       tsv   = "Text",
                       txt   = "Text",
-                      xlsx  = "Open XML Spreadsheet"
+                      xlsx  = "Open XML Spreadsheet",
+                      xz    = "Compressed Text",
+                      zip   = "Compressed Text"
                   )
 
   # Process connection and return
