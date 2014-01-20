@@ -157,6 +157,7 @@ ImportText <- function(parent=NULL) {
       Data("comment", comments)
       Data("data.raw", as.list(d))
       Data("data.raw", seq_len(m), which.attr="row.names")
+      Data("data.raw", n, which.attr="nrows")
       Data("cols", cols)
 
       memory.usage <- gc()

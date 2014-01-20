@@ -233,12 +233,12 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
     cols[[idx]] <- list(id="", class="")
 
-    value.length <- length(Data("data.raw")[[1]])
-    if (is.null(value.length) && length(cols) > 1)
-      value.length <- length(EvalFunction(cols[[1]]$fun, cols))
+    m <- Data("data.raw", which.attr="nrows")
+    if (is.null(m) && length(cols) > 1)
+      m <- length(EvalFunction(cols[[1]]$fun, cols))
 
-    f <- EditFunction(cols, index=idx, value.length=value.length,
-                      win.title="New Variable", parent=tt)
+    f <- EditFunction(cols, index=idx, value.length=m, win.title="New Variable",
+                      parent=tt)
     if (is.null(f$fun) || f$fun == "")
       return()
 
@@ -264,7 +264,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     if (length(idx) == 0)
       return()
 
-    m <- length(Data("data.raw")[[1]])
+    m <- Data("data.raw", which.attr="nrows")
     f <- EditFunction(cols, index=idx, value.length=m, parent=tt)
 
     if (is.null(f$fun))

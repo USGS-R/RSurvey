@@ -198,6 +198,7 @@ OpenRSurvey <- function() {
       Data("comment", comment(d))
       Data("data.raw", d)
       Data("data.raw", row.names, which.attr="row.names")
+      Data("data.raw", n, which.attr="nrows")
       Data("cols", cols)
       Data("import", list(source=src))
     }
@@ -841,7 +842,7 @@ OpenRSurvey <- function() {
   BuildQuery <- function() {
     if (is.null(Data("data.raw")))
       return()
-    m <- length(Data("data.raw")[[1]])
+    m <- Data("data.raw", which.attr="nrows")
     if (m == 0)
       return()
     cols <- Data("cols")
