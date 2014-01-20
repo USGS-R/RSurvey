@@ -16,7 +16,9 @@ Data connections are defined as the path to the file to be opened, a
 complete \acronym{URL} (e.g. http://, ftp:// or file://), or windows clipboard.
 Files are limited to text format (e.g., \file{.tsv} \file{.csv}, or
 \file{.txt}); however, they can be compressed by
-\emph{\href{http://www.bzip.org/}{bzip2}} with additional extension \file{.bz2}.
+\href{http://www.gzip.org/}{gzip}, \href{http://www.bzip.org/}{bzip2}, or
+\href{http://tukaani.org/xz/format.html}{xz} with additional extension
+\file{.gz}, \file{.bz2}, or \file{.xz}, respectively.
 
 Conversion specification formats are the character representation of object
 types used to: identify column classes prior to reading in data,
