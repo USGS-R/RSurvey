@@ -233,7 +233,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
     cols[[idx]] <- list(id="", class="")
 
-    value.length <- length(Data("rows")$names)
+    value.length <- length(Data("data.raw")[[1]])
     if (is.null(value.length) && length(cols) > 1)
       value.length <- length(EvalFunction(cols[[1]]$fun, cols))
 
@@ -264,8 +264,8 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     if (length(idx) == 0)
       return()
 
-    f <- EditFunction(cols, index=idx, value.length=length(Data("rows")$names),
-                      parent=tt)
+    m <- length(Data("data.raw")[[1]])
+    f <- EditFunction(cols, index=idx, value.length=m, parent=tt)
 
     if (is.null(f$fun))
       return()
@@ -376,7 +376,8 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
       return()
     SaveNb()
     d <- list(EvalFunction(cols[[idx]]$fun, cols))
-    EditData(d, col.names=cols[[idx]]$id, row.names=Data("rows")$names,
+    rows <- Data("data.raw", which.attr="row.names")
+    EditData(d, col.names=cols[[idx]]$id, row.names=rows,
              col.formats=cols[[idx]]$format, read.only=TRUE,
              win.title="View Raw Data", parent=tt)
     return()

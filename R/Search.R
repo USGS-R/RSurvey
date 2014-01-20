@@ -138,7 +138,7 @@ Search <- function(is.replace=FALSE, defaults=NULL, parent=NULL) {
 
   frame1 <- ttkframe(tt, relief="flat")
 
-  frame1.lab.1.1 <- ttklabel(frame1, text="Find what", foreground="#141414")
+  frame1.lab.1.1 <- ttklabel(frame1, text="Find what:", foreground="#141414")
   frame1.ent.2.1 <- ttkentry(frame1, width=10, font="TkFixedFont",
                              textvariable=find.what.var)
   tkgrid(frame1.lab.1.1, sticky="w")
@@ -146,7 +146,7 @@ Search <- function(is.replace=FALSE, defaults=NULL, parent=NULL) {
   tkgrid.columnconfigure(frame1, 0, weight=1)
 
   if (is.replace) {
-    frame1.lab.3.1 <- ttklabel(frame1, text="Replace with",
+    frame1.lab.3.1 <- ttklabel(frame1, text="Replace with:",
                                foreground="#141414")
     frame1.ent.4.1 <- ttkentry(frame1, width=10, font="TkFixedFont",
                                textvariable=replace.with.var)

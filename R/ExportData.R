@@ -18,7 +18,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
     # Organize data
     vars <- Data("vars")
     cols <- Data("cols")
-    rows <- Data("rows")
+    rows <- Data("data.raw", which.attr="row.names")
 
     all.col.ids <- vapply(seq_along(cols), function(i) cols[[i]]$id, "")
     if (file.type == "shp") {
@@ -39,11 +39,11 @@ ExportData <- function(file.type="txt", parent=NULL) {
 
     if (is.proc) {
       row.names <- row.names(Data("data.pts"))
-      row.idxs <- which(row.names %in% rows$names)
+      row.idxs <- which(row.names %in% rows)
       if (length(row.names) != length(row.idxs))
         stop("length of row names different from length of row indexes")
     } else {
-      row.names <- rows$names
+      row.names <- rows
       row.idxs <- seq_along(row.names)
     }
     n <- length(col.idxs)
@@ -132,15 +132,9 @@ ExportData <- function(file.type="txt", parent=NULL) {
       }
 
       # Set connection
-      if (zip == "gz") {
-        con <- gzfile(description=file.name, open="w", encoding=enc)
-      } else if (zip == "bz2") {
-        con <- bzfile(description=file.name, open="w", encoding=enc)
-      } else if (zip == "xz") {
-        con <- xzfile(description=file.name, open="w", encoding=enc)
-      } else {
-        con <- file(description=file.name, open="w", encoding=enc)
-      }
+      args <- list(description=file.name, open="w", encoding=enc)
+      what <- paste0(ifelse(zip == "bz2", "bz", zip), "file")
+      con <- do.call(what, args)
       if (!inherits(con, "connection"))
         stop("Connection error")
       on.exit(close(con), add=TRUE)
@@ -268,12 +262,9 @@ ExportData <- function(file.type="txt", parent=NULL) {
         default.ext <- zip
         exts <- zip
       }
-    } else if (file.type == "shp") {
-      default.ext <- "shp"
-      exts <- "shp"
-    } else if (file.type == "rda") {
-      default.ext <- "rda"
-      exts <- "rda"
+    } else {
+      default.ext <- file.type
+      exts <- file.type
     }
     f <- GetFile(cmd="Save As", exts=exts, file=NULL, win.title="Save Data As",
                  defaultextension=default.ext)

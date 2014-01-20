@@ -161,6 +161,8 @@ OpenRSurvey <- function() {
       m <- nrow(d)
       n <- ncol(d)
       row.names <- rownames(d)
+      if (is.null(row.names))
+        row.names <- seq_len(m)
       col.names <- colnames(d)
 
       if (inherits(d, "matrix")) {
@@ -195,7 +197,7 @@ OpenRSurvey <- function() {
       Data(clear.data=TRUE)
       Data("comment", comment(d))
       Data("data.raw", d)
-      Data("rows", list(names=row.names))
+      Data("data.raw", row.names, which.attr="row.names")
       Data("cols", cols)
       Data("import", list(source=src))
     }
@@ -725,7 +727,7 @@ OpenRSurvey <- function() {
     } else {  # edit raw data
       if (is.null(Data("data.raw")))
         return()
-      rows <- Data("rows")
+      rows <- Data("data.raw", which.attr="row.names")
       cols <- Data("cols")
       idxs <- na.omit(vapply(cols, function(i) i$index, 0L))
       col.names <- vapply(cols, function(i) i$id, "")[idxs]
@@ -733,7 +735,7 @@ OpenRSurvey <- function() {
       old.changelog <- Data("changelog")
 
       ans <- EditData(Data("data.raw")[idxs], col.names=col.names,
-                      row.names=rows$names, col.formats=col.formats,
+                      row.names=rows, col.formats=col.formats,
                       read.only=FALSE, changelog=old.changelog,
                       win.title="Edit Raw Data", parent=tt)
       if (is.null(ans))
@@ -790,10 +792,10 @@ OpenRSurvey <- function() {
                          stringsAsFactors=FALSE)
 
       if (!is.null(Data("data.raw"))) {
-        rows.str <- Data("rows")$names
-        rows.int <- as.integer(rows.str)
+        rows <- Data("data.raw", which.attr="row.names")
+        rows.int <- as.integer(rows)
         is.int <- is.integer(rows.int) && !anyDuplicated(rows.int)
-        rownames(d) <- if (is.int) rows.int else rows.str
+        rownames(d) <- if (is.int) rows.int else rows
       }
       names(d) <- var.names
 
@@ -839,12 +841,12 @@ OpenRSurvey <- function() {
   BuildQuery <- function() {
     if (is.null(Data("data.raw")))
       return()
-    n <- length(Data("rows")$names)
-    if (n == 0)
+    m <- length(Data("data.raw")[[1]])
+    if (m == 0)
       return()
     cols <- Data("cols")
     old.fun <- Data("query")
-    f <- EditFunction(cols, fun=old.fun, value.length=n, value.class="logical",
+    f <- EditFunction(cols, fun=old.fun, value.length=m, value.class="logical",
                       win.title="Filter Data Records", parent=tt)
     if (is.null(f))
       return()
