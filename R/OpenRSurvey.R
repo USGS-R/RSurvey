@@ -160,9 +160,14 @@ OpenRSurvey <- function() {
 
       m <- nrow(d)
       n <- ncol(d)
-      row.names <- rownames(d)
+
+      rows <- rownames(d)
       if (is.null(row.names))
-        row.names <- seq_len(m)
+        rows <- seq_len(m)
+      rows.int <- as.integer(rows)
+      is.int <- is.integer(rows.int) && !anyDuplicated(rows.int)
+      row.names <- if (is.int) rows.int else rows
+
       col.names <- colnames(d)
 
       if (inherits(d, "matrix")) {
@@ -711,19 +716,42 @@ OpenRSurvey <- function() {
   }
 
   # Call edit data
-  CallEditData <- function(read.only) {
+  CallEditData <- function(read.only=TRUE, is.raw=TRUE, is.state=FALSE) {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
     if (read.only) {  # view processed data
       CallProcessData()
       if (is.null(Data("data.pts")))
         return()
+
+
+
       cols <- Data("cols")
       vars <- Data("vars")
+
+
+
+
+
+
       col.names <- names(Data("data.pts"))
       col.formats <- vapply(col.names, function(i) cols[[vars[[i]]]]$format, "")
+
+
+
+
+
+
       EditData(Data("data.pts"), col.names=col.names, col.formats=col.formats,
                read.only=TRUE, win.title="View Processed Data", parent=tt)
+
+
+
+
+
+
+
+
 
     } else {  # edit raw data
       if (is.null(Data("data.raw")))
@@ -1046,7 +1074,7 @@ OpenRSurvey <- function() {
   tkadd(menu.view.pr, "command", label="All variables",
         command=function() print("notyet"))
   tkadd(menu.view.pr, "command", label="State variables",
-        command=function() CallEditData(read.only=TRUE))
+        command=function() CallEditData())
   tkadd(menu.view, "cascade", label="Processed data for", menu=menu.view.pr)
 
 
