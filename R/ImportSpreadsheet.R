@@ -22,27 +22,39 @@
   custom.styles <- as.data.frame(.RbindFill(custom.styles),
                                  stringsAsFactors=FALSE)
   custom.styles$numFmtId <- as.integer(custom.styles$numFmtId)
+  custom.styles$formatCode <- sub(";@$", "", custom.styles$formatCode)
   n <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
   zeros <- vapply(seq_len(n), function(i) paste(rep("0", i), collapse=""), "")
   fmt.codes.d <- c("yyyy\\-mm\\-dd",
                    "yyyy/mm/dd",
+                   "m\\-d\\-yy",
+                   "m\\-d\\-yyyy",
+                   "m/d/yyyy",
                    "mm/dd/yy",
                    "mm/dd/yyyy",
-                   "m/d/yyyy",
                    "mm\\-dd\\-yy",
                    "mm\\-dd\\-yyyy",
-                   "m\\-d\\-yyyy",
-                   "m\\-d\\-yy",
+                   "mmm\\ d\\ yyyy",
+                   "mmm\\-yy",
+                   "d\\-mmm",
+                   "d\\-mmm\\-yy",
+                   "d\\-mmm\\-yyyy",
                    "dd/mm/yy",
                    "dd/mm/yyyy",
                    "dd\\-mm\\-yy",
                    "dd\\-mm\\-yyyy",
-                   "[$-409]dddd\\,\\ mmmm\ dd\\,\\ yyyy")
-  fmt.codes.t <- c("hh:mm",
+                   "[$-409]d\\-mmm\\-yy",
+                   "[$-409]dddd\\,\\ mmmm\\ dd\\,\\ yyyy")
+  fmt.codes.t <- c("h:mm",
+                   "hh:mm",
+                   "h:mm\\ AM/PM",
+                   "hh:mm\\ AM/PM",
+                   "h:mm:ss\\ AM/PM",
+                   "hh:mm:ss\\ AM/PM",
                    "hh:mm:ss", paste("hh:mm:ss", zeros, sep="."),
                    "h:mm:ss", paste("h:mm:ss", zeros, sep="."),
                    "mm:ss", paste("mm:ss", zeros, sep="."))
-  fmt.codes.dt <- c("m/d/yy\\ h:mm;@", "[$-409]m/d/yy\\ h:mm\\ AM/PM;@")
+  fmt.codes.dt <- NULL
   for (i in fmt.codes.d) {
     add.fmts <- vapply(fmt.codes.t, function(j) paste(i, j, sep="\\ "), "")
     fmt.codes.dt <- c(fmt.codes.dt, add.fmts)
