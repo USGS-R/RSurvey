@@ -28,6 +28,7 @@
                    "yyyy/mm/dd",
                    "m\\-d\\-yy",
                    "m\\-d\\-yyyy",
+                   "m/d/yy",
                    "m/d/yyyy",
                    "mm/dd/yy",
                    "mm/dd/yyyy",
