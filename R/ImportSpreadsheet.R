@@ -21,10 +21,9 @@
                               xmlAttrs, namespaces="x")
   custom.styles <- as.data.frame(.RbindFill(custom.styles),
                                  stringsAsFactors=FALSE)
-  custom.styles$numFmtId <- as.integer(custom.styles$numFmtId)
   custom.styles$formatCode <- sub(";@$", "", custom.styles$formatCode)
-  n <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
-  zeros <- vapply(seq_len(n), function(i) paste(rep("0", i), collapse=""), "")
+  custom.styles$numFmtId <- as.integer(custom.styles$numFmtId)
+  zeros <- vapply(seq_len(15), function(i) paste(rep("0", i), collapse=""), "")
   fmt.codes.d <- c("yyyy\\-mm\\-dd",
                    "yyyy/mm/dd",
                    "m\\-d\\-yy",
@@ -56,8 +55,8 @@
                    "mm:ss", paste("mm:ss", zeros, sep="."))
   fmt.codes.dt <- NULL
   for (i in fmt.codes.d) {
-    add.fmts <- vapply(fmt.codes.t, function(j) paste(i, j, sep="\\ "), "")
-    fmt.codes.dt <- c(fmt.codes.dt, add.fmts)
+    Fun <- function(j) paste(i, j, sep="\\ ")
+    fmt.codes.dt <- c(fmt.codes.dt, vapply(fmt.codes.t, Fun, ""))
   }
   names(fmt.codes.dt) <- NULL
   ids.d  <- custom.styles$numFmtId[custom.styles$formatCode %in% fmt.codes.d]
@@ -166,8 +165,7 @@
   Fun <- function(i) as.numeric(names(which.max(table(i))))
   col.style <- vapply(d.style, Fun, 0)
   col.style[] <- styles[col.style + 1L]
-  origin <- "1899-12-30"  # TODO(jfisher): mac os might be "1904-01-01"
-  ndigits <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
+  origin <- "1899-12-30"  # TODO(jfisher): check mac os, might be "1904-01-01"
   for (i in seq_along(col.style)) {
     if (col.style[i] %in% 14:17) {  # date-time
       d[, i] <- as.Date(as.numeric(d[, i]), origin=origin)
@@ -175,8 +173,6 @@
       d[, i] <- as.POSIXct(as.numeric(d[, i]) * 86400, origin=origin, tz="GMT")
     } else {
       d[, i] <- type.convert(.TrimSpace(d[, i]), as.is=!str.as.fact)
-      if (is.numeric(d[, i]))
-        d[, i] <- round(d[, i], digits=ndigits)
     }
   }
   if (!save.row.no)
