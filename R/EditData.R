@@ -67,7 +67,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
           fmt.vals[idxs] <- format(vals, format=fmt)
       } else {
         if (fmt == "")
-          fmt.vals[idxs] <- format(vals, trim=TRUE, nsmall=num.digits,
+          fmt.vals[idxs] <- format(vals, trim=TRUE, nsmall=ndigits,
                                    scientific=ifelse(is.fmt, NA, FALSE),
                                    drop0trailing=TRUE)
         else
@@ -665,8 +665,8 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     stop("invalid changelog")
   changelog.old <- changelog
 
-  # Numerical precision
-  num.digits <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
+  # Minimum number of digits to the right of the decimal point
+  ndigits <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
 
   # Number of rows and columns in the viewable table
   nrows <- ifelse(m > 15L, 15L, m)

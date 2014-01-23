@@ -167,6 +167,7 @@
   col.style <- vapply(d.style, Fun, 0)
   col.style[] <- styles[col.style + 1L]
   origin <- "1899-12-30"  # TODO(jfisher): mac os might be "1904-01-01"
+  ndigits <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
   for (i in seq_along(col.style)) {
     if (col.style[i] %in% 14:17) {  # date-time
       d[, i] <- as.Date(as.numeric(d[, i]), origin=origin)
@@ -174,6 +175,8 @@
       d[, i] <- as.POSIXct(as.numeric(d[, i]) * 86400, origin=origin, tz="GMT")
     } else {
       d[, i] <- type.convert(.TrimSpace(d[, i]), as.is=!str.as.fact)
+      if (is.numeric(d[, i]))
+        d[, i] <- round(d[, i], digits=ndigits)
     }
   }
   if (!save.row.no)
