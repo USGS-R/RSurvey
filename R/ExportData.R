@@ -1,5 +1,10 @@
 # Export data to file.
 
+.DefaultFormat <- function(x) {
+  x <- format(x, trim=TRUE, na.encode=FALSE, scientific=FALSE, drop0trailing=TRUE)
+  return(gsub("(^ +)|( +$)", "", x))
+}
+
 ExportData <- function(file.type="txt", parent=NULL) {
 
   ## Additional functions
@@ -55,14 +60,14 @@ ExportData <- function(file.type="txt", parent=NULL) {
       if (file.type == "txt") {
         fmt <- col.fmts[i]
         if (fmt == "") {
-          obj <- format(obj, na.encode=FALSE)
+          obj <- .DefaultFormat(obj)
         } else {
           if (inherits(obj, "POSIXt")) {
             obj <- format(obj, format=fmt, na.encode=FALSE)
           } else {
             ans <- try(sprintf(fmt, obj), silent=TRUE)
             if (inherits(ans, "try-error")) {
-              obj <- format(obj, na.encode=FALSE)
+              obj <- .DefaultFormat(obj)
             } else {
               obj <- ans
               obj[obj %in% c("NA", "NaN")] <- NA
