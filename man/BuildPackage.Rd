@@ -8,11 +8,13 @@
 Writes a series of commands for creating an \R package to a Windows batch file.
 }
 
-\usage{BuildPackage(check.cran = FALSE)}
+\usage{BuildPackage(check.cran = FALSE, build.vignettes = TRUE)}
 
 \arguments{
 \item{check.cran}{logical; if \code{TRUE}, uses command-line options similar to
   \acronym{CRAN}.}
+\item{build.vignettes}{logical; if \code{TRUE}, uses command-line options to
+  (re)build the vignettes.}
 }
 
 \details{

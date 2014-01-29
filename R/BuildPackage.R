@@ -6,11 +6,18 @@
 #   Ghostscript; http://www.ghostscript.com/
 # Place QPDF and Ghostscript in the 'Path' environmental variable.
 
-BuildPackage <- function(check.cran=FALSE) {
+BuildPackage <- function(check.cran=FALSE, build.vignettes=TRUE) {
   if (.Platform$OS.type != "windows")
     stop(call.=FALSE, "This function requires a Windows platform.")
 
-  option <- ifelse(check.cran, "--as-cran", "")
+  build.option <- "--resave-data"
+  check.option <- ""
+  if (check.cran)
+    check.option <- paste(check.option, "--as-cran")
+  if (!build.vignettes) {
+    build.option <- paste(build.option, "--no-build-vignettes")
+    check.option <- paste(check.option, "--no-build-vignettes")
+  }
 
   pkg <- basename(getwd())
   description <- readLines("DESCRIPTION")
@@ -33,8 +40,8 @@ BuildPackage <- function(check.cran=FALSE) {
   cmd <- append(cmd, paste(cs, "CP -r", path.pkg, shQuote("C:/")))
   cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.chk))
   cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.git))
-  cmd <- append(cmd, paste(cs, path.cmd, "build", path.tmp, "--resave-data"))
-  cmd <- append(cmd, paste(cs, path.cmd, "check", option, path.tar))
+  cmd <- append(cmd, paste(cs, path.cmd, "build", path.tmp, build.option))
+  cmd <- append(cmd, paste(cs, path.cmd, "check", check.option, path.tar))
   cmd <- append(cmd, paste(cs, path.cmd, "INSTALL --build", path.tar))
   cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.tmp))
   cmd <- append(cmd, paste(cs, "MOVE /Y", file.zip, path.pkg))
