@@ -6,20 +6,27 @@
 #   Ghostscript; http://www.ghostscript.com/
 # Place QPDF and Ghostscript in the 'Path' environmental variable.
 
-BuildPackage <- function(check.cran=FALSE, build.vignettes=TRUE) {
+BuildPackage <- function(check.cran=FALSE, no.vignettes=FALSE) {
   if (.Platform$OS.type != "windows")
     stop(call.=FALSE, "This function requires a Windows platform.")
 
+  pkg <- basename(getwd())
+  file.name <- pkg
+
   build.option <- "--resave-data"
   check.option <- ""
-  if (check.cran)
+  if (check.cran) {
+    file.name <- paste0(file.name, "-check_cran")
     check.option <- paste(check.option, "--as-cran")
-  if (!build.vignettes) {
+  }
+  if (no.vignettes) {
+    file.name <-  paste0(file.name, "-no_vignettes")
     build.option <- paste(build.option, "--no-build-vignettes")
     check.option <- paste(check.option, "--no-build-vignettes")
   }
+  if (!check.cran && !no.vignettes)
+    check.option <- paste(check.option, "--no-build-vignettes")
 
-  pkg <- basename(getwd())
   description <- readLines("DESCRIPTION")
   ver <- strsplit(grep("Version:", description, value=TRUE), " ")[[1]][2]
 
@@ -48,10 +55,9 @@ BuildPackage <- function(check.cran=FALSE, build.vignettes=TRUE) {
   cmd <- append(cmd, "pause")
 
   f <- tcl("tk_getSaveFile", defaultextension=".bat",
-           title="Save Batch file As", initialfile=paste0(pkg, ".bat"),
+           title="Save Batch file As", initialfile=paste0(file.name, ".bat"),
            initialdir=file.path(getwd(), ".."))
   f <- as.character(f)
-
   if (length(f) == 0)
     return()
 
