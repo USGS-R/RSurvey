@@ -8,9 +8,8 @@ The set of standards used for coding **RSurvey** is documented in [Google's R St
 Immediate goals for software development include:
 
 * adding the ability to manipulate geospatial data;
-* revising management of graphics devices;
-* creating a GUI for geostatistical modeling based on functions in the **gstat** package; and
-* encouraging others to collaborate on code development and documentation.
+* revising management of graphics devices; and
+* creating a GUI for geostatistical modeling based on functions in the **gstat** package.
 
 Install
 -------
