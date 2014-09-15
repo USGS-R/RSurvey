@@ -9,7 +9,7 @@ Immediate goals for software development include:
 
 * adding the ability to manipulate geospatial data;
 * revising management of graphics devices; and
-* creating a GUI for geostatistical modeling based on functions in the **gstat** package.
+* creating a GUI for geostatistical modeling.
 
 Install
 -------
