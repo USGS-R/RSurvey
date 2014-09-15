@@ -5,6 +5,12 @@ This [R](http://www.r-project.org/ "R") package is a processing program for spat
 [**RSurvey**](http://cran.r-project.org/web/packages/RSurvey/index.html "RSurvey") features graphing, data management, query building, and polygon clipping tools.
 A graphical user interface (GUI) is provided and requires R operate as an SDI application, using multiple top-level windows for the console, graphics, and pager.
 The set of standards used for coding **RSurvey** is documented in [Google's R Style Guide](http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html "Google's R Style Guide").
+Immediate goals for software development include:
+
+* adding the ability to manipulate geospatial data;
+* revising management of graphics devices;
+* creating a GUI for geostatistical modeling based on functions in the **gstat** package; and
+* encouraging others to collaborate on code development and documentation.
 
 Install
 -------
