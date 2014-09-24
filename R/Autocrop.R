@@ -52,7 +52,7 @@ Autocrop <- function(mesh, max.len, max.itr=10000) {
 
   ## Main program
 
-  if (!require("tripack"))
+  if (!requireNamespace("tripack", quietly=TRUE))
     stop()
 
   elem.build <- matrix(c(2, 3, 3, 1, 1, 2), nrow=3, ncol=2, byrow=TRUE,

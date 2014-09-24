@@ -6,7 +6,7 @@ Plot3d <- function(x=NULL, y=NULL, z=NULL, px=NULL, py=NULL, pz=NULL,
                    nlevels=20, color.palette=terrain.colors,
                    mouse.mode=c("trackball", "zAxis", "zoom"), bg="white") {
 
-  if (!require("rgl"))
+  if (!requireNamespace("rgl", quietly=TRUE))
     stop()
 
   # Account for missing arguments
@@ -158,19 +158,19 @@ Plot3d <- function(x=NULL, y=NULL, z=NULL, px=NULL, py=NULL, pz=NULL,
   cols <- color.palette(n)[((z - zran[1]) / (zran[2] - zran[1])) * (n - 1) + 1]
 
   # Open RGL device
-  open3d()
+  rgl::open3d()
 
   # Size of plot window
   win.dim <- ppi + width * ppi
   win.rect <- c(ppi, ppi, win.dim, win.dim * 0.75)
 
-  par3d(windowRect=win.rect, mouseMode=mouse.mode)
+  rgl::par3d(windowRect=win.rect, mouseMode=mouse.mode)
 
   # Add terrain surface shape
-  bg3d(color=bg)
-  surface3d(x, y, z, color=cols, back="fill")
-  view3d(theta=0, phi=-55, fov=60, zoom=0.6)
+  rgl::bg3d(color=bg)
+  rgl::surface3d(x, y, z, color=cols, back="fill")
+  rgl::view3d(theta=0, phi=-55, fov=60, zoom=0.6)
 
   if (show.points)
-    points3d(x=px, y=py, z=pz, size=cex.pts * 3, point_antialias=TRUE)
+    rgl::points3d(x=px, y=py, z=pz, size=cex.pts * 3, point_antialias=TRUE)
 }

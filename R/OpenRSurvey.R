@@ -361,8 +361,8 @@ OpenRSurvey <- function() {
   CloseDevices <- function() {
     graphics.off()
     if (is.rgl) {
-      while (rgl.cur() != 0)
-        rgl.close()
+      while (rgl::rgl.cur() != 0)
+        rgl::rgl.close()
     }
   }
 
@@ -380,7 +380,7 @@ OpenRSurvey <- function() {
 
   # Save RGL graphic devices
   SaveRGLDevice <- function() {
-    if (!is.rgl || rgl.cur() == 0)
+    if (!is.rgl || rgl::rgl.cur() == 0)
       return()
     f <- GetFile(cmd="Save As", exts=c("png", "eps", "pdf"),
                  win.title="Save RGL Graphic As", defaultextension="png",
@@ -388,9 +388,9 @@ OpenRSurvey <- function() {
     if (is.null(f))
       return()
     if (attr(f, "extension") == "png")
-      rgl.snapshot(filename=f, fmt=attr(f, "extension"))
+      rgl::rgl.snapshot(filename=f, fmt=attr(f, "extension"))
     else
-      rgl.postscript(filename=f, fmt=attr(f, "extension"))
+      rgl::rgl.postscript(filename=f, fmt=attr(f, "extension"))
   }
 
   # Session information
@@ -929,11 +929,11 @@ OpenRSurvey <- function() {
     Data("default.dir", getwd())
 
   # Check if suggested packages are loaded
-  is.xml <- suppressWarnings(require("XML", quietly=TRUE))
-  is.rgl <- suppressWarnings(require("rgl", quietly=TRUE))
-  is.rgdal <- suppressWarnings(require("rgdal", quietly=TRUE))
-  is.tripack <- suppressWarnings(require("tripack", quietly=TRUE))
-  is.colorspace <- suppressWarnings(require("colorspace", quietly=TRUE))
+  is.xml <- requireNamespace("XML", quietly=TRUE)
+  is.rgl <- requireNamespace("rgl", quietly=TRUE)
+  is.rgdal <- requireNamespace("rgdal", quietly=TRUE)
+  is.tripack <- requireNamespace("tripack", quietly=TRUE)
+  is.colorspace <- requireNamespace("colorspace", quietly=TRUE)
 
   # Set options
   SetCsi()
@@ -1066,13 +1066,13 @@ OpenRSurvey <- function() {
   tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
   menu.view.raw <- tkmenu(tt, tearoff=0)
   tkadd(menu.view.raw, "command", label="All variables",
-        command=function() print("notyet"))
+        command=function() print("notyet"), state="disabled")
   tkadd(menu.view.raw, "command", label="State variables",
-        command=function() print("notyet"))
+        command=function() print("notyet"), state="disabled")
   tkadd(menu.view, "cascade", label="Raw data for", menu=menu.view.raw)
   menu.view.pr <- tkmenu(tt, tearoff=0)
   tkadd(menu.view.pr, "command", label="All variables",
-        command=function() print("notyet"))
+        command=function() print("notyet"), state="disabled")
   tkadd(menu.view.pr, "command", label="State variables",
         command=function() CallEditData())
   tkadd(menu.view, "cascade", label="Processed data for", menu=menu.view.pr)

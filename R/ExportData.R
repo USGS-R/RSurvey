@@ -310,7 +310,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
   if (!file.type %in% c("txt", "shp", "rda"))
     stop()
   if (file.type == "shp") {
-    if (!require("rgdal"))
+    if (!requireNamespace("rgdal", quietly=TRUE))
       stop()
     if (is.null(Data(c("vars", "x"))) | is.null(Data(c("vars", "y"))))
       stop("shapefiles require x,y coordinate values")

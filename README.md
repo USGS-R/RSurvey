@@ -8,7 +8,7 @@ The set of standards used for coding **RSurvey** is documented in [Google's R St
 Immediate goals for software development include:
 
 * adding the ability to manipulate geospatial data;
-* revising management of graphics devices; and
+* revising management of graphic devices; and
 * creating a GUI for geostatistical modeling.
 
 Install
@@ -19,8 +19,9 @@ Windows users should set R to operate as an SDI application during installation 
 
 Open an R session and install **RSurvey** and its dependent packages from CRAN using the following commands:
 
-    update.packages(ask = FALSE, repos = "http://cran.us.r-project.org")
-    install.packages("RSurvey", repos = "http://cran.us.r-project.org")
+    repos <- "http://cran.us.r-project.org"
+    update.packages(ask = FALSE, repos = repos)
+    install.packages("RSurvey", repos = repos, dependencies = TRUE, type = "both")
 
 In addition to the required packages, **RSurvey** uses functions in a number of recommended packages.
 If any of these recommended packages are missing, **RSurvey** will offer to install them when it first starts up.

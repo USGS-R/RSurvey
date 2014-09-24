@@ -63,7 +63,7 @@ AutocropRegion <- function(d, parent=NULL, ...) {
 
   ## Main program
 
-  if (!require("tripack"))
+  if (!requireNamespace("tripack", quietly=TRUE))
     stop()
 
   # Initialize parameters
@@ -80,7 +80,7 @@ AutocropRegion <- function(d, parent=NULL, ...) {
   mesh <- tripack::tri.mesh(d$x, d$y, duplicate="remove")
 
   # Convex hull and maximum outer arc length
-  hull <- convex.hull(mesh)
+  hull <- tripack::convex.hull(mesh)
   x1 <- hull$x
   y1 <- hull$y
   x2 <- c(x1[-1], x1[1])

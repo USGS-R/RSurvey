@@ -16,9 +16,9 @@
 .GetStyles <- function(path) {
   path.xl <- file.path(path, "xl")
   f.styles <- list.files(path.xl, "styles.xml$", full.names=TRUE)
-  styles <- xmlParse(f.styles)
-  custom.styles <- xpathApply(styles, "//x:numFmt[@numFmtId and @formatCode]",
-                              xmlAttrs, namespaces="x")
+  styles <- XML::xmlParse(f.styles)
+  custom.styles <- XML::xpathApply(styles, "//x:numFmt[@numFmtId and @formatCode]",
+                                   XML::xmlAttrs, namespaces="x")
   custom.styles <- as.data.frame(.RbindFill(custom.styles),
                                  stringsAsFactors=FALSE)
   custom.styles$formatCode <- sub(";@$", "", custom.styles$formatCode)
@@ -63,7 +63,7 @@
   ids.d  <- custom.styles$numFmtId[custom.styles$formatCode %in% fmt.codes.d]
   ids.t  <- custom.styles$numFmtId[custom.styles$formatCode %in% fmt.codes.t]
   ids.dt <- custom.styles$numFmtId[custom.styles$formatCode %in% fmt.codes.dt]
-  styles <- xpathApply(styles, "//x:xf[@numFmtId and @xfId]", xmlAttrs,
+  styles <- XML::xpathApply(styles, "//x:xf[@numFmtId and @xfId]", XML::xmlAttrs,
                        namespaces="x")
   styles <- lapply(styles, function(i) i[grepl("numFmtId", names(i))])
   styles <- vapply(styles, function(i) as.integer(i["numFmtId"]), 0L)
@@ -77,7 +77,7 @@
 .GetSheetNames <- function(path) {
   path.xl <- file.path(path, "xl")
   f.workbook <- list.files(path.xl, "workbook.xml$", full.names=TRUE)
-  sheets <- xmlToList(xmlParse(f.workbook))
+  sheets <- XML::xmlToList(XML::xmlParse(f.workbook))
   Fun <- function(i) as.data.frame(as.list(i), stringsAsFactors=FALSE)
   sheets <- .RbindFill(lapply(sheets$sheets, Fun))
   rownames(sheets) <- NULL
@@ -89,11 +89,11 @@
   path.ws <- file.path(path, "xl", "worksheets")
   f.ws <- list.files(path.ws, paste0("sheet(", sheet.id, ")\\.xml$"),
                      full.names=TRUE)
-  ws <- xmlRoot(xmlParse(f.ws))[["sheetData"]]
-  if (xmlSize(ws) == 0)
+  ws <- XML::xmlRoot(XML::xmlParse(f.ws))[["sheetData"]]
+  if (XML::xmlSize(ws) == 0)
     stop("selected worksheet is empty.", call.=FALSE)
-  Fun <- function(i) c(v=xmlValue(i[["v"]]), xmlAttrs(i))
-  ws <- xpathApply(ws, "//x:c", Fun, namespaces="x")
+  Fun <- function(i) c(v=XML::xmlValue(i[["v"]]), XML::xmlAttrs(i))
+  ws <- XML::xpathApply(ws, "//x:c", Fun, namespaces="x")
   rows <- unlist(lapply(seq_along(ws), function(i) rep(i, length(ws[[i]]))))
   ws <- unlist(ws)
   ws <- data.frame(row=rows, ind=names(ws), value=ws, stringsAsFactors=FALSE)
@@ -105,8 +105,8 @@
 .GetSharedStrings <- function(path) {
   path.xl <- file.path(path, "xl")
   f.strings <- list.files(path.xl, "sharedStrings.xml$", full.names=TRUE)
-  strings <- xpathSApply(xmlParse(f.strings), "//x:si", xmlValue,
-                         namespaces="x")
+  strings <- XML::xpathSApply(XML::xmlParse(f.strings), "//x:si", XML::xmlValue,
+                              namespaces="x")
   names(strings) <- seq_along(strings) - 1
   return(strings)
 }
@@ -305,7 +305,7 @@ ImportSpreadsheet <- function(parent=NULL) {
   ## Main program
 
   # Load dependent package
-  if (!require("XML"))
+  if (!requireNamespace("XML", quietly=TRUE))
     stop()
 
   # Initialize variables
