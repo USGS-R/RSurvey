@@ -57,6 +57,6 @@ A list with components \code{polys}, \code{poly.data}, and \code{poly.crop}
 \code{\link{intersect}}
 }
 
-\examples{\donttest{ManagePolygons()}}
+\examples{\dontrun{ManagePolygons()}}
 
 \keyword{misc}

@@ -22,7 +22,7 @@
 
 \author{J.C. Fisher}
 
-\examples{\donttest{
+\examples{\dontrun{
 Format(sample = pi, fmt = "\%3.8f")
 Format(sample = 3L)
 Format(sample = TRUE)

@@ -27,6 +27,6 @@ This code was derived with permission from Schaun Wheeler's
 \href{https://gist.github.com/schaunwheeler/5825002}{xlsxToR} function.
 }
 
-\examples{\donttest{ans <- ImportSpreadsheet()}}
+\examples{\dontrun{ans <- ImportSpreadsheet()}}
 
 \keyword{IO}

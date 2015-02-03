@@ -17,6 +17,6 @@ connection.
 
 \seealso{\code{\link{install.packages}}, \code{\link{require}}}
 
-\examples{\donttest{LoadPackages()}}
+\examples{\dontrun{LoadPackages()}}
 
 \keyword{misc}

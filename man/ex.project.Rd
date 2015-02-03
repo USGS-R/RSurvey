@@ -15,7 +15,7 @@ A list containing typical components in a project; these components are
 described throughout the \pkg{RSurvey} documentation.
 }
 
-\examples{\donttest{
+\examples{\dontrun{
 data(ex.project)
 str(ex.project)
 

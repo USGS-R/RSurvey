@@ -53,7 +53,7 @@ The \code{vars} object is a list with components:
 
 \author{J.C. Fisher}
 
-\examples{\donttest{
+\examples{\dontrun{
 data(ex.project)
 Data(replace.all = ex.project)
 ManageVariables(ex.project$cols, ex.project$vars, ex.project$query, ex.project$changelog)

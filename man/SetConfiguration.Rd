@@ -56,6 +56,6 @@ Queries and sets the following components of \code{\link{Data}}:
 
 \author{J.C. Fisher}
 
-\examples{\donttest{SetConfiguration()}}
+\examples{\dontrun{SetConfiguration()}}
 
 \keyword{misc}

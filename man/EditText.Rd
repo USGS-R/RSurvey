@@ -21,7 +21,7 @@ EditText(txt, read.only = FALSE, win.title = "View Text",
 
 \author{J.C. Fisher}
 
-\examples{\donttest{
+\examples{\dontrun{
 txt <- c("\"Hills cherish the ambition",
          "    to turn into partial",
          "   differential equations\"",

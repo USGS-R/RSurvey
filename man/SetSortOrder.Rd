@@ -30,7 +30,7 @@ they are removed.
 
 \seealso{\code{\link{order}}}
 
-\examples{\donttest{
+\examples{\dontrun{
 col.ids <- c("Variable1", "Variable2", "Variable3")
 sort.on <- 2
 attr(sort.on, "decreasing") <- TRUE

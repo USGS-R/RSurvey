@@ -34,6 +34,6 @@ A \code{list} with the following components:
 
 \author{J.C. Fisher}
 
-\examples{\donttest{ans <- Search()}}
+\examples{\dontrun{ans <- Search()}}
 
 \keyword{misc}

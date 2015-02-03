@@ -40,7 +40,7 @@ Returns a list with two four components:
 
 \seealso{\code{\link{EvalFunction}}}
 
-\examples{\donttest{
+\examples{\dontrun{
 d <- list(x = 1:10, y = 10:1)
 Data("data.raw", d)
 cols <- list()

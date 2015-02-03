@@ -43,6 +43,6 @@ Otherwise, a list is returned containing a character object for each file.
 
 \author{J.C. Fisher}
 
-\examples{\donttest{GetFile()}}
+\examples{\dontrun{GetFile()}}
 
 \keyword{file}

@@ -19,6 +19,6 @@
 
 \seealso{\code{\link{points}}}
 
-\examples{\donttest{ChoosePch(pch = "+")}}
+\examples{\dontrun{ChoosePch(pch = "+")}}
 
 \keyword{misc}

@@ -33,7 +33,7 @@ input parameters.
 
 \author{J.C. Fisher}
 
-\examples{\donttest{
+\examples{\dontrun{
 data(tritest, package = "tripack")
 AutocropRegion(as.data.frame(tritest), asp = 1)
 }}

@@ -27,7 +27,7 @@ FormatDateTime(sample = as.POSIXct("1991-08-25 20:57:08"), fmt = "",
 
 \author{J.C. Fisher}
 
-\examples{\donttest{
+\examples{\dontrun{
 new.fmt <- FormatDateTime(fmt = "\%A \%B \%d \%I:\%M \%p")
 FormatDateTime(Sys.Date())
 }}

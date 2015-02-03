@@ -29,7 +29,7 @@ removed; a polygon is created from the union of the remaining triangles.
 
 \author{J.C. Fisher}
 
-\examples{\donttest{
+\examples{\dontrun{
 data(tritest, package = "tripack")
 mesh <- tripack::tri.mesh(tritest$x, tritest$y)
 plot(mesh)

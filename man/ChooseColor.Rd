@@ -24,6 +24,6 @@ giving a value in the range \code{00} to \code{FF}.
 
 \seealso{\code{\link{col2rgb}}}
 
-\examples{\donttest{ChooseColor(col = "#669933")}}
+\examples{\dontrun{ChooseColor(col = "#669933")}}
 
 \keyword{misc}

@@ -24,6 +24,6 @@ SetPolygonLimits(poly.names = NULL, poly.data = NULL, poly.crop = NULL,
 
 \author{J.C. Fisher}
 
-\examples{\donttest{SetPolygonLimits(c("Polygon1", "Polygon2", "Polygon3"))}}
+\examples{\dontrun{SetPolygonLimits(c("Polygon1", "Polygon2", "Polygon3"))}}
 
 \keyword{misc}

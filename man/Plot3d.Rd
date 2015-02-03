@@ -57,7 +57,7 @@ around the x-axis, and zooms the display, respectively.
 
 \author{J.C. Fisher}
 
-\examples{\donttest{
+\examples{\dontrun{
 data(ex.project)
 Plot3d(ex.project$data.grd)
 rgl::rgl.quit()

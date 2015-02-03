@@ -29,7 +29,7 @@ function.
 
 \seealso{\code{\link{hist}}, \code{\link{plot.histogram}}}
 
-\examples{\donttest{
+\examples{\dontrun{
 data(ex.project)
 BuildHistogram(ex.project$data.pts)
 }}

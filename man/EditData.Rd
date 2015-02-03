@@ -51,7 +51,7 @@ Requires the Tcl package
 
 \seealso{\code{\link{BuildHistogram}}}
 
-\examples{\donttest{
+\examples{\dontrun{
 tcltk::tclRequire("Tktable", warn = TRUE)
 
 n <- 1000L

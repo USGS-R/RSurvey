@@ -23,6 +23,6 @@ Quaries and sets the \code{vars} component of \code{\link{Data}}. The
 
 \author{J.C. Fisher}
 
-\examples{\donttest{OpenRSurvey()}}
+\examples{\dontrun{OpenRSurvey()}}
 
 \keyword{misc}

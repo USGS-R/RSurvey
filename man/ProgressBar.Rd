@@ -54,7 +54,7 @@ returned if the progress has terminated prematurely.
 This code was derived from the \code{\link[tcltk]{tkProgressBar}} function.
 }
 
-\examples{\donttest{
+\examples{\dontrun{
 maximum <- 10
 label <- "Estimated time to completion is being calculated\u2026"
 pb <- ProgressBar(label = label, maximum = maximum, nsteps = maximum)

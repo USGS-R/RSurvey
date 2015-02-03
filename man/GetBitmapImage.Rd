@@ -26,7 +26,7 @@ A recommended editor for bitmap design is Paul Obermeier's
 
 \seealso{\code{\link{tkimage.create}}}
 
-\examples{\donttest{
+\examples{\dontrun{
 types <- c("left", "right", "up", "down", "top", "bottom", "upleft", "upright",
            "downleft", "downright", "next", "previous", "copy", "paste", "find",
            "delete", "view", "info", "plus", "minus", "print", "histogram")

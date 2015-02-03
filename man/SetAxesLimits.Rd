@@ -34,6 +34,6 @@ Returns a list containing the following components:
 
 \author{J.C. Fisher}
 
-\examples{\donttest{SetAxesLimits()}}
+\examples{\dontrun{SetAxesLimits()}}
 
 \keyword{misc}

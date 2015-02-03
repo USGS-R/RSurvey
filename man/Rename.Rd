@@ -22,7 +22,7 @@ A \acronym{GUI} for renaming values in a vector of character strings.
 
 \author{J.C. Fisher}
 
-\examples{\donttest{
+\examples{\dontrun{
 Rename(names = c("Name1", "Name2", "Name3"), cur.name = "Name2")
 }}
 

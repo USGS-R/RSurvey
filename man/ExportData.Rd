@@ -58,7 +58,7 @@ Saves the \acronym{GUI} options in the \code{export} component of
 
 \author{J.C. Fisher}
 
-\examples{\donttest{
+\examples{\dontrun{
 data(ex.project)
 Data(replace.all = ex.project)
 ExportData(file.type = "txt")

@@ -29,7 +29,7 @@ A data frame with 50 rows and the following columns:
   \item{Character}{factor; vector.}
 }}
 
-\examples{\donttest{
+\examples{\dontrun{
 data(ex.data)
 summary(ex.data)
 }}

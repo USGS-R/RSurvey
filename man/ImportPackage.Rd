@@ -25,6 +25,6 @@ Returns a list with the following components:
 
 \seealso{\code{\link{data}}}
 
-\examples{\donttest{ans <- ImportPackage(c("data.frame", "matrix"))}}
+\examples{\dontrun{ans <- ImportPackage(c("data.frame", "matrix"))}}
 
 \keyword{IO}

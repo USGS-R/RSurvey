@@ -73,6 +73,6 @@ Components of \code{import} include:
 
 \author{J.C. Fisher}
 
-\examples{\donttest{ImportText()}}
+\examples{\dontrun{ImportText()}}
 
 \keyword{IO}

@@ -33,6 +33,6 @@ values.
 
 \seealso{\code{\link{mba.points}}}
 
-\examples{\donttest{SetInterpolation()}}
+\examples{\dontrun{SetInterpolation()}}
 
 \keyword{misc}
