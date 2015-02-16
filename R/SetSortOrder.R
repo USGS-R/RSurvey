@@ -106,9 +106,9 @@ SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
 
   frame1.lab.2.4 <- ttklabel(frame1, text="NAs")
   frame1.rad.2.5 <- ttkradiobutton(frame1, variable=na.last.var, value=1,
-                                   text="last")
+                                   text="place last")
   frame1.rad.3.5 <- ttkradiobutton(frame1, variable=na.last.var, value=0,
-                                   text="first")
+                                   text="place first")
   frame1.rad.4.5 <- ttkradiobutton(frame1, variable=na.last.var, value=2,
                                    text="remove")
 
