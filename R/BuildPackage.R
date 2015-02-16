@@ -16,7 +16,7 @@ BuildPackage <- function(check.cran=FALSE, no.vignettes=FALSE) {
   build.option <- "--resave-data"
   check.option <- ""
   if (check.cran) {
-    file.name <- paste0(file.name, "-check_cran")
+    file.name <- paste0(file.name, "-cran")
     check.option <- paste(check.option, "--as-cran")
   }
   if (no.vignettes) {
