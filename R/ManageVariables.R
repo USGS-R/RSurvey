@@ -506,8 +506,9 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   frame1 <- tkframe(pw, relief="flat")
 
   frame1.lst <- tklistbox(frame1, selectmode="browse", activestyle="none",
-                relief="flat", borderwidth=5, width=25, exportselection=FALSE,
-                listvariable=list.var, highlightthickness=0)
+                          relief="flat", borderwidth=5, width=25,
+                          exportselection=FALSE, listvariable=list.var,
+                          highlightthickness=0)
   frame1.ysc <- ttkscrollbar(frame1, orient="vertical")
   tkconfigure(frame1.lst, background="white",
               yscrollcommand=paste(.Tk.ID(frame1.ysc), "set"))
