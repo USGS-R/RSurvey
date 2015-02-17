@@ -44,6 +44,7 @@ BuildPackage <- function(check.cran=FALSE, no.vignettes=FALSE) {
   cmd <- append(cmd, paste0(cs, " RM -f ", pkg, "*"))
   cmd <- append(cmd, "CD /d C:/")
   cmd <- append(cmd, paste(cs, path.cmd, "REMOVE", pkg))
+  cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.tmp))
   cmd <- append(cmd, paste(cs, "CP -r", path.pkg, shQuote("C:/")))
   cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.chk))
   cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.git))

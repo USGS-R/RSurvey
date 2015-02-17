@@ -15,7 +15,6 @@ pkgs <- c(pkgs, if (length(txt) > 0) strsplit(txt, ",")[[1]] else NULL)
 packages <- sub("^\\s+", "", pkgs)
 
 options(defaultPackages=c(getOption("defaultPackages"), packages))
-options(repos=c(CRAN="http://cran.r-project.org"))
 
 .First <- function() {
   RSurvey::RestoreSession(file.path(getwd(), "R"))

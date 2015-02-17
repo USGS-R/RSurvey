@@ -34,14 +34,13 @@ LoadPackages <- function() {
         return()
     }
     if (length(available.pkgs) > 0)
-      install.packages(available.pkgs, repos=repo, quiet=TRUE)
+      install.packages(available.pkgs, repos=repo, verbose=TRUE)
 
     # Load packages into current session
     for (pkg in available.pkgs) {
-      is.pkg.loaded <- suppressWarnings(require(pkg, character.only=TRUE,
-                                                warn.conflicts=FALSE,
-                                                quietly=TRUE))
-      if (!is.pkg.loaded)
+      is.loaded <- suppressWarnings(require(pkg, character.only=TRUE,
+                                            warn.conflicts=FALSE, quietly=TRUE))
+      if (!is.loaded)
         warning(paste("unable to load suggested package:", pkg), call.=FALSE)
     }
 
@@ -74,7 +73,7 @@ LoadPackages <- function() {
     # Open GUI
     tclServiceMode(FALSE)
     tt <- tktoplevel()
-    tktitle(tt) <- "Missing Packages"
+    tktitle(tt) <- "Manage Packages"
     tkwm.resizable(tt, 0, 0)
 
     # Frame 0, ok and cancel buttons
