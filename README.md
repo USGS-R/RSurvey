@@ -23,9 +23,9 @@ Open an R session and install **RSurvey** and its dependent packages from CRAN u
     update.packages(ask = FALSE, repos = repo)
     install.packages("RSurvey", repos = repo, dependencies = TRUE, type = "both")
 
-In addition to the required packages, **RSurvey** uses functions in a number of recommended packages.
-If any of these recommended packages are missing, **RSurvey** will offer to install them when it first starts up.
-Note that the license for the recommended package **tripack** explicitly forbids commercial use.
+In addition to the required packages, **RSurvey** uses functions in a number of suggested packages.
+If any of these packages are missing, **RSurvey** will offer to install them when it first starts up.
+Note that the license for the suggested **tripack** package explicitly forbids commercial use.
 
 Support for displaying table data is provided by [tktable](http://tktable.sourceforge.net/ "tktable"), a spreadsheet-like [Tcl/Tk](http://www.tcl.tk/ "Tcl/Tk") widget (typically included with the binary distribution of R).
 The following command will indicate whether tktable is available for use:
