@@ -118,8 +118,8 @@ LoadPackages <- function() {
     frame1.lab.3.2 <- ttklabel(frame1, text=txt, justify="left",
                                background="white")
 
-    txt <- paste("Selected packages will be installed from the Comprehensive",
-                 "R Archive Network (CRAN).", sep="\n")
+    txt <- paste("The selected packages will be installed from the",
+                 "Comprehensive R Archive Network (CRAN).", sep="\n")
     frame1.lab.4.2 <- ttklabel(frame1, text=txt, justify="left",
                                background="white")
 
