@@ -24,7 +24,7 @@ LoadPackages <- function() {
     available.pkgs <- missing.pkgs[is.on.cran]
     unavailable.pkgs <- missing.pkgs[!is.on.cran]
     if (length(unavailable.pkgs) > 0) {
-      msg <- paste0("The following package(s) are unavailable on this ",
+      msg <- paste0("The following packages are unavailable on this ",
                     "CRAN mirror:\n\n",
                     paste(paste0("\'", unavailable.pkgs, "\'"), collapse=", "),
                     "\n\nWould you like to try a different CRAN mirror?")
@@ -98,7 +98,7 @@ LoadPackages <- function() {
 
     frame1.lab.1.1 <- ttklabel(frame1, image=rlogo.var, background="white")
 
-    txt <- "The following suggested package(s) are missing:"
+    txt <- "The following suggested packages are missing:"
     frame1.lab.1.2 <- ttklabel(frame1, text=txt, justify="left",
                                background="white")
 
@@ -118,8 +118,8 @@ LoadPackages <- function() {
     frame1.lab.3.2 <- ttklabel(frame1, text=txt, justify="left",
                                background="white")
 
-    txt <- paste("The selected packages will be installed from the",
-                 "Comprehensive R Archive Network (CRAN).", sep="\n")
+    txt <- paste("Selected packages will be installed from the Comprehensive",
+                 "R Archive Network (CRAN).", sep="\n")
     frame1.lab.4.2 <- ttklabel(frame1, text=txt, justify="left",
                                background="white")
 
