@@ -98,7 +98,7 @@ LoadPackages <- function() {
 
     frame1.lab.1.1 <- ttklabel(frame1, image=rlogo.var, background="white")
 
-    txt <- "The following suggested packages are missing:"
+    txt <- "The following suggested (not required) packages are missing:"
     frame1.lab.1.2 <- ttklabel(frame1, text=txt, justify="left",
                                background="white")
 

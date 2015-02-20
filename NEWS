@@ -1,3 +1,10 @@
+Changes in Version 0.8-3
+
+  o  Revised GUI in the LoadPackages function to make it more obvious that the
+     missing packages are not necessary (thanks, @geneorama, #1).
+
+  o  Changed donttest to dontrun in the man files.
+
 Changes in Version 0.8-2
 
   o  Removed 'require' for conditioning in package code, now using
