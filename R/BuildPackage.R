@@ -35,7 +35,7 @@ BuildPackage <- function(check.cran=FALSE, no.vignettes=FALSE) {
   path.git <- shQuote(file.path("C:", pkg, ".git"))
   path.tar <- shQuote(paste0("C:/", pkg, "_", ver, ".tar.gz"))
   path.chk <- shQuote(paste0("C:/", pkg, ".Rcheck"))
-  path.cmd <- paste0(R.home(component="bin"), "/Rcmd")
+  path.cmd <- paste0(R.home(component="bin"), "/R CMD")
   file.zip <- shQuote(paste0(pkg, "_*"))
 
   cs <- paste(Sys.getenv("COMSPEC"), "/c")
@@ -48,7 +48,7 @@ BuildPackage <- function(check.cran=FALSE, no.vignettes=FALSE) {
   cmd <- append(cmd, paste(cs, "CP -r", path.pkg, shQuote("C:/")))
   cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.chk))
   cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.git))
-  cmd <- append(cmd, paste(cs, path.cmd, "build", path.tmp, build.option))
+  cmd <- append(cmd, paste(cs, path.cmd, "build", build.option, path.tmp))
   cmd <- append(cmd, paste(cs, path.cmd, "check", check.option, path.tar))
   cmd <- append(cmd, paste(cs, path.cmd, "INSTALL --build", path.tar))
   cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.tmp))
