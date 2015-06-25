@@ -31,10 +31,12 @@ BuildPackage <- function(check.cran=FALSE, no.vignettes=FALSE) {
   ver <- strsplit(grep("Version:", description, value=TRUE), " ")[[1]][2]
 
   path.pkg <- shQuote(getwd())
-  path.tmp <- shQuote(file.path("C:", pkg))
-  path.git <- shQuote(file.path("C:", pkg, ".git"))
-  path.tar <- shQuote(paste0("C:/", pkg, "_", ver, ".tar.gz"))
-  path.chk <- shQuote(paste0("C:/", pkg, ".Rcheck"))
+
+  temp.dir <- normalizePath(Sys.getenv("TEMP"), winslash = "/")
+  path.tmp <- shQuote(file.path(temp.dir, pkg))
+  path.git <- shQuote(file.path(temp.dir, pkg, ".git"))
+  path.tar <- shQuote(file.path(temp.dir, paste0(pkg, "_", ver, ".tar.gz")))
+  path.chk <- shQuote(file.path(temp.dir, paste0(pkg, ".Rcheck")))
   path.cmd <- paste0(R.home(component="bin"), "/R CMD")
   file.zip <- shQuote(paste0(pkg, "_*"))
 
@@ -42,10 +44,10 @@ BuildPackage <- function(check.cran=FALSE, no.vignettes=FALSE) {
 
   cmd <- paste("CD /d", path.pkg)
   cmd <- append(cmd, paste0(cs, " RM -f ", pkg, "*"))
-  cmd <- append(cmd, "CD /d C:/")
+  cmd <- append(cmd, paste("CD /d", shQuote(temp.dir)))
   cmd <- append(cmd, paste(cs, path.cmd, "REMOVE", pkg))
   cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.tmp))
-  cmd <- append(cmd, paste(cs, "CP -r", path.pkg, shQuote("C:/")))
+  cmd <- append(cmd, paste(cs, "CP -r", path.pkg, shQuote(temp.dir)))
   cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.chk))
   cmd <- append(cmd, paste(cs, "RMDIR /S /Q", path.git))
   cmd <- append(cmd, paste(cs, path.cmd, "build", build.option, path.tmp))
