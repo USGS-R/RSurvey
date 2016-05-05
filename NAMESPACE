@@ -1,7 +1,22 @@
-import(tcltk, sp)
+importFrom("grDevices", "chull", "col2rgb", "colorRampPalette", "dev.cur",
+           "dev.list", "dev.new", "dev.off", "extendrange", "graphics.off",
+           "gray.colors", "hsv", "postscript", "rainbow", "rgb2hsv", "savePlot",
+           "terrain.colors")
+importFrom("graphics", ".filled.contour", "arrows", "axTicks", "axis",
+           "axis.POSIXct", "box", "contour", "grid", "hist", "image",
+           "layout", "lcm", "lines", "locator", "mtext", "par", "plot.new",
+           "plot.window", "points", "rect", "rug", "title")
+importFrom("methods", "as")
+importFrom("stats", "density", "na.omit", "reshape")
+importFrom("utils", "available.packages", "browseURL", "capture.output",
+           "contrib.url", "data", "getCRANmirrors", "getIdentification", "head",
+           "help", "install.packages", "read.table", "sessionInfo", "str",
+           "tail", "type.convert", "unzip", "write.table")
 
-importMethodsFrom(rgeos, union, setdiff, intersect)
-importClassesFrom(rgeos, gpc.poly)
+import("tcltk", "sp")
+
+importMethodsFrom("rgeos", "union", "setdiff", "intersect")
+importClassesFrom("rgeos", "gpc.poly")
 
 export(AddAxis,
        Autocrop,

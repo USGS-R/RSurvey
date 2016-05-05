@@ -1,11 +1,11 @@
 Package: RSurvey
 Version: 0.8-4
-Date: 2015-02-20
+Date: 2016-05-05
 Title: Analysis of Spatially Distributed Data
 Author: Jason C. Fisher
 Maintainer: Jason C. Fisher <jfisher@usgs.gov>
 Depends: R (>= 3.1.0)
-Imports: tcltk, sp, rgeos, MBA
+Imports: methods, tcltk, sp, rgeos, MBA
 Suggests: rgdal, tripack, colorspace, dichromat, rgl, XML
 SystemRequirements: Tcl/Tk (>= 8.5), Tktable (>= 2.9, optional)
 Description: A processing program for spatially distributed data.
