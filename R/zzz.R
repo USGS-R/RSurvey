@@ -1,7 +1,7 @@
 .onAttach <- function(lib, pkg) {
   if (interactive()) {
     ver <- read.dcf(file.path(lib, pkg, "DESCRIPTION"), "Version")
-    packageStartupMessage("RSurvey: version: ", ver)
+    packageStartupMessage(pkg, ": version: ", ver)
 
     s <- paste("This information is preliminary or provisional and is subject to revision.",
                "It is being provided to meet the need for timely best science.",
