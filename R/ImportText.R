@@ -340,8 +340,8 @@ ImportText <- function(parent=NULL) {
         table.var[[i - 1, j - 1]] <- as.tclObj(d[i, j], drop=TRUE))
 
     for (i in seq_len(ncol(d))) {
-      len <- max(nchar(gsub("\t", "    ", d[seq_len(nrows), i])),
-                 na.omit=TRUE) + 1L
+      len <- max(nchar(gsub("\t", "    ", d[seq_len(nrows), i])), na.rm=TRUE)
+      len <- len + 1L
       if (len < 10L) {
         len <- 10L
       } else if (len > 50L) {
