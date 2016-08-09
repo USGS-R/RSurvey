@@ -18,7 +18,7 @@ application, using multiple top-level windows for the console, graphics,
 and pager.
 
 The set of standards used for coding \pkg{RSurvey} is documented in
-\href{http://google-styleguide.googlecode.com/svn/trunk/google-r-style.html}{Google's R Style Guide}.
+\href{https://google.github.io/styleguide/Rguide.xml}{Google's R Style Guide}.
 }
 
 \examples{\dontrun{library(RSurvey)}}
