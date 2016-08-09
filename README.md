@@ -19,9 +19,9 @@ Windows users should set R to operate as an SDI application during installation 
 
 Open an R session and install **RSurvey** and its dependent packages from CRAN using the following commands:
 
-    repo <- "http://cran.us.r-project.org"
-    update.packages(ask = FALSE, repos = repo)
-    install.packages("RSurvey", repos = repo, dependencies = TRUE, type = "both")
+```r
+install.packages("RSurvey", dependencies = TRUE, type = "both")
+```
 
 In addition to the required packages, **RSurvey** uses functions in a number of suggested packages.
 If any of these packages are missing, **RSurvey** will offer to install them when it first starts up.
