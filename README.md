@@ -30,16 +30,21 @@ Note that the license for the suggested **tripack** package explicitly forbids c
 Support for displaying table data is provided by [tktable](http://tktable.sourceforge.net/ "tktable"), a spreadsheet-like [Tcl/Tk](http://www.tcl.tk/ "Tcl/Tk") widget (typically included with the binary distribution of R).
 The following command will indicate whether tktable is available for use:
 
-    print(inherits(tcltk::tclRequire("Tktable", warn = FALSE), "tclObj"))
+```r
+print(inherits(tcltk::tclRequire("Tktable", warn = FALSE), "tclObj"))
+```
 
 Run
 ---
 
 Load **RSurvey** in the current R session to activate the main GUI:
 
-    library(RSurvey)
+```r
+library(RSurvey)
+```
 
 Example data sets are provided in the following directory:
 
-    system.file("extdata", package = "RSurvey")
-
+```r
+system.file("extdata", package = "RSurvey")
+```
