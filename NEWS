@@ -1,5 +1,7 @@
 Changes in Version 0.8-3
 
+  o  Fix bug that prevents data import from text files.
+
   o  Revised GUI in the LoadPackages function to make it more obvious that the
      missing packages are not necessary (thanks, @geneorama, #1).
 
