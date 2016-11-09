@@ -910,7 +910,7 @@ OpenRSurvey <- function() {
   ## Main program
 
   # Warn if using Windows OS and running in MDI mode
-  if (.Platform$OS.type == "windows" && getIdentification() == "RGui")
+  if (.Platform$OS.type == "windows" && utils::getIdentification() == "RGui")
     message("\n\n    You are running R in MDI mode which *may* interfere\n",
             "    with the functionality of the graphical user interface.\n",
             "    It is recommended to use R in SDI mode which can be\n",

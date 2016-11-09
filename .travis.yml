@@ -10,9 +10,6 @@ addons:
     packages:
       - libgdal-dev
       - libproj-dev
-      - tcl-dev
-      - tk-dev
-      - tk-table
 
 r_binary_packages:
   - rgl
