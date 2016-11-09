@@ -26,7 +26,7 @@ You can install the stable version of the **RSurvey** package from
 [CRAN](https://CRAN.R-project.org/package=RSurvey) using the following command:
 
 ```r
-install.packages("RSurvey", dependencies = TRUE)
+install.packages("RSurvey")
 ```
 
 In addition to the required packages, **RSurvey** is dependent on a number of functions in the suggested packages.

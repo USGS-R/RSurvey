@@ -4,10 +4,7 @@ language: r
 sudo: required
 dist: trusty
 cache: packages
-r:
-  - oldrel
-  - release
-  - devel
+
 
 addons:
   apt:
@@ -20,3 +17,6 @@ addons:
 
 r_binary_packages:
   - rgl
+
+
+after_failure: "cat /home/travis/build/jfisher-usgs/RSurvey/RSurvey.Rcheck/00install.out"
