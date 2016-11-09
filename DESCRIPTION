@@ -8,17 +8,21 @@ Description: A processing program for spatially distributed data.
 Depends:
     R (>= 3.1.0)
 Imports:
+    graphics,
+    grDevices,
+    MBA,
     methods,
-    tcltk,
-    sp,
     rgeos,
-    MBA
+    sp,
+    stats,
+    tcltk,
+    utils
 Suggests:
-    rgdal,
-    tripack,
     colorspace,
     dichromat,
+    rgdal,
     rgl,
+    tripack,
     XML
 SystemRequirements: Tcl/Tk (>= 8.5), Tktable (>= 2.9, optional)
 License: GPL (>= 2)
