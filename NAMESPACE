@@ -1,60 +1,114 @@
-importFrom("grDevices", "chull", "col2rgb", "colorRampPalette", "dev.cur",
-           "dev.list", "dev.new", "dev.off", "extendrange", "graphics.off",
-           "gray.colors", "hsv", "postscript", "rainbow", "rgb2hsv", "savePlot",
-           "terrain.colors")
-importFrom("graphics", ".filled.contour", "arrows", "axTicks", "axis",
-           "axis.POSIXct", "box", "contour", "grid", "hist", "image",
-           "layout", "lcm", "lines", "locator", "mtext", "par", "plot.new",
-           "plot.window", "points", "rect", "rug", "title")
-importFrom("methods", "as")
-importFrom("stats", "density", "na.omit", "reshape")
-importFrom("utils", "available.packages", "browseURL", "capture.output",
-           "contrib.url", "data", "getCRANmirrors", "getIdentification", "head",
-           "help", "install.packages", "read.table", "sessionInfo", "str",
-           "tail", "type.convert", "unzip", "write.table")
 
-import("tcltk", "sp")
+export(AddAxis)
+export(Autocrop)
+export(AutocropRegion)
+export(BuildHistogram)
+export(BuildPackage)
+export(CheckEntry)
+export(ChooseColor)
+export(ChoosePch)
+export(CutoutPolygon)
+export(Data)
+export(EditData)
+export(EditFunction)
+export(EditText)
+export(EvalFunction)
+export(ExportData)
+export(Format)
+export(FormatDateTime)
+export(GetBitmapImage)
+export(GetFile)
+export(ImportPackage)
+export(ImportSpreadsheet)
+export(ImportText)
+export(LoadPackages)
+export(ManageVariables)
+export(ManagePolygons)
+export(OpenRSurvey)
+export(Plot2d)
+export(Plot3d)
+export(POSIXct2Character)
+export(ProcessData)
+export(ProgressBar)
+export(Rename)
+export(RestoreSession)
+export(Search)
+export(SetAxesLimits)
+export(SetConfiguration)
+export(SetInterpolation)
+export(SetPolygonLimits)
+export(SetProgressBar)
+export(SetSortOrder)
 
-importMethodsFrom("rgeos", "union", "setdiff", "intersect")
-importClassesFrom("rgeos", "gpc.poly")
+import(tcltk)
+import(sp)
 
-export(AddAxis,
-       Autocrop,
-       AutocropRegion,
-       BuildHistogram,
-       BuildPackage,
-       CheckEntry,
-       ChooseColor,
-       ChoosePch,
-       CutoutPolygon,
-       Data,
-       EditData,
-       EditFunction,
-       EditText,
-       EvalFunction,
-       ExportData,
-       Format,
-       FormatDateTime,
-       GetBitmapImage,
-       GetFile,
-       ImportPackage,
-       ImportSpreadsheet,
-       ImportText,
-       LoadPackages,
-       ManageVariables,
-       ManagePolygons,
-       OpenRSurvey,
-       Plot2d,
-       Plot3d,
-       POSIXct2Character,
-       ProcessData,
-       ProgressBar,
-       Rename,
-       RestoreSession,
-       Search,
-       SetAxesLimits,
-       SetConfiguration,
-       SetInterpolation,
-       SetPolygonLimits,
-       SetProgressBar,
-       SetSortOrder)
+importFrom(grDevices,chull)
+importFrom(grDevices,col2rgb)
+importFrom(grDevices,colorRampPalette)
+importFrom(grDevices,dev.cur)
+importFrom(grDevices,dev.list)
+importFrom(grDevices,dev.new)
+importFrom(grDevices,dev.off)
+importFrom(grDevices,extendrange)
+importFrom(grDevices,graphics.off)
+importFrom(grDevices,gray.colors)
+importFrom(grDevices,hsv)
+importFrom(grDevices,postscript)
+importFrom(grDevices,rainbow)
+importFrom(grDevices,rgb2hsv)
+importFrom(grDevices,savePlot)
+importFrom(grDevices,terrain.colors)
+
+importFrom(graphics,.filled.contour)
+importFrom(graphics,arrows)
+importFrom(graphics,axTicks)
+importFrom(graphics,axis)
+importFrom(graphics,axis.POSIXct)
+importFrom(graphics,box)
+importFrom(graphics,contour)
+importFrom(graphics,grid)
+importFrom(graphics,hist)
+importFrom(graphics,image)
+importFrom(graphics,layout)
+importFrom(graphics,lcm)
+importFrom(graphics,lines)
+importFrom(graphics,locator)
+importFrom(graphics,mtext)
+importFrom(graphics,par)
+importFrom(graphics,plot.new)
+importFrom(graphics,plot.window)
+importFrom(graphics,points)
+importFrom(graphics,rect)
+importFrom(graphics,rug)
+importFrom(graphics,title)
+
+importFrom(methods,as)
+
+importFrom(stats,density)
+importFrom(stats,na.omit)
+importFrom(stats,reshape)
+
+importFrom(utils,available.packages)
+importFrom(utils,browseURL)
+importFrom(utils,capture.output)
+importFrom(utils,contrib.url)
+importFrom(utils,data)
+importFrom(utils,getCRANmirrors)
+importFrom(utils,getIdentification)
+importFrom(utils,head)
+importFrom(utils,help)
+importFrom(utils,install.packages)
+importFrom(utils,read.table)
+importFrom(utils,sessionInfo)
+importFrom(utils,str)
+importFrom(utils,tail)
+importFrom(utils,type.convert)
+importFrom(utils,unzip)
+importFrom(utils,write.table)
+
+importMethodsFrom(rgeos,union)
+importMethodsFrom(rgeos,setdiff)
+importMethodsFrom(rgeos,intersect)
+
+importClassesFrom(rgeos,gpc.poly)

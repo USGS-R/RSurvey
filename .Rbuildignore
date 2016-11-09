@@ -1,2 +1,6 @@
-.gitattributes
-.gitignore
+^\.gitattributes$
+^\.gitignore$
+^\.RData$
+^\.Rhistory$
+^Makefile$
+^\.travis\.yml$

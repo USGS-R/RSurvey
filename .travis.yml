@@ -1,0 +1,22 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: r
+sudo: required
+dist: trusty
+cache: packages
+r:
+  - oldrel
+  - release
+  - devel
+
+addons:
+  apt:
+    packages:
+      - libgdal-dev
+      - libproj-dev
+      - tcl-dev
+      - tk-dev
+      - tk-table
+
+r_binary_packages:
+  - r-cran-rgl
