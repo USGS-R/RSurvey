@@ -19,4 +19,4 @@ addons:
       - tk-table
 
 r_binary_packages:
-  - r-cran-rgl
+  - rgl
