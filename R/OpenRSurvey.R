@@ -405,8 +405,7 @@ OpenRSurvey <- function() {
   AboutPackage <- function() {
     txt <- readLines(info.path)
     pkg.version <- strsplit(txt[grep("^Version:", txt)], " ")[[1]][2]
-    pkg.date <- strsplit(txt[grep("^Date:", txt)], " ")[[1]][2]
-    msg <- paste0("RSurvey package ", pkg.version, " (", pkg.date, ")")
+    msg <- paste("RSurvey package version", pkg.version)
     tkmessageBox(icon="info", message=msg, title="Information", type="ok",
                  parent=tt)
   }
@@ -1313,40 +1312,7 @@ OpenRSurvey <- function() {
 
   tkgrid.configure(frame2.but.1.2, padx=4)
 
-##tkpack(frame2, fill="x", expand=TRUE, padx=10)
   tkpack(frame2, fill="x", expand=TRUE, padx=10, pady=c(0, 10))
-
-  # TODO(jfisher): Frame 3, view
-
-  frame3 <- tkframe(tt, relief="flat")
-
-  frame3.lab.1.1 <- ttklabel(frame3, text="View")
-  frame3.rad.1.2 <- ttkradiobutton(frame3, variable=layout.var, value=TRUE,
-                                   text="layout")
-  frame3.rad.1.3 <- ttkradiobutton(frame3, variable=layout.var, value=FALSE,
-                                   text="data")
-  frame3.chk.1.4 <- ttkcheckbutton(frame3, text="2D", variable=space2d.var)
-  frame3.chk.1.5 <- ttkcheckbutton(frame3, text="3D", variable=space3d.var)
-
-  frame3.box.2.1 <- ttkcombobox(frame3, state="readonly",
-                                textvariable=plt.typ.var,
-                                values=c("Points", "Surface"))
-  frame3.but.2.4 <- ttkbutton(frame3, width=10, text="Plot",
-                              command=function() print("notyet"))
-
-  tkgrid(frame3.lab.1.1, frame3.rad.1.2, frame3.rad.1.3, frame3.chk.1.4,
-         frame3.chk.1.5, pady=5, sticky="w")
-  tkgrid(frame3.box.2.1, "x", "x", frame3.but.2.4, "x", pady=c(0, 10))
-
-  tkgrid.configure(frame3.lab.1.1, padx=c(0, 2))
-  tkgrid.configure(frame3.rad.1.2, padx=c(0, 2))
-  tkgrid.configure(frame3.rad.1.3, padx=c(0, 10))
-  tkgrid.configure(frame3.chk.1.4, padx=c(0, 2))
-
-  tkgrid.configure(frame3.box.2.1, padx=c(0, 15), columnspan=3)
-  tkgrid.configure(frame3.but.2.4, columnspan=2, sticky="w")
-
-##tkpack(frame3, anchor="w", padx=10)
 
   # Set variables
   SetVars()

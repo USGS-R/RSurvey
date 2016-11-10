@@ -1,5 +1,9 @@
 # RSurvey 0.8.3.9000
 
+- Add CITATION file to be used by the `citation` function.
+
+- Remove `BuildPackage` function
+
 - Add Makefile for automating package-development tasks.
 
 - Change NEWS file to markdown format.
