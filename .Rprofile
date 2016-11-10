@@ -7,6 +7,7 @@ options(defaultPackages=pkgs)
 
 
 .First <- function() {
-  RSurvey::RestoreSession(file.path(getwd(), "R"))
+  source(file.path(getwd(), "R", "RestoreSession.R"), .GlobalEnv)
+  RestoreSession(file.path(getwd(), "R"))
   tcltk::tcl("package", "require", "Tktable")
 }
