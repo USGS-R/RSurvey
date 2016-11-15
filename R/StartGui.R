@@ -1,4 +1,4 @@
-# launch package gui session
+# launch a gui session
 
 StartGui <- function() {
 

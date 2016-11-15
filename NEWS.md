@@ -1,7 +1,8 @@
 # RSurvey 0.8.3.9000
 
+- Stop GUI from automatically launching during the **RSurvey** package load.
+
 - Change function name from `OpenRSurvey` to `StartGui`.
-  And stop GUI from automatically launching during the **RSurvey** package load.
 
 - Remove vector components from state variables.
 
