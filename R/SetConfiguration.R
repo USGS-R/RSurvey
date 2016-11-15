@@ -20,21 +20,11 @@ SetConfiguration <- function(parent=NULL) {
     val <- as.numeric(tclvalue(asp.zx.var))
     Data("asp.zx", if (is.na(val)) NULL else val)
 
-    val <- as.numeric(tclvalue(vmax.var))
-    Data("vmax", if (is.na(val)) NULL else val)
-
-    val <- as.numeric(tclvalue(vxby.var))
-    Data("vxby", if (is.na(val)) NULL else val)
-
-    val <- as.numeric(tclvalue(vyby.var))
-    Data("vyby", if (is.na(val)) NULL else val)
-
     Data("rkey", as.integer(tclvalue(rkey.var)))
     Data("img.contour", as.integer(tclvalue(img.contour.var)))
     Data("show.lines", as.integer(tclvalue(show.lines.var)))
     Data("show.points", as.integer(tclvalue(show.points.var)))
     Data("show.poly", as.integer(tclvalue(show.poly.var)))
-    Data("vuni", as.integer(tclvalue(vuni.var)))
     Data("show.2.axes", as.integer(tclvalue(show.2.axes.var)))
     Data("minor.ticks", as.integer(tclvalue(minor.ticks.var)))
     Data("ticks.inside", as.integer(tclvalue(ticks.inside.var)))
@@ -52,15 +42,11 @@ SetConfiguration <- function(parent=NULL) {
   cex.pts.var      <- tclVar()
   asp.yx.var       <- tclVar()
   asp.zx.var       <- tclVar()
-  vmax.var         <- tclVar()
-  vxby.var         <- tclVar()
-  vyby.var         <- tclVar()
   rkey.var         <- tclVar()
   show.poly.var    <- tclVar()
   img.contour.var  <- tclVar()
   show.lines.var   <- tclVar()
   show.points.var  <- tclVar()
-  vuni.var         <- tclVar()
   show.2.axes.var  <- tclVar()
   minor.ticks.var  <- tclVar()
   ticks.inside.var <- tclVar()
@@ -76,12 +62,6 @@ SetConfiguration <- function(parent=NULL) {
     tclvalue(asp.yx.var) <- Data("asp.yx")
   if (!is.null(Data("asp.zx")))
     tclvalue(asp.zx.var) <- Data("asp.zx")
-  if (!is.null(Data("vmax")))
-    tclvalue(vmax.var) <- Data("vmax")
-  if (!is.null(Data("vxby")))
-    tclvalue(vxby.var) <- Data("vxby")
-  if (!is.null(Data("vyby")))
-    tclvalue(vyby.var) <- Data("vyby")
   if (!is.null(Data("rkey")))
     tclvalue(rkey.var) <- Data("rkey")
   if (!is.null(Data("show.poly")))
@@ -92,8 +72,6 @@ SetConfiguration <- function(parent=NULL) {
     tclvalue(show.lines.var) <- Data("show.lines")
   if (!is.null(Data("show.points")))
     tclvalue(show.points.var) <- Data("show.points")
-  if (!is.null(Data("vuni")))
-    tclvalue(vuni.var) <- Data("vuni")
   if (!is.null(Data("show.2.axes")))
     tclvalue(show.2.axes.var) <- Data("show.2.axes")
   if (!is.null(Data("minor.ticks")))
@@ -153,39 +131,23 @@ SetConfiguration <- function(parent=NULL) {
   frame1.lab.4.1 <- ttklabel(frame1, text=txt)
   txt <- "Vertical aspect ratio"
   frame1.lab.5.1 <- ttklabel(frame1, text=txt)
-  txt <- "Maximum arrow length, in inches"
-  frame1.lab.6.1 <- ttklabel(frame1, text=txt)
-  txt <- "Increment for sequence of arrows in x direction"
-  frame1.lab.7.1 <- ttklabel(frame1, text=txt)
-  txt <- "Increment for sequence of arrows in y direction"
-  frame1.lab.8.1 <- ttklabel(frame1, text=txt)
 
   frame1.ent.1.2 <- ttkentry(frame1, width=8, textvariable=width.var)
   frame1.ent.2.2 <- ttkentry(frame1, width=8, textvariable=nlevels.var)
   frame1.ent.3.2 <- ttkentry(frame1, width=8, textvariable=cex.pts.var)
   frame1.ent.4.2 <- ttkentry(frame1, width=8, textvariable=asp.yx.var)
   frame1.ent.5.2 <- ttkentry(frame1, width=8, textvariable=asp.zx.var)
-  frame1.ent.6.2 <- ttkentry(frame1, width=8, textvariable=vmax.var)
-  frame1.ent.7.2 <- ttkentry(frame1, width=8, textvariable=vxby.var)
-  frame1.ent.8.2 <- ttkentry(frame1, width=8, textvariable=vyby.var)
 
   tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(15, 4))
   tkgrid(frame1.lab.2.1, frame1.ent.2.2, pady=c(0, 4))
   tkgrid(frame1.lab.3.1, frame1.ent.3.2, pady=c(0, 4))
   tkgrid(frame1.lab.4.1, frame1.ent.4.2, pady=c(0, 4))
-  tkgrid(frame1.lab.5.1, frame1.ent.5.2, pady=c(0, 4))
-  tkgrid(frame1.lab.6.1, frame1.ent.6.2, pady=c(0, 4))
-  tkgrid(frame1.lab.7.1, frame1.ent.7.2, pady=c(0, 4))
-  tkgrid(frame1.lab.8.1, frame1.ent.8.2)
+  tkgrid(frame1.lab.5.1, frame1.ent.5.2)
 
   tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, frame1.lab.3.1,
-                   frame1.lab.4.1, frame1.lab.5.1, frame1.lab.6.1,
-                   frame1.lab.7.1, frame1.lab.8.1,
-                   sticky="w")
+                   frame1.lab.4.1, frame1.lab.5.1, sticky="w")
   tkgrid.configure(frame1.ent.1.2, frame1.ent.2.2, frame1.ent.3.2,
-                   frame1.ent.4.2, frame1.ent.5.2, frame1.ent.6.2,
-                   frame1.ent.7.2, frame1.ent.8.2, padx=c(2, 15),
-                   sticky="we")
+                   frame1.ent.4.2, frame1.ent.5.2, padx=c(2, 15), sticky="we")
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=6)
 
@@ -203,17 +165,14 @@ SetConfiguration <- function(parent=NULL) {
   frame2.chk.04.1 <- ttkcheckbutton(frame2, text=txt, variable=show.lines.var)
   txt <- "Show points on maps"
   frame2.chk.05.1 <- ttkcheckbutton(frame2, text=txt, variable=show.points.var)
-  txt <- "Use uniform arrow lengths"
-  frame2.chk.06.1 <- ttkcheckbutton(frame2, text=txt, variable=vuni.var)
-
   txt <- "Show tickmarks on second axis"
-  frame2.chk.07.1 <- ttkcheckbutton(frame2, text=txt, variable=show.2.axes.var)
+  frame2.chk.06.1 <- ttkcheckbutton(frame2, text=txt, variable=show.2.axes.var)
   txt <- "Add minor tickmarks"
-  frame2.chk.08.1 <- ttkcheckbutton(frame2, text=txt, variable=minor.ticks.var)
+  frame2.chk.07.1 <- ttkcheckbutton(frame2, text=txt, variable=minor.ticks.var)
   txt <- "Place tickmarks inside plot region"
-  frame2.chk.09.1 <- ttkcheckbutton(frame2, text=txt, variable=ticks.inside.var)
+  frame2.chk.08.1 <- ttkcheckbutton(frame2, text=txt, variable=ticks.inside.var)
   txt <- "Remove point symbol boundary line"
-  frame2.chk.10.1 <- ttkcheckbutton(frame2, text=txt, variable=rm.pnt.line.var)
+  frame2.chk.09.1 <- ttkcheckbutton(frame2, text=txt, variable=rm.pnt.line.var)
 
   tkgrid(frame2.chk.01.1, sticky="w", pady=c(0, 2))
   tkgrid(frame2.chk.02.1, sticky="w", pady=c(0, 2))
@@ -223,8 +182,7 @@ SetConfiguration <- function(parent=NULL) {
   tkgrid(frame2.chk.06.1, sticky="w", pady=c(0, 2))
   tkgrid(frame2.chk.07.1, sticky="w", pady=c(0, 2))
   tkgrid(frame2.chk.08.1, sticky="w", pady=c(0, 2))
-  tkgrid(frame2.chk.09.1, sticky="w", pady=c(0, 2))
-  tkgrid(frame2.chk.10.1, sticky="w")
+  tkgrid(frame2.chk.09.1, sticky="w")
 
   # Final layout
   tkgrid(frame1, frame2, sticky="nswe")
@@ -256,18 +214,6 @@ SetConfiguration <- function(parent=NULL) {
   tkbind(frame1.ent.5.2, "<KeyRelease>",
          function() {
            tclvalue(asp.zx.var) <- CheckEntry("numeric", tclvalue(asp.zx.var))
-         })
-  tkbind(frame1.ent.6.2, "<KeyRelease>",
-         function() {
-           tclvalue(vmax.var) <- CheckEntry("numeric", tclvalue(vmax.var))
-         })
-  tkbind(frame1.ent.7.2, "<KeyRelease>",
-         function() {
-           tclvalue(vxby.var) <- CheckEntry("integer", tclvalue(vxby.var))
-         })
-  tkbind(frame1.ent.8.2, "<KeyRelease>",
-         function() {
-           tclvalue(vyby.var) <- CheckEntry("integer", tclvalue(vyby.var))
          })
 
   # GUI control

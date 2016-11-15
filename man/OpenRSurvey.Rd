@@ -17,7 +17,7 @@ All functions within \pkg{RSurvey} are accessible through this \acronym{GUI}.
 \value{
 Quaries and sets the \code{vars} component of \code{\link{Data}}. The
 \code{vars} object is a list with components:
-\item{x, y, z, vx, vy}{integer; the index number of the corresponding
+\item{x, y, z}{integer; the index number of the corresponding
   state variable in \code{cols}, see \code{\link{ManageVariables}}.}
 }
 

@@ -24,9 +24,6 @@ Queries and sets the following components of \code{\link{Data}}:
   reduces the point symbol to half of its default size.}
 \item{asp.yx, asp.zx}{numeric; the \code{y/x} and \code{z/x} aspect ratios,
   respectively (optional).}
-\item{vmax}{numeric; the maximum length of arrows in inches (optional).}
-\item{vxby, vyby}{integer; increment for the sequence of arrows in the
-  \code{x} and \code{y} directions, respectively.}
 \item{rkey}{logical; if \code{TRUE} the legend key is reversed with \code{z}
   values descending from top to bottom; its default is \code{FALSE}.}
 \item{img.contour}{logical; if \code{TRUE} the \code{\link{image}} function is
@@ -40,8 +37,6 @@ Queries and sets the following components of \code{\link{Data}}:
 \item{show.poly}{logical; if \code{TRUE} polygons describing the spatial
   domain are added to the scatter plot and two-dimensional surface plot; its
   default is \code{FALSE}.}
-\item{vuni}{logical; if \code{TRUE} a constant arrow length specified by
-  \code{vmax} is used; its default is \code{FALSE}.}
 \item{show.2.axes}{logical; if \code{TRUE} axes tickmarks will be drawn
   on all sides; its default is \code{FALSE}.}
 \item{minor.ticks}{logical; if \code{TRUE} minor tickmarks are added to the

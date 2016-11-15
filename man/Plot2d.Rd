@@ -10,13 +10,12 @@ the colors map to state variable values is shown to the right of the plot.
 }
 
 \usage{
-Plot2d(x = NULL, y = NULL, z = NULL, vx = NULL, vy = NULL,
+Plot2d(x = NULL, y = NULL, z = NULL,
        type = "p", xlim = NULL, ylim = NULL, zlim = NULL,
        xlab = NULL, ylab = NULL, zlab = NULL, asp = NA,
        csi = NA, width = 7, pointsize = 12, cex.pts = 1,
        nlevels = 20, rkey = FALSE,
        color.palette = terrain.colors,
-       vuni = FALSE, vmax = NULL, vxby = NULL, vyby = NULL,
        axis.side = 1:2, minor.ticks = FALSE,
        ticks.inside = FALSE, add.contour.lines = FALSE,
        rm.pnt.line = FALSE)
@@ -24,14 +23,11 @@ Plot2d(x = NULL, y = NULL, z = NULL, vx = NULL, vy = NULL,
 
 \arguments{
 \item{x}{numeric; a vector of \code{x} coordinates for the plot. If \code{x} is
-  a data frame, its components \code{x$x}, \code{x$y}, \code{x$z}, \code{x$vx},
-  and \code{x$vy} are used for \code{x}, \code{y}, \code{z}, \code{vx}, and
-  \code{vy}, respectively.}
+  a data frame, its components \code{x$x}, \code{x$y}, and \code{x$z}
+  are used for \code{x}, \code{y}, and \code{z}, respectively.}
 \item{y}{numeric; a vector of \code{y} coordinates for the plot.}
 \item{z}{numeric or matrix; the state variable values to be plotted,
   NAs allowed. A matrix is required for contour plots.}
-\item{vx, vy}{numeric; a vector of arrow component lengths in the
-  \code{x} and \code{y} directions.}
 \item{type}{character; a 1-character string giving the type of plot desired.
   The following values are possible: "p" for points, "l" for level contour,
   "g" for grid contour.}
@@ -51,11 +47,6 @@ Plot2d(x = NULL, y = NULL, z = NULL, vx = NULL, vy = NULL,
   values descending from top to bottom; its default is \code{FALSE}.}
 \item{color.palette}{function; a color \link{palette} to be used to assign
   colors in the plot.}
-\item{vuni}{logical; if \code{TRUE} all arrow lengths are set equal; its
-  default is \code{FALSE}.}
-\item{vmax}{numeric; the maximum length of arrows in inches.}
-\item{vxby, vyby}{integer; increment for the sequence of arrows in the \code{x}
-  and \code{y} direction.}
 \item{axis.side}{integer; the side of the plot the axis is to be drawn on.
   The axis is placed as follows: 1 = below, 2 = left, 3 = above and 4 = right.}
 \item{minor.ticks}{logical; if \code{TRUE} minor tickmarks are added to the

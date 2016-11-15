@@ -68,9 +68,6 @@ AutocropRegion <- function(d, parent=NULL, ...) {
 
   # Initialize parameters
 
-  d$vx <- NULL
-  d$vy <- NULL
-
   ply <- NULL
   rtn <- NULL
   dev <- NULL

@@ -233,7 +233,8 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   tkgrid.configure(frame1.lab.1.1, sticky="e", padx=c(10, 2))
   tkgrid.configure(frame1.box.1.2, sticky="we", padx=c(0, 10))
 
-  tkconfigure(frame1.box.1.2, value=var.names)
+  val <- if (length(var.names) == 1) paste0("{", var.names, "}") else var.names
+  tkconfigure(frame1.box.1.2, value=val)
   tcl(frame1.box.1.2, "current", var.default - 1L)
 
   tkgrid.columnconfigure(frame1, 1, weight=1, minsize=25)

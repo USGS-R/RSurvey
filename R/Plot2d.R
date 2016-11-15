@@ -1,12 +1,11 @@
 # Draws a scatter plot with arrows or contour plot with arrows. A key showing
 # how the colors map to state variable values is shown to the right of the plot.
 
-Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
+Plot2d <- function(x=NULL, y=NULL, z=NULL, type="p",
                    xlim=NULL, ylim=NULL, zlim=NULL, xlab=NULL,
                    ylab=NULL, zlab=NULL, asp=NA, csi=NA, width=7,
                    pointsize=12, cex.pts=1, nlevels=20, rkey=FALSE,
-                   color.palette=terrain.colors, vuni=FALSE, vmax=NULL,
-                   vxby=NULL, vyby=NULL, axis.side=1:2,
+                   color.palette=terrain.colors, axis.side=1:2,
                    minor.ticks=FALSE, ticks.inside=FALSE,
                    add.contour.lines=FALSE, rm.pnt.line=FALSE) {
 
@@ -14,8 +13,6 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
 
   if (is.null(z)) {
     if (is.list(x)) {
-      vx <- x$vx
-      vy <- x$vy
       z  <- x$z
       y  <- x$y
       x  <- x$x
@@ -62,12 +59,6 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
       }
 
       z <- CalcAveElem(z)
-      if (!is.null(vx) | !is.null(vy)) {
-        if (!is.null(vx))
-          vx <- CalcAveElem(vx)
-        if (!is.null(vy))
-          vy <- CalcAveElem(vy)
-      }
     }
   }
 
@@ -293,69 +284,6 @@ Plot2d <- function(x=NULL, y=NULL, z=NULL, vx=NULL, vy=NULL, type="p",
       lwd <- 0.5 * (96 / (6 * 12))
       contour(x=x, y=y, z=z, col="#999999", lty="solid",
               add=TRUE, nlevels=nlevels, lwd=lwd)
-  }
-
-  # Plot vector arrows
-
-  if (!is.null(vx) | !is.null(vy)) {
-    if (is.matrix(vx) | is.matrix(vy)) {
-      m <- length(y)
-      n <- length(x)
-      x.coord <- rep(x, m)
-      y.coord <- as.vector(matrix(rep(y, n), nrow=n, ncol=m, byrow=TRUE))
-      v <- data.frame(cbind(x=x.coord, y=y.coord))
-    } else {
-      v <- data.frame(cbind(x=x, y=y))
-    }
-
-    v$vx <- as.vector(vx)
-    if (is.null(v$vx))
-      v$vx <- NA
-    v$vy <- as.vector(vy)
-    if (is.null(v$vy))
-      v$vy <- NA
-
-    v <- v[!(is.na(v$vx) & is.na(v$vy)), ]
-
-    if (is.na(asp))
-      asp <- diff(ylim) / diff(xlim)
-    ran <- range(abs(c(v$vx / asp, v$vy)), na.rm=TRUE)
-
-    if (is.null(vmax) || !is.numeric(vmax)) {
-      len <- sqrt((diff(xlim) / asp)^2 + diff(ylim)^2) * 0.03
-    } else {
-      xpin <- abs(diff(par("usr")[1:2])) / par("pin")[1]
-      len <- vmax * xpin
-    }
-
-    if (vuni) {
-      v$vx <- sign(v$vx) * len
-      v$vy <- sign(v$vy) * len
-    } else {
-      v$vx <- sign(v$vx) * len * ((abs(v$vx) - ran[1]) / (ran[2] - ran[1]))
-      v$vy <- sign(v$vy) * len * ((abs(v$vy) - ran[1]) / (ran[2] - ran[1]))
-    }
-
-    if (type %in% c("l", "g")) {
-      vxUnique <- sort(unique(v$x))
-      vyUnique <- sort(unique(v$y))
-      if (is.null(vxby))
-        vxseq <- as.integer(seq(1, length(vxUnique), length.out=20))
-      else
-        vxseq <- seq(1, length(vxUnique), by=vxby)
-      if (is.null(vyby))
-        vyseq <- as.integer(seq(1, length(vyUnique), length.out=20))
-      else
-        vyseq <- seq(1, length(vyUnique), by=vyby)
-      v <- v[v$x %in% vxUnique[vxseq] & v$y %in% vyUnique[vyseq], ]
-    }
-
-    v$vx[is.na(v$vx)] <- 0
-    v$vy[is.na(v$vy)] <- 0
-    v <- v[!(v$vx == 0 & v$vy == 0), ]
-
-    suppressWarnings(arrows(v$x, v$y, v$x + v$vx, v$y + v$vy,
-                            length=0.05, angle=30, lwd=lwd))
   }
 
   # Plot points

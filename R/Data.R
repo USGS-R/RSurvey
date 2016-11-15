@@ -16,7 +16,6 @@ Data <- local({
                   "img.contour"   = 0,
                   "show.lines"    = 0,
                   "show.points"   = 0,
-                  "vuni"          = 0,
                   "show.2.axes"   = 0,
                   "minor.ticks"   = 0,
                   "ticks.inside"  = 0,
@@ -41,12 +40,11 @@ Data <- local({
     if (clear.proj | clear.data) {
       save.params <- c("default.dir", "win.loc", "csi", "width", "cex.pts")
       if (clear.data)
-        save.params <- c(save.params, "nlevels", "asp.yx", "asp.zx",
-                         "vmax", "vxby", "vyby", "rkey", "show.poly",
-                         "img.contour", "show.lines", "show.points",
-                         "vuni", "date.fmt", "polys", "proj.file",
-                         "show.2.axes", "minor.ticks", "ticks.inside",
-                         "color.palette", "rm.pnt.line")
+        save.params <- c(save.params, "nlevels", "asp.yx", "asp.zx", "rkey",
+                         "show.poly", "img.contour", "show.lines", "show.points",
+                         "date.fmt", "polys", "proj.file", "show.2.axes",
+                         "minor.ticks", "ticks.inside", "color.palette",
+                         "rm.pnt.line")
       save.params <- save.params[save.params %in% names(dat)]
       dat <<- sapply(save.params, function(i) list(dat[[i]]))
       return(invisible())

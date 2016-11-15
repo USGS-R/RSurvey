@@ -1,10 +1,9 @@
-# Opens the main GUI for RSurvey.
+# opens the main gui
 
 OpenRSurvey <- function() {
 
-  ## Additional functions
 
-  # Close GUI
+  # close gui
   CloseGUI <- function() {
     if (as.integer(tclvalue(tt.done.var)) > 0)
       return()
@@ -12,109 +11,103 @@ OpenRSurvey <- function() {
     on.exit(tclServiceMode(TRUE))
     geo <- unlist(strsplit(as.character(tkwm.geometry(tt)), "\\+"))
     tkdestroy(tt)
-    Data("win.loc", paste0("+", as.integer(geo[2]),
-                           "+", as.integer(geo[3])))
+    Data("win.loc", paste0("+", as.integer(geo[2]), "+", as.integer(geo[3])))
     tclvalue(tt.done.var) <- 1
     CloseDevices()
   }
 
-  # Open binary project file
+
+  # open binary project file
   OpenProj <- function() {
-    f <- GetFile(cmd="Open", exts="RData", win.title="Open Project File",
-                 parent=tt)
-    if (is.null(f) || file.access(f, mode=0) == -1L)
-      return()
-    if (ClearObjs() == "cancel")
-      return()
-    ans <- try(load(file=f, envir=environment(OpenProj)), silent=TRUE)
+    file <- GetFile(cmd="Open", exts="RData", win.title="Open Project File", parent=tt)
+    if (is.null(file) || file.access(file, mode=0) == -1L) return()
+    if (ClearObjs() == "cancel") return()
+    ans <- try(load(file=file, envir=environment(OpenProj)), silent=TRUE)
     if (inherits(ans, "try-error")) {
-      msg <- "Not a valid project file."
-      tkmessageBox(icon="error", message=msg, detail=ans, title="Error",
-                   type="ok", parent=tt)
+      tkmessageBox(icon="error", detail=ans, title="Error", type="ok", parent=tt,
+                   message="Not a valid project file.")
       return()
     }
     Data(replace.all=get(ans, envir=environment(OpenProj)))
-    Data("proj.file", f)
+    Data("proj.file", file)
     SetCsi()
     SetVars()
   }
 
-  # Save binary project file
+
+  # save binary project file
   SaveProj <- function() {
-    if (!is.null(Data("proj.file"))) {
-      if (file.access(Data("proj.file"), mode=0) != 0)
-        Data("proj.file", NULL)
+    if (!is.null(Data("proj.file")) &&
+        file.access(Data("proj.file"), mode=0) != 0) {
+      Data("proj.file", NULL)
     }
     if (is.null(Data("proj.file"))) {
-      f <- GetFile(cmd="Save As", exts="RData", win.title="Save Project As",
-                   defaultextension="RData", parent=tt)
-      if (!is.null(f)) {
-        Data("proj.file", f)
-        Data("default.dir", attr(f, "directory"))
+      file <- GetFile(cmd="Save As", exts="RData", win.title="Save Project As",
+                      defaultextension="RData", parent=tt)
+      if (!is.null(file)) {
+        Data("proj.file", file)
+        Data("default.dir", attr(file, "directory"))
       }
     }
     if (!is.null(Data("proj.file"))) {
       csi <- Data("csi")
       Data("csi", NULL)
-      f <- Data("proj.file")
-      obj.name <- sub("[.][^.]*$", "", basename(f))
+      file <- Data("proj.file")
+      obj.name <- sub("[.][^.]*$", "", basename(file))
       assign(obj.name, Data(), envir=environment(SaveProj))
-      save(list=obj.name, file=f, compress=TRUE)
+      save(list=obj.name, file=file, compress=TRUE)
       Data("csi", csi)
     }
   }
 
-  # Save a new binary project file
+
+  # save a new binary project file
   SaveProjAs <- function() {
     Data("proj.file", NULL)
     SaveProj()
   }
 
-  # Clear objects
+
+  # clear objects
   ClearObjs <- function() {
-    msg <- "Save the existing project?"
     if (is.null(Data("proj.file")))
       ans <- "no"
     else
-      ans <- as.character(tkmessageBox(icon="question", message=msg,
-                                       title="Warning", type="yesnocancel",
-                                       parent=tt))
+      ans <- as.character(tkmessageBox(icon="question", title="Warning",
+                                       type="yesnocancel", parent=tt,
+                                       message="Save the existing project?"))
     if (ans == "cancel") {
       return(ans)
     } else if (ans == "yes") {
       SaveProj()
     }
     Data(clear.proj=TRUE)
-    gc()
     SetVars()
     return(ans)
   }
 
-  # Write data
+
+  # write data
   WriteData <- function(file.type) {
-    if (is.null(Data("cols")))
-      return()
+    if (is.null(Data("cols"))) return()
     is.coordinate <- !is.null(Data("vars")$x) & !is.null(Data("vars")$y)
-    if (!is.coordinate & file.type %in% c("shp", "grd"))
-      return()
+    if (!is.coordinate & file.type %in% c("shp", "grd")) return()
     if (file.type == "grd") {
       CallProcessData(interpolate=TRUE)
       d <- Data("data.grd")
-      if (is.null(d))
-        return()
-      f <- GetFile(cmd="Save As", exts="rda", file=NULL,
-                   win.title="Save Grid Data As", defaultextension="rda")
-      if (is.null(f))
-        return()
-      save(d, file=f)
+      if (is.null(d)) return()
+      file <- GetFile(cmd="Save As", exts="rda", file=NULL,
+                      win.title="Save Grid Data As", defaultextension="rda")
+      if (is.null(file)) return()
+      save(d, file=file)
     } else {
       CallProcessData()
       ExportData(file.type=file.type, parent=tt)
     }
   }
 
-  # Read data
 
+  # read data
   ReadData <- function(file.type) {
     if (file.type == "txt") {
       ImportText(tt)
@@ -124,22 +117,16 @@ OpenRSurvey <- function() {
         ans <- ImportSpreadsheet(parent=tt)
         d <- ans$d
         src <- ans$src
-
       } else if (file.type == "rda") {
-        f <- GetFile(cmd="Open", exts="rda", win.title="Open R Data File",
-                       parent=tt)
-        if (is.null(f))
-          return()
-        d <- local({d.name <- load(file=f)
-                    return(eval(parse(text=d.name[1])))})
+        file <- GetFile(cmd="Open", exts="rda", win.title="Open R Data File", parent=tt)
+        if (is.null(file)) return()
+        d <- local({d.name <- load(file=file); return(eval(parse(text=d.name[1])))})
         if (!inherits(d, c("data.frame", "matrix"))) {
-          msg <- "R data set is not a valid object class."
-          tkmessageBox(icon="error", message=msg, title="Error", type="ok",
-                       parent=tt)
+          tkmessageBox(icon="error", title="Error", type="ok", parent=tt,
+                       message="R data set is not a valid object class.")
           return()
         }
-        src <- c(pathname=f[1], accessed=format(Sys.time()))
-
+        src <- c(pathname=file[1], accessed=format(Sys.time()))
       } else if (file.type == "rpackage") {
         valid.classes <- c("data.frame", "matrix")
         d <- ImportPackage(valid.classes, parent=tt)
@@ -147,23 +134,19 @@ OpenRSurvey <- function() {
         d <- d$d
       }
 
-      if (is.null(d) || nrow(d) == 0 || ncol(d) == 0)
-        return()
+      if (is.null(d) || nrow(d) == 0 || ncol(d) == 0) return()
       if (!is.null(Data("cols"))) {
-        msg <- "This action will delete existing data."
-        ans <- as.character(tkmessageBox(icon="warning", message=msg,
-                                         title="Warning", type="okcancel",
-                                         parent=tt))
-        if (ans == "cancel")
-          return()
+        ans <- as.character(tkmessageBox(icon="warning", title="Warning",
+                                         type="okcancel", parent=tt,
+                                         message="This action will delete existing data."))
+        if (ans == "cancel") return()
       }
 
       m <- nrow(d)
       n <- ncol(d)
 
       rows <- rownames(d)
-      if (is.null(row.names))
-        rows <- seq_len(m)
+      if (is.null(row.names)) rows <- seq_len(m)
       rows.int <- as.integer(rows)
       is.int <- is.integer(rows.int) && !anyDuplicated(rows.int)
       row.names <- if (is.int) rows.int else rows
@@ -211,15 +194,16 @@ OpenRSurvey <- function() {
     SetVars()
   }
 
-  # Get numeric columns
+
+  # get numeric columns
   GetNumericCols <- function(cols) {
-    is.num <- vapply(cols,
-                     function(i) any(c("numeric", "integer") %in% i$class),
-                     TRUE)
+    FUN <- function(i) any(c("numeric", "integer") %in% i$class)
+    is.num <- vapply(cols, FUN, TRUE)
     return(which(is.num))
   }
 
-  # Establish defaults for x-, y-, and z-coordinate variables
+
+  # establish defaults for x-, y-, and z-coordinate variables
   EstablishDefaultVars <- function() {
     vars <- list()
     idxs.n <- GetNumericCols(Data("cols"))
@@ -236,103 +220,73 @@ OpenRSurvey <- function() {
   }
 
 
-  # Toggle widget state
-
+  # toggle widget state
   ToggleState <- function(vars) {
 
-    # Menus
-
+    # menus
     src <- Data(c("import", "source"))
     is.src.pkg <- !is.null(src) && "package" %in% names(src)
-    tkentryconfigure(menu.help, 1,
-                     state=ifelse(is.src.pkg, "normal", "disabled"))
+    tkentryconfigure(menu.help, 1, state=ifelse(is.src.pkg, "normal", "disabled"))
 
-    # Buttons
-
+    # buttons
     is.xy <- !is.null(vars$x) && !is.null(vars$y)
-    tkconfigure(frame2.but.1.1, state=ifelse(is.xy, "normal", "disabled"))
+    tkconfigure(f2.but.1.1, state=ifelse(is.xy, "normal", "disabled"))
     is.2d <- is.xy && !is.null(vars$z)
-    tkconfigure(frame2.but.1.2, state=ifelse(is.2d, "normal", "disabled"))
+    tkconfigure(f2.but.1.2, state=ifelse(is.2d, "normal", "disabled"))
     is.3d <- is.2d && is.rgl
-    tkconfigure(frame2.but.1.3, state=ifelse(is.3d, "normal", "disabled"))
+    tkconfigure(f2.but.1.3, state=ifelse(is.3d, "normal", "disabled"))
   }
 
 
-
-
-
-  # Set variables
-
+  # set variables
   SetVars <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
 
-    tkset(frame1.box.1.2, "")
-    tkset(frame1.box.2.2, "")
-    tkset(frame1.box.3.2, "")
-    tkset(frame1.box.4.2, "")
-    tkset(frame1.box.5.2, "")
+    tkset(f1.box.1.2, "")
+    tkset(f1.box.2.2, "")
+    tkset(f1.box.3.2, "")
 
     cols <- Data("cols")
     vars <- Data("vars")
 
     if (is.null(cols) | is.null(vars)) {
-      tkconfigure(frame1.box.1.2, value="")
-      tkconfigure(frame1.box.2.2, value="")
-      tkconfigure(frame1.box.3.2, value="")
-      tkconfigure(frame1.box.4.2, value="")
-      tkconfigure(frame1.box.5.2, value="")
+      tkconfigure(f1.box.1.2, value="")
+      tkconfigure(f1.box.2.2, value="")
+      tkconfigure(f1.box.3.2, value="")
       ToggleState(vars)
-      if (is.null(cols))
-        return()
+      if (is.null(cols)) return()
     }
 
     ids <- vapply(cols, function(i) i$id, "")
     idxs.n <- GetNumericCols(cols)
     vals.n <- c("", ids[idxs.n])
-    tkconfigure(frame1.box.1.2, value=vals.n)
-    tkconfigure(frame1.box.2.2, value=vals.n)
-    tkconfigure(frame1.box.3.2, value=vals.n)
-    tkconfigure(frame1.box.4.2, value=vals.n)
-    tkconfigure(frame1.box.5.2, value=vals.n)
+    tkconfigure(f1.box.1.2, value=vals.n)
+    tkconfigure(f1.box.2.2, value=vals.n)
+    tkconfigure(f1.box.3.2, value=vals.n)
 
-    if (!is.null(vars$x))
-      tcl(frame1.box.1.2, "current", which(vars$x  == idxs.n))
-    if (!is.null(vars$y))
-      tcl(frame1.box.2.2, "current", which(vars$y  == idxs.n))
-    if (!is.null(vars$z))
-      tcl(frame1.box.3.2, "current", which(vars$z  == idxs.n))
-    if (!is.null(vars$vx))
-      tcl(frame1.box.4.2, "current", which(vars$vx == idxs.n))
-    if (!is.null(vars$vy))
-      tcl(frame1.box.5.2, "current", which(vars$vy == idxs.n))
+    if (!is.null(vars$x)) tcl(f1.box.1.2, "current", which(vars$x  == idxs.n))
+    if (!is.null(vars$y)) tcl(f1.box.2.2, "current", which(vars$y  == idxs.n))
+    if (!is.null(vars$z)) tcl(f1.box.3.2, "current", which(vars$z  == idxs.n))
 
     ToggleState(vars)
   }
 
-  # Refresh variables
+
+  # refresh variables
   RefreshVars <- function(item) {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
 
     idxs.n <- GetNumericCols(Data("cols"))
 
-    idx.x  <- as.integer(tcl(frame1.box.1.2, "current"))
-    idx.y  <- as.integer(tcl(frame1.box.2.2, "current"))
-    idx.z  <- as.integer(tcl(frame1.box.3.2, "current"))
-    idx.vx <- as.integer(tcl(frame1.box.4.2, "current"))
-    idx.vy <- as.integer(tcl(frame1.box.5.2, "current"))
+    idx.x  <- as.integer(tcl(f1.box.1.2, "current"))
+    idx.y  <- as.integer(tcl(f1.box.2.2, "current"))
+    idx.z  <- as.integer(tcl(f1.box.3.2, "current"))
     vars <- list()
-    if (idx.x > 0)
-      vars$x[1] <- idxs.n[idx.x]
-    if (idx.y > 0)
-      vars$y[1] <- idxs.n[idx.y]
-    if (idx.z > 0)
-      vars$z[1] <- idxs.n[idx.z]
-    if (idx.vx > 0)
-      vars$vx[1] <- idxs.n[idx.vx]
-    if (idx.vy > 0)
-      vars$vy[1] <- idxs.n[idx.vy]
+    if (idx.x > 0) vars$x[1] <- idxs.n[idx.x]
+    if (idx.y > 0) vars$y[1] <- idxs.n[idx.y]
+    if (idx.z > 0) vars$z[1] <- idxs.n[idx.z]
     if (!identical(vars, Data("vars"))) {
       Data("vars", vars)
       Data("data.pts", NULL)
@@ -341,7 +295,8 @@ OpenRSurvey <- function() {
     ToggleState(vars)
   }
 
-  # Manage variables
+
+  # manage variables
   CallManageVariables <- function() {
     ans <- ManageVariables(Data("cols"), Data("vars"), Data("query"),
                            Data("changelog"), tt)
@@ -357,7 +312,8 @@ OpenRSurvey <- function() {
     }
   }
 
-  # Close graphic devices
+
+  # close graphic devices
   CloseDevices <- function() {
     graphics.off()
     if (is.rgl) {
@@ -366,63 +322,60 @@ OpenRSurvey <- function() {
     }
   }
 
-  # Save R graphic devices
+
+  # save r graphic devices
   SaveRDevice <- function() {
-    if (is.null(dev.list()))
-      return()
+    if (is.null(dev.list())) return()
     exts <- c("eps", "png", "jpg", "jpeg", "pdf", "bmp", "tif", "tiff")
-    f <- GetFile(cmd="Save As", exts=exts, win.title="Save R Graphic As",
-                 defaultextension="eps", parent=tt)
-    if (is.null(f))
-      return()
-    savePlot(filename=f, type=attr(f, "extension"))
+    file <- GetFile(cmd="Save As", exts=exts, win.title="Save R Graphic As",
+                    defaultextension="eps", parent=tt)
+    if (is.null(file)) return()
+    savePlot(filename=file, type=attr(file, "extension"))
   }
 
-  # Save RGL graphic devices
+
+  # save rgl graphic devices
   SaveRGLDevice <- function() {
-    if (!is.rgl || rgl::rgl.cur() == 0)
-      return()
-    f <- GetFile(cmd="Save As", exts=c("png", "eps", "pdf"),
-                 win.title="Save RGL Graphic As", defaultextension="png",
-                 parent=tt)
-    if (is.null(f))
-      return()
-    if (attr(f, "extension") == "png")
-      rgl::rgl.snapshot(filename=f, fmt=attr(f, "extension"))
+    if (!is.rgl || rgl::rgl.cur() == 0) return()
+    file <- GetFile(cmd="Save As", exts=c("png", "eps", "pdf"),
+                    win.title="Save RGL Graphic As", defaultextension="png",
+                    parent=tt)
+    if (is.null(file)) return()
+    if (attr(file, "extension") == "png")
+      rgl::rgl.snapshot(filename=file, fmt=attr(file, "extension"))
     else
-      rgl::rgl.postscript(filename=f, fmt=attr(f, "extension"))
+      rgl::rgl.postscript(filename=file, fmt=attr(file, "extension"))
   }
 
-  # Session information
+
+  # session information
   SessionInfo <- function() {
-    txt <- paste(c(capture.output(print(sessionInfo(), locale=TRUE)), ""),
-                 collapse="\n")
+    txt <- paste(c(capture.output(print(sessionInfo(), locale=TRUE)), ""), collapse="\n")
     EditText(txt, read.only=TRUE, win.title="Session Information",
              is.fixed.width.font=FALSE, parent=tt)
   }
 
-  # About package
+
+  # about package
   AboutPackage <- function() {
     txt <- readLines(info.path)
     pkg.version <- strsplit(txt[grep("^Version:", txt)], " ")[[1]][2]
     msg <- paste("RSurvey package version", pkg.version)
-    tkmessageBox(icon="info", message=msg, title="Information", type="ok",
-                 parent=tt)
+    tkmessageBox(icon="info", message=msg, title="Information", type="ok", parent=tt)
   }
 
-  # Manage polygons
+
+  # manage polygons
   CallManagePolygons <- function() {
     old.polys <- Data("polys")
     old.poly.data <- Data("poly.data")
     old.poly.crop <- Data("poly.crop")
-    ans <- ManagePolygons(Data("polys"), Data("poly.data"), Data("poly.crop"),
-                          parent=tt)
+    ans <- ManagePolygons(Data("polys"), Data("poly.data"), Data("poly.crop"), parent=tt)
 
     new.polys <- ans$polys
     new.poly.data <- ans$poly.data
     new.poly.crop <- ans$poly.crop
-    if (is.null(new.polys) || identical(new.polys, old.polys))
-      return()
+    if (is.null(new.polys) || identical(new.polys, old.polys)) return()
 
     old <- if (is.null(old.poly.data)) NULL else old.polys[[old.poly.data]]
     new <- if (is.null(new.poly.data)) NULL else new.polys[[new.poly.data]]
@@ -433,54 +386,51 @@ OpenRSurvey <- function() {
 
     old <- if (is.null(old.poly.crop)) NULL else old.polys[[old.poly.crop]]
     new <- if (is.null(new.poly.crop)) NULL else new.polys[[new.poly.crop]]
-    if (!identical(new, old))
-      Data("data.grd",  NULL)
+    if (!identical(new, old)) Data("data.grd",  NULL)
 
     Data("polys", new.polys)
     Data("poly.data", new.poly.data)
     Data("poly.crop", new.poly.crop)
   }
 
-  # Set polygon range and limit
+
+  # set polygon range and limit
   CallSetPolygonLimits <- function() {
     polys <- Data("polys")
     old.poly.data <- Data("poly.data")
     old.poly.crop <- Data("poly.crop")
     ans <- SetPolygonLimits(names(polys), old.poly.data, old.poly.crop, tt)
-    if (is.null(ans))
-      return()
+    if (is.null(ans)) return()
     new.poly.data <- ans$poly.data
     new.poly.crop <- ans$poly.crop
     if (!identical(new.poly.data, old.poly.data)) {
       Data("data.pts", NULL)
       Data("data.grd", NULL)
     }
-    if (!identical(new.poly.crop, old.poly.crop))
-      Data("data.grd", NULL)
+    if (!identical(new.poly.crop, old.poly.crop)) Data("data.grd", NULL)
     Data("poly.data", new.poly.data)
     Data("poly.crop", new.poly.crop)
   }
 
-  # Construct polygon
+
+  # construct polygon
   ConstructPolygon <- function(type) {
-    if (is.null(Data("data.raw")))
-      return()
+    if (is.null(Data("data.raw"))) return()
     msg <- paste("After the graph has been created, use the mouse to identify",
                  "the vertices of the polygon. The identification process can",
                  "be terminated by clicking the second button and selecting",
                  "[Stop] from the menu, or from the [Stop] menu on the",
                  "graphics window.", sep="\n")
     if (shown.construct.polygon.msgbox)
-      tkmessageBox(icon="info", message=msg, title="Build Polygon", type="ok",
-                   parent=tt)
+      tkmessageBox(icon="info", message=msg, title="Build Polygon", type="ok", parent=tt)
     shown.construct.polygon.msgbox <<- FALSE
     CallPlot2d(type=type, build.poly=TRUE)
   }
 
-  # Autocrop polygon
+
+  # autocrop polygon
   CallAutocropRegion <- function() {
-    if (is.null(Data("data.raw")))
-      return()
+    if (is.null(Data("data.raw"))) return()
     CallProcessData()
     d       <- Data("data.pts")
     xlab    <- Data("cols")[[Data("vars")$x]]$id
@@ -497,8 +447,7 @@ OpenRSurvey <- function() {
                               cex.pts=cex.pts, rkey=rkey)
     if (inherits(ply.new, "gpc.poly")) {
       ply <- list()
-      if (!is.null(Data("polys")))
-        ply <- Data("polys")
+      if (!is.null(Data("polys"))) ply <- Data("polys")
       ply.name <- NamePolygon(old=names(ply))
       ply[[ply.name]] <- ply.new
       Data("polys", ply)
@@ -507,10 +456,10 @@ OpenRSurvey <- function() {
     }
   }
 
-  # Name polygon
+
+  # name polygon
   NamePolygon <- function(old=NULL, nam=NA){
-    if (is.na(nam))
-      nam <- "New Polygon"
+    if (is.na(nam)) nam <- "New Polygon"
     idx <- 1
     chk <- nam
     while (chk %in% old) {
@@ -520,8 +469,8 @@ OpenRSurvey <- function() {
     chk
   }
 
-  # Plot point or 2d surface data
 
+  # plot point or 2d surface data
   CallPlot2d <- function(type, build.poly=FALSE) {
     if (type == "p")
       CallProcessData()
@@ -538,16 +487,14 @@ OpenRSurvey <- function() {
 
     ply <- if (type == "p") Data("poly.data") else Data("poly.crop")
 
-    if (!is.null(ply) && !is.na(ply))
-      ply <- Data("polys")[[ply]]
+    if (!is.null(ply) && !is.na(ply)) ply <- Data("polys")[[ply]]
 
     show.poly   <- Data("show.poly") && inherits(ply, "gpc.poly")
     show.lines  <- type %in% c("l", "g") && Data("show.lines")
     show.points <- type %in% c("l", "g") && Data("show.points")
 
     axis.side <- 1:2
-    if (Data("show.2.axes"))
-      axis.side <- 1:4
+    if (Data("show.2.axes")) axis.side <- 1:4
 
     nlevels <- Data("nlevels")
     cols    <- Data("cols")
@@ -573,29 +520,22 @@ OpenRSurvey <- function() {
       yran <- range(dat$y, finite=TRUE)
     }
 
-    # Adjust axes limits for polygon
-
+    # adjust axes limits for polygon
     lim <- Data("lim.axes")
 
     xlim <- lim$x
-    if (is.null(xlim))
-      xlim <- c(NA, NA)
+    if (is.null(xlim)) xlim <- c(NA, NA)
     ylim <- lim$y
-    if (is.null(ylim))
-      ylim <- c(NA, NA)
+    if (is.null(ylim)) ylim <- c(NA, NA)
 
     if (show.poly) {
       bbx <- bby <- NULL
       bb <- rgeos::get.bbox(ply)
 
-      if (!is.na(xlim[1]))
-        bb$x[1] <- xlim[1]
-      if (!is.na(xlim[2]))
-        bb$x[2] <- xlim[2]
-      if (!is.na(ylim[1]))
-        bb$y[1] <- ylim[1]
-      if (!is.na(ylim[2]))
-        bb$y[2] <- ylim[2]
+      if (!is.na(xlim[1])) bb$x[1] <- xlim[1]
+      if (!is.na(xlim[2])) bb$x[2] <- xlim[2]
+      if (!is.na(ylim[1])) bb$y[1] <- ylim[1]
+      if (!is.na(ylim[2])) bb$y[2] <- ylim[2]
 
       xy <- cbind(x=c(bb$x, rev(bb$x)), y=c(bb$y[c(1,1)], bb$y[c(2,2)]))
       bb <- rgeos::get.bbox(intersect(ply, as(xy, "gpc.poly")))
@@ -603,14 +543,10 @@ OpenRSurvey <- function() {
       bby <- range(bb$y)
       bbx <- extendrange(bbx, f=0.02)
       bby <- extendrange(bby, f=0.02)
-      if (is.na(xlim[1]) && bbx[1] < xran[1])
-        lim$x[1] <- bbx[1]
-      if (is.na(xlim[2]) && bbx[2] > xran[2])
-        lim$x[2] <- bbx[2]
-      if (is.na(ylim[1]) && bby[1] < yran[1])
-        lim$y[1] <- bby[1]
-      if (is.na(ylim[2]) && bby[2] > yran[2])
-        lim$y[2] <- bby[2]
+      if (is.na(xlim[1]) && bbx[1] < xran[1]) lim$x[1] <- bbx[1]
+      if (is.na(xlim[2]) && bbx[2] > xran[2]) lim$x[2] <- bbx[2]
+      if (is.na(ylim[1]) && bby[1] < yran[1]) lim$y[1] <- bby[1]
+      if (is.na(ylim[2]) && bby[2] > yran[2]) lim$y[2] <- bby[2]
     }
 
     ans <- try(Plot2d(dat, type=type, xlim=lim$x, ylim=lim$y, zlim=lim$z,
@@ -618,14 +554,11 @@ OpenRSurvey <- function() {
                       csi=Data("csi"), width=Data("width"), nlevels=nlevels,
                       cex.pts=Data("cex.pts"), rkey=Data("rkey"),
                       color.palette=Data("color.palette"),
-                      vuni=Data("vuni"), vmax=Data("vmax"),
-                      vxby=Data("vxby"), vyby=Data("vyby"),
                       axis.side=axis.side, minor.ticks=Data("minor.ticks"),
                       ticks.inside=Data("ticks.inside"),
                       rm.pnt.line=Data("rm.pnt.line"),
                       add.contour.lines=show.lines))
-    if (inherits(ans, "try-error"))
-      return()
+    if (inherits(ans, "try-error")) return()
 
     if (show.poly)
       plot(ply, add=TRUE, poly.args=list(border="black", lty=3))
@@ -638,12 +571,10 @@ OpenRSurvey <- function() {
       points(loc.xy, col="black", bg="black", pch=22)
       lines(loc.xy, col="black")
       ply.new <- suppressWarnings(as(v, "gpc.poly"))
-      if (!is.null(ply))
-        ply.new <- intersect(ply, ply.new)
+      if (!is.null(ply)) ply.new <- intersect(ply, ply.new)
       if (rgeos::area.poly(ply.new) == 0) {
-        msg <- "The resulting polygon is invalid."
-        tkmessageBox(icon="warning", message=msg, title="Polygon Discarded",
-                     parent=tt)
+        tkmessageBox(icon="warning", title="Polygon Discarded", parent=tt,
+                     message="The resulting polygon is invalid.")
         ply.new <- NULL
       }
 
@@ -669,9 +600,8 @@ OpenRSurvey <- function() {
             Data("data.pts", NULL)
             Data("data.grd", NULL)
           } else {
-            msg <- "No data points fall within the given polygon."
-            tkmessageBox(icon="warning", message=msg, title="Polygon Discarded",
-                         parent=tt)
+            tkmessageBox(icon="warning", title="Polygon Discarded", parent=tt,
+                         message="No data points fall within the given polygon.")
           }
         } else if (type == "l") {
           cutout <- CutoutPolygon(dat, ply.new)
@@ -686,17 +616,16 @@ OpenRSurvey <- function() {
     tkfocus(tt)
   }
 
-  # Plot 3d surface data
+
+  # plot 3d surface data
   CallPlot3d <- function() {
     CallProcessData(interpolate=TRUE)
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
-    if (is.null(Data("data.grd")))
-      return()
+    if (is.null(Data("data.grd"))) return()
     dat <- Data("data.grd")
     pts <- NULL
-    if (Data("show.points"))
-      pts <- Data("data.pts")
+    if (Data("show.points")) pts <- Data("data.pts")
     lim <- Data("lim.axes")
     try(Plot3d(x=dat, px=pts, xlim=lim$x, ylim=lim$y, zlim=lim$z,
                vasp=Data("asp.zx"), hasp=Data("asp.yx"),
@@ -753,8 +682,7 @@ OpenRSurvey <- function() {
 
 
     } else {  # edit raw data
-      if (is.null(Data("data.raw")))
-        return()
+      if (is.null(Data("data.raw"))) return()
       rows <- Data("data.raw", which.attr="row.names")
       cols <- Data("cols")
       idxs <- na.omit(vapply(cols, function(i) i$index, 0L))
@@ -766,8 +694,7 @@ OpenRSurvey <- function() {
                       row.names=rows, col.formats=col.formats,
                       read.only=FALSE, changelog=old.changelog,
                       win.title="Edit Raw Data", parent=tt)
-      if (is.null(ans))
-        return()
+      if (is.null(ans)) return()
 
       tclServiceMode(FALSE)
       on.exit(tclServiceMode(TRUE), add=TRUE)
@@ -792,8 +719,8 @@ OpenRSurvey <- function() {
     }
   }
 
-  # Call process data
 
+  # call process data
   CallProcessData <- function(interpolate=FALSE) {
     tkconfigure(tt, cursor="watch")
     tclServiceMode(FALSE)
@@ -808,15 +735,14 @@ OpenRSurvey <- function() {
       return()
     }
 
-    # Process points
-
+    # process points
     if (is.null(Data("data.pts"))) {
       cols <- Data("cols")
 
-      Fun <- function(v) {
+      FUN <- function(v) {
         if (is.null(v)) NULL else EvalFunction(cols[[v]]$fun, cols)
       }
-      d <- as.data.frame(lapply(var.names, function(i) Fun(vars[[i]])),
+      d <- as.data.frame(lapply(var.names, function(i) FUN(vars[[i]])),
                          stringsAsFactors=FALSE)
 
       if (!is.null(Data("data.raw"))) {
@@ -828,29 +754,26 @@ OpenRSurvey <- function() {
       names(d) <- var.names
 
       query <- Data("query")
-      if (is.null(query)) {
+      if (is.null(query))
         coerce.rows <- NULL
-      } else {
+      else
         coerce.rows <- EvalFunction(query, cols)
-      }
 
       if (!is.null(vars$x)) {
         ply <- Data("poly.data")
-        if (!is.null(ply))
-          ply <- Data(c("polys", ply))
+        if (!is.null(ply)) ply <- Data(c("polys", ply))
       } else {
         ply <- NULL
       }
 
-      data.pts <- try(ProcessData(d, type="p", coerce.rows=coerce.rows,
-                                  ply=ply))
+      data.pts <- try(ProcessData(d, type="p", coerce.rows=coerce.rows, ply=ply))
       if (!inherits(data.pts, "try-error")) {
         Data("data.pts", data.pts)
         Data("data.grd", NULL)
       }
     }
 
-    # Process grid
+    # process grid
     if (!is.null(Data("data.pts")) && is.null(Data("data.grd")) &&
         interpolate) {
       ply <- Data("poly.crop")
@@ -865,28 +788,24 @@ OpenRSurvey <- function() {
     }
   }
 
-  # Build query
+
+  # build query
   BuildQuery <- function() {
-    if (is.null(Data("data.raw")))
-      return()
+    if (is.null(Data("data.raw"))) return()
     m <- Data("data.raw", which.attr="nrows")
-    if (m == 0)
-      return()
+    if (m == 0) return()
     cols <- Data("cols")
     old.fun <- Data("query")
-    f <- EditFunction(cols, fun=old.fun, value.length=m, value.class="logical",
-                      win.title="Filter Data Records", parent=tt)
-    if (is.null(f))
-      return()
-    if (f$fun == "")
-      Data("query", NULL)
-    else
-      Data("query", f$fun)
+    file <- EditFunction(cols, fun=old.fun, value.length=m, value.class="logical",
+                         win.title="Filter Data Records", parent=tt)
+    if (is.null(file)) return()
+    if (file$fun == "") Data("query", NULL) else Data("query", file$fun)
     Data("data.pts", NULL)
     Data("data.grd", NULL)
   }
 
-  # Clear query
+
+  # clear query
   ClearQuery <- function() {
     if (!is.null(Data("query"))) {
       Data("query", NULL)
@@ -895,7 +814,8 @@ OpenRSurvey <- function() {
     }
   }
 
-  # Edit comment
+
+  # edit comment
   EditComment <- function() {
     txt <- EditText(Data("comment"), win.title="Comment", parent=tt)
     if (is.null(txt))
@@ -906,9 +826,7 @@ OpenRSurvey <- function() {
   }
 
 
-  ## Main program
-
-  # Warn if using Windows OS and running in MDI mode
+  # warn if using windows os and running in mdi mode
   if (.Platform$OS.type == "windows" && utils::getIdentification() == "RGui")
     message("\n\n    You are running R in MDI mode which *may* interfere\n",
             "    with the functionality of the graphical user interface.\n",
@@ -916,7 +834,7 @@ OpenRSurvey <- function() {
             "    set in the command line or by clicking in the Menu:\n",
             "    Edit - GUI Preferences: SDI, then Save and restart R.\n\n")
 
-  # Establish default directories
+  # establish default directories
   if ("package:RSurvey" %in% search()) {
     image.path <- system.file("images", package="RSurvey")
     info.path <- system.file("DESCRIPTION", package="RSurvey")
@@ -927,19 +845,19 @@ OpenRSurvey <- function() {
   if (is.null(Data("default.dir")))
     Data("default.dir", getwd())
 
-  # Check if suggested packages are loaded
-  is.xml <- requireNamespace("XML", quietly=TRUE)
-  is.rgl <- requireNamespace("rgl", quietly=TRUE)
-  is.rgdal <- requireNamespace("rgdal", quietly=TRUE)
-  is.tripack <- requireNamespace("tripack", quietly=TRUE)
+  # check if suggested packages are loaded
+  is.xml        <- requireNamespace("XML", quietly=TRUE)
+  is.rgl        <- requireNamespace("rgl", quietly=TRUE)
+  is.rgdal      <- requireNamespace("rgdal", quietly=TRUE)
+  is.tripack    <- requireNamespace("tripack", quietly=TRUE)
   is.colorspace <- requireNamespace("colorspace", quietly=TRUE)
 
-  # Set options
+  # set options
   SetCsi()
   options(help_type="html")
   shown.construct.polygon.msgbox <- TRUE
 
-  # Assign variables linked to Tk entry widgets
+  # assign variables linked to Tk entry widgets
   import.var  <- tclVar()
   save.var    <- tclVar()
   manage.var  <- tclVar()
@@ -953,18 +871,17 @@ OpenRSurvey <- function() {
   plt.typ.var <- tclVar("Points")
   tt.done.var <- tclVar(0)
 
-  # Open GUI
+  # open GUI
   tclServiceMode(FALSE)
   tt <- tktoplevel()
   tkwm.geometry(tt, Data("win.loc"))
   tktitle(tt) <- "RSurvey"
   tkwm.resizable(tt, 1, 0)
 
-  # Top menu
+  # top menu
   top.menu <- tkmenu(tt, tearoff=0)
 
-  # File menu
-
+  # file menu
   menu.file <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
 
@@ -1015,8 +932,7 @@ OpenRSurvey <- function() {
   tkadd(menu.file, "command", label="Exit",
         command=CloseGUI)
 
-  # Edit menu
-
+  # edit menu
   menu.edit <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
 
@@ -1056,11 +972,7 @@ OpenRSurvey <- function() {
           SetInterpolation(tt)
         })
 
-
-
-
-  # View menu
-
+  # view menu
   menu.view <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
   menu.view.raw <- tkmenu(tt, tearoff=0)
@@ -1076,11 +988,7 @@ OpenRSurvey <- function() {
         command=function() CallEditData())
   tkadd(menu.view, "cascade", label="Processed data for", menu=menu.view.pr)
 
-
-
-
-  # Polygon menu
-
+  # polygon menu
   menu.poly <- tkmenu(tt, tearoff=0)
 
   tkadd(top.menu, "cascade", label="Polygon", menu=menu.poly, underline=0)
@@ -1113,20 +1021,19 @@ OpenRSurvey <- function() {
         state=if (is.tripack) "normal" else "disabled",
         command=CallAutocropRegion)
 
-  # Graph menu
-
+  # graph menu
   menu.graph <- tkmenu(tt, tearoff=0)
-  tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
-  tkadd(menu.graph, "command", label="Plot scatterplot",
+  tkadd(top.menu, "cascade", label="Plot", menu=menu.graph, underline=0)
+  tkadd(menu.graph, "command", label="Scatterplot",
         command=function() {
           CallPlot2d(type="p")
         })
-  tkadd(menu.graph, "command", label="Plot 2D-interpolated map",
+  tkadd(menu.graph, "command", label="2D-interpolated map",
         command=function() {
           type <- if (Data("img.contour")) "g" else "l"
           CallPlot2d(type=type)
         })
-  tkadd(menu.graph, "command", label="Plot 3D-interpolated map",
+  tkadd(menu.graph, "command", label="3D-interpolated map",
         state=ifelse(is.rgl, "normal", "disabled"),
         command=CallPlot3d)
   tkadd(menu.graph, "separator")
@@ -1156,8 +1063,7 @@ OpenRSurvey <- function() {
   tkadd(menu.graph, "command", label="Close all graphic devices",
         accelerator="Ctrl+F4", command=CloseDevices)
 
-  # Help menu
-
+  # help menu
   menu.help <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Help", menu=menu.help, underline=0)
   tkadd(menu.help, "command", label="Documentation",
@@ -1200,14 +1106,12 @@ OpenRSurvey <- function() {
             })
   }
 
-  # Finalize top menu
-
+  # finalize top menu
   tkconfigure(tt, menu=top.menu)
 
-  # Frame 0, toolbar with command buttons
-
-  frame0 <- ttkframe(tt, relief="flat", borderwidth=2)
-  tkpack(frame0, side="top", fill="x")
+  # frame 0, toolbar with command buttons
+  f0 <- ttkframe(tt, relief="flat", borderwidth=2)
+  tkpack(f0, side="top", fill="x")
 
   tkimage.create("photo", save.var, format="GIF",
                  file=file.path(image.path, "save.gif"))
@@ -1224,120 +1128,92 @@ OpenRSurvey <- function() {
   tkimage.create("photo", close.var, format="GIF",
                  file=file.path(image.path, "close.gif"))
 
-  frame0.but.1  <- tkbutton(frame0, relief="flat", overrelief="raised",
-                            borderwidth=1, image=save.var,
-                            command=SaveProj)
-  frame0.but.2  <- tkbutton(frame0, relief="flat", overrelief="raised",
-                            borderwidth=1, image=import.var,
-                            command=function() ReadData("txt"))
-  frame0.but.3  <- tkbutton(frame0, relief="flat", overrelief="raised",
-                            borderwidth=1, image=manage.var,
-                            command=CallManageVariables)
-  frame0.but.4  <- tkbutton(frame0, relief="flat", overrelief="raised",
-                            borderwidth=1, image=polygon.var,
-                            command=CallManagePolygons)
-  frame0.but.5  <- tkbutton(frame0, relief="flat", overrelief="raised",
-                            borderwidth=1, image=axes.var,
-                            command=function() {
-                              lim <- SetAxesLimits(Data("lim.axes"), tt)
-                              Data("lim.axes", lim)
-                            })
-  frame0.but.6  <- tkbutton(frame0, relief="flat", overrelief="raised",
-                            borderwidth=1, image=config.var,
-                            command=function() SetConfiguration(tt))
-  frame0.but.7  <- tkbutton(frame0, relief="flat", overrelief="raised",
-                            borderwidth=1, image=close.var,
-                            command=CloseDevices)
+  f0.but.1  <- tkbutton(f0, relief="flat", overrelief="raised", borderwidth=1,
+                        image=save.var, command=SaveProj)
+  f0.but.2  <- tkbutton(f0, relief="flat", overrelief="raised", borderwidth=1,
+                        image=import.var, command=function() ReadData("txt"))
+  f0.but.3  <- tkbutton(f0, relief="flat", overrelief="raised", borderwidth=1,
+                        image=manage.var, command=CallManageVariables)
+  f0.but.4  <- tkbutton(f0, relief="flat", overrelief="raised", borderwidth=1,
+                        image=polygon.var, command=CallManagePolygons)
+  f0.but.5  <- tkbutton(f0, relief="flat", overrelief="raised", borderwidth=1,
+                        image=axes.var, command=function() {
+                          lim <- SetAxesLimits(Data("lim.axes"), tt)
+                          Data("lim.axes", lim)
+                        })
+  f0.but.6  <- tkbutton(f0, relief="flat", overrelief="raised", borderwidth=1,
+                        image=config.var, command=function() SetConfiguration(tt))
+  f0.but.7  <- tkbutton(f0, relief="flat", overrelief="raised", borderwidth=1,
+                        image=close.var, command=CloseDevices)
 
-  tkgrid(frame0.but.1, frame0.but.2, frame0.but.3, frame0.but.4, frame0.but.5,
-         frame0.but.6, frame0.but.7, sticky="w", padx=1)
-  tkgrid.configure(frame0.but.1, padx=c(5, 0))
+  tkgrid(f0.but.1, f0.but.2, f0.but.3, f0.but.4, f0.but.5, f0.but.6, f0.but.7,
+         sticky="w", padx=1)
+  tkgrid.configure(f0.but.1, padx=c(5, 0))
 
   separator <- ttkseparator(tt, orient="horizontal")
   tkpack(separator, fill="x")
 
-  # Frame 1, variables
+  # frame 1, variables
+  f1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
+                      text="Set state variables")
 
-  frame1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Set state variables")
+  f1.lab.1.1 <- ttklabel(f1, text="x")
+  f1.lab.2.1 <- ttklabel(f1, text="y")
+  f1.lab.3.1 <- ttklabel(f1, text="z")
 
-  frame1.lab.1.1 <- ttklabel(frame1, text="x")
-  frame1.lab.2.1 <- ttklabel(frame1, text="y")
-  frame1.lab.3.1 <- ttklabel(frame1, text="z")
-  frame1.lab.4.1 <- ttklabel(frame1, text="vx")
-  frame1.lab.5.1 <- ttklabel(frame1, text="vy")
+  f1.box.1.2 <- ttkcombobox(f1, state="readonly")
+  f1.box.2.2 <- ttkcombobox(f1, state="readonly")
+  f1.box.3.2 <- ttkcombobox(f1, state="readonly")
 
-  frame1.box.1.2 <- ttkcombobox(frame1, state="readonly")
-  frame1.box.2.2 <- ttkcombobox(frame1, state="readonly")
-  frame1.box.3.2 <- ttkcombobox(frame1, state="readonly")
-  frame1.box.4.2 <- ttkcombobox(frame1, state="readonly")
-  frame1.box.5.2 <- ttkcombobox(frame1, state="readonly")
+  tkgrid(f1.lab.1.1, f1.box.1.2)
+  tkgrid(f1.lab.2.1, f1.box.2.2, pady=4)
+  tkgrid(f1.lab.3.1, f1.box.3.2)
 
-  tkgrid(frame1.lab.1.1, frame1.box.1.2, pady=c(0, 4))
-  tkgrid(frame1.lab.2.1, frame1.box.2.2, pady=c(0, 4))
-  tkgrid(frame1.lab.3.1, frame1.box.3.2, pady=c(0, 4))
-  tkgrid(frame1.lab.4.1, frame1.box.4.2, pady=c(0, 4))
-  tkgrid(frame1.lab.5.1, frame1.box.5.2)
+  tkgrid.configure(f1.lab.1.1, f1.lab.2.1, f1.lab.3.1, sticky="w", padx=c(0, 2))
+  tkgrid.configure(f1.box.1.2, f1.box.2.2, f1.box.3.2, sticky="we")
 
-  tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, frame1.lab.3.1,
-                   frame1.lab.4.1, frame1.lab.5.1, sticky="w", padx=c(0, 2))
+  tkgrid.columnconfigure(f1, 1, weight=1, minsize=25)
 
-  tkgrid.configure(frame1.box.1.2, frame1.box.2.2, frame1.box.3.2,
-                   frame1.box.4.2, frame1.box.5.2, sticky="we")
-  tkgrid.configure(frame1.box.1.2, frame1.box.2.2, frame1.box.3.2,
-                   frame1.box.4.2)
+  tkpack(f1, fill="x", expand=TRUE, padx=10, pady=5)
 
-  tkgrid.columnconfigure(frame1, 1, weight=1, minsize=25)
+  # frame 2, plotting buttons
+  f2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
+                      text="Plot state variables")
 
-  tkpack(frame1, fill="x", expand=TRUE, padx=10, pady=5)
+  f2.but.1.1 <- ttkbutton(f2, width=10, text="Scatter",
+                          command=function() CallPlot2d(type="p"))
+  f2.but.1.2 <- ttkbutton(f2, width=10, text="2D Map",
+                          command=function() {
+                            type <- if (Data("img.contour")) "g" else "l"
+                            CallPlot2d(type=type)
+                          })
+  f2.but.1.3 <- ttkbutton(f2, width=10, text="3D Map",
+                          command=CallPlot3d)
 
-  # Frame 2, plotting buttons
+  tkgrid(f2.but.1.1, f2.but.1.2, f2.but.1.3)
+  tkgrid.configure(f2.but.1.2, padx=4)
 
-  frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Plot state variables")
+  tkpack(f2, fill="x", expand=TRUE, padx=10, pady=c(0, 10))
 
-  frame2.but.1.1 <- ttkbutton(frame2, width=10, text="Scatter",
-                              command=function() {
-                                CallPlot2d(type="p")
-                              })
-  frame2.but.1.2 <- ttkbutton(frame2, width=10, text="2D Map",
-                              command=function() {
-                                type <- if (Data("img.contour")) "g" else "l"
-                                CallPlot2d(type=type)
-                              })
-  frame2.but.1.3 <- ttkbutton(frame2, width=10, text="3D Map",
-                              command=CallPlot3d)
-
-  tkgrid(frame2.but.1.1, frame2.but.1.2, frame2.but.1.3)
-
-  tkgrid.configure(frame2.but.1.2, padx=4)
-
-  tkpack(frame2, fill="x", expand=TRUE, padx=10, pady=c(0, 10))
-
-  # Set variables
+  # set variables
   SetVars()
 
-  # Bind events
-
+  # bind events
   tclServiceMode(TRUE)
 
-  tkbind(tt, "<Destroy>", CloseGUI)
-
-  tkbind(tt, "<Control-n>", ClearObjs)
-  tkbind(tt, "<Control-o>", OpenProj)
-  tkbind(tt, "<Control-s>", SaveProj)
+  tkbind(tt, "<Destroy>",         CloseGUI)
+  tkbind(tt, "<Control-n>",       ClearObjs)
+  tkbind(tt, "<Control-o>",       OpenProj)
+  tkbind(tt, "<Control-s>",       SaveProj)
   tkbind(tt, "<Shift-Control-S>", SaveProjAs)
-  tkbind(tt, "<Control-r>", SaveRDevice)
-  tkbind(tt, "<Control-F4>", CloseDevices)
+  tkbind(tt, "<Control-r>",       SaveRDevice)
+  tkbind(tt, "<Control-F4>",      CloseDevices)
 
-  tkbind(frame1.box.1.2, "<<ComboboxSelected>>", RefreshVars)
-  tkbind(frame1.box.2.2, "<<ComboboxSelected>>", RefreshVars)
-  tkbind(frame1.box.3.2, "<<ComboboxSelected>>", RefreshVars)
-  tkbind(frame1.box.4.2, "<<ComboboxSelected>>", RefreshVars)
-  tkbind(frame1.box.5.2, "<<ComboboxSelected>>", RefreshVars)
+  tkbind(f1.box.1.2, "<<ComboboxSelected>>", RefreshVars)
+  tkbind(f1.box.2.2, "<<ComboboxSelected>>", RefreshVars)
+  tkbind(f1.box.3.2, "<<ComboboxSelected>>", RefreshVars)
 
-  # GUI closure
-
+  # gui closure
   tkfocus(force=tt)
   invisible()
 }

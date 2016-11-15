@@ -707,9 +707,9 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     else
       nchar.title <- max(vapply(strsplit(col.names[j], "\n"), nchar, 0L))
     max.rows <- ifelse(m > 200L, 200L, m)
-    nchar.data <- max(nchar(FormatValues(seq_len(max.rows), rep(j, max.rows),
-                                         is.fmt=TRUE)))
-    col.width[j] <- max(c(nchar.title, nchar.data)) + 1L
+    nchar.data <- max(nchar(FormatValues(seq_len(max.rows), rep(j, max.rows), is.fmt=TRUE)),
+                      na.rm=TRUE)
+    col.width[j] <- max(c(nchar.title, nchar.data), na.rm=TRUE) + 1L
     if (col.width[j] < 10L) {
       col.width[j] <- 10L
     } else if (col.width[j] > 50L) {
@@ -915,7 +915,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
 
   # Graph menu
   menu.graph <- tkmenu(tt, tearoff=0)
-  tkadd(top.menu, "cascade", label="Graph", menu=menu.graph, underline=0)
+  tkadd(top.menu, "cascade", label="Plot", menu=menu.graph, underline=0)
   tkadd(menu.graph, "command", label="Build histogram\u2026",
         command=PlotHistogram)
 

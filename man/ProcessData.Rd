@@ -14,8 +14,7 @@ ProcessData(d, type = "p", coerce.rows = NULL, ply = NULL,
 
 \arguments{
 \item{d}{data.frame; the data to be processed, a table
-  with variables \code{x}, \code{y}, \code{z}, \code{t},
-  \code{vx}, \code{vy}, and \code{vz}.}
+  with variables \code{x}, \code{y}, \code{z}, and \code{t}.}
 \item{type}{character; a 1-character string giving the resulting
   output type. The following values are possible: "p" for points
   and "g" for interpolated grid.}
@@ -43,18 +42,12 @@ the polygon boundary are set to \code{\link{NA}}.
 If \code{type = "p"} returns a data frame with variables:
 \item{x, y}{numeric; a vector of \code{x} and \code{y} coordinates.}
 \item{z}{numeric; a vector of state variable values (optional).}
-\item{vx, vy, vz}{numeric; a vector of velocity components in the \code{x},
-  \code{y} and \code{z} directions, respectively (optional).}
 If \code{type = "g"} returns a list with components:
 \item{x, y}{numeric; a vector of grid line locations at which the values in
   \code{z} are measured.}
 \item{z}{matrix; interpolated surface of state variable with rows and columns
   corresponding to grid lines in the \code{x} and \code{y} directions,
   respectively.}
-\item{vx, vy, vz}{matrix; interpolated surface of velocity components with rows
-  and columns corresponding to grid lines in the \code{x} and \code{y}
-  directions (optional).}
-\item{vf}{numeric; volumetric flux (optional).}
 }
 
 \author{J.C. Fisher}

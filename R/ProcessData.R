@@ -60,9 +60,6 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
     x <- d$x
     y <- d$y
     z <- d$z
-    vx <- d$vx
-    vy <- d$vy
-    vz <- d$vz
 
     # Define interpolation grid
     if (is.null(ply)) {
@@ -125,27 +122,6 @@ ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
     }
 
     d <- GetSurface(x, y, z, pts, n, m)
-
-    if (!is.null(vx))
-      d$vx <- GetSurface(x, y, vx, pts, n, m)$z
-    if (!is.null(vy))
-      d$vy <- GetSurface(x, y, vy, pts, n, m)$z
-    if (!is.null(vz)) {
-      d$vz <- GetSurface(x, y, vz, pts, n, m)$z
-
-      # Calculate volumetric flux
-      GetArcLength <- function(x) {
-        diff(c(x[1], x[-1] - (diff(x) / 2), x[length(x)]))
-      }
-
-      m <- length(d$x)
-      n <- length(d$y)
-      area <- matrix(rep(GetArcLength(d$x), n), nrow=m, ncol=n, byrow=FALSE) *
-              matrix(rep(GetArcLength(d$y), m), nrow=m, ncol=n, byrow=TRUE)
-      vol.flux <- sum(d$vz * area, na.rm=TRUE)  # vol.flux = vel * area
-      if (is.numeric(vol.flux))
-        d$vf <- vol.flux
-    }
   }
 
   return(d)

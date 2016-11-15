@@ -98,7 +98,7 @@ LoadPackages <- function() {
 
     frame1.lab.1.1 <- ttklabel(frame1, image=rlogo.var, background="white")
 
-    txt <- "The following suggested (not required) packages are missing:"
+    txt <- "The following suggested (not required) package(s) are missing:"
     frame1.lab.1.2 <- ttklabel(frame1, text=txt, justify="left",
                                background="white")
 
@@ -118,12 +118,12 @@ LoadPackages <- function() {
     frame1.lab.3.2 <- ttklabel(frame1, text=txt, justify="left",
                                background="white")
 
-    txt <- paste("The selected packages will be installed from the",
+    txt <- paste("The selected packages will be downloaded and installed from the",
                  "Comprehensive R Archive Network (CRAN).", sep="\n")
     frame1.lab.4.2 <- ttklabel(frame1, text=txt, justify="left",
                                background="white")
 
-    frame1.lab.5.2 <- ttklabel(frame1, text="CRAN mirror",
+    frame1.lab.5.2 <- ttklabel(frame1, text="Choose your preferred CRAN mirror",
                                justify="left", background="white")
     frame1.box.5.3 <- ttkcombobox(frame1, textvariable=repos.var, width=25,
                                   values=cran.mirrors$Name, state="readonly")
@@ -141,8 +141,8 @@ LoadPackages <- function() {
     tkgrid.configure(frame1.ysc.2.3, padx=c(0, 40), sticky="nsw")
     tkgrid.configure(frame1.lab.3.2, padx=c(0, 40), columnspan=2, sticky="w")
     tkgrid.configure(frame1.lab.4.2, padx=c(0, 40), columnspan=2, sticky="w")
-    tkgrid.configure(frame1.lab.5.2, padx=c( 0,  4), sticky="e")
-    tkgrid.configure(frame1.box.5.3, padx=c( 0, 40), sticky="w")
+    tkgrid.configure(frame1.lab.5.2, padx=c(0, 4), sticky="e")
+    tkgrid.configure(frame1.box.5.3, padx=c(0, 40), sticky="w")
 
     tkpack(frame1)
 

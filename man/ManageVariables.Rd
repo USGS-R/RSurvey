@@ -43,7 +43,7 @@ to a specific variable, and contains the following components:
   (see \code{\link{summary}}).}
 \item{comments}{character; user comments.}
 The \code{vars} object is a list with components:
-\item{x, y, z, vx, vy, sort.on}{integer; the index number of the corresponding
+\item{x, y, z, sort.on}{integer; the index number of the corresponding
   state variable in \code{cols}. These indexes are updated to reflect
   the removal and (or) reordering of variables in \code{cols}.}
 \item{query}{character; if required, variable names are updated.}
