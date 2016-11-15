@@ -14,7 +14,6 @@
                  "and no responsibility is assumed by the USGS in connection therewith.")
       packageStartupMessage(paste(strwrap(s, indent=1), collapse="\n "))
     }
-    OpenRSurvey()
   }
   invisible()
 }

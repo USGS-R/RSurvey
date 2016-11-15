@@ -1,14 +1,14 @@
-\name{OpenRSurvey}
+\name{StartGui}
 
-\alias{OpenRSurvey}
+\alias{StartGui}
 
-\title{Open RSurvey}
+\title{Open Graphical User Interface}
 
 \description{
-Opens the main graphical user interface (\acronym{GUI}) for \pkg{RSurvey}.
+Launches a \pkg{RSurvey} graphical user interface (\acronym{GUI}) for \pkg{RSurvey}.
 }
 
-\usage{OpenRSurvey()}
+\usage{StartGui()}
 
 \details{
 All functions within \pkg{RSurvey} are accessible through this \acronym{GUI}.
@@ -23,6 +23,6 @@ Quaries and sets the \code{vars} component of \code{\link{Data}}. The
 
 \author{J.C. Fisher}
 
-\examples{\dontrun{OpenRSurvey()}}
+\examples{\dontrun{StartGui()}}
 
 \keyword{misc}

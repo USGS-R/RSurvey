@@ -1,5 +1,10 @@
 # RSurvey 0.8.3.9000
 
+- Change function name from `OpenRSurvey` to `StartGui`.
+  And stop GUI from automatically launching during the **RSurvey** package load.
+
+- Remove vector components from state variables.
+
 - Add CITATION file to be used by the `citation` function.
 
 - Remove `BuildPackage` function

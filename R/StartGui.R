@@ -1,6 +1,6 @@
-# opens the main gui
+# launch package gui session
 
-OpenRSurvey <- function() {
+StartGui <- function() {
 
 
   # close gui
@@ -659,25 +659,13 @@ OpenRSurvey <- function() {
 
 
 
-
-
-
       col.names <- names(Data("data.pts"))
       col.formats <- vapply(col.names, function(i) cols[[vars[[i]]]]$format, "")
 
 
 
-
-
-
       EditData(Data("data.pts"), col.names=col.names, col.formats=col.formats,
                read.only=TRUE, win.title="View Processed Data", parent=tt)
-
-
-
-
-
-
 
 
 
@@ -842,8 +830,7 @@ OpenRSurvey <- function() {
     image.path <- file.path(getwd(), "inst", "images")
     info.path <- file.path(getwd(), "DESCRIPTION")
   }
-  if (is.null(Data("default.dir")))
-    Data("default.dir", getwd())
+  if (is.null(Data("default.dir"))) Data("default.dir", getwd())
 
   # check if suggested packages are loaded
   is.xml        <- requireNamespace("XML", quietly=TRUE)
@@ -1102,7 +1089,7 @@ OpenRSurvey <- function() {
               Data("data.pts", NULL)
               Data("data.grd", NULL)
               RestoreSession(file.path(getwd(), "R"), save.objs="Data",
-                             fun.call="OpenRSurvey")
+                             fun.call="StartGui")
             })
   }
 

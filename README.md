@@ -43,16 +43,16 @@ print(inherits(tcltk::tclRequire("Tktable", warn = FALSE), "tclObj"))
 
 ## Run
 
-Load **RSurvey** in the current R session to activate the main GUI:
+Load **RSurvey** in the current R session to activate the main GUI
 
 ```r
 library(RSurvey)
 ```
 
-Example data sets are provided in the following directory:
+Open the main GUI
 
 ```r
-print(system.file("extdata", package = "RSurvey"))
+StartGui()
 ```
 
 ## Bugs
