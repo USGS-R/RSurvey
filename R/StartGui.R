@@ -358,9 +358,10 @@ StartGui <- function() {
 
   # about package
   AboutPackage <- function() {
-    txt <- readLines(info.path)
-    pkg.version <- strsplit(txt[grep("^Version:", txt)], " ")[[1]][2]
-    msg <- paste("RSurvey package version", pkg.version)
+    lib <- ifelse("package:RSurvey" %in% search(), system.file(package="RSurvey"), getwd())
+    ver <- read.dcf(file.path(lib, "DESCRIPTION"), "Version")
+    yr  <- sub("-.*", "", read.dcf(file.path(lib, "DESCRIPTION"), "Packaged"))
+    msg <- sprintf("RSurvey package version %s (%s)", ver, yr)
     tkmessageBox(icon="info", message=msg, title="Information", type="ok", parent=tt)
   }
 
@@ -822,21 +823,14 @@ StartGui <- function() {
             "    set in the command line or by clicking in the Menu:\n",
             "    Edit - GUI Preferences: SDI, then Save and restart R.\n\n")
 
-  # establish default directories
-  if ("package:RSurvey" %in% search()) {
-    image.path <- system.file("images", package="RSurvey")
-    info.path <- system.file("DESCRIPTION", package="RSurvey")
-  } else {
-    image.path <- file.path(getwd(), "inst", "images")
-    info.path <- file.path(getwd(), "DESCRIPTION")
-  }
+  # establish default directory
   if (is.null(Data("default.dir"))) Data("default.dir", getwd())
 
   # check if suggested packages are loaded
-  is.xml        <- requireNamespace("XML", quietly=TRUE)
-  is.rgl        <- requireNamespace("rgl", quietly=TRUE)
-  is.rgdal      <- requireNamespace("rgdal", quietly=TRUE)
-  is.tripack    <- requireNamespace("tripack", quietly=TRUE)
+  is.xml        <- requireNamespace("XML",        quietly=TRUE)
+  is.rgl        <- requireNamespace("rgl",        quietly=TRUE)
+  is.rgdal      <- requireNamespace("rgdal",      quietly=TRUE)
+  is.tripack    <- requireNamespace("tripack",    quietly=TRUE)
   is.colorspace <- requireNamespace("colorspace", quietly=TRUE)
 
   # set options
@@ -916,8 +910,7 @@ StartGui <- function() {
   tkadd(menu.file, "cascade", label="Save plot from", menu=menu.file.save)
 
   tkadd(menu.file, "separator")
-  tkadd(menu.file, "command", label="Exit",
-        command=CloseGUI)
+  tkadd(menu.file, "command", label="Exit", command=CloseGUI)
 
   # edit menu
   menu.edit <- tkmenu(tt, tearoff=0)
@@ -927,14 +920,12 @@ StartGui <- function() {
         command=CallManageVariables)
   tkadd(menu.edit, "command", label="Raw data editor\u2026",
         command=function() CallEditData(read.only=FALSE))
-  tkadd(menu.edit, "command", label="Comment\u2026",
-        command=EditComment)
+  tkadd(menu.edit, "command", label="Comment\u2026", command=EditComment)
 
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Filter data records\u2026",
         command=BuildQuery)
-  tkadd(menu.edit, "command", label="Clear filter",
-        command=ClearQuery)
+  tkadd(menu.edit, "command", label="Clear filter", command=ClearQuery)
 
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Set sort order\u2026",
@@ -949,15 +940,11 @@ StartGui <- function() {
           }
         })
   tkadd(menu.edit, "command", label="Clear sort order",
-        command=function() {
-          Data(c("vars", "sort.on"), NULL)
-        })
+        command=function() Data(c("vars", "sort.on"), NULL))
 
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Set interpolation method",
-        command=function() {
-          SetInterpolation(tt)
-        })
+        command=function() SetInterpolation(tt))
 
   # view menu
   menu.view <- tkmenu(tt, tearoff=0)
@@ -989,20 +976,16 @@ StartGui <- function() {
         command=function() {
           Data("poly.data", NULL)
           Data("poly.crop", NULL)
-          Data("data.pts", NULL)
-          Data("data.grd", NULL)
+          Data("data.pts",  NULL)
+          Data("data.grd",  NULL)
         })
   tkadd(menu.poly, "separator")
 
   menu.poly.con <- tkmenu(tt, tearoff=0)
   tkadd(menu.poly.con, "command", label="Boundary defining data limits",
-        command=function() {
-          ConstructPolygon(type="p")
-        })
+        command=function() ConstructPolygon(type="p"))
   tkadd(menu.poly.con, "command", label="Crop region for interpolated surface",
-        command=function() {
-          ConstructPolygon(type="l")
-        })
+        command=function() ConstructPolygon(type="l"))
   tkadd(menu.poly, "cascade", label="Build", menu=menu.poly.con)
   tkadd(menu.poly, "command", label="Autocrop region\u2026",
         state=if (is.tripack) "normal" else "disabled",
@@ -1012,9 +995,7 @@ StartGui <- function() {
   menu.graph <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Plot", menu=menu.graph, underline=0)
   tkadd(menu.graph, "command", label="Scatterplot",
-        command=function() {
-          CallPlot2d(type="p")
-        })
+        command=function() CallPlot2d(type="p"))
   tkadd(menu.graph, "command", label="2D-interpolated map",
         command=function() {
           type <- if (Data("img.contour")) "g" else "l"
@@ -1030,21 +1011,16 @@ StartGui <- function() {
           Data("lim.axes", lim)
         })
   tkadd(menu.graph, "command", label="Clear axes limits",
-        command=function() {
-          Data("lim.axes", NULL)
-        })
+        command=function() Data("lim.axes", NULL))
   tkadd(menu.graph, "separator")
   tkadd(menu.graph, "command", label="Configuration",
-        command=function() {
-          SetConfiguration(tt)
-        })
+        command=function() SetConfiguration(tt))
   tkadd(menu.graph, "command", label="Choose color palette\u2026",
         state=if (is.colorspace) "normal" else "disabled",
         command=function() {
           pal <- colorspace::choose_palette(pal=Data("color.palette"),
                                             n=Data("nlevels"), parent=tt)
-          if (!is.null(pal))
-            Data("color.palette", pal)
+          if (!is.null(pal)) Data("color.palette", pal)
         })
   tkadd(menu.graph, "separator")
   tkadd(menu.graph, "command", label="Close all graphic devices",
@@ -1054,9 +1030,7 @@ StartGui <- function() {
   menu.help <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Help", menu=menu.help, underline=0)
   tkadd(menu.help, "command", label="Documentation",
-        command=function() {
-          help(package="RSurvey")
-        })
+        command=function() help(package="RSurvey"))
   tkadd(menu.help, "command", label="Dataset",
         command=function() {
           src <- Data(c("import", "source"))
@@ -1066,20 +1040,14 @@ StartGui <- function() {
   tkadd(menu.help, "separator")
   menu.help.rep <- tkmenu(tt, tearoff=0)
   tkadd(menu.help.rep, "command", label="CRAN",
-        command=function() {
-          browseURL("http://cran.r-project.org/web/packages/RSurvey/")
-        })
+        command=function() browseURL("https://CRAN.R-project.org/package=RSurvey"))
   tkadd(menu.help.rep, "command", label="GitHub",
-        command=function() {
-          browseURL("https://github.com/jfisher-usgs/RSurvey")
-        })
+        command=function() browseURL("https://github.com/jfisher-usgs/RSurvey"))
   tkadd(menu.help, "cascade", label="Repository on  ", menu=menu.help.rep)
 
   tkadd(menu.help, "separator")
-  tkadd(menu.help, "command", label="Session information",
-        command=SessionInfo)
-  tkadd(menu.help, "command", label="About",
-        command=AboutPackage)
+  tkadd(menu.help, "command", label="Session information", command=SessionInfo)
+  tkadd(menu.help, "command", label="About", command=AboutPackage)
 
   if (!("RSurvey" %in% .packages())) {
       tkadd(menu.help, "separator")
@@ -1100,20 +1068,25 @@ StartGui <- function() {
   f0 <- ttkframe(tt, relief="flat", borderwidth=2)
   tkpack(f0, side="top", fill="x")
 
+  if ("package:RSurvey" %in% search())
+    img.path <- system.file("images", package="RSurvey")
+  else
+    img.path <- file.path(getwd(), "inst", "images")
+
   tkimage.create("photo", save.var, format="GIF",
-                 file=file.path(image.path, "save.gif"))
+                 file=file.path(img.path, "save.gif"))
   tkimage.create("photo", import.var, format="GIF",
-                 file=file.path(image.path, "import.gif"))
+                 file=file.path(img.path, "import.gif"))
   tkimage.create("photo", manage.var, format="GIF",
-                 file=file.path(image.path, "manage.gif"))
+                 file=file.path(img.path, "manage.gif"))
   tkimage.create("photo", polygon.var, format="GIF",
-                 file=file.path(image.path, "polygon.gif"))
+                 file=file.path(img.path, "polygon.gif"))
   tkimage.create("photo", axes.var, format="GIF",
-                 file=file.path(image.path, "axes.gif"))
+                 file=file.path(img.path, "axes.gif"))
   tkimage.create("photo", config.var, format="GIF",
-                 file=file.path(image.path, "config.gif"))
+                 file=file.path(img.path, "config.gif"))
   tkimage.create("photo", close.var, format="GIF",
-                 file=file.path(image.path, "close.gif"))
+                 file=file.path(img.path, "close.gif"))
 
   f0.but.1  <- tkbutton(f0, relief="flat", overrelief="raised", borderwidth=1,
                         image=save.var, command=SaveProj)
@@ -1125,8 +1098,7 @@ StartGui <- function() {
                         image=polygon.var, command=CallManagePolygons)
   f0.but.5  <- tkbutton(f0, relief="flat", overrelief="raised", borderwidth=1,
                         image=axes.var, command=function() {
-                          lim <- SetAxesLimits(Data("lim.axes"), tt)
-                          Data("lim.axes", lim)
+                          Data("lim.axes", SetAxesLimits(Data("lim.axes"), tt))
                         })
   f0.but.6  <- tkbutton(f0, relief="flat", overrelief="raised", borderwidth=1,
                         image=config.var, command=function() SetConfiguration(tt))
@@ -1171,8 +1143,7 @@ StartGui <- function() {
                           command=function() CallPlot2d(type="p"))
   f2.but.1.2 <- ttkbutton(f2, width=10, text="2D Map",
                           command=function() {
-                            type <- if (Data("img.contour")) "g" else "l"
-                            CallPlot2d(type=type)
+                            CallPlot2d(type=if (Data("img.contour")) "g" else "l")
                           })
   f2.but.1.3 <- ttkbutton(f2, width=10, text="3D Map",
                           command=CallPlot3d)

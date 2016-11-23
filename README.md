@@ -49,7 +49,7 @@ Load **RSurvey** in the current R session
 library(RSurvey)
 ```
 
-Launch a **RSurvey** GUI session
+Launch a GUI session
 
 ```r
 StartGui()
