@@ -991,7 +991,7 @@ StartGui <- function() {
         state=if (is.tripack) "normal" else "disabled",
         command=CallAutocropRegion)
 
-  # graph menu
+  # plot menu
   menu.graph <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Plot", menu=menu.graph, underline=0)
   tkadd(menu.graph, "command", label="Scatterplot",
