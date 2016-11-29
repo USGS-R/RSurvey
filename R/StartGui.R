@@ -1,5 +1,3 @@
-# launch a gui session
-
 StartGui <- function() {
 
 
@@ -994,7 +992,7 @@ StartGui <- function() {
   # plot menu
   menu.graph <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Plot", menu=menu.graph, underline=0)
-  tkadd(menu.graph, "command", label="Scatterplot",
+  tkadd(menu.graph, "command", label="Scatter",
         command=function() CallPlot2d(type="p"))
   tkadd(menu.graph, "command", label="2D-interpolated map",
         command=function() {

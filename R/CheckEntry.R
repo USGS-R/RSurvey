@@ -1,9 +1,6 @@
-# Controls the character string content within a Tk entry widget.
-
 CheckEntry <- function(obj.class, ent.str="") {
 
-  if (ent.str == "")
-    return(ent.str)
+  if (ent.str == "") return(ent.str)
 
   if ("numeric" %in% obj.class) {
     accept.vals <- c(as.character(0:9), "-", "e", "E", ".", "N", "A")

@@ -1,22 +1,8 @@
-# A GUI for selecting files to open or save.
-
 GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
                     initialfile=NULL, defaultextension=NULL, win.title=cmd,
                     multi=FALSE, parent=NULL) {
 
-  ## Additional functions
-
-  # Determine file extension
-  GetFileExt <- function(x) {
-    ext <- tail(unlist(strsplit(basename(x), "\\."))[-1], 1)
-    if (length(ext) == 0L)
-      ext <- ""
-    return(ext)
-  }
-
-  ## Main program
-
-  # Initialize file filters
+  # initialize file filters
   all.filters <- list(bmp   = "Windows Bitmap",
                       bz2   = "Compressed Text",
                       csv   = "Text",
@@ -42,13 +28,13 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
                       zip   = "Compressed Text"
                   )
 
-  # Process connection and return
+  # process connection and return
   if (!is.null(file)) {
     if (inherits(file, "connection"))
       val <- summary.connection(file)$description
     else
       val <- file
-    ext <- GetFileExt(val)
+    ext <- tools::file_ext(val)
     attr(val, "directory") <- dirname(val)
     attr(val, "extension") <- ext
     attr(val, "name") <- sub(paste0(".", ext, "$"), "", basename(val))
@@ -57,17 +43,15 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
     return(val)
   }
 
-  # Establish initial directory
-  if (is.null(initialdir))
-    initialdir <- Data("default.dir")
+  # establish initial directory
+  if (is.null(initialdir)) initialdir <- Data("default.dir")
 
-  # Build filters
+  # build filters
   filters <- matrix(nrow=0, ncol=2)
   if (!is.null(exts)) {
     for (ext in exts) {
       typ <- all.filters[[ext]]
-      if (is.null(typ))
-        typ <- toupper(ext)
+      if (is.null(typ)) typ <- toupper(ext)
       filters <- rbind(filters, c(typ, paste0(".", ext)))
     }
   }
@@ -76,7 +60,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
   filters   <- apply(filters, 1, paste, collapse=" ")
   filters   <- paste(paste0("{", filters, "}"), collapse=" ")
 
-  # Build arguments
+  # build arguments
   if (tolower(substr(cmd, 1, 4)) == "open")
     args <- list("tk_getOpenFile", title=win.title, multiple=multi)
   else
@@ -91,12 +75,11 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
     args <- c(args, initialfile=initialfile)
   args <- c(args, filetypes=filters)
 
-  # Open file dialog gui
+  # open file dialog gui
   res <- tclvalue(do.call(tcl, args))
-  if (!nzchar(res))
-    return()
+  if (!nzchar(res)) return()
 
-  # Account for mutiple files
+  # account for mutiple files
   if (multi) {
     ans <- character()
     pat <- "([^{])*\\{([^}]*)\\}(.*)"
@@ -110,14 +93,13 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
     ans <- res
   }
 
-  # Package results
+  # package results
   n <- length(ans)
-  if (n > 1)
-    f <- list()
+  if (n > 1) f <- list()
 
   for (i in seq_along(ans)) {
     val <- ans[i]
-    ext <- GetFileExt(val)
+    ext <- tools::file_ext(val)
     attr(val, "directory") <- dirname(val)
     attr(val, "extension") <- ext
     attr(val, "name") <- sub(paste0(".", ext, "$"), "", basename(val))
@@ -128,9 +110,8 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
       f <- val
   }
 
-  # Set default directory
-  if (!is.null(f))
-    Data("default.dir", attr(val, "directory"))
+  # set default directory
+  if (!is.null(f)) Data("default.dir", attr(val, "directory"))
 
   return(f)
 }

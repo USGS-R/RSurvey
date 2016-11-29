@@ -1,10 +1,7 @@
-# A GUI for selecting a graphic color.
-
 ChooseColor <- function(col, parent=NULL) {
 
-  ## Additional functions
 
-  # Save color and quit
+  # save color and quit
   SaveColor <- function() {
     col.hex <- Txt2hex(tclvalue(col.var))
     if (col.hex == "")
@@ -13,24 +10,27 @@ ChooseColor <- function(col, parent=NULL) {
     tclvalue(tt.done.var) <- 1
   }
 
-  # Draw polygon on color sample
+
+  # draw polygon on color sample
   DrawSamplePolygon <- function(fill) {
-    tcl(frame0.cvs.1, "delete", "col")
+    tcl(f0.cvs.1, "delete", "col")
     pts <- .Tcl.args(c(0, 0, dx, 0, dx, dy, 0, dy))
-    tkcreate(frame0.cvs.1, "polygon", pts, fill=fill, outline="", tag="col")
+    tkcreate(f0.cvs.1, "polygon", pts, fill=fill, outline="", tag="col")
   }
 
-  # Draw polygon on color chart
+
+  # draw polygon on color chart
   DrawChartPolygon <- function(i, j, fill, outline, tag) {
     x1 <- j * dx - dx
     y1 <- i * dy - dy
     x2 <- j * dx
     y2 <- i * dy
     pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2) - 0.5)
-    tkcreate(frame1.cvs, "polygon", pts, fill=fill, outline=outline, tag=tag)
+    tkcreate(f1.cvs, "polygon", pts, fill=fill, outline=outline, tag=tag)
   }
 
-  # Build color chart
+
+  # build color chart
   BuildColorChart <- function() {
     for (i in seq_len(m)) {
       for (j in seq_len(n)) {
@@ -39,11 +39,12 @@ ChooseColor <- function(col, parent=NULL) {
     }
   }
 
-  # Update color ramp
+
+  # update color ramp
   UpdateColorRamp <- function(col.hex) {
-    col.ramp <<- colorRampPalette(c("#FFFFFF", col.hex, "#000000"),
-                                  space="Lab")(n + 4)[3:(n + 2)]
-    tcl(frame2.cvs, "delete", "ramp")
+    cols <- c("#FFFFFF", col.hex, "#000000")
+    col.ramp <<- colorRampPalette(cols, space="Lab")(n + 4)[3:(n + 2)]
+    tcl(f2.cvs, "delete", "ramp")
     dx <- (w - 1) / n
     x2 <- 1
     y1 <- 1
@@ -52,18 +53,18 @@ ChooseColor <- function(col, parent=NULL) {
       x1 <- x2
       x2 <- x1 + dx
       pts <- .Tcl.args(c(x1, y1, x2, y1, x2, y2, x1, y2))
-      tkcreate(frame2.cvs, "polygon", pts, fill=i, tag="ramp")
+      tkcreate(f2.cvs, "polygon", pts, fill=i, tag="ramp")
     }
   }
 
-  # Change color
 
+  # change color
   ChangeColor <- function(col.hex, is.hsva=FALSE, is.color=FALSE) {
     col.hex <- substr(col.hex, 1, 7)
     if (is.na(col.hex) || col.hex == "")
       col.hex <- "#000000"
 
-    tcl(frame1.cvs, "delete", "browse")
+    tcl(f1.cvs, "delete", "browse")
     if (col.hex %in% d) {
       ij <- which(d == col.hex, arr.ind=TRUE)[1, ]
       i <- ij[1]
@@ -89,31 +90,31 @@ ChooseColor <- function(col, parent=NULL) {
       tclvalue(v.ent.var) <- sprintf("%.2f", nv)
       tclvalue(a.ent.var) <- sprintf("%.2f", na)
     }
-    if (!is.color)
-      tclvalue(col.var) <- Hsv2hex()
+    if (!is.color) tclvalue(col.var) <- Hsv2hex()
   }
 
-  # Select ramp color
+
+  # select ramp color
   SelectRampColor <- function(x) {
     i <- ceiling((as.numeric(x)) / ((w - 1) / n))
     col.hex <- col.ramp[i]
     ChangeColor(col.hex)
   }
 
-  # Select chart color
+
+  # select chart color
   SelectChartColor <- function(x, y) {
-    tcl(frame1.cvs, "delete", "browse")
+    tcl(f1.cvs, "delete", "browse")
     i <- ceiling((as.numeric(y)) / dy)
     j <- ceiling((as.numeric(x)) / dx)
-    if (i == 0)
-      i <- 1
-    if (j == 0)
-      j <- 1
+    if (i == 0) i <- 1
+    if (j == 0) j <- 1
     DrawChartPolygon(i, j, fill="", outline="white", tag="browse")
     ChangeColor(d[i, j])
   }
 
-  # Coerce text string to hexadecimal color
+
+  # coerce text string to hexadecimal color
   Txt2hex <- function(txt) {
     txt <- CheckColorStr(as.character(txt))
     if (substr(txt, 1, 1) != "#")
@@ -124,16 +125,13 @@ ChooseColor <- function(col, parent=NULL) {
       fmt <- "%06s"
     fmt.txt <- gsub(" ", "0", sprintf(fmt, substr(txt, 2, nchar(txt))))
     txt <- paste0("#", fmt.txt)
-    if (inherits(try(col2rgb(txt), silent=TRUE), "try-error")) {
-      if (is.transparent)
-        txt <- "#000000FF"
-      else
-        txt <- "#000000"
-    }
+    if (inherits(try(col2rgb(txt), silent=TRUE), "try-error"))
+      txt <- ifelse(is.transparent, "#000000FF", "#000000")
     return(txt)
   }
 
-  # Coerce numeric HSV values to hexadecimal color
+
+  # coerce numeric HSV values to hexadecimal color
   Hsv2hex <- function() {
     if (is.transparent)
       col.hex <- hsv(h=nh, s=ns, v=nv, alpha=na)
@@ -142,7 +140,8 @@ ChooseColor <- function(col, parent=NULL) {
     return(col.hex)
   }
 
-  # Check range of numeric color attribute
+
+  # check range of numeric color attribute
   CheckColorNum <- function(...) {
     num <- suppressWarnings(as.numeric(...))
     if (is.na(num) || num < 0) {
@@ -153,7 +152,8 @@ ChooseColor <- function(col, parent=NULL) {
     return(num)
   }
 
-  # Check hexadecimal character string
+
+  # check hexadecimal character string
   CheckColorStr <- function(txt) {
     txt <- as.character(txt)
     if (is.transparent)
@@ -166,8 +166,8 @@ ChooseColor <- function(col, parent=NULL) {
     return(txt)
   }
 
-  # Update based on change in scales
 
+  # update based on change in scales
   ScaleH <- function(...) {
     nh <<- as.numeric(...)
     tclvalue(h.scl.var) <- nh
@@ -195,8 +195,8 @@ ChooseColor <- function(col, parent=NULL) {
     tclvalue(col.var) <- Hsv2hex()
   }
 
-  # Update based on change in numeric color attributes
 
+  # update based on change in numeric color attributes
   EntryH <- function() {
     txt <- tclvalue(h.ent.var)
     nh <<- CheckColorNum(txt)
@@ -225,24 +225,23 @@ ChooseColor <- function(col, parent=NULL) {
     tclvalue(col.var) <- Hsv2hex()
   }
 
-  # Toggle transparency check-box
 
+  # toggle transparency check-box
   ToggleTransparency <- function() {
     is.transparent <<- as.logical(as.integer(tclvalue(trans.var)))
     if (is.transparent) {
-      tkconfigure(frame3.lab.4.1, state="noraml")
-      tcl(frame3.scl.4.2, "state", "!disabled")
-      tkconfigure(frame3.ent.4.3, state="noraml")
+      tkconfigure(f3.lab.4.1, state="noraml")
+      tcl(f3.scl.4.2, "state", "!disabled")
+      tkconfigure(f3.ent.4.3, state="noraml")
     } else {
-      tkconfigure(frame3.lab.4.1, state="disabled")
-      tcl(frame3.scl.4.2, "state", "disabled")
-      tkconfigure(frame3.ent.4.3, state="disabled")
+      tkconfigure(f3.lab.4.1, state="disabled")
+      tcl(f3.scl.4.2, "state", "disabled")
+      tkconfigure(f3.ent.4.3, state="disabled")
     }
     tclvalue(col.var) <- Hsv2hex()
   }
 
-  # Edit color entry
-
+  # edit color entry
   EditColorEntry <- function() {
     txt <- CheckColorStr(tclvalue(col.var))
     tclvalue(col.var) <- txt
@@ -250,12 +249,10 @@ ChooseColor <- function(col, parent=NULL) {
     ChangeColor(col.hex, is.color=TRUE)
   }
 
-  ## Main program
 
-  if (!requireNamespace("colorspace", quietly=TRUE))
-    stop()
+  if (!requireNamespace("colorspace", quietly=TRUE)) stop()
 
-  # Color chart information
+  # color chart information
   m <- 12
   dx <- dy <- 20
   d1 <- cbind(colorspace::rainbow_hcl(m), colorspace::heat_hcl(m),
@@ -303,31 +300,28 @@ ChooseColor <- function(col, parent=NULL) {
   w <- dx * n
   h <- dy * m
 
-  # All possible digits in color character string
+  # all possible digits in color character string
   hex.digits <- list(0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
                      "a", "b", "c", "d", "e", "f",
-                     "A", "B", "C", "D", "E", "F", "#")
+                     "A", "B", "C", "D", "E", "F",
+                     "#")
 
-  # Initialize return color
+  # initialize return color
   rtn.col <- NULL
 
-  # Initialize color ramp palette
+  # initialize color ramp palette
   col.ramp <- NULL
 
-  # Account for improper color argument
-  if (missing(col) || !inherits(col, "character"))
-    col <- "#000000"
+  # account for improper color argument
+  if (missing(col) || !inherits(col, "character")) col <- "#000000"
 
- # Transparency status
-  if (nchar(col) == 9)
-    is.transparent <- TRUE
-  else
-    is.transparent <- FALSE
+ # transparency status
+  is.transparent <- ifelse(nchar(col) == 9, TRUE, FALSE)
 
-  # Color is intially required to be in hexadecimal format
+  # color is intially required to be in hexadecimal format
   col.hex <- Txt2hex(col)
 
-  # Initialize hue, saturation, value, and alpha color components
+  # initialize hue, saturation, value, and alpha color components
   col.rgb <- col2rgb(col.hex, alpha=TRUE)
   col.hsv <- rgb2hsv(col.rgb[seq_len(3)], maxColorValue=255)
   nh <- col.hsv[1]
@@ -335,25 +329,20 @@ ChooseColor <- function(col, parent=NULL) {
   nv <- col.hsv[3]
   na <- col.rgb[4] / 255
 
-  # Assign additional variables linked to Tk widgets
-
-  col.var <- tclVar(col.hex)
-
-  trans.var <- tclVar(is.transparent)
-
-  h.scl.var <- tclVar(nh)
-  s.scl.var <- tclVar(ns)
-  v.scl.var <- tclVar(nv)
-  a.scl.var <- tclVar(na)
-  h.ent.var <- tclVar(sprintf("%.2f", nh))
-  s.ent.var <- tclVar(sprintf("%.2f", ns))
-  v.ent.var <- tclVar(sprintf("%.2f", nv))
-  a.ent.var <- tclVar(sprintf("%.2f", na))
-
+  # assign additional variables linked to Tk widgets
+  col.var     <- tclVar(col.hex)
+  trans.var   <- tclVar(is.transparent)
+  h.scl.var   <- tclVar(nh)
+  s.scl.var   <- tclVar(ns)
+  v.scl.var   <- tclVar(nv)
+  a.scl.var   <- tclVar(na)
+  h.ent.var   <- tclVar(sprintf("%.2f", nh))
+  s.ent.var   <- tclVar(sprintf("%.2f", ns))
+  v.ent.var   <- tclVar(sprintf("%.2f", nv))
+  a.ent.var   <- tclVar(sprintf("%.2f", na))
   tt.done.var <- tclVar(0)
 
-  # Open GUI
-
+  # open gui
   tclServiceMode(FALSE)
 
   tt <- tktoplevel()
@@ -366,122 +355,113 @@ ChooseColor <- function(col, parent=NULL) {
   tkwm.resizable(tt, 0, 0)
   tktitle(tt) <- "Choose Color"
 
-  # Frame 0, ok and cancel buttons, and sample color
+  # frame 0, ok and cancel buttons, and sample color
+  f0 <- ttkframe(tt, relief="flat")
 
-  frame0 <- ttkframe(tt, relief="flat")
+  f0.cvs.1 <- tkcanvas(f0, relief="flat", width=dx - 1, height=dy - 1,
+                       background="white", confine=TRUE, closeenough=0,
+                       borderwidth=0, highlightthickness=0)
+  f0.ent.2 <- ttkentry(f0, textvariable=col.var, width=12)
+  f0.chk.3 <- ttkcheckbutton(f0, variable=trans.var, text="Transparency",
+                             command=ToggleTransparency)
 
-  frame0.cvs.1 <- tkcanvas(frame0, relief="flat", width=dx - 1, height=dy - 1,
-                           background="white", confine=TRUE, closeenough=0,
-                           borderwidth=0, highlightthickness=0)
-  frame0.ent.2 <- ttkentry(frame0, textvariable=col.var, width=12)
-  frame0.chk.3 <- ttkcheckbutton(frame0, variable=trans.var,
-                                 text="Transparency",
-                                 command=ToggleTransparency)
+  f0.but.5 <- ttkbutton(f0, width=12, text="OK", command=SaveColor)
+  f0.but.6 <- ttkbutton(f0, width=12, text="Cancel",
+                        command=function() {
+                          rtn.col <<- NULL
+                          tclvalue(tt.done.var) <- 1
+                        })
 
-  frame0.but.5 <- ttkbutton(frame0, width=12, text="OK", command=SaveColor)
-  frame0.but.6 <- ttkbutton(frame0, width=12, text="Cancel",
-                            command=function() {
-                              rtn.col <<- NULL
-                              tclvalue(tt.done.var) <- 1
-                            })
+  tkgrid(f0.cvs.1, f0.ent.2,  f0.chk.3, "x", f0.but.5, f0.but.6, pady=c(10, 10))
+  tkgrid.columnconfigure(f0, 3, weight=1)
 
-  tkgrid(frame0.cvs.1, frame0.ent.2,  frame0.chk.3, "x", frame0.but.5,
-         frame0.but.6, pady=c(10, 10))
-  tkgrid.columnconfigure(frame0, 3, weight=1)
+  tkgrid.configure(f0.cvs.1, sticky="w", padx=c(11, 1), pady=11)
+  tkgrid.configure(f0.ent.2, padx=c(4, 4))
 
-  tkgrid.configure(frame0.cvs.1, sticky="w", padx=c(11, 1), pady=11)
-  tkgrid.configure(frame0.ent.2, padx=c(4, 4))
+  tkgrid.configure(f0.but.5, sticky="e", padx=c(0, 4))
+  tkgrid.configure(f0.but.6, sticky="w", padx=c(0, 10), rowspan=2)
 
-  tkgrid.configure(frame0.but.5, sticky="e", padx=c(0, 4))
-  tkgrid.configure(frame0.but.6, sticky="w", padx=c(0, 10), rowspan=2)
+  tkpack(f0, fill="x", side="bottom", anchor="e")
 
-  tkpack(frame0, fill="x", side="bottom", anchor="e")
+  # frame 1, color chart
+  f1 <- ttkframe(tt, relief="flat")
+  f1.cvs <- tkcanvas(f1, relief="flat", width=w + 1, height=h + 1,
+                     background="black", confine=TRUE, closeenough=0,
+                     borderwidth=0, highlightthickness=0)
+  tkgrid(f1.cvs, padx=10, pady=10)
+  tkpack(f1)
 
-  # Frame 1, color chart
-  frame1 <- ttkframe(tt, relief="flat")
-  frame1.cvs <- tkcanvas(frame1, relief="flat", width=w + 1, height=h + 1,
-                         background="black", confine=TRUE, closeenough=0,
-                         borderwidth=0, highlightthickness=0)
-  tkgrid(frame1.cvs, padx=10, pady=10)
-  tkpack(frame1)
+  # frame 2, color ramp
+  f2 <- ttkframe(tt, relief="flat")
+  f2.cvs <- tkcanvas(f2, relief="flat", width=w + 1, height=dy / 2 + 1,
+                     background="black", confine=TRUE, closeenough=0,
+                     borderwidth=0, highlightthickness=0)
 
-  # Frame 2, color ramp
-  frame2 <- ttkframe(tt, relief="flat")
-  frame2.cvs <- tkcanvas(frame2, relief="flat", width=w + 1, height=dy / 2 + 1,
-                         background="black", confine=TRUE, closeenough=0,
-                         borderwidth=0, highlightthickness=0)
+  tkgrid(f2.cvs, padx=10, pady=c(0, 10))
+  tkpack(f2)
 
-  tkgrid(frame2.cvs, padx=10, pady=c(0, 10))
-  tkpack(frame2)
+  # frame 3, color attriubte sliders
+  f3 <- ttkframe(tt, relief="flat")
 
-  # Frame 3, color attriubte sliders
+  f3.lab.1.1 <- ttklabel(f3, text="H", justify="center")
+  f3.lab.2.1 <- ttklabel(f3, text="S", justify="center")
+  f3.lab.3.1 <- ttklabel(f3, text="V", justify="center")
+  f3.lab.4.1 <- ttklabel(f3, text="A", justify="center")
 
-  frame3 <- ttkframe(tt, relief="flat")
+  f3.scl.1.2 <- tkwidget(f3, "ttk::scale", from=0, to=1,
+                         orient="horizontal", value=nh, variable=h.scl.var,
+                         command=function(...) ScaleH(...))
+  f3.scl.2.2 <- tkwidget(f3, "ttk::scale", from=0, to=1,
+                         orient="horizontal", value=ns, variable=s.scl.var,
+                         command=function(...) ScaleS(...))
+  f3.scl.3.2 <- tkwidget(f3, "ttk::scale", from=0, to=1,
+                         orient="horizontal", value=nv, variable=v.scl.var,
+                         command=function(...) ScaleV(...))
+  f3.scl.4.2 <- tkwidget(f3, "ttk::scale", from=0, to=1,
+                         orient="horizontal", value=na, variable=a.scl.var,
+                         command=function(...) ScaleA(...))
 
-  frame3.lab.1.1 <- ttklabel(frame3, text="H", justify="center")
-  frame3.lab.2.1 <- ttklabel(frame3, text="S", justify="center")
-  frame3.lab.3.1 <- ttklabel(frame3, text="V", justify="center")
-  frame3.lab.4.1 <- ttklabel(frame3, text="A", justify="center")
-
-  frame3.scl.1.2 <- tkwidget(frame3, "ttk::scale", from=0, to=1,
-                             orient="horizontal", value=nh, variable=h.scl.var,
-                             command=function(...) ScaleH(...))
-  frame3.scl.2.2 <- tkwidget(frame3, "ttk::scale", from=0, to=1,
-                             orient="horizontal", value=ns, variable=s.scl.var,
-                             command=function(...) ScaleS(...))
-  frame3.scl.3.2 <- tkwidget(frame3, "ttk::scale", from=0, to=1,
-                             orient="horizontal", value=nv, variable=v.scl.var,
-                             command=function(...) ScaleV(...))
-  frame3.scl.4.2 <- tkwidget(frame3, "ttk::scale", from=0, to=1,
-                             orient="horizontal", value=na, variable=a.scl.var,
-                             command=function(...) ScaleA(...))
-
-  frame3.ent.1.3 <- ttkentry(frame3, textvariable=h.ent.var, width=4)
-  frame3.ent.2.3 <- ttkentry(frame3, textvariable=s.ent.var, width=4)
-  frame3.ent.3.3 <- ttkentry(frame3, textvariable=v.ent.var, width=4)
-  frame3.ent.4.3 <- ttkentry(frame3, textvariable=a.ent.var, width=4)
+  f3.ent.1.3 <- ttkentry(f3, textvariable=h.ent.var, width=4)
+  f3.ent.2.3 <- ttkentry(f3, textvariable=s.ent.var, width=4)
+  f3.ent.3.3 <- ttkentry(f3, textvariable=v.ent.var, width=4)
+  f3.ent.4.3 <- ttkentry(f3, textvariable=a.ent.var, width=4)
 
   ToggleTransparency()
 
-  tkgrid(frame3.lab.1.1, frame3.scl.1.2, frame3.ent.1.3, pady=c(0, 5))
-  tkgrid(frame3.lab.2.1, frame3.scl.2.2, frame3.ent.2.3, pady=c(0, 5))
-  tkgrid(frame3.lab.3.1, frame3.scl.3.2, frame3.ent.3.3, pady=c(0, 5))
-  tkgrid(frame3.lab.4.1, frame3.scl.4.2, frame3.ent.4.3)
+  tkgrid(f3.lab.1.1, f3.scl.1.2, f3.ent.1.3, pady=c(0, 5))
+  tkgrid(f3.lab.2.1, f3.scl.2.2, f3.ent.2.3, pady=c(0, 5))
+  tkgrid(f3.lab.3.1, f3.scl.3.2, f3.ent.3.3, pady=c(0, 5))
+  tkgrid(f3.lab.4.1, f3.scl.4.2, f3.ent.4.3)
 
-  tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, frame3.lab.3.1,
-                   frame3.lab.4.1, padx=c(10, 2))
-  tkgrid.configure(frame3.scl.1.2, frame3.scl.2.2, frame3.scl.3.2,
-                   frame3.scl.4.2, sticky="we", padx=2)
-  tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, frame3.ent.3.3,
-                   frame3.ent.4.3, padx=c(10, 10))
+  tkgrid.configure(f3.lab.1.1, f3.lab.2.1, f3.lab.3.1, f3.lab.4.1, padx=c(10, 2))
+  tkgrid.configure(f3.scl.1.2, f3.scl.2.2, f3.scl.3.2, f3.scl.4.2, sticky="we", padx=2)
+  tkgrid.configure(f3.ent.1.3, f3.ent.2.3, f3.ent.3.3, f3.ent.4.3, padx=c(10, 10))
 
-  tkgrid.columnconfigure(frame3, 1, weight=1)
+  tkgrid.columnconfigure(f3, 1, weight=1)
 
-  tkpack(frame3, fill="x")
+  tkpack(f3, fill="x")
 
-  # Initial commands
+  # initial commands
   BuildColorChart()
   ChangeColor(col.hex)
 
-  # Bind events
-
+  # bind events
   tclServiceMode(TRUE)
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tkbind(frame0.ent.2, "<KeyRelease>", EditColorEntry)
-  tkbind(frame0.ent.2, "<Return>", SaveColor)
+  tkbind(f0.ent.2, "<KeyRelease>", EditColorEntry)
+  tkbind(f0.ent.2, "<Return>", SaveColor)
 
-  tkbind(frame1.cvs, "<ButtonPress>", function(x, y) SelectChartColor(x, y))
-  tkbind(frame2.cvs, "<ButtonPress>", function(x) SelectRampColor(x))
+  tkbind(f1.cvs, "<ButtonPress>", function(x, y) SelectChartColor(x, y))
+  tkbind(f2.cvs, "<ButtonPress>", function(x) SelectRampColor(x))
 
-  tkbind(frame3.ent.1.3, "<KeyRelease>", EntryH)
-  tkbind(frame3.ent.2.3, "<KeyRelease>", EntryS)
-  tkbind(frame3.ent.3.3, "<KeyRelease>", EntryV)
-  tkbind(frame3.ent.4.3, "<KeyRelease>", EntryA)
+  tkbind(f3.ent.1.3, "<KeyRelease>", EntryH)
+  tkbind(f3.ent.2.3, "<KeyRelease>", EntryS)
+  tkbind(f3.ent.3.3, "<KeyRelease>", EntryV)
+  tkbind(f3.ent.4.3, "<KeyRelease>", EntryA)
 
-  # GUI control
-
+  # gui control
   tkfocus(tt)
   tkgrab(tt)
   tkwait.variable(tt.done.var)

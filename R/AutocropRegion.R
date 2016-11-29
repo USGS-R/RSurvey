@@ -1,11 +1,7 @@
-# A GUI for specify input parameters for the Autocrop function.
-
 AutocropRegion <- function(d, parent=NULL, ...) {
 
-  ## Additional functions
 
-  # Save polygon and exit GUI
-
+  # save polygon and exit gui
   SavePolygon <- function() {
     if (inherits(ply, "gpc.poly")) {
       rtn <<- ply
@@ -13,8 +9,8 @@ AutocropRegion <- function(d, parent=NULL, ...) {
     }
   }
 
-  # Run Autocrop function and plot results
 
+  # run Autocrop function and plot results
   DrawPolygon <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
@@ -29,11 +25,9 @@ AutocropRegion <- function(d, parent=NULL, ...) {
 
     if (is.null(ply)) {
       msg <- "Autocrop failed, try increasing the maximum outer arc length."
-      tkmessageBox(icon="warning", message=msg, title="Warning", type="ok",
-                   parent=tt)
+      tkmessageBox(icon="warning", message=msg, title="Warning", type="ok", parent=tt)
     } else {
-      if (is.null(dev) || dev.cur() == 1)
-        DrawBasePlot()
+      if (is.null(dev) || dev.cur() == 1) DrawBasePlot()
 
       if (!is.null(old.ply))
         plot(old.ply, add=TRUE, poly.args=list(border="black", lty=3))
@@ -44,13 +38,15 @@ AutocropRegion <- function(d, parent=NULL, ...) {
     tkfocus(tt)
   }
 
-  # Draw base plot and points
+
+  # draw base plot and points
   DrawBasePlot <- function() {
     do.call(Plot2d, append(list(x=d, type="p"), list(...)))
     dev <<- dev.cur()
   }
 
-  # Refresh plot
+
+  # refresh plot
   RefreshPlot <- function() {
     if (is.null(dev))
       return()
@@ -61,22 +57,19 @@ AutocropRegion <- function(d, parent=NULL, ...) {
     old.ply <<- NULL
   }
 
-  ## Main program
 
-  if (!requireNamespace("tripack", quietly=TRUE))
-    stop()
+  if (!requireNamespace("tripack", quietly=TRUE)) stop()
 
-  # Initialize parameters
-
-  ply <- NULL
-  rtn <- NULL
-  dev <- NULL
+  # initialize parameters
+  ply     <- NULL
+  rtn     <- NULL
+  dev     <- NULL
   old.ply <- NULL
 
-  # Construct mesh
+  # construct mesh
   mesh <- tripack::tri.mesh(d$x, d$y, duplicate="remove")
 
-  # Convex hull and maximum outer arc length
+  # convex hull and maximum outer arc length
   hull <- tripack::convex.hull(mesh)
   x1 <- hull$x
   y1 <- hull$y
@@ -84,11 +77,11 @@ AutocropRegion <- function(d, parent=NULL, ...) {
   y2 <- c(y1[-1], y1[1])
   default.len <- max(sqrt((x2 - x1)^2 + (y2 - y1)^2))
 
-  # Assign the variables linked to Tk widgets
+  # assign the variables linked to Tk widgets
   max.len.var <- tclVar(format(default.len))
   tt.done.var <- tclVar(0)
 
-  # Open GUI
+  # open gui
   tclServiceMode(FALSE)
   tt <- tktoplevel()
   if (!is.null(parent)) {
@@ -100,58 +93,50 @@ AutocropRegion <- function(d, parent=NULL, ...) {
   tktitle(tt) <- "Autocrop Region"
   tkwm.resizable(tt, 1, 0)
 
-  # Frame 0 contains buttons
+  # frame 0 contains buttons
 
-  frame0 <- ttkframe(tt, relief="flat")
+  f0 <- ttkframe(tt, relief="flat")
 
-  frame0.but.1 <- ttkbutton(frame0, width=10, text="Build",
-                            command=DrawPolygon)
-  frame0.but.2 <- ttkbutton(frame0, width=10, text="Refresh",
-                            command=RefreshPlot)
+  f0.but.1 <- ttkbutton(f0, width=10, text="Build", command=DrawPolygon)
+  f0.but.2 <- ttkbutton(f0, width=10, text="Refresh", command=RefreshPlot)
 
+  f0.but.4 <- ttkbutton(f0, width=10, text="Save", command=SavePolygon)
+  f0.but.5 <- ttkbutton(f0, width=10, text="Cancel",
+                        command=function() tclvalue(tt.done.var) <- 1)
+  f0.but.6 <- ttkbutton(f0, width=12, text="Help",
+                        command=function() print(help("Autocrop", package="RSurvey")))
 
-  frame0.but.4 <- ttkbutton(frame0, width=10, text="Save",
-                            command=SavePolygon)
-  frame0.but.5 <- ttkbutton(frame0, width=10, text="Cancel",
-                            command=function() tclvalue(tt.done.var) <- 1)
-  frame0.but.6 <- ttkbutton(frame0, width=12, text="Help",
-                            command=function() {
-                              print(help("Autocrop", package="RSurvey"))
-                            })
+  tkgrid(f0.but.1, f0.but.2, "x", f0.but.4, f0.but.5, f0.but.6,
+         pady=c(15, 10), padx=c(4, 0))
 
-  tkgrid(frame0.but.1, frame0.but.2, "x", frame0.but.4, frame0.but.5,
-         frame0.but.6, pady=c(15, 10), padx=c(4, 0))
+  tkgrid.columnconfigure(f0, 2, weight=1)
+  tkgrid.configure(f0.but.1, padx=c(10, 0))
+  tkgrid.configure(f0.but.2, padx=c(4, 25))
+  tkgrid.configure(f0.but.6, padx=c(4, 10))
+  tkpack(f0, fill="x", side="bottom", anchor="e")
 
-  tkgrid.columnconfigure(frame0, 2, weight=1)
-  tkgrid.configure(frame0.but.1, padx=c(10, 0))
-  tkgrid.configure(frame0.but.2, padx=c(4, 25))
-  tkgrid.configure(frame0.but.6, padx=c(4, 10))
-  tkpack(frame0, fill="x", side="bottom", anchor="e")
+  # frame 1 contains parameters
+  f1 <- ttkframe(tt, relief="flat", borderwidth=10)
 
-  # Frame 1 contains parameters
+  f1.lab.1.1 <- ttklabel(f1, text="Maximum outer arc length")
+  f1.ent.1.2 <- ttkentry(f1, width=20, textvariable=max.len.var)
 
-  frame1 <- ttkframe(tt, relief="flat", borderwidth=10)
+  tkgrid(f1.lab.1.1, f1.ent.1.2, pady=c(10, 0))
 
-  frame1.lab.1.1 <- ttklabel(frame1, text="Maximum outer arc length")
-  frame1.ent.1.2 <- ttkentry(frame1, width=20, textvariable=max.len.var)
+  tkgrid.configure(f1.lab.1.1, sticky="e", padx=c(0, 2))
+  tkgrid.configure(f1.ent.1.2, sticky="we")
 
-  tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(10, 0))
+  tkgrid.columnconfigure(f1, 1, weight=1, minsize=15)
 
-  tkgrid.configure(frame1.lab.1.1, sticky="e", padx=c(0, 2))
-  tkgrid.configure(frame1.ent.1.2, sticky="we")
+  tcl("grid", "anchor", f1, "center")
 
-  tkgrid.columnconfigure(frame1, 1, weight=1, minsize=15)
+  tkpack(f1, fill="both")
 
-  tcl("grid", "anchor", frame1, "center")
-
-  tkpack(frame1, fill="both")
-
-  # Bind events
-
+  # bind events
   tclServiceMode(TRUE)
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
-  tkbind(frame1.ent.1.2, "<KeyRelease>",
+  tkbind(f1.ent.1.2, "<KeyRelease>",
          function() {
            tclvalue(max.len.var) <- CheckEntry("numeric", tclvalue(max.len.var))
          })

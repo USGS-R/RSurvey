@@ -14,13 +14,11 @@
                  "and no responsibility is assumed by the USGS in connection therewith.")
       packageStartupMessage(paste(strwrap(s, indent=1), collapse="\n "))
     }
+    StartGui()
   }
   invisible()
 }
 
 .onLoad <- function(...) {
-  if (interactive())
-    LoadPackages()
-  else
-    return()
+  if (interactive()) LoadPackages()
 }
