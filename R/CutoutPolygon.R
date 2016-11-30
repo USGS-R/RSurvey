@@ -1,5 +1,3 @@
-# This function excludes gridded data lying outside of a given polygon.
-
 CutoutPolygon <- function(dat, ply=NULL) {
 
   if (inherits(dat, "matrix")) {
@@ -13,18 +11,14 @@ CutoutPolygon <- function(dat, ply=NULL) {
   } else {
     nrows <- length(dat$x)
     ncols <- length(dat$y)
-    x <- as.vector(matrix(rep(dat$x, ncols), nrow=nrows, ncol=ncols,
-                          byrow=FALSE))
-    y <- as.vector(matrix(rep(dat$y, nrows), nrow=nrows, ncol=ncols,
-                          byrow=TRUE))
+    x <- as.vector(matrix(rep(dat$x, ncols), nrow=nrows, ncol=ncols, byrow=FALSE))
+    y <- as.vector(matrix(rep(dat$y, nrows), nrow=nrows, ncol=ncols, byrow=TRUE))
   }
 
-  if (is.null(ply))
-    return(dat)
+  if (is.null(ply)) return(dat)
 
   pnt.in.ply <- matrix(0, nrow=length(dat$x), ncol=length(dat$y))
-  if (is.null(dat$z))
-    dat$z <- pnt.in.ply
+  if (is.null(dat$z)) dat$z <- pnt.in.ply
 
   d <- rgeos::get.pts(ply)
   holes <- vapply(d, function(x) x$hole, TRUE)
@@ -42,21 +36,14 @@ CutoutPolygon <- function(dat, ply=NULL) {
 
   dat$z[pnt.in.ply == 0] <- NA
 
-  # Remove rows and columns consisting of all NA values
-
+  # remove rows and columns consisting of all missing values
   rm.cols <- rm.rows <- NULL
 
   cols <- seq_len(ncol(dat$z))
   rows <- seq_len(nrow(dat$z))
 
-  for (i in rows) {
-    if (all(is.na(dat$z[i,])))
-      rm.rows <- c(rm.rows, i)
-  }
-  for (i in cols) {
-    if (all(is.na(dat$z[,i])))
-      rm.cols <- c(rm.cols, i)
-  }
+  for (i in rows) {if (all(is.na(dat$z[i,]))) rm.rows <- c(rm.rows, i)}
+  for (i in cols) {if (all(is.na(dat$z[,i]))) rm.cols <- c(rm.cols, i)}
 
   dat$x <- dat$x[!(rows %in% rm.rows)]
   dat$y <- dat$y[!(cols %in% rm.cols)]

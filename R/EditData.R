@@ -1,12 +1,8 @@
-# A GUI for viewing and editing table formatted data.
-
 EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
-                     read.only=FALSE, changelog=NULL, win.title="Data",
-                     parent=NULL) {
+                     read.only=FALSE, changelog=NULL, win.title="Data", parent=NULL) {
 
-  ## Additional functions
 
-  # Save table and close
+  # save table and close
   SaveTable <- function() {
     tclServiceMode(FALSE)
     SaveActiveEdits()
@@ -16,16 +12,16 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     return()
   }
 
-  # Save edits in active cell
+
+  # save edits in active cell
   SaveActiveEdits <- function() {
-    cell <- as.character(tkindex(frame3.tbl, "active"))
+    cell <- as.character(tkindex(f3.tbl, "active"))
     ij <- as.integer(strsplit(cell, ",")[[1]])
     i <- ij[1]
     j <- ij[2]
     old.val <- FormatValues(i, j)
-    new.val <- paste(as.character(tkget(frame3.tbl, cell)), collapse=" ")
-    if (identical(new.val, old.val))
-      return()
+    new.val <- paste(as.character(tkget(f3.tbl, cell)), collapse=" ")
+    if (identical(new.val, old.val)) return()
     SaveEdits(new.val, i, j)
     new.val <- FormatValues(i, j)
     e <- data.frame(timestamp=Sys.time(), cell=cell, old=old.val, new=new.val,
@@ -35,7 +31,8 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     return()
   }
 
-  # Get single cell value for table
+
+  # get single cell value for table
   GetCellValue <- function(r, c) {
     i <- as.integer(r)
     j <- as.integer(c)
@@ -51,7 +48,8 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     return(as.tclObj(val, drop=TRUE))
   }
 
-  # Format values
+
+  # format values
   FormatValues <- function(i, j, is.fmt=FALSE) {
     fmt.vals <- rep("", length(i))
     for (column in unique(j)) {
@@ -77,11 +75,12 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     return(fmt.vals)
   }
 
-  # Save edits to data frame
+
+  # save edits to data frame
   SaveEdits <- function(vals, i, j) {
     if (is.character(i)) {
-      Fun <- function(x) as.integer(strsplit(x, ",")[[1]])
-      ij <- t(vapply(i, Fun, c(0L, 0L)))
+      FUN <- function(x) as.integer(strsplit(x, ",")[[1]])
+      ij <- t(vapply(i, FUN, c(0L, 0L)))
       i <- ij[, 1]
       j <- ij[, 2]
     }
@@ -95,16 +94,14 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
         fmt <- ifelse(fmt == "", "%Y-%m-%d %H:%M:%S", fmt)
         tz <- attr(d[[column]], "tzone")
         new.vals <- strptime(new.vals, format=fmt, tz=tz)
-        if ("POSIXct" %in% col.class)
-          new.vals <- as.POSIXct(new.vals, tz=tz)
+        if ("POSIXct" %in% col.class) new.vals <- as.POSIXct(new.vals, tz=tz)
       } else if ("Date" %in% col.class) {
         fmt <- col.formats[column]
         new.vals <- as.Date(new.vals, format=ifelse(fmt == "", "%Y-%m-%d", fmt))
       } else if ("factor" %in% col.class) {
         old.levels <- levels(d[[column]])
         new.levels <- unique(c(old.levels, na.omit(new.vals)))
-        if (!all(new.levels %in% old.levels))
-          levels(d[[column]]) <<- new.levels
+        if (!all(new.levels %in% old.levels)) levels(d[[column]]) <<- new.levels
       } else {
         new.vals <- suppressWarnings(as(new.vals, col.class[1]))
       }
@@ -113,13 +110,14 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     return()
   }
 
-  # Validate entry value
+
+  # validate entry value
   ValidateEntryValue <- function(P, S) {
-    cell <- as.character(tkindex(frame3.tbl, "active"))
+    cell <- as.character(tkindex(f3.tbl, "active"))
     ij <- as.integer(strsplit(cell, ",")[[1]])
     new.val <- as.character(S)
     if (identical(new.val, CheckEntry(class(d[[ij[2]]][ij[1]]), new.val))) {
-      tkset(frame3.tbl, cell, as.character(P))
+      tkset(f3.tbl, cell, as.character(P))
       is.valid <- TRUE
     } else {
       is.valid <- FALSE
@@ -127,9 +125,10 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     return(as.tclObj(is.valid))
   }
 
-  # Validate cell value
+
+  # validate cell value
   ValidateCellValue <- function(s, S) {
-    cell <- as.character(tkindex(frame3.tbl, "active"))
+    cell <- as.character(tkindex(f3.tbl, "active"))
     ij <- as.integer(strsplit(cell, ",")[[1]])
     i <- ij[1]
     j <- ij[2]
@@ -143,18 +142,19 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     return(as.tclObj(is.valid))
   }
 
-  # Set active cell
+
+  # set active cell
   SetActiveCell <- function() {
-    cell <- as.character(tkindex(frame3.tbl, "active"))
+    cell <- as.character(tkindex(f3.tbl, "active"))
     ij <- as.integer(strsplit(cell, ",")[[1]])
     fmt.val <- FormatValues(ij[1], ij[2])
-    if (!read.only)
-      tkset(frame3.tbl, cell, fmt.val)
+    if (!read.only) tkset(f3.tbl, cell, fmt.val)
     tclvalue(value.var) <- as.character(fmt.val)
     return()
   }
 
-  # Change active cell
+
+  # change active cell
   ChangeActiveCell <- function(s, S) {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
@@ -163,7 +163,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
       i <- old.cell[1]
       j <- old.cell[2]
       old.val <- FormatValues(i, j)
-      new.val <- paste(as.character(tkget(frame3.tbl, s)), collapse=" ")
+      new.val <- paste(as.character(tkget(f3.tbl, s)), collapse=" ")
       if (!identical(new.val, old.val)) {
         SaveEdits(new.val, i, j)
         e <- data.frame(timestamp=Sys.time(), cell=s, old=old.val,
@@ -171,90 +171,86 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
         undo.stack <<- rbind(undo.stack, e)
         redo.stack <<- NULL
       }
-      tkset(frame3.tbl, s, FormatValues(i, j, is.fmt=TRUE))
+      tkset(f3.tbl, s, FormatValues(i, j, is.fmt=TRUE))
     }
     ij <- as.integer(strsplit(S, ",")[[1]])
     i <- ij[1]
     j <- ij[2]
     if (i == 0 || j == 0) {
-      if (i == 0)
-        i <- 1L
-      if (j == 0)
-        j <- 1L
-      tkactivate(frame3.tbl, paste(i, j, sep=","))
+      if (i == 0) i <- 1L
+      if (j == 0) j <- 1L
+      tkactivate(f3.tbl, paste(i, j, sep=","))
     }
-    tktag.delete(frame3.tbl, "row.idx")
-    tktag.delete(frame3.tbl, "col.idx")
-    tcl(frame3.tbl, "tag", "cell", "row.idx", paste(i, 0, sep=","))
-    tcl(frame3.tbl, "tag", "cell", "col.idx", paste(0, j, sep=","))
-    tktag.raise(frame3.tbl, "row.idx")
-    tktag.raise(frame3.tbl, "col.idx")
-    tktag.configure(frame3.tbl, "row.idx", background="#B3B3B3")
-    tktag.configure(frame3.tbl, "col.idx", background="#B3B3B3")
-    tktag.raise(frame3.tbl, "active", "sel")
+    tktag.delete(f3.tbl, "row.idx")
+    tktag.delete(f3.tbl, "col.idx")
+    tcl(f3.tbl, "tag", "cell", "row.idx", paste(i, 0, sep=","))
+    tcl(f3.tbl, "tag", "cell", "col.idx", paste(0, j, sep=","))
+    tktag.raise(f3.tbl, "row.idx")
+    tktag.raise(f3.tbl, "col.idx")
+    tktag.configure(f3.tbl, "row.idx", background="#B3B3B3")
+    tktag.configure(f3.tbl, "col.idx", background="#B3B3B3")
+    tktag.raise(f3.tbl, "active", "sel")
     if (read.only) {
-      tktag.delete(frame3.tbl, "active_readonly")
-      tcl(frame3.tbl, "tag", "cell", "active_readonly", paste(i, j, sep=","))
-      tktag.configure(frame3.tbl, "active_readonly", background="#FBFCD0")
-      tktag.raise(frame3.tbl, "active_readonly", "sel")
+      tktag.delete(f3.tbl, "active_readonly")
+      tcl(f3.tbl, "tag", "cell", "active_readonly", paste(i, j, sep=","))
+      tktag.configure(f3.tbl, "active_readonly", background="#FBFCD0")
+      tktag.raise(f3.tbl, "active_readonly", "sel")
     }
     SetActiveCell()
     return()
   }
 
-  # Undo edit
+
+  # undo edit
   UndoEdit <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
-    if (is.null(undo.stack) || nrow(undo.stack) == 0)
-      return()
+    if (is.null(undo.stack) || nrow(undo.stack) == 0) return()
     time.stamp <- undo.stack$timestamp
     idxs <- which(time.stamp == time.stamp[nrow(undo.stack)])
     cells <- undo.stack[idxs, "cell"]
-    Fun <- function(i) as.integer(strsplit(i, ",")[[1]])
-    ij <- t(vapply(cells, Fun, c(0, 0)))
+    FUN <- function(i) as.integer(strsplit(i, ",")[[1]])
+    ij <- t(vapply(cells, FUN, c(0, 0)))
     old.vals <- undo.stack[idxs, "old"]
     SaveEdits(old.vals, cells)
     redo.stack <<- rbind(redo.stack, undo.stack[idxs, , drop=FALSE])
     undo.stack <<- undo.stack[-idxs, , drop=FALSE]
-    if (nrow(undo.stack) == 0)
-      undo.stack <<- NULL
+    if (nrow(undo.stack) == 0) undo.stack <<- NULL
     fmt.old.vals <- FormatValues(ij[, 1], ij[, 2], is.fmt=TRUE)
-    for (i in seq_along(cells))
-      tkset(frame3.tbl, cells[i], fmt.old.vals[i])
+    for (i in seq_along(cells)) tkset(f3.tbl, cells[i], fmt.old.vals[i])
     SetActiveCell()
     return()
   }
 
-  # Redo edit
+
+  # redo edit
   RedoEdit <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
-    if (is.null(redo.stack) || nrow(redo.stack) == 0)
-      return()
+    if (is.null(redo.stack) || nrow(redo.stack) == 0) return()
     time.stamp <- redo.stack$timestamp
     idxs <- which(time.stamp == time.stamp[nrow(redo.stack)])
     cells <- redo.stack[idxs, "cell"]
-    Fun <- function(i) as.integer(strsplit(i, ",")[[1]])
-    ij <- t(vapply(cells, Fun, c(0, 0)))
+    FUN <- function(i) as.integer(strsplit(i, ",")[[1]])
+    ij <- t(vapply(cells, FUN, c(0, 0)))
     new.vals <- redo.stack[idxs, "new"]
     SaveEdits(new.vals, cells)
     undo.stack <<- rbind(undo.stack, redo.stack[idxs, , drop=FALSE])
     redo.stack <<- redo.stack[-idxs, , drop=FALSE]
     fmt.new.vals <- FormatValues(ij[, 1], ij[, 2], is.fmt=TRUE)
-    for (i in seq_along(cells))
-      tkset(frame3.tbl, cells[i], fmt.new.vals[i])
+    for (i in seq_along(cells)) tkset(f3.tbl, cells[i], fmt.new.vals[i])
     SetActiveCell()
     return()
   }
 
-  # Bypass copy command
+
+  # bypass copy command
   BypassCopyCmd <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
-    cells <- as.character(tkcurselection(frame3.tbl))
-    Fun <- function(i) as.integer(strsplit(i, ",")[[1]])
-    ij <- t(vapply(cells, Fun, c(0, 0)))
+    cells <- as.character(tkcurselection(f3.tbl))
+    FUN <- function(i) as.integer(strsplit(i, ",")[[1]])
+    ij <- t(vapply(cells, FUN, c(0, 0)))
     ilim <- range(ij[, 1])
     jlim <- range(ij[, 2])
     ni <- ilim[2] - ilim[1] + 1L
@@ -263,8 +259,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     cells.all <- paste(ij.all[, 1], ij.all[, 2], sep=",")
     if (!all(cells.all %in% cells)) {
       msg <- "The copy command cannot be used on multiple selections."
-      tkmessageBox(icon="info", message=msg, title="Copy", type="ok",
-                   parent=tt)
+      tkmessageBox(icon="info", message=msg, title="Copy", type="ok", parent=tt)
       return()
     }
     vals <- FormatValues(ij[, 1], ij[, 2])
@@ -273,14 +268,15 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     return()
   }
 
-  # Bypass cut command
+
+  # bypass cut command
   BypassCutCmd <- function() {
     BypassCopyCmd()
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
-    cells <- as.character(tkcurselection(frame3.tbl))
-    Fun <- function(i) as.integer(strsplit(i, ",")[[1]])
-    ij <- t(vapply(cells, Fun, c(0, 0)))
+    cells <- as.character(tkcurselection(f3.tbl))
+    FUN <- function(i) as.integer(strsplit(i, ",")[[1]])
+    ij <- t(vapply(cells, FUN, c(0, 0)))
     i <- ij[, 1]
     j <- ij[, 2]
     old.vals <- FormatValues(i, j)
@@ -290,28 +286,26 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     undo.stack <<- rbind(undo.stack, e)
     redo.stack <<- NULL
     SaveEdits(new.vals, i, j)
-    for (cell in cells)
-      tkset(frame3.tbl, cell, "NA")
+    for (cell in cells) tkset(f3.tbl, cell, "NA")
     SetActiveCell()
     return()
   }
 
-  # Bypass paste command
+
+  # bypass paste command
   BypassPasteCmd <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
-    active.cell <- as.character(tkindex(frame3.tbl, "active"))
+    active.cell <- as.character(tkindex(f3.tbl, "active"))
     args <- list(file="clipboard", colClasses="character", sep="\t",
                  flush=TRUE, fill=TRUE, na.strings=NULL)
     new.vals <- suppressWarnings(try(do.call(read.table, args), silent=TRUE))
-    if (inherits(new.vals, "try-error"))
-      return()
+    if (inherits(new.vals, "try-error")) return()
     match.length <- attr(regexpr("\t", new.vals, fixed=TRUE), "match.length")
     if (!all(match.length == match.length[1])) {
       msg <- paste("Clipboard contains text string copied from multiple",
                    "selections and is unsuitable for pasting.")
-      tkmessageBox(icon="info", message=msg, title="Paste", type="ok",
-                   parent=tt)
+      tkmessageBox(icon="info", message=msg, title="Paste", type="ok", parent=tt)
       return()
     }
     active.ij <- as.integer(strsplit(active.cell, ",")[[1]])
@@ -331,39 +325,36 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     redo.stack <<- NULL
     SaveEdits(new.vals, i, j)
     new.vals <- FormatValues(i, j, is.fmt=TRUE)
-    for (i in seq_along(cells))
-      tkset(frame3.tbl, cells[i], new.vals[i])
+    for (i in seq_along(cells)) tkset(f3.tbl, cells[i], new.vals[i])
     SetActiveCell()
     return()
   }
 
-  # Bypass return command
+
+  # bypass return command
   BypassReturnCmd <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
-    active.cell <- as.character(tkindex(frame3.tbl, "active"))
+    active.cell <- as.character(tkindex(f3.tbl, "active"))
     old.ij <- as.integer(strsplit(active.cell, ",")[[1]])
     i <- old.ij[1]
-    if (i > 0 & i < (m + 1L))
-      i <- i + 1L
+    if (i > 0 & i < (m + 1L)) i <- i + 1L
     j <- old.ij[2]
-    if (i == 0 | j == 0)
-      return()
+    if (i == 0 | j == 0) return()
     new.ij <- paste(i, j, sep=",")
-    tkselection.clear(frame3.tbl, "all")
-    tkactivate(frame3.tbl, new.ij)
-    tkselection.set(frame3.tbl, new.ij)
-    tksee(frame3.tbl, new.ij)
+    tkselection.clear(f3.tbl, "all")
+    tkactivate(f3.tbl, new.ij)
+    tkselection.set(f3.tbl, new.ij)
+    tksee(f3.tbl, new.ij)
     return()
   }
 
-  # Search data table
 
+  # search data table
   CallSearch <- function(is.replace=FALSE) {
     search.defaults$find.what <- as.character(tclvalue(pattern.var))
     ans <- Search(is.replace, defaults=search.defaults, parent=tt)
-    if (is.null(ans))
-      return()
+    if (is.null(ans)) return()
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
     tkconfigure(tt, cursor="watch")
@@ -378,8 +369,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     Find("next", is.replace)
 
     are.matches <- !is.null(matched.cells) && nrow(matched.cells) > 0
-    if (!(is.replace && are.matches))
-      return()
+    if (!(is.replace && are.matches)) return()
 
     if (ans$is.replace.first)
       matched.cells <<- matched.cells[1, , drop=FALSE]
@@ -398,20 +388,18 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
 
     SaveEdits(new.vals, cells)
 
-    for (idx in seq_along(cells))
-      tkset(frame3.tbl, cells[idx], new.vals[idx])
+    for (idx in seq_along(cells)) tkset(f3.tbl, cells[idx], new.vals[idx])
     SetActiveCell()
     return()
   }
 
-  # Find value in data table
 
+  # find value in data table
   Find <- function(direction="next", is.replace=FALSE) {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
     pattern <- as.character(tclvalue(pattern.var))
-    if (pattern == "")
-      return()
+    if (pattern == "") return()
 
     if (is.null(matched.cells)) {
       is.match.word <- search.defaults$is.match.word
@@ -421,7 +409,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
       is.search.sel <- search.defaults$is.search.sel
 
       if (is.search.sel) {
-        cells <- as.character(tcl(frame3.tbl, "tag", "cell", "sel"))
+        cells <- as.character(tcl(f3.tbl, "tag", "cell", "sel"))
         ncells <- length(cells)
       } else {
         ncells <- m * n
@@ -452,20 +440,17 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
         Match <- function(i) grep(pattern, i, ignore.case=ignore.case,
                                   fixed=fixed, perl=perl)
       }
-      Fun <- function(i) {
-        ans <- try(SetProgressBar(pb, value=chunks[[i]][1], step=i),
-                   silent=TRUE)
-        if (inherits(ans, "try-error"))
-          return()
+      FUN <- function(i) {
+        ans <- try(SetProgressBar(pb, value=chunks[[i]][1], step=i), silent=TRUE)
+        if (inherits(ans, "try-error")) return()
         chunks[[i]][Match(FormatValues(cells$i[chunks[[i]]],
                                        cells$j[chunks[[i]]]))]
       }
-      matched.idxs <- c(lapply(seq_along(chunks), Fun), recursive=TRUE)
+      matched.idxs <- c(lapply(seq_along(chunks), FUN), recursive=TRUE)
 
       if (length(matched.idxs) == 0L) {
         msg <- paste0("Search string \'", pattern, "\' not found.")
-        tkmessageBox(icon="info", message=msg, title="Find", type="ok",
-                     parent=tt)
+        tkmessageBox(icon="info", message=msg, title="Find", type="ok", parent=tt)
         return()
       }
 
@@ -481,8 +466,8 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
       matched.cells <<- cells
     }
 
-    active.i <- as.integer(tcl(frame3.tbl, "tag", "row", "active"))
-    active.j <- as.integer(tcl(frame3.tbl, "tag", "col", "active"))
+    active.i <- as.integer(tcl(f3.tbl, "tag", "row", "active"))
+    active.j <- as.integer(tcl(f3.tbl, "tag", "col", "active"))
     if (length(active.i) == 0L) {
       active.i <- 1L
       active.j <- 1L
@@ -516,36 +501,34 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
 
     if (!is.replace) {
       cell.str <- paste(cell[1, 1], cell[1, 2], sep=",")
-      tkactivate(frame3.tbl, cell.str)
-      tksee(frame3.tbl, cell.str)
+      tkactivate(f3.tbl, cell.str)
+      tksee(f3.tbl, cell.str)
     }
   }
 
-  # View data record
+
+  # view data record
   ViewRecord <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
     rec <- as.character(tclvalue(record.var))
-    if (is.na(rec))
-      return()
+    if (is.na(rec)) return()
     idx <- which(row.names %in% rec)
     if (length(idx) > 0) {
-      active.cell <- as.character(tkindex(frame3.tbl, "active"))
+      active.cell <- as.character(tkindex(f3.tbl, "active"))
       active.col <- as.integer(strsplit(active.cell, ",")[[1]])[2]
-      tksee(frame3.tbl, paste(idx[1], active.col, sep=","))
+      tksee(f3.tbl, paste(idx[1], active.col, sep=","))
     } else {
       msg <- "Row name (or record number) not found."
-      tkmessageBox(icon="info", message=msg, title="View", type="ok",
-                   parent=tt)
+      tkmessageBox(icon="info", message=msg, title="View", type="ok", parent=tt)
     }
   }
 
-  # Get edits
 
+  # get edits
   GetEdits <- function() {
     s <- NULL
-    if (is.null(changelog) & (is.null(undo.stack) || nrow(undo.stack) == 0))
-      return(s)
+    if (is.null(changelog) & (is.null(undo.stack) || nrow(undo.stack) == 0)) return(s)
     if (!is.null(changelog)) {
       changelog$cell <- paste(match(changelog$record, row.names),
                               match(changelog$variable, col.names), sep=",")
@@ -554,14 +537,12 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     }
     for (i in unique(undo.stack$cell)) {
       undo.stack.cell <- undo.stack[undo.stack$cell == i, , drop=FALSE]
-      undo.stack.cell <- undo.stack.cell[order(undo.stack.cell$timestamp), ,
-                                         drop=FALSE]
+      undo.stack.cell <- undo.stack.cell[order(undo.stack.cell$timestamp), , drop=FALSE]
       m <- nrow(undo.stack.cell)
       cell <- as.integer(strsplit(undo.stack.cell$cell, ",")[[1]])
       old <- undo.stack.cell$old[1]
       new <- undo.stack.cell$new[m]
-      if (identical(old, new))
-        next
+      if (identical(old, new)) next
       lst <- list(timestamp=undo.stack.cell$timestamp[m],
                   record=row.names[cell[1]], variable=col.names[cell[2]],
                   old=old, new=new)
@@ -570,7 +551,8 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     return(s)
   }
 
-  # View changelog
+
+  # view changelog
   ViewChangeLog <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
@@ -582,7 +564,8 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     return()
   }
 
-  # View structure and summary information
+
+  # view structure and summary information
   ViewInfo <- function(type) {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
@@ -599,27 +582,29 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     return()
   }
 
-  # Resize column
+
+  # resize column
   ResizeColumn <- function(x, y) {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
     x <- as.character(x)
     y <- as.character(y)
-    border.col <- as.character(tcl(frame3.tbl, "border", "mark", x, y, "col"))
+    border.col <- as.character(tcl(f3.tbl, "border", "mark", x, y, "col"))
     if (length(border.col) > 0) {
       j <- as.integer(border.col)
-      tcl(frame3.tbl, "width", j, col.width[j])
+      tcl(f3.tbl, "width", j, col.width[j])
     }
   }
 
-  # Change cell selection
+
+  # change cell selection
   ChangeCellSelection <- function () {
     is.search.sel <- search.defaults$is.search.sel
-    if (is.logical(is.search.sel) && is.search.sel)
-      matched.cells <<- NULL
+    if (is.logical(is.search.sel) && is.search.sel) matched.cells <<- NULL
   }
 
-  # Plot histogram
+
+  # plot histogram
   PlotHistogram <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
@@ -627,14 +612,11 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   }
 
 
-  ## Main program
-
-  # GUI requires TkTable
+  # gui requires TkTable
   is.tktable <- try(tcl("package", "present", "Tktable"), silent=TRUE)
-  if (inherits(is.tktable, "try-error"))
-    stop("tkTable is not available")
+  if (inherits(is.tktable, "try-error")) stop("tkTable is not available")
 
-  # Check validity of data
+  # check validity of data
   if (!inherits(d, c("list", "matrix", "data.frame")))
     stop("invalid class for data table")
   rtn.class <- class(d)
@@ -648,39 +630,34 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     } else {
       d <- as.list(d)
     }
-    if (is.null(row.names))
-      row.names <- d.rownames
+    if (is.null(row.names)) row.names <- d.rownames
   }
 
-  # Check dimensions of data table
+  # check dimensions of data table
   n <- length(d)
   m <- unique(vapply(d, length, 0))
-  if (length(m) != 1)
-    stop("components of list have unequal lengths")
-  if (m == 0 || n == 0)
-    return()
+  if (length(m) != 1) stop("components of list have unequal lengths")
+  if (m == 0 || n == 0) return()
 
-  # Check validity of changelog
-  if (!inherits(changelog, c("NULL", "data.frame")))
-    stop("invalid changelog")
+  # check validity of changelog
+  if (!inherits(changelog, c("NULL", "data.frame"))) stop("invalid changelog")
   changelog.old <- changelog
 
-  # Minimum number of digits to the right of the decimal point
+  # minimum number of digits to the right of the decimal point
   ndigits <- nchar(format(as.integer(1 / sqrt(.Machine$double.eps))))
 
-  # Number of rows and columns in the viewable table
-  nrows <- ifelse(m > 15L, 15L, m)
-  ncols <- ifelse(n > 6L, 6L, n)
+  # number of rows and columns in the viewable table
+  nrows <- ifelse(m > 15, 15, m)
+  ncols <- ifelse(n > 6, 6, n)
 
-  # Account for missing arguments
-
+  # account for missing arguments
   if (is.character(col.names) && length(col.names) == n) {
     col.names <- col.names[seq_len(n)]
     col.names[is.na(col.names)] <- ""
     col.names <- gsub("(^ +)|( +$)", "", col.names)
   } else {
-    Fun <- function(i) paste0(LETTERS, i)
-    col.names <- c(LETTERS, as.vector(t(vapply(LETTERS, Fun, rep("", 26)))))
+    FUN <- function(i) paste0(LETTERS, i)
+    col.names <- c(LETTERS, as.vector(t(vapply(LETTERS, FUN, rep("", 26)))))
     col.names <- col.names[seq_len(n)]
     names(d) <- col.names
   }
@@ -695,11 +672,11 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   if (!inherits(row.names, c("integer", "character")) || length(row.names) != m)
     row.names <- seq_len(m)
 
-  # Determine width and height of column 0 and row 0, respectively
+  # determine width and height of column 0 and row 0, respectively
   col.0.width  <- max(nchar(row.names)) + 1L
   row.0.height <- max(vapply(strsplit(col.names, "\n"), length, 0L))
 
-  # Determine column widths
+  # determine column widths
   col.width <- NULL
   for (j in seq_len(n)) {
     if (col.names[j] == "")
@@ -717,22 +694,21 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     }
   }
 
-  # Assigin global variables
+  # assigin global variables
   undo.stack <- NULL
   redo.stack <- NULL
   matched.cells <- NULL
   search.defaults <- list(is.match.word=FALSE, is.match.case=TRUE,
-                          is.reg.exps=FALSE, is.search.sel=FALSE,
-                          is.perl=FALSE)
+                          is.reg.exps=FALSE, is.search.sel=FALSE, is.perl=FALSE)
 
-  # Assign variables linked to Tk widgets
+  # assign variables linked to Tk widgets
   table.var   <- tclArray()
   record.var  <- tclVar()
   value.var   <- tclVar()
   pattern.var <- tclVar()
   tt.done.var <- tclVar(0)
 
-  # Open GUI
+  # open gui
   tclServiceMode(FALSE)
   tt <- tktoplevel()
   if (!is.null(parent)) {
@@ -743,372 +719,332 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   }
   tktitle(tt) <- win.title
 
-  # Start top menu
+  # start top menu
   top.menu <- tkmenu(tt, tearoff=0)
 
-  # Edit menu
+  # edit menu
   menu.edit <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
   if (!read.only) {
-    tkadd(menu.edit, "command", label="Undo", accelerator="Ctrl+z",
-          command=UndoEdit)
-    tkadd(menu.edit, "command", label="Redo", accelerator="Ctrl+y",
-          command=RedoEdit)
+    tkadd(menu.edit, "command", label="Undo", accelerator="Ctrl+z", command=UndoEdit)
+    tkadd(menu.edit, "command", label="Redo", accelerator="Ctrl+y", command=RedoEdit)
     tkadd(menu.edit, "separator")
   }
-  tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c",
-        command=BypassCopyCmd)
+  tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c", command=BypassCopyCmd)
   if (!read.only) {
-    tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+x",
-          command=BypassCutCmd)
-    tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+v",
-          command=BypassPasteCmd)
+    tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+x", command=BypassCutCmd)
+    tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+v", command=BypassPasteCmd)
     tkadd(menu.edit, "separator")
     menu.edit.del <- tkmenu(tt, tearoff=0)
-    tkadd(menu.edit.del, "command", label="Character after cursor",
-          accelerator="Delete",
-          command=function() tkevent.generate(frame3.tbl, "<Delete>"))
-    tkadd(menu.edit.del, "command", label="Character before cursor",
-          accelerator="Backspace",
-          command=function() tkevent.generate(frame3.tbl, "<BackSpace>"))
-    tkadd(menu.edit.del, "command", label="All characters after cursor",
-          accelerator="Ctrl+k",
-          command=function() tkevent.generate(frame3.tbl, "<Control-k>"))
+    tkadd(menu.edit.del, "command", label="Character after cursor", accelerator="Delete",
+          command=function() tkevent.generate(f3.tbl, "<Delete>"))
+    tkadd(menu.edit.del, "command", label="Character before cursor", accelerator="Backspace",
+          command=function() tkevent.generate(f3.tbl, "<BackSpace>"))
+    tkadd(menu.edit.del, "command", label="All characters after cursor", accelerator="Ctrl+k",
+          command=function() tkevent.generate(f3.tbl, "<Control-k>"))
     tkadd(menu.edit, "cascade", label="Inside cell delete", menu=menu.edit.del)
   }
   tkadd(menu.edit, "separator")
   menu.edit.width <- tkmenu(tt, tearoff=0)
   tkadd(menu.edit.width, "command", label="Increase", accelerator="Ctrl+\u003d",
-        command=function() tkevent.generate(frame3.tbl, "<Control-equal>"))
+        command=function() tkevent.generate(f3.tbl, "<Control-equal>"))
   tkadd(menu.edit.width, "command", label="Decrease", accelerator="Ctrl+\u2212",
-        command=function() tkevent.generate(frame3.tbl, "<Control-minus>"))
+        command=function() tkevent.generate(f3.tbl, "<Control-minus>"))
   tkadd(menu.edit, "cascade", label="Column width", menu=menu.edit.width)
 
-# View menu
+# view menu
   menu.view <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
-  tkadd(menu.view, "command", label="Structure",
-        command=function() ViewInfo("Structure"))
-  tkadd(menu.view, "command", label="Summary",
-        command=function() ViewInfo("Summary"))
+  tkadd(menu.view, "command", label="Structure", command=function() ViewInfo("Structure"))
+  tkadd(menu.view, "command", label="Summary", command=function() ViewInfo("Summary"))
   if (!read.only) {
     tkadd(menu.view, "separator")
     tkadd(menu.view, "command", label="Change log", command=ViewChangeLog)
   }
 
-  # Search menu
+  # search menu
   menu.search <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Search", menu=menu.search, underline=0)
   tkadd(menu.search, "command", label="Find\u2026", accelerator="Ctrl+f",
         command=function() CallSearch())
-  tkadd(menu.search, "command", label="Find next",
-        command=function() Find("next"))
-  tkadd(menu.search, "command", label="Find previous",
-        command=function() Find("prev"))
+  tkadd(menu.search, "command", label="Find next", command=function() Find("next"))
+  tkadd(menu.search, "command", label="Find previous", command=function() Find("prev"))
   if (!read.only)
     tkadd(menu.search, "command", label="Replace\u2026", accelerator="Ctrl+r",
           command=function() CallSearch(is.replace=TRUE))
 
-  # Selection menu
+  # selection menu
   menu.sel <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Select", menu=menu.sel, underline=0)
   tkadd(menu.sel, "command", label="Select all cells",
         accelerator="Ctrl+\u2044",
-        command=function() tkevent.generate(frame3.tbl, "<Control-slash>"))
+        command=function() tkevent.generate(f3.tbl, "<Control-slash>"))
   tkadd(menu.sel, "separator")
   menu.sel.extend <- tkmenu(tt, tearoff=0)
   tkadd(menu.sel.extend, "command", label="First cell",
         accelerator="Shift+Ctrl+Home",
-        command=function() tkevent.generate(frame3.tbl, "<Shift-Control-Home>"))
+        command=function() tkevent.generate(f3.tbl, "<Shift-Control-Home>"))
   tkadd(menu.sel.extend, "command", label="Last cell",
         accelerator="Shift+Ctrl+End",
-        command=function() tkevent.generate(frame3.tbl, "<Shift-Control-End>"))
+        command=function() tkevent.generate(f3.tbl, "<Shift-Control-End>"))
   tkadd(menu.sel.extend, "separator")
   tkadd(menu.sel.extend, "command", label="Row above",
         accelerator="Shift+\u2191",
-        command=function() tkevent.generate(frame3.tbl, "<Shift-Up>"))
+        command=function() tkevent.generate(f3.tbl, "<Shift-Up>"))
   tkadd(menu.sel.extend, "command", label="Row below",
         accelerator="Shift+\u2193",
-        command=function() tkevent.generate(frame3.tbl, "<Shift-Down>"))
+        command=function() tkevent.generate(f3.tbl, "<Shift-Down>"))
   tkadd(menu.sel.extend, "command", label="Column left",
         accelerator="Shift+\u2190",
-        command=function() tkevent.generate(frame3.tbl, "<Shift-Left>"))
+        command=function() tkevent.generate(f3.tbl, "<Shift-Left>"))
   tkadd(menu.sel.extend, "command", label="Column right",
         accelerator="Shift+\u2192",
-        command=function() tkevent.generate(frame3.tbl, "<Shift-Right>"))
+        command=function() tkevent.generate(f3.tbl, "<Shift-Right>"))
   tkadd(menu.sel, "cascade", label="Extend selection to", menu=menu.sel.extend)
 
-  # Navigation menu
+  # navigation menu
   menu.nav <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Navigate", menu=menu.nav, underline=0)
   tkadd(menu.nav, "command", label="Move up", accelerator="\u2191",
-        command=function() tkevent.generate(frame3.tbl, "<Up>"))
+        command=function() tkevent.generate(f3.tbl, "<Up>"))
   tkadd(menu.nav, "command", label="Move down", accelerator="\u2193",
-        command=function() tkevent.generate(frame3.tbl, "<Down>"))
+        command=function() tkevent.generate(f3.tbl, "<Down>"))
   tkadd(menu.nav, "command", label="Move left", accelerator="\u2190",
-        command=function() tkevent.generate(frame3.tbl, "<Left>"))
+        command=function() tkevent.generate(f3.tbl, "<Left>"))
   tkadd(menu.nav, "command", label="Move right", accelerator="\u2192",
-        command=function() tkevent.generate(frame3.tbl, "<Right>"))
+        command=function() tkevent.generate(f3.tbl, "<Right>"))
   tkadd(menu.nav, "separator")
   if (read.only) {
     menu.nav.view <- tkmenu(tt, tearoff=0)
-    tkadd(menu.nav.view, "command", label="Prior page in view",
-          accelerator="PageUp",
-          command=function() tkevent.generate(frame3.tbl, "<Prior>"))
-    tkadd(menu.nav.view, "command", label="Next page in view",
-          accelerator="PageDown",
-          command=function() tkevent.generate(frame3.tbl, "<Next>"))
+    tkadd(menu.nav.view, "command", label="Prior page in view", accelerator="PageUp",
+          command=function() tkevent.generate(f3.tbl, "<Prior>"))
+    tkadd(menu.nav.view, "command", label="Next page in view", accelerator="PageDown",
+          command=function() tkevent.generate(f3.tbl, "<Next>"))
     tkadd(menu.nav, "cascade", label="Move table to have", menu=menu.nav.view)
     tkadd(menu.nav, "separator")
     menu.nav.active <- tkmenu(tt, tearoff=0)
     tkadd(menu.nav.active, "command", label="First cell",
           accelerator="Ctrl+Home",
-          command=function() tkevent.generate(frame3.tbl, "<Control-Home>"))
+          command=function() tkevent.generate(f3.tbl, "<Control-Home>"))
     tkadd(menu.nav.active, "command", label="Last cell", accelerator="Ctrl+End",
-          command=function() tkevent.generate(frame3.tbl, "<Control-End>"))
-    tkadd(menu.nav, "cascade", label="Move activate cell to",
-          menu=menu.nav.active)
+          command=function() tkevent.generate(f3.tbl, "<Control-End>"))
+    tkadd(menu.nav, "cascade", label="Move activate cell to", menu=menu.nav.active)
   } else {
     menu.nav.view <- tkmenu(tt, tearoff=0)
-    tkadd(menu.nav.view, "command", label="First cell in view",
-          accelerator="Home",
-          command=function() tkevent.generate(frame3.tbl, "<Home>"))
-    tkadd(menu.nav.view, "command", label="Last cell in view",
-          accelerator="End",
-          command=function() tkevent.generate(frame3.tbl, "<End>"))
+    tkadd(menu.nav.view, "command", label="First cell in view", accelerator="Home",
+          command=function() tkevent.generate(f3.tbl, "<Home>"))
+    tkadd(menu.nav.view, "command", label="Last cell in view", accelerator="End",
+          command=function() tkevent.generate(f3.tbl, "<End>"))
     tkadd(menu.nav.view, "separator")
-    tkadd(menu.nav.view, "command", label="Prior page in view",
-          accelerator="Ctrl+PageUp",
-          command=function() tkevent.generate(frame3.tbl, "<Control-Prior>"))
-    tkadd(menu.nav.view, "command", label="Next page in view",
-          accelerator="Ctrl+PageDown",
-          command=function() tkevent.generate(frame3.tbl, "<Control-Next>"))
+    tkadd(menu.nav.view, "command", label="Prior page in view", accelerator="Ctrl+PageUp",
+          command=function() tkevent.generate(f3.tbl, "<Control-Prior>"))
+    tkadd(menu.nav.view, "command", label="Next page in view", accelerator="Ctrl+PageDown",
+          command=function() tkevent.generate(f3.tbl, "<Control-Next>"))
     tkadd(menu.nav, "cascade", label="Move table to have", menu=menu.nav.view)
     tkadd(menu.nav, "separator")
     menu.nav.active <- tkmenu(tt, tearoff=0)
-    tkadd(menu.nav.active, "command", label="First cell",
-          accelerator="Ctrl+Home",
-          command=function() tkevent.generate(frame3.tbl, "<Control-Home>"))
+    tkadd(menu.nav.active, "command", label="First cell", accelerator="Ctrl+Home",
+          command=function() tkevent.generate(f3.tbl, "<Control-Home>"))
     tkadd(menu.nav.active, "command", label="Last cell", accelerator="Ctrl+End",
-          command=function() tkevent.generate(frame3.tbl, "<Control-End>"))
+          command=function() tkevent.generate(f3.tbl, "<Control-End>"))
     tkadd(menu.nav.active, "separator")
     tkadd(menu.nav.active, "command", label="Prior page", accelerator="PageUp",
-          command=function() tkevent.generate(frame3.tbl, "<Prior>"))
+          command=function() tkevent.generate(f3.tbl, "<Prior>"))
     tkadd(menu.nav.active, "command", label="Next page", accelerator="PageDown",
-          command=function() tkevent.generate(frame3.tbl, "<Next>"))
-    tkadd(menu.nav, "cascade", label="Move active cell to",
-          menu=menu.nav.active)
+          command=function() tkevent.generate(f3.tbl, "<Next>"))
+    tkadd(menu.nav, "cascade", label="Move active cell to", menu=menu.nav.active)
     tkadd(menu.nav, "separator")
     menu.nav.in <- tkmenu(tt, tearoff=0)
     tkadd(menu.nav.in, "command", label="Left", accelerator="Ctrl+\u2190",
-          command=function() tkevent.generate(frame3.tbl, "<Control-Left>"))
+          command=function() tkevent.generate(f3.tbl, "<Control-Left>"))
     tkadd(menu.nav.in, "command", label="Right", accelerator="Ctrl+\u2192",
-          command=function() tkevent.generate(frame3.tbl, "<Control-Right>"))
+          command=function() tkevent.generate(f3.tbl, "<Control-Right>"))
     tkadd(menu.nav.in, "separator")
     tkadd(menu.nav.in, "command", label="Beggining", accelerator="Ctrl+a",
-          command=function() tkevent.generate(frame3.tbl, "<Control-a>"))
+          command=function() tkevent.generate(f3.tbl, "<Control-a>"))
     tkadd(menu.nav.in, "command", label="End", accelerator="Ctrl+e",
-          command=function() tkevent.generate(frame3.tbl, "<Control-e>"))
-    tkadd(menu.nav, "cascade", label="Move inside cell to the",
-          menu=menu.nav.in)
+          command=function() tkevent.generate(f3.tbl, "<Control-e>"))
+    tkadd(menu.nav, "cascade", label="Move inside cell to the", menu=menu.nav.in)
   }
 
-  # Graph menu
+  # graph menu
   menu.graph <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Plot", menu=menu.graph, underline=0)
-  tkadd(menu.graph, "command", label="Build histogram\u2026",
-        command=PlotHistogram)
+  tkadd(menu.graph, "command", label="Build histogram\u2026", command=PlotHistogram)
 
-  # Finish top menu
+  # finish top menu
   tkconfigure(tt, menu=top.menu)
 
-  # Frame 0
-  frame0 <- ttkframe(tt, relief="flat")
-  frame0.ent.1.1 <- ttkentry(frame0, width=10, font="TkFixedFont",
-                             state=if (read.only) "readonly" else "normal",
-                             textvariable=value.var, validate="key",
-                             validatecommand=function(P, S) {
-                                               ValidateEntryValue(P, S)
-                                             })
-  tkgrid(frame0.ent.1.1, padx=c(10, 25), pady=c(10, 4), sticky="we")
-  tkgrid.columnconfigure(frame0, 0, weight=1)
-  tkpack(frame0, fill="x", side="top")
+  # frame 0
+  f0 <- ttkframe(tt, relief="flat")
+  f0.ent.1.1 <- ttkentry(f0, width=10, font="TkFixedFont",
+                         state=if (read.only) "readonly" else "normal",
+                         textvariable=value.var, validate="key",
+                         validatecommand=function(P, S) ValidateEntryValue(P, S))
+  tkgrid(f0.ent.1.1, padx=c(10, 25), pady=c(10, 4), sticky="we")
+  tkgrid.columnconfigure(f0, 0, weight=1)
+  tkpack(f0, fill="x", side="top")
 
-  # Frame 1
-
-  frame1 <- ttkframe(tt, relief="flat")
+  # frame 1
+  f1 <- ttkframe(tt, relief="flat")
 
   if (read.only) {
-    frame1.but.1.2 <- "x"
-    frame1.but.1.3 <- ttkbutton(frame1, width=12, text="Close",
-                                command=function() tclvalue(tt.done.var) <- 1)
+    f1.but.1.2 <- "x"
+    f1.but.1.3 <- ttkbutton(f1, width=12, text="Close",
+                            command=function() tclvalue(tt.done.var) <- 1)
   } else {
-    frame1.but.1.2 <- ttkbutton(frame1, width=12, text="Save",
-                                command=SaveTable)
-    frame1.but.1.3 <- ttkbutton(frame1, width=12, text="Cancel",
-                                command=function() tclvalue(tt.done.var) <- 1)
+    f1.but.1.2 <- ttkbutton(f1, width=12, text="Save", command=SaveTable)
+    f1.but.1.3 <- ttkbutton(f1, width=12, text="Cancel",
+                            command=function() tclvalue(tt.done.var) <- 1)
   }
-  frame1.but.1.4 <- ttkbutton(frame1, width=12, text="Help",
-                              command=function() {
-                                print(help("EditData", package="RSurvey"))
-                              })
-  frame1.grp.1.5 <- ttksizegrip(frame1)
+  f1.but.1.4 <- ttkbutton(f1, width=12, text="Help",
+                          command=function() {
+                            print(help("EditData", package="RSurvey"))
+                          })
+  f1.grp.1.5 <- ttksizegrip(f1)
 
-  tkgrid("x", frame1.but.1.2, frame1.but.1.3, frame1.but.1.4, frame1.grp.1.5)
+  tkgrid("x", f1.but.1.2, f1.but.1.3, f1.but.1.4, f1.grp.1.5)
 
-  tkgrid.columnconfigure(frame1, 0, weight=1)
+  tkgrid.columnconfigure(f1, 0, weight=1)
 
-  if (!read.only)
-    tkgrid.configure(frame1.but.1.2, padx=c(10, 0))
-  tkgrid.configure(frame1.but.1.3, padx=c(4, 0))
-  tkgrid.configure(frame1.but.1.4, pady=10, padx=c(4, 10), columnspan=2)
-  tkgrid.configure(frame1.grp.1.5, sticky="se")
+  if (!read.only) tkgrid.configure(f1.but.1.2, padx=c(10, 0))
+  tkgrid.configure(f1.but.1.3, padx=c(4, 0))
+  tkgrid.configure(f1.but.1.4, pady=10, padx=c(4, 10), columnspan=2)
+  tkgrid.configure(f1.grp.1.5, sticky="se")
 
-  tkraise(frame1.but.1.4, frame1.grp.1.5)
+  tkraise(f1.but.1.4, f1.grp.1.5)
 
-  tkpack(frame1, fill="x", side="bottom", anchor="e")
+  tkpack(f1, fill="x", side="bottom", anchor="e")
 
-  # Frame 2
+  # frame 2
+  f2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0, height=200)
 
-  frame2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0, height=200)
+  f2.lab.1.1 <- ttklabel(f2, text="Record")
+  f2.lab.2.1 <- ttklabel(f2, text="Find")
 
-  frame2.lab.1.1 <- ttklabel(frame2, text="Record")
-  frame2.lab.2.1 <- ttklabel(frame2, text="Find")
+  f2.ent.1.2 <- ttkentry(f2, width=15, font="TkFixedFont", textvariable=record.var)
+  f2.ent.2.2 <- ttkentry(f2, width=15, font="TkFixedFont", textvariable=pattern.var)
 
-  frame2.ent.1.2 <- ttkentry(frame2, width=15, font="TkFixedFont",
-                             textvariable=record.var)
-  frame2.ent.2.2 <- ttkentry(frame2, width=15, font="TkFixedFont",
-                             textvariable=pattern.var)
+  f2.but.1.3 <- ttkbutton(f2, width=4, text="View", command=ViewRecord)
+  f2.but.2.3 <- ttkbutton(f2, width=2, image=GetBitmapImage("previous"),
+                          command=function() Find("prev"))
+  f2.but.2.4 <- ttkbutton(f2, width=2, image=GetBitmapImage("next"),
+                          command=function() Find("next"))
 
-  frame2.but.1.3 <- ttkbutton(frame2, width=4, text="View", command=ViewRecord)
-  frame2.but.2.3 <- ttkbutton(frame2, width=2, image=GetBitmapImage("previous"),
-                              command=function() Find("prev"))
-  frame2.but.2.4 <- ttkbutton(frame2, width=2, image=GetBitmapImage("next"),
-                              command=function() Find("next"))
+  tkgrid(f2.lab.1.1, f2.ent.1.2, f2.but.1.3, pady=c(0, 4))
+  tkgrid(f2.lab.2.1, f2.ent.2.2, f2.but.2.3, f2.but.2.4)
 
-  tkgrid(frame2.lab.1.1, frame2.ent.1.2, frame2.but.1.3, pady=c(0, 4))
-  tkgrid(frame2.lab.2.1, frame2.ent.2.2, frame2.but.2.3, frame2.but.2.4)
+  tkgrid.configure(f2.ent.2.2, f2.ent.1.2, padx=c(0, 2))
+  tkgrid.configure(f2.lab.2.1, f2.lab.1.1, padx=c(0, 2), sticky="w")
+  tkgrid.configure(f2.but.1.3, columnspan=2, padx=c(0, 70), sticky="we")
+  tkgrid.configure(f2.but.2.4, padx=c(2, 70))
 
-  tkgrid.configure(frame2.ent.2.2, frame2.ent.1.2, padx=c(0, 2))
-  tkgrid.configure(frame2.lab.2.1, frame2.lab.1.1, padx=c(0, 2), sticky="w")
-  tkgrid.configure(frame2.but.1.3, columnspan=2, padx=c(0, 70), sticky="we")
-  tkgrid.configure(frame2.but.2.4, padx=c(2, 70))
+  tkpack(f2, side="bottom", anchor="nw", padx=c(10, 0))
 
-  tkpack(frame2, side="bottom", anchor="nw", padx=c(10, 0))
+  # frame 3
+  f3 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
-  # Frame 3
+  f3.tbl <- tkwidget(f3, "table", rows=m + 1, cols=n + 1,
+                     colwidth=-2, rowheight=1,
+                     state=ifelse(read.only, "disabled", "normal"),
+                     height=nrows + 1, width=ncols + 1, ipadx=3, ipady=1,
+                     wrap=0, justify="left", background="#FFFFFF",
+                     foreground="#000000", titlerows=1, titlecols=1,
+                     multiline=0, resizeborders="col", colorigin=0,
+                     bordercursor="sb_h_double_arrow", cursor="plus",
+                     colstretchmode="none", rowstretchmode="none",
+                     drawmode="single", flashmode=0, rowseparator="\n",
+                     colseparator="\t", selectmode="extended",
+                     selecttitle=0, insertofftime=0, anchor="nw",
+                     highlightthickness=0, cache=1, validate=1,
+                     font="TkFixedFont", exportselection=0,
+                     browsecommand=function(s, S) ChangeActiveCell(s, S),
+                     validatecommand=function(s, S) ValidateCellValue(s, S),
+                     command=function(r, c) GetCellValue(r, c),
+                     xscrollcommand=function(...) tkset(f3.xsc, ...),
+                     yscrollcommand=function(...) tkset(f3.ysc, ...))
 
-  frame3 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
+  f3.xsc <- ttkscrollbar(f3, orient="horizontal",
+                         command=function(...) tkxview(f3.tbl, ...))
+  f3.ysc <- ttkscrollbar(f3, orient="vertical",
+                         command=function(...) tkyview(f3.tbl, ...))
 
-  frame3.tbl <- tkwidget(frame3, "table", rows=m + 1, cols=n + 1,
-                         colwidth=-2, rowheight=1,
-                         state=ifelse(read.only, "disabled", "normal"),
-                         height=nrows + 1, width=ncols + 1, ipadx=3, ipady=1,
-                         wrap=0, justify="left", background="#FFFFFF",
-                         foreground="#000000", titlerows=1, titlecols=1,
-                         multiline=0, resizeborders="col", colorigin=0,
-                         bordercursor="sb_h_double_arrow", cursor="plus",
-                         colstretchmode="none", rowstretchmode="none",
-                         drawmode="single", flashmode=0, rowseparator="\n",
-                         colseparator="\t", selectmode="extended",
-                         selecttitle=0, insertofftime=0, anchor="nw",
-                         highlightthickness=0, cache=1, validate=1,
-                         font="TkFixedFont", exportselection=0,
-                         browsecommand=function(s, S) ChangeActiveCell(s, S),
-                         validatecommand=function(s, S) ValidateCellValue(s, S),
-                         command=function(r, c) GetCellValue(r, c),
-                         xscrollcommand=function(...) tkset(frame3.xsc, ...),
-                         yscrollcommand=function(...) tkset(frame3.ysc, ...))
+  tcl(f3.tbl, "width",  0, col.0.width)
+  tcl(f3.tbl, "height", 0, row.0.height)
+  for (j in seq_len(n)) tcl(f3.tbl, "width", j, col.width[j])
 
-  frame3.xsc <- ttkscrollbar(frame3, orient="horizontal",
-                             command=function(...) tkxview(frame3.tbl, ...))
-  frame3.ysc <- ttkscrollbar(frame3, orient="vertical",
-                             command=function(...) tkyview(frame3.tbl, ...))
+  tkgrid(f3.tbl, f3.ysc)
+  tkgrid(f3.xsc, "x")
 
-  tcl(frame3.tbl, "width",  0, col.0.width)
-  tcl(frame3.tbl, "height", 0, row.0.height)
-  for (j in seq_len(n))
-    tcl(frame3.tbl, "width", j, col.width[j])
+  tkgrid.configure(f3.tbl, padx=c(10,  0), pady=c(0, 0), sticky="news")
+  tkgrid.configure(f3.ysc, padx=c( 0, 10), pady=c(0, 0), sticky="ns")
+  tkgrid.configure(f3.xsc, padx=c(10,  0), pady=c(0, 5), sticky="we")
 
-  tkgrid(frame3.tbl, frame3.ysc)
-  tkgrid(frame3.xsc, "x")
+  tktag.configure(f3.tbl, "active", background="#FBFCD0")
+  tktag.configure(f3.tbl, "sel",    background="#EAEEFE", foreground="#000000")
+  tktag.configure(f3.tbl, "title",  background="#D9D9D9", foreground="#000000")
 
-  tkgrid.configure(frame3.tbl, padx=c(10,  0), pady=c(0, 0), sticky="news")
-  tkgrid.configure(frame3.ysc, padx=c( 0, 10), pady=c(0, 0), sticky="ns")
-  tkgrid.configure(frame3.xsc, padx=c(10,  0), pady=c(0, 5), sticky="we")
+  tcl(f3.tbl, "tag", "row", "coltitles", 0)
+  tcl(f3.tbl, "tag", "col", "rowtitles", 0)
 
-  tktag.configure(frame3.tbl, "active", background="#FBFCD0")
-  tktag.configure(frame3.tbl, "sel", background="#EAEEFE",
-                  foreground="#000000")
-  tktag.configure(frame3.tbl, "title", background="#D9D9D9",
-                  foreground="#000000")
+  tktag.configure(f3.tbl, "coltitles", anchor="nw")
+  tktag.configure(f3.tbl, "rowtitles", anchor="n")
 
-  tcl(frame3.tbl, "tag", "row", "coltitles", 0)
-  tcl(frame3.tbl, "tag", "col", "rowtitles", 0)
+  tktag.raise(f3.tbl, "title", "sel")
 
-  tktag.configure(frame3.tbl, "coltitles", anchor="nw")
-  tktag.configure(frame3.tbl, "rowtitles", anchor="n")
+  tkgrid.columnconfigure(f3, 0, weight=1)
+  tkgrid.rowconfigure(f3, 0, weight=1)
 
-  tktag.raise(frame3.tbl, "title", "sel")
+  tkpack(f3, fill="both", expand=TRUE)
 
-  tkgrid.columnconfigure(frame3, 0, weight=1)
-  tkgrid.rowconfigure(frame3, 0, weight=1)
-
-  tkpack(frame3, fill="both", expand=TRUE)
-
-  # Bind events
-
+  # bind events
   tclServiceMode(TRUE)
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tkbind(frame0.ent.1.1, "<Return>",
+  tkbind(f0.ent.1.1, "<Return>",
          paste(.Tcl.callback(BypassReturnCmd), "break", sep="; "))
-  tkbind(frame0.ent.1.1, "<FocusIn>", function() tksee(frame3.tbl, "active"))
+  tkbind(f0.ent.1.1, "<FocusIn>", function() tksee(f3.tbl, "active"))
 
   tkbind(tt, "<Control-f>", function() CallSearch(is.replace=FALSE))
   tkbind(tt, "<Control-r>", function() CallSearch(is.replace=TRUE))
 
-  tkbind(frame3.tbl, "<Control-x>",
+  tkbind(f3.tbl, "<Control-x>",
          paste(.Tcl.callback(BypassCutCmd), "break", sep="; "))
-  tkbind(frame3.tbl, "<Control-v>",
+  tkbind(f3.tbl, "<Control-v>",
          paste(.Tcl.callback(BypassPasteCmd), "break", sep="; "))
-  tkbind(frame3.tbl, "<Return>",
+  tkbind(f3.tbl, "<Return>",
          paste(.Tcl.callback(BypassReturnCmd), "break", sep="; "))
-  tkbind(frame3.tbl, "<Control-c>",
+  tkbind(f3.tbl, "<Control-c>",
          paste(.Tcl.callback(BypassCopyCmd), "break", sep="; "))
-  tkbind(frame3.tbl, "<Control-z>", UndoEdit)
-  tkbind(frame3.tbl, "<Control-y>", RedoEdit)
-  tkbind(frame3.tbl, "<Double-Button-1>", function(x, y) ResizeColumn(x, y))
+  tkbind(f3.tbl, "<Control-z>", UndoEdit)
+  tkbind(f3.tbl, "<Control-y>", RedoEdit)
+  tkbind(f3.tbl, "<Double-Button-1>", function(x, y) ResizeColumn(x, y))
 
   tkevent.add("<<TableSelect>>", "<ButtonRelease>",
               "<Control-slash>", "<Shift-Control-Home>", "<Shift-Control-End>",
               "<Shift-Up>", "<Shift-Down>", "<Shift-Right>", "<Shift-Left>",
               "<Up>", "<Down>", "<Right>", "<Left>")
-  tkbind(frame3.tbl, "<<TableSelect>>", ChangeCellSelection)
+  tkbind(f3.tbl, "<<TableSelect>>", ChangeCellSelection)
 
   D <- ""  # hack to force 'D' to be something other than a function
-  tkbind(frame3.tbl, "<MouseWheel>",
+  tkbind(f3.tbl, "<MouseWheel>",
          function(D) {
            number <- as.integer((-as.integer(D) / 120)^3)
-           tkyview(frame3.tbl, "scroll", number, "units")
+           tkyview(f3.tbl, "scroll", number, "units")
          })
 
-  tkbind(frame2.ent.2.2, "<KeyRelease>",
-         function() {
-           matched.cells <<- NULL
-         })
-  tkbind(frame2.ent.2.2, "<Return>", function() Find("next"))
-  tkbind(frame2.ent.2.2, "<Up>",     function() Find("prev"))
-  tkbind(frame2.ent.2.2, "<Down>",   function() Find("next"))
-  tkbind(frame2.ent.1.2, "<Return>", function() ViewRecord())
+  tkbind(f2.ent.2.2, "<KeyRelease>", function() matched.cells <<- NULL)
+  tkbind(f2.ent.2.2, "<Return>",     function() Find("next"))
+  tkbind(f2.ent.2.2, "<Up>",         function() Find("prev"))
+  tkbind(f2.ent.2.2, "<Down>",       function() Find("next"))
+  tkbind(f2.ent.1.2, "<Return>",     function() ViewRecord())
 
-  # GUI control
-
-  tkfocus(frame3.tbl)
-  tkactivate(frame3.tbl, "origin")
-  tkselection.set(frame3.tbl, "active")
-  tksee(frame3.tbl, "active")
+  # gui control
+  tkfocus(f3.tbl)
+  tkactivate(f3.tbl, "origin")
+  tkselection.set(f3.tbl, "active")
+  tksee(f3.tbl, "active")
 
   tkgrab(tt)
   tkwait.variable(tt.done.var)
