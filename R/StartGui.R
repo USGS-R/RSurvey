@@ -144,10 +144,10 @@ StartGui <- function() {
       n <- ncol(d)
 
       rows <- rownames(d)
-      if (is.null(row.names)) rows <- seq_len(m)
+      if (is.null(rows)) rows <- seq_len(m)
       rows.int <- as.integer(rows)
       is.int <- is.integer(rows.int) && !anyDuplicated(rows.int)
-      row.names <- if (is.int) rows.int else rows
+      rows <- if (is.int) rows.int else rows
 
       col.names <- colnames(d)
 
@@ -183,8 +183,7 @@ StartGui <- function() {
       Data(clear.data=TRUE)
       Data("comment", comment(d))
       Data("data.raw", d)
-      Data("data.raw", row.names, which.attr="row.names")
-      Data("data.raw", n, which.attr="nrows")
+      Data("rows", rows)
       Data("cols", cols)
       Data("import", list(source=src))
     }
@@ -648,8 +647,7 @@ StartGui <- function() {
     on.exit(tkconfigure(tt, cursor="arrow"))
     if (read.only) {  # view processed data
       CallProcessData()
-      if (is.null(Data("data.pts")))
-        return()
+      if (is.null(Data("data.pts"))) return()
 
 
 
@@ -670,12 +668,14 @@ StartGui <- function() {
 
     } else {  # edit raw data
       if (is.null(Data("data.raw"))) return()
-      rows <- Data("data.raw", which.attr="row.names")
+      rows <- Data("rows")
       cols <- Data("cols")
       idxs <- na.omit(vapply(cols, function(i) i$index, 0L))
       col.names <- vapply(cols, function(i) i$id, "")[idxs]
       col.formats <- vapply(cols, function(i) i$format, "")[idxs]
       old.changelog <- Data("changelog")
+
+
 
       ans <- EditData(Data("data.raw")[idxs], col.names=col.names,
                       row.names=rows, col.formats=col.formats,
@@ -733,7 +733,7 @@ StartGui <- function() {
                          stringsAsFactors=FALSE)
 
       if (!is.null(Data("data.raw"))) {
-        rows <- Data("data.raw", which.attr="row.names")
+        rows <- Data("rows")
         rows.int <- as.integer(rows)
         is.int <- is.integer(rows.int) && !anyDuplicated(rows.int)
         rownames(d) <- if (is.int) rows.int else rows
@@ -761,11 +761,9 @@ StartGui <- function() {
     }
 
     # process grid
-    if (!is.null(Data("data.pts")) && is.null(Data("data.grd")) &&
-        interpolate) {
+    if (!is.null(Data("data.pts")) && is.null(Data("data.grd")) && interpolate) {
       ply <- Data("poly.crop")
-      if (!is.null(ply))
-        ply <- Data("polys")[[ply]]
+      if (!is.null(ply)) ply <- Data("polys")[[ply]]
       grid.res <- Data("grid.res")
       grid.mba <- Data("grid.mba")
       data.grd <- try(ProcessData(Data("data.pts"), type="g", ply=ply,
@@ -779,7 +777,7 @@ StartGui <- function() {
   # build query
   BuildQuery <- function() {
     if (is.null(Data("data.raw"))) return()
-    m <- Data("data.raw", which.attr="nrows")
+    m <- length(Data("data.raw")[[1]])
     if (m == 0) return()
     cols <- Data("cols")
     old.fun <- Data("query")

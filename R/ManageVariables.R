@@ -233,14 +233,10 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
     cols[[idx]] <- list(id="", class="")
 
-    m <- Data("data.raw", which.attr="nrows")
-    if (is.null(m) && length(cols) > 1)
-      m <- length(EvalFunction(cols[[1]]$fun, cols))
+    m <- if (length(cols) > 1) length(EvalFunction(cols[[1]]$fun, cols)) else NULL
 
-    f <- EditFunction(cols, index=idx, value.length=m, win.title="New Variable",
-                      parent=tt)
-    if (is.null(f$fun) || f$fun == "")
-      return()
+    f <- EditFunction(cols, index=idx, value.length=m, win.title="New Variable", parent=tt)
+    if (is.null(f$fun) || f$fun == "") return()
 
     cols[[idx]] <<- list(id="", name="New Variable", format="", class=f$class,
                          index=NA, fun=f$fun, sample=f$sample,
@@ -261,10 +257,10 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     SaveNb()
 
     idx <- as.integer(tkcurselection(frame1.lst)) + 1L
-    if (length(idx) == 0)
-      return()
+    if (length(idx) == 0) return()
 
-    m <- Data("data.raw", which.attr="nrows")
+    m <- if (length(cols) > 1) length(EvalFunction(cols[[1]]$fun, cols)) else NULL
+
     f <- EditFunction(cols, index=idx, value.length=m, parent=tt)
 
     if (is.null(f$fun))
@@ -376,8 +372,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
       return()
     SaveNb()
     d <- list(EvalFunction(cols[[idx]]$fun, cols))
-    rows <- Data("data.raw", which.attr="row.names")
-    EditData(d, col.names=cols[[idx]]$id, row.names=rows,
+    EditData(d, col.names=cols[[idx]]$id, row.names=Data("rows"),
              col.formats=cols[[idx]]$format, read.only=TRUE,
              win.title="View Raw Data", parent=tt)
     return()

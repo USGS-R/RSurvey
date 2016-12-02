@@ -1,7 +1,6 @@
 # Create small bitmap icon images.
 # Bitmap editor: http://www.posoft.de/html/poBitmapMain.html
 # Size: width 11 pixel, height 11 pixel
-
 GetBitmapImage <- function(type) {
 
   bits <- list()

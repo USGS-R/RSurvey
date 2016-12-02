@@ -1,5 +1,3 @@
-# Parse and evaluate an RSurvey expression.
-
 EvalFunction <- function(txt, cols) {
   d <- list()
   ids <- vapply(cols, function(i) i$id, "")
@@ -13,8 +11,7 @@ EvalFunction <- function(txt, cols) {
   }
   fun <- txt
   for (i in seq_along(ids))
-    fun <- gsub(paste0("\"", ids[i], "\""), paste0("DATA[[", i, "]]"), fun,
-                fixed=TRUE)
+    fun <- gsub(paste0("\"", ids[i], "\""), paste0("DATA[[", i, "]]"), fun, fixed=TRUE)
   fun <- eval(parse(text=paste0("function(DATA) {", fun, "}")))
   ans <- try(fun(d), silent=TRUE)
   return(ans)

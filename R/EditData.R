@@ -559,7 +559,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     ow <- options(width=200)$width
     on.exit(options(width=ow), add=TRUE)
     txt <- paste(capture.output(GetEdits()), collapse="\n")
-    EditText(txt, read.only=TRUE, win.title="Change log",
+    EditText(txt, read.only=TRUE, win.title="Changelog",
              is.fixed.width.font=TRUE, parent=tt)
     return()
   }
@@ -612,7 +612,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   }
 
 
-  # gui requires TkTable
+  # gui requires tktable
   is.tktable <- try(tcl("package", "present", "Tktable"), silent=TRUE)
   if (inherits(is.tktable, "try-error")) stop("tkTable is not available")
 
@@ -620,6 +620,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   if (!inherits(d, c("list", "matrix", "data.frame")))
     stop("invalid class for data table")
   rtn.class <- class(d)
+  rtn.attrs <- attributes(d)
   if (!inherits(d, "list")) {
     d.rownames <- rownames(d)
     d.colnames <- colnames(d)
@@ -759,7 +760,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   tkadd(menu.view, "command", label="Summary", command=function() ViewInfo("Summary"))
   if (!read.only) {
     tkadd(menu.view, "separator")
-    tkadd(menu.view, "command", label="Change log", command=ViewChangeLog)
+    tkadd(menu.view, "command", label="Changelog", command=ViewChangeLog)
   }
 
   # search menu
@@ -1055,13 +1056,10 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   } else {
     if (rtn.class == "data.frame") {
       class(d) <- "data.frame"  # see warning in utils::read.table (R v3.0.2)
-      rownames(d) <- d.rownames
-      colnames(d) <- d.colnames
     } else if (rtn.class == "matrix") {
       d <- do.call(cbind, d)
-      rownames(d) <- d.rownames
-      colnames(d) <- d.colnames
     }
+    attributes(d) <- rtn.attrs
   }
 
   tkgrab.release(tt)
