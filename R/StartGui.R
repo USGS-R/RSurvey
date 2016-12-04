@@ -3,8 +3,7 @@ StartGui <- function() {
 
   # close gui
   CloseGUI <- function() {
-    if (as.integer(tclvalue(tt.done.var)) > 0)
-      return()
+    if (as.integer(tclvalue(tt.done.var)) > 0) return()
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
     geo <- unlist(strsplit(as.character(tkwm.geometry(tt)), "\\+"))
@@ -35,8 +34,7 @@ StartGui <- function() {
 
   # save binary project file
   SaveProj <- function() {
-    if (!is.null(Data("proj.file")) &&
-        file.access(Data("proj.file"), mode=0) != 0) {
+    if (!is.null(Data("proj.file")) && file.access(Data("proj.file"), mode=0) != 0) {
       Data("proj.file", NULL)
     }
     if (is.null(Data("proj.file"))) {
@@ -163,8 +161,7 @@ StartGui <- function() {
       matched <- lapply(unique(ids), function(i) which(ids %in% i)[-1])
       names(matched) <- unique(ids)
       for (i in seq_along(matched))
-        ids[matched[[i]]] <- paste0(names(matched[i]), " (",
-                                    seq_along(matched[[i]]), ")")
+        ids[matched[[i]]] <- paste0(names(matched[i]), " (", seq_along(matched[[i]]), ")")
       names(d) <- paste0("V", seq_len(n))
 
       cols <- list()
@@ -233,7 +230,6 @@ StartGui <- function() {
     is.3d <- is.2d && is.rgl
     tkconfigure(f2.but.1.3, state=ifelse(is.3d, "normal", "disabled"))
   }
-
 
   # set variables
   SetVars <- function() {
@@ -335,8 +331,7 @@ StartGui <- function() {
   SaveRGLDevice <- function() {
     if (!is.rgl || rgl::rgl.cur() == 0) return()
     file <- GetFile(cmd="Save As", exts=c("png", "eps", "pdf"),
-                    win.title="Save RGL Graphic As", defaultextension="png",
-                    parent=tt)
+                    win.title="Save RGL Graphic As", defaultextension="png", parent=tt)
     if (is.null(file)) return()
     if (attr(file, "extension") == "png")
       rgl::rgl.snapshot(filename=file, fmt=attr(file, "extension"))
@@ -632,7 +627,8 @@ StartGui <- function() {
     tkfocus(tt)
   }
 
-  # Set the height of (default-sized) characters in inches.
+
+  # set the height of (default-sized) characters in inches.
   SetCsi <- function() {
     if (is.null(Data("csi"))) {
       dev.new(pointsize=12)
@@ -641,7 +637,8 @@ StartGui <- function() {
     }
   }
 
-  # Call edit data
+
+  # call edit data
   CallEditData <- function(read.only=TRUE, is.raw=TRUE, is.state=FALSE) {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
@@ -741,10 +738,7 @@ StartGui <- function() {
       names(d) <- var.names
 
       query <- Data("query")
-      if (is.null(query))
-        coerce.rows <- NULL
-      else
-        coerce.rows <- EvalFunction(query, cols)
+      coerce.rows <- if (is.null(query)) NULL else EvalFunction(query, cols)
 
       if (!is.null(vars$x)) {
         ply <- Data("poly.data")
@@ -768,8 +762,7 @@ StartGui <- function() {
       grid.mba <- Data("grid.mba")
       data.grd <- try(ProcessData(Data("data.pts"), type="g", ply=ply,
                                   grid.res=grid.res, grid.mba=grid.mba))
-      if (!inherits(data.grd, "try-error"))
-        Data("data.grd", data.grd)
+      if (!inherits(data.grd, "try-error")) Data("data.grd", data.grd)
     }
   }
 
@@ -803,10 +796,8 @@ StartGui <- function() {
   # edit comment
   EditComment <- function() {
     txt <- EditText(Data("comment"), win.title="Comment", parent=tt)
-    if (is.null(txt))
-      return()
-    if (length(txt) == 0 || (length(txt) == 1 & txt == ""))
-      txt <- NULL
+    if (is.null(txt)) return()
+    if (length(txt) == 0 || (length(txt) == 1 & txt == "")) txt <- NULL
     Data("comment", txt)
   }
 
@@ -868,8 +859,8 @@ StartGui <- function() {
         command=OpenProj)
   tkadd(menu.file, "command", label="Save project", accelerator="Ctrl+s",
         command=SaveProj)
-  tkadd(menu.file, "command", label="Save project as\u2026",
-        accelerator="Shift+Ctrl+s", command=SaveProjAs)
+  tkadd(menu.file, "command", label="Save project as\u2026",  accelerator="Shift+Ctrl+s",
+        command=SaveProjAs)
 
   tkadd(menu.file, "separator")
   menu.file.import <- tkmenu(tt, tearoff=0)
@@ -882,8 +873,7 @@ StartGui <- function() {
         command=function() ReadData("rpackage"))
   tkadd(menu.file.import, "command", label="R data file\u2026",
         command=function() ReadData("rda"))
-  tkadd(menu.file, "cascade", label="Import raw data from",
-        menu=menu.file.import)
+  tkadd(menu.file, "cascade", label="Import raw data from", menu=menu.file.import)
   menu.file.export <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.export, "command", label="Text file\u2026",
         command=function() WriteData("txt"))
@@ -892,8 +882,7 @@ StartGui <- function() {
         command=function() WriteData("shp"))
   tkadd(menu.file.export, "command", label="R data file\u2026",
         command=function() WriteData("rda"))
-  tkadd(menu.file, "cascade", label="Export point data as",
-        menu=menu.file.export)
+  tkadd(menu.file, "cascade", label="Export point data as", menu=menu.file.export)
   tkadd(menu.file, "command", label="Export grid data as\u2026",
         command=function() WriteData("grd"))
 
@@ -901,8 +890,7 @@ StartGui <- function() {
   menu.file.save <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.save, "command", label="R graphic\u2026", accelerator="Ctrl+r",
         command=SaveRDevice)
-  tkadd(menu.file.save, "command", label="RGL graphic\u2026",
-        command=SaveRGLDevice)
+  tkadd(menu.file.save, "command", label="RGL graphic\u2026", command=SaveRGLDevice)
   tkadd(menu.file, "cascade", label="Save plot from", menu=menu.file.save)
 
   tkadd(menu.file, "separator")
@@ -912,15 +900,13 @@ StartGui <- function() {
   menu.edit <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
 
-  tkadd(menu.edit, "command", label="Manage variables\u2026",
-        command=CallManageVariables)
+  tkadd(menu.edit, "command", label="Manage variables\u2026", command=CallManageVariables)
   tkadd(menu.edit, "command", label="Raw data editor\u2026",
         command=function() CallEditData(read.only=FALSE))
   tkadd(menu.edit, "command", label="Comment\u2026", command=EditComment)
 
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Filter data records\u2026",
-        command=BuildQuery)
+  tkadd(menu.edit, "command", label="Filter data records\u2026", command=BuildQuery)
   tkadd(menu.edit, "command", label="Clear filter", command=ClearQuery)
 
   tkadd(menu.edit, "separator")
@@ -963,11 +949,9 @@ StartGui <- function() {
 
   tkadd(top.menu, "cascade", label="Polygon", menu=menu.poly, underline=0)
 
-  tkadd(menu.poly, "command", label="Manage polygons\u2026",
-        command=CallManagePolygons)
+  tkadd(menu.poly, "command", label="Manage polygons\u2026", command=CallManagePolygons)
   tkadd(menu.poly, "separator")
-  tkadd(menu.poly, "command", label="Set polygon limits\u2026",
-        command=CallSetPolygonLimits)
+  tkadd(menu.poly, "command", label="Set polygon limits\u2026", command=CallSetPolygonLimits)
   tkadd(menu.poly, "command", label="Clear polygon limits",
         command=function() {
           Data("poly.data", NULL)
@@ -990,8 +974,7 @@ StartGui <- function() {
   # plot menu
   menu.graph <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Plot", menu=menu.graph, underline=0)
-  tkadd(menu.graph, "command", label="Scatter",
-        command=function() CallPlot2d(type="p"))
+  tkadd(menu.graph, "command", label="Scatter", command=function() CallPlot2d(type="p"))
   tkadd(menu.graph, "command", label="2D-interpolated map",
         command=function() {
           type <- if (Data("img.contour")) "g" else "l"
@@ -1019,8 +1002,8 @@ StartGui <- function() {
           if (!is.null(pal)) Data("color.palette", pal)
         })
   tkadd(menu.graph, "separator")
-  tkadd(menu.graph, "command", label="Close all graphic devices",
-        accelerator="Ctrl+F4", command=CloseDevices)
+  tkadd(menu.graph, "command", label="Close all graphic devices", accelerator="Ctrl+F4",
+        command=CloseDevices)
 
   # help menu
   menu.help <- tkmenu(tt, tearoff=0)
@@ -1141,8 +1124,7 @@ StartGui <- function() {
                           command=function() {
                             CallPlot2d(type=if (Data("img.contour")) "g" else "l")
                           })
-  f2.but.1.3 <- ttkbutton(f2, width=10, text="3D Map",
-                          command=CallPlot3d)
+  f2.but.1.3 <- ttkbutton(f2, width=10, text="3D Map", command=CallPlot3d)
 
   tkgrid(f2.but.1.1, f2.but.1.2, f2.but.1.3)
   tkgrid.configure(f2.but.1.2, padx=4)

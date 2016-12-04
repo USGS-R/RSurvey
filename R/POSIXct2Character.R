@@ -1,5 +1,3 @@
-# Convert objects from POSIXct to character class
-
 POSIXct2Character <- function(x, fmt="%Y-%m-%d %H:%M:%OS3") {
   pos <- gregexpr("%OS[[:digit:]]+", fmt)[[1]]
   if (pos > 0) {

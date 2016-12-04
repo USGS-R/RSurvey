@@ -1,8 +1,5 @@
-# A GUI for specifying window geometry and universal plotting parameters.
-
 SetConfiguration <- function(parent=NULL) {
 
-  ## Additional functions
 
   UpdatePar <- function() {
     val <- as.numeric(tclvalue(width.var))
@@ -33,10 +30,8 @@ SetConfiguration <- function(parent=NULL) {
     tclvalue(tt.done.var) <- 1
   }
 
-  ## Main program
 
-  # Assign variables linked to Tk widgets
-
+  # assign variables linked to Tk widgets
   width.var        <- tclVar()
   nlevels.var      <- tclVar()
   cex.pts.var      <- tclVar()
@@ -83,8 +78,7 @@ SetConfiguration <- function(parent=NULL) {
 
   tt.done.var <- tclVar(0)
 
-  # Open GUI
-
+  # open gui
   tclServiceMode(FALSE)
   tt <- tktoplevel()
   if (!is.null(parent)) {
@@ -94,130 +88,117 @@ SetConfiguration <- function(parent=NULL) {
                              "+", as.integer(geo[3]) + 25))
   }
   tktitle(tt) <- "Configuration"
-
   tkwm.resizable(tt, 1, 0)
 
-  # Frame 0 contains ok and cancel buttons
+  # frame 0 contains ok and cancel buttons
+  f0 <- ttkframe(tt, relief="flat")
+  f0.but.2 <- ttkbutton(f0, width=12, text="OK", command=UpdatePar)
+  f0.but.3 <- ttkbutton(f0, width=12, text="Cancel",
+                        command=function() tclvalue(tt.done.var) <- 1)
+  f0.but.4 <- ttkbutton(f0, width=12, text="Help",
+                        command=function() {
+                          print(help("SetConfiguration", package="RSurvey"))
+                        })
+  tkgrid("x", f0.but.2, f0.but.3, f0.but.4, sticky="se", pady=10, padx=c(4, 0))
+  tkgrid.columnconfigure(f0, 0, weight=1)
+  tkgrid.configure(f0.but.4, padx=c(4, 10))
+  tkpack(f0, fill="x", side="bottom", anchor="e")
 
-  frame0 <- ttkframe(tt, relief="flat")
-  frame0.but.2 <- ttkbutton(frame0, width=12, text="OK", command=UpdatePar)
-  frame0.but.3 <- ttkbutton(frame0, width=12, text="Cancel",
-                            command=function() tclvalue(tt.done.var) <- 1)
-  frame0.but.4 <- ttkbutton(frame0, width=12, text="Help",
-                            command=function() {
-                              print(help("SetConfiguration", package="RSurvey"))
-                            })
-  tkgrid("x", frame0.but.2, frame0.but.3, frame0.but.4,
-         sticky="se", pady=10, padx=c(4, 0))
-  tkgrid.columnconfigure(frame0, 0, weight=1)
-  tkgrid.configure(frame0.but.4, padx=c(4, 10))
-  tkpack(frame0, fill="x", side="bottom", anchor="e")
-
-  # Paned window
-
+  # paned window
   pw <- ttkpanedwindow(tt, orient="horizontal")
 
-  # Frame 1 contains parameters
+  # frame 1 contains parameters
+  f1 <- ttkframe(pw, relief="flat", borderwidth=0, padding=10)
 
-  frame1 <- ttkframe(pw, relief="flat", borderwidth=0, padding=10)
+  f1.lab.1.1 <- ttklabel(f1, text="Width of plotting window canvas, in inches")
+  f1.lab.2.1 <- ttklabel(f1, text="Approximate number of contour levels")
+  f1.lab.3.1 <- ttklabel(f1, text="Scaling for point symbols")
+  f1.lab.4.1 <- ttklabel(f1, text="Horizontal aspect ratio")
+  f1.lab.5.1 <- ttklabel(f1, text="Vertical aspect ratio")
 
-  txt <- "Width of plotting window canvas, in inches"
-  frame1.lab.1.1 <- ttklabel(frame1, text=txt)
-  txt <- "Approximate number of contour levels"
-  frame1.lab.2.1 <- ttklabel(frame1, text=txt)
-  txt <- "Scaling for point symbols"
-  frame1.lab.3.1 <- ttklabel(frame1, text=txt)
-  txt <- "Horizontal aspect ratio"
-  frame1.lab.4.1 <- ttklabel(frame1, text=txt)
-  txt <- "Vertical aspect ratio"
-  frame1.lab.5.1 <- ttklabel(frame1, text=txt)
+  f1.ent.1.2 <- ttkentry(f1, width=8, textvariable=width.var)
+  f1.ent.2.2 <- ttkentry(f1, width=8, textvariable=nlevels.var)
+  f1.ent.3.2 <- ttkentry(f1, width=8, textvariable=cex.pts.var)
+  f1.ent.4.2 <- ttkentry(f1, width=8, textvariable=asp.yx.var)
+  f1.ent.5.2 <- ttkentry(f1, width=8, textvariable=asp.zx.var)
 
-  frame1.ent.1.2 <- ttkentry(frame1, width=8, textvariable=width.var)
-  frame1.ent.2.2 <- ttkentry(frame1, width=8, textvariable=nlevels.var)
-  frame1.ent.3.2 <- ttkentry(frame1, width=8, textvariable=cex.pts.var)
-  frame1.ent.4.2 <- ttkentry(frame1, width=8, textvariable=asp.yx.var)
-  frame1.ent.5.2 <- ttkentry(frame1, width=8, textvariable=asp.zx.var)
+  tkgrid(f1.lab.1.1, f1.ent.1.2, pady=c(15, 4))
+  tkgrid(f1.lab.2.1, f1.ent.2.2, pady=c(0, 4))
+  tkgrid(f1.lab.3.1, f1.ent.3.2, pady=c(0, 4))
+  tkgrid(f1.lab.4.1, f1.ent.4.2, pady=c(0, 4))
+  tkgrid(f1.lab.5.1, f1.ent.5.2)
 
-  tkgrid(frame1.lab.1.1, frame1.ent.1.2, pady=c(15, 4))
-  tkgrid(frame1.lab.2.1, frame1.ent.2.2, pady=c(0, 4))
-  tkgrid(frame1.lab.3.1, frame1.ent.3.2, pady=c(0, 4))
-  tkgrid(frame1.lab.4.1, frame1.ent.4.2, pady=c(0, 4))
-  tkgrid(frame1.lab.5.1, frame1.ent.5.2)
+  tkgrid.configure(f1.lab.1.1, f1.lab.2.1, f1.lab.3.1, f1.lab.4.1, f1.lab.5.1,
+                   sticky="w")
+  tkgrid.configure(f1.ent.1.2, f1.ent.2.2, f1.ent.3.2, f1.ent.4.2, f1.ent.5.2,
+                   padx=c(2, 15), sticky="we")
 
-  tkgrid.configure(frame1.lab.1.1, frame1.lab.2.1, frame1.lab.3.1,
-                   frame1.lab.4.1, frame1.lab.5.1, sticky="w")
-  tkgrid.configure(frame1.ent.1.2, frame1.ent.2.2, frame1.ent.3.2,
-                   frame1.ent.4.2, frame1.ent.5.2, padx=c(2, 15), sticky="we")
+  tkgrid.columnconfigure(f1, 1, weight=1, minsize=6)
 
-  tkgrid.columnconfigure(frame1, 1, weight=1, minsize=6)
+  # frame 2 contains plot features
+  f2 <- ttkframe(pw, relief="flat", borderwidth=0, padding=10)
 
-  # Frame 2 contains plot features
+  f2.chk.01.1 <- ttkcheckbutton(f2, text="Reverse legend",
+                                variable=rkey.var)
+  f2.chk.02.1 <- ttkcheckbutton(f2, text="Show polygons",
+                                variable=show.poly.var)
+  f2.chk.03.1 <- ttkcheckbutton(f2, text="Use image contour",
+                                variable=img.contour.var)
+  f2.chk.04.1 <- ttkcheckbutton(f2, text="Show contour lines",
+                                variable=show.lines.var)
+  f2.chk.05.1 <- ttkcheckbutton(f2, text="Show points on maps",
+                                variable=show.points.var)
+  f2.chk.06.1 <- ttkcheckbutton(f2, text="Show tickmarks on second axis",
+                                variable=show.2.axes.var)
+  f2.chk.07.1 <- ttkcheckbutton(f2, text="Add minor tickmarks",
+                                variable=minor.ticks.var)
+  f2.chk.08.1 <- ttkcheckbutton(f2, text="Place tickmarks inside plot region",
+                                variable=ticks.inside.var)
+  f2.chk.09.1 <- ttkcheckbutton(f2, text="Remove point symbol boundary line",
+                                variable=rm.pnt.line.var)
 
-  frame2 <- ttkframe(pw, relief="flat", borderwidth=0, padding=10)
+  tkgrid(f2.chk.01.1, sticky="w", pady=c(0, 2))
+  tkgrid(f2.chk.02.1, sticky="w", pady=c(0, 2))
+  tkgrid(f2.chk.03.1, sticky="w", pady=c(0, 2))
+  tkgrid(f2.chk.04.1, sticky="w", pady=c(0, 2))
+  tkgrid(f2.chk.05.1, sticky="w", pady=c(0, 2))
+  tkgrid(f2.chk.06.1, sticky="w", pady=c(0, 2))
+  tkgrid(f2.chk.07.1, sticky="w", pady=c(0, 2))
+  tkgrid(f2.chk.08.1, sticky="w", pady=c(0, 2))
+  tkgrid(f2.chk.09.1, sticky="w")
 
-  txt <- "Reverse legend"
-  frame2.chk.01.1 <- ttkcheckbutton(frame2, text=txt, variable=rkey.var)
-  txt <- "Show polygons"
-  frame2.chk.02.1 <- ttkcheckbutton(frame2, text=txt, variable=show.poly.var)
-  txt <- "Use image contour"
-  frame2.chk.03.1 <- ttkcheckbutton(frame2, text=txt, variable=img.contour.var)
-  txt <- "Show contour lines"
-  frame2.chk.04.1 <- ttkcheckbutton(frame2, text=txt, variable=show.lines.var)
-  txt <- "Show points on maps"
-  frame2.chk.05.1 <- ttkcheckbutton(frame2, text=txt, variable=show.points.var)
-  txt <- "Show tickmarks on second axis"
-  frame2.chk.06.1 <- ttkcheckbutton(frame2, text=txt, variable=show.2.axes.var)
-  txt <- "Add minor tickmarks"
-  frame2.chk.07.1 <- ttkcheckbutton(frame2, text=txt, variable=minor.ticks.var)
-  txt <- "Place tickmarks inside plot region"
-  frame2.chk.08.1 <- ttkcheckbutton(frame2, text=txt, variable=ticks.inside.var)
-  txt <- "Remove point symbol boundary line"
-  frame2.chk.09.1 <- ttkcheckbutton(frame2, text=txt, variable=rm.pnt.line.var)
-
-  tkgrid(frame2.chk.01.1, sticky="w", pady=c(0, 2))
-  tkgrid(frame2.chk.02.1, sticky="w", pady=c(0, 2))
-  tkgrid(frame2.chk.03.1, sticky="w", pady=c(0, 2))
-  tkgrid(frame2.chk.04.1, sticky="w", pady=c(0, 2))
-  tkgrid(frame2.chk.05.1, sticky="w", pady=c(0, 2))
-  tkgrid(frame2.chk.06.1, sticky="w", pady=c(0, 2))
-  tkgrid(frame2.chk.07.1, sticky="w", pady=c(0, 2))
-  tkgrid(frame2.chk.08.1, sticky="w", pady=c(0, 2))
-  tkgrid(frame2.chk.09.1, sticky="w")
-
-  # Final layout
-  tkgrid(frame1, frame2, sticky="nswe")
+  # final layout
+  tkgrid(f1, f2, sticky="nswe")
   tkgrid.columnconfigure(pw, 0, weight=2)
   tkpack(pw, fill="x", expand=TRUE)
 
-  # Bind events
-
+  # bind events
   tclServiceMode(TRUE)
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tkbind(frame1.ent.1.2, "<KeyRelease>",
+  tkbind(f1.ent.1.2, "<KeyRelease>",
          function() {
            tclvalue(width.var) <- CheckEntry("numeric", tclvalue(width.var))
          })
-  tkbind(frame1.ent.2.2, "<KeyRelease>",
+  tkbind(f1.ent.2.2, "<KeyRelease>",
          function() {
            tclvalue(nlevels.var) <- CheckEntry("integer", tclvalue(nlevels.var))
          })
-  tkbind(frame1.ent.3.2, "<KeyRelease>",
+  tkbind(f1.ent.3.2, "<KeyRelease>",
          function() {
            tclvalue(cex.pts.var) <- CheckEntry("numeric", tclvalue(cex.pts.var))
          })
-  tkbind(frame1.ent.4.2, "<KeyRelease>",
+  tkbind(f1.ent.4.2, "<KeyRelease>",
          function() {
            tclvalue(asp.yx.var) <- CheckEntry("numeric", tclvalue(asp.yx.var))
          })
-  tkbind(frame1.ent.5.2, "<KeyRelease>",
+  tkbind(f1.ent.5.2, "<KeyRelease>",
          function() {
            tclvalue(asp.zx.var) <- CheckEntry("numeric", tclvalue(asp.zx.var))
          })
 
-  # GUI control
-
+  # gui control
   tkfocus(tt)
   tkgrab(tt)
   tkwait.variable(tt.done.var)

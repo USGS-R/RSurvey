@@ -1,5 +1,3 @@
-# This function restores local objects within the current R session.
-
 RestoreSession <- function(path, save.objs, fun.call) {
 
   if (missing(path)) {
@@ -11,19 +9,16 @@ RestoreSession <- function(path, save.objs, fun.call) {
       path <- tcltk::tkchooseDirectory(initialdir=initial.dir,
                                        title="Choose R Source Directory...")
       path <- tcltk::tclvalue(path)
-      if (!nzchar(path))
-        return()
+      if (!nzchar(path)) return()
 
       Data("default.dir", path)
     } else {
       path <- file.path(getwd(), "R")
-      if (!file.exists(path))
-        return()
+      if (!file.exists(path)) return()
     }
   }
 
-  if (missing(save.objs))
-    save.objs <- NULL
+  if (missing(save.objs)) save.objs <- NULL
 
   all.objs <- ls(all.names=FALSE, envir=as.environment(1))
   cur.objs <- all.objs[!all.objs %in% save.objs]
@@ -50,6 +45,5 @@ RestoreSession <- function(path, save.objs, fun.call) {
 
   cat(err.msg)
 
-  if (!missing(fun.call))
-    eval(parse(text=fun.call))()
+  if (!missing(fun.call)) eval(parse(text=fun.call))()
 }
