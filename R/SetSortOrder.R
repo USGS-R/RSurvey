@@ -19,6 +19,7 @@ SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
   }
 
 
+  # initialize return value
   rtn <- sort.on
 
   # assign variables linked to Tk widgets

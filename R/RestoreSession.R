@@ -6,8 +6,8 @@ RestoreSession <- function(path, save.objs, fun.call) {
       if("R" %in% dir(path=initial.dir, full.names=FALSE))
         initial.dir <- file.path(initial.dir, "R")
 
-      path <- tcltk::tkchooseDirectory(initialdir=initial.dir,
-                                       title="Choose R Source Directory...")
+      txt <- "Choose R Source Directory..."
+      path <- tcltk::tkchooseDirectory(initialdir=initial.dir, title=txt)
       path <- tcltk::tclvalue(path)
       if (!nzchar(path)) return()
 

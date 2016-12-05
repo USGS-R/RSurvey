@@ -1,24 +1,18 @@
-# A GUI for reading table formatted data from a text file or copy-paste
-# operation.
-
 ImportText <- function(parent=NULL) {
 
-  ## Additional functions
 
-  # Read table
-
+  # read table
   ReadTable <- function(con, headers=c(FALSE, FALSE), sep="\t", dec=".",
                         quote="\"'", nrows=-1, na.strings=c("", "NA"), skip=0L,
-                        comment.char="#", str.as.fact=TRUE,
-                        encoding=getOption("encoding")) {
+                        comment.char="#", str.as.fact=TRUE, encoding=getOption("encoding")) {
 
-    # Clear previous data
+    # clear previous data
     Data(clear.data=TRUE)
 
-    # Track computational time
+    # track computational time
     elapsed.time <- system.time({
 
-      # Load comment
+      # load comment
       comments <- NULL
       if (!is.na(comment.char) && comment.char != "" && isSeekable(con)) {
         pattern <- paste0("^", comment.char)
@@ -34,40 +28,36 @@ ImportText <- function(parent=NULL) {
         invisible(seek(con, where=0, origin="start", rw="read"))
       }
 
-      # Establish arguments to pass to read.table
+      # establish arguments to pass to read.table
       args <- list(file=con, header=FALSE, sep=sep, dec=dec, quote=quote,
                    row.names=NULL, na.strings=na.strings, check.names=TRUE,
                    fill=TRUE, strip.white=TRUE, blank.lines.skip=TRUE,
                    comment.char=comment.char, allowEscapes=TRUE, flush=TRUE,
                    fileEncoding="", encoding=encoding)
 
-      # Load headers
-
+      # load headers
       col.classes <- "character"
       nheaders <- sum(headers)
       if (nheaders > 0L) {
         h.args <- c(args, skip=skip, nrows=nheaders, colClasses=col.classes)
         h <- try(do.call(read.table, h.args), silent=TRUE)
-        if (inherits(h, "try-error"))
-          return(h)
+        if (inherits(h, "try-error")) return(h)
 
         i <- 1L
         if (headers[1]) {
           col.formats <- as.character(h[i, ])
 
-          # Use formats to determine column classes
+          # use formats to determine column classes
           n <- ncol(h)
           col.classes <- rep("character", n)
           for (j in seq_len(n)) {
             fmt <- col.formats[j]
-
             test <- try(sprintf(fmt, 1), silent=TRUE)
             is.error <- inherits(test, "try-error")
             if (!is.error) {
               is.num <- !is.na(suppressWarnings(as.numeric(test)))
               if (is.num) {
-                s <- paste0(substr(fmt, 1, 1),
-                            substr(fmt, nchar(fmt), nchar(fmt)))
+                s <- paste0(substr(fmt, 1, 1), substr(fmt, nchar(fmt), nchar(fmt)))
                 if (s %in% c("%d", "%i")) {
                   col.classes[j] <- "integer"
                 } else if (s %in% c("%f", "%e", "%E")) {
@@ -88,31 +78,27 @@ ImportText <- function(parent=NULL) {
         nrows <- nrows - nheaders
       }
 
-      # Load data
+      # load data
       d.args <- c(args, skip=skip, nrows=nrows, list(colClasses=col.classes))
       d <- try(do.call(read.table, d.args), silent=TRUE)
-      if (inherits(d, "try-error"))
-        return(d)
+      if (inherits(d, "try-error")) return(d)
 
-      # Table dimensions
+      # table dimensions
       m <- nrow(d)
       n <- ncol(d)
 
-      # Initialize missing headers
-      if (!headers[1])
-        col.formats <- rep(NA, n)
-      if (!headers[2])
-        col.names <- rep("Unknown", n)
+      # initialize missing headers
+      if (!headers[1]) col.formats <- rep(NA, n)
+      if (!headers[2]) col.names <- rep("Unknown", n)
 
-      # Determine unique column names
+      # determine unique column names
       ids <- col.names
       matched <- lapply(unique(ids), function(i) which(ids %in% i)[-1])
       names(matched) <- unique(ids)
       for (i in seq_along(matched))
-        ids[matched[[i]]] <- paste0(names(matched[i]), " (",
-                                    seq_along(matched[[i]]), ")")
+        ids[matched[[i]]] <- paste0(names(matched[i]), " (", seq_along(matched[[i]]), ")")
 
-      # Initialize columns list
+      # initialize columns list
       cols <- list()
 
       # Establish column types
@@ -120,7 +106,7 @@ ImportText <- function(parent=NULL) {
         val <- d[, j]
         fmt <- if (is.na(col.formats[j])) NULL else col.formats[j]
 
-        # Determine if character variables are POSIXct class
+        # determine if character variables are POSIXct class
         # TODO(jfisher): ensure variable is date-time
         if (inherits(val, "character")) {
           is.time <- FALSE
@@ -135,13 +121,10 @@ ImportText <- function(parent=NULL) {
               }
             }
           }
-          if (is.time)
-            val <- as.POSIXct(date.time)
-          else
-            val <- type.convert(val, as.is=!str.as.fact)
+          val <- if (is.time) as.POSIXct(date.time) else type.convert(val, as.is=!str.as.fact)
         }
 
-        # Organize metadata
+        # organize metadata
         cols[[j]] <- list()
         cols[[j]]$id      <- ids[j]
         cols[[j]]$name    <- col.names[j]
@@ -167,7 +150,8 @@ ImportText <- function(parent=NULL) {
     return(ans)
   }
 
-  # Raise error message for bad connection
+
+  # raise error message for bad connection
   RaiseError <- function(type, detail) {
     msg <- NULL
     msg[1] <- "Connection to data source failed."
@@ -176,7 +160,8 @@ ImportText <- function(parent=NULL) {
                  type="ok", parent=tt)
   }
 
-  # Establish data connection
+
+  # establish data connection
   GetConnection <- function(src, enc, opn="r") {
     if (src == "") {
       con <- try(textConnection(cb, local=TRUE), silent=TRUE)
@@ -192,18 +177,17 @@ ImportText <- function(parent=NULL) {
     return(con)
   }
 
-  # Read data from file and populate example table
-
+  # read data from file and populate example table
   ReadFile <- function(summary.only=TRUE) {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
 
-    sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
-    dec <- dec0[as.integer(tcl(frame3.box.1.5, "current")) + 1]
-    nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
-    quo <- quo0[as.integer(tcl(frame3.box.2.5, "current")) + 1]
-    com <- com0[as.integer(tcl(frame3.box.3.2, "current")) + 1]
-    enc <- enc0[as.integer(tcl(frame3.box.3.5, "current")) + 1]
+    sep <- sep0[as.integer(tcl(f3.box.1.2, "current")) + 1]
+    dec <- dec0[as.integer(tcl(f3.box.1.5, "current")) + 1]
+    nas <- nas0[as.integer(tcl(f3.box.2.2, "current")) + 1]
+    quo <- quo0[as.integer(tcl(f3.box.2.5, "current")) + 1]
+    com <- com0[as.integer(tcl(f3.box.3.2, "current")) + 1]
+    enc <- enc0[as.integer(tcl(f3.box.3.5, "current")) + 1]
 
     src <- as.character(tclvalue(source.var))
     con <- GetConnection(src, enc)
@@ -215,24 +199,18 @@ ImportText <- function(parent=NULL) {
     }
 
     skp <- as.integer(tclvalue(skip.var))
-    if (is.na(skp) || skp < 0)
-      skp <- 0
+    if (is.na(skp) || skp < 0) skp <- 0
 
     nrw <- as.integer(tclvalue(nrow.var))
-    if (is.na(nrw))
-      nrw <- -1
-    if (nrw > 0 && nrw < nrows)
-      nrows <- nrw
+    if (is.na(nrw)) nrw <- -1
+    if (nrw > 0 && nrw < nrows) nrows <- nrw
 
-    if (is.na(sep))
-      sep <- as.character(tclvalue(sep.var))
+    if (is.na(sep)) sep <- as.character(tclvalue(sep.var))
     if (is.na(nas)) {
       nas <- as.character(tclvalue(nas.var))
-      if (nas == "")
-        nas <- "NA"
+      if (nas == "") nas <- "NA"
     }
-    if (is.na(com))
-      com <- as.character(tclvalue(com.var))
+    if (is.na(com)) com <- as.character(tclvalue(com.var))
 
     if (summary.only) {
       d <- try(read.table(con, header=FALSE, sep=sep, quote=quo, dec=dec,
@@ -246,19 +224,18 @@ ImportText <- function(parent=NULL) {
         return()
       }
 
-      # Remove columns containing all NA values
+      # remove columns containing all missing values
       is.all.na <- vapply(seq_along(d), function(i) all(is.na(d[, i])), TRUE)
       d <- d[, !is.all.na, drop=FALSE]
       return(d)
 
     } else {
 
-      # Raise warning message if data already exists
+      # raise warning message if data already exists
       if (!is.null(Data("cols"))) {
         msg <- "This action will delete existing data?"
-        ans <- as.character(tkmessageBox(icon="question", message=msg,
-                                         title="Warning", type="okcancel",
-                                         parent=parent))
+        ans <- as.character(tkmessageBox(icon="question", message=msg, title="Warning",
+                                         type="okcancel", parent=parent))
         if (ans == "ok")
           Data(clear.data=TRUE)
         else
@@ -280,8 +257,7 @@ ImportText <- function(parent=NULL) {
 
       if (!is.null(ans)) {
         Data("import", list())
-        Data(c("import", "source"),
-             c(pathname=src, accessed=format(Sys.time())))
+        Data(c("import", "source"), c(pathname=src, accessed=format(Sys.time())))
         Data(c("import", "fmts"), is.fmts)
         Data(c("import", "cols"), is.cols)
         Data(c("import", "str.as.fact"), is.fact)
@@ -297,46 +273,41 @@ ImportText <- function(parent=NULL) {
     }
   }
 
-  # Rebuild table
-
+  # rebuild table
   RebuildTable <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
 
-    sep <- sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]
+    sep <- sep0[as.integer(tcl(f3.box.1.2, "current")) + 1]
     sep.state <- if (is.na(sep)) "normal" else "disabled"
-    tkconfigure(frame3.ent.1.3, state=sep.state)
+    tkconfigure(f3.ent.1.3, state=sep.state)
 
-    nas <- nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]
+    nas <- nas0[as.integer(tcl(f3.box.2.2, "current")) + 1]
     nas.state <- if (is.na(nas)) "normal" else "disabled"
-    tkconfigure(frame3.ent.2.3, state=nas.state)
+    tkconfigure(f3.ent.2.3, state=nas.state)
 
-    com <- com0[as.integer(tcl(frame3.box.3.2, "current")) + 1]
+    com <- com0[as.integer(tcl(f3.box.3.2, "current")) + 1]
     com.state <- if (is.na(com)) "normal" else "disabled"
-    tkconfigure(frame3.ent.3.3, state=com.state)
+    tkconfigure(f3.ent.3.3, state=com.state)
 
-    if (tclvalue(source.var) == "" && is.null(cb))
-      return()
+    if (tclvalue(source.var) == "" && is.null(cb)) return()
 
     d <- ReadFile()
-    if (is.null(d))
-      return()
+    if (is.null(d)) return()
 
     ResetGUI()
 
     insert.rows <- nrow(d) - 1 - GetEndRow()
     insert.cols <- ncol(d) - 1 - GetEndCol()
 
-    tkconfigure(frame4.tbl, state="normal")
+    tkconfigure(f4.tbl, state="normal")
 
-    if (insert.rows > 0)
-      tkinsert(frame4.tbl, "rows", "end", insert.rows)
-    if (insert.cols > 0)
-      tkinsert(frame4.tbl, "cols", "end", insert.cols)
+    if (insert.rows > 0) tkinsert(f4.tbl, "rows", "end", insert.rows)
+    if (insert.cols > 0) tkinsert(f4.tbl, "cols", "end", insert.cols)
 
     for (j in seq_len(ncol(d)))
-      sapply(seq_len(nrow(d)), function(i)
-        table.var[[i - 1, j - 1]] <- as.tclObj(d[i, j], drop=TRUE))
+      sapply(seq_len(nrow(d)),
+             function(i) table.var[[i - 1, j - 1]] <- as.tclObj(d[i, j], drop=TRUE))
 
     for (i in seq_len(ncol(d))) {
       len <- max(nchar(gsub("\t", "    ", d[seq_len(nrows), i])), na.rm=TRUE)
@@ -346,37 +317,34 @@ ImportText <- function(parent=NULL) {
       } else if (len > 50L) {
         len <- 50L
       }
-      tcl(frame4.tbl, "width", i - 1L, len)
+      tcl(f4.tbl, "width", i - 1L, len)
     }
 
     SetTags()
-    tkconfigure(frame4.tbl, state="disabled")
+    tkconfigure(f4.tbl, state="disabled")
   }
 
-  # Count the number of lines in a file; derived with permission from
-  # R.utils::countLines (v1.26.2)
+
+  # count the number of lines in a file; derived with permission from R.utils::countLines (v1.26.2)
   CountLines <- function() {
     tkconfigure(tt, cursor="watch")
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
     on.exit(tkconfigure(tt, cursor="arrow"), add=TRUE)
     src <- as.character(tclvalue(source.var))
-    enc <- enc0[as.integer(tcl(frame3.box.3.5, "current")) + 1]
+    enc <- enc0[as.integer(tcl(f3.box.3.5, "current")) + 1]
     con <- GetConnection(src, enc, opn="rb")
     on.exit(close(con), add=TRUE)
-    if (inherits(con, "try-error"))
-      return()
+    if (inherits(con, "try-error")) return()
     lf <- as.raw(0x0a)
     cr <- as.raw(0x0d)
     is.last.cr <- FALSE
     nbreaks <- 0L
     while(TRUE) {
       bfr <- readBin(con=con, what="raw", n=5e+07L)
-      if (is.last.cr && bfr[1] == lf)
-        bfr[1] <- as.raw(32)
+      if (is.last.cr && bfr[1] == lf) bfr[1] <- as.raw(32)
       n <- length(bfr)
-      if (n == 0)
-        break
+      if (n == 0) break
       idxs.cr <- which(bfr == cr)
       ncr <- length(idxs.cr)
       if (ncr > 0) {
@@ -393,13 +361,13 @@ ImportText <- function(parent=NULL) {
     tclvalue(nrow.var) <- nbreaks
   }
 
-  # Data file
+
+  # data file
   GetDataFile <- function() {
     exts <- c("tsv", "csv", "txt", "gz", "bz2", "xz")
     f <- GetFile(cmd="Open", exts=exts, win.title="Open Data File", parent=tt)
     tkfocus(tt)
-    if (is.null(f))
-      return()
+    if (is.null(f)) return()
     tclvalue(source.var) <- f
     tclvalue(nrow.var) <- ""
     cb <<- NULL
@@ -407,30 +375,29 @@ ImportText <- function(parent=NULL) {
     if (ext %in% c("gz", "bz2", "xz")) {
       nam <- sub("[.][^.]*$", "", basename(f))
       ext <- tail(unlist(strsplit(nam, "\\."))[-1], 1)
-      if (length(ext) == 0L)
-        ext <- ""
+      if (length(ext) == 0L) ext <- ""
     }
     if (ext == "csv") {
-      tcl(frame3.box.1.2, "current", match(",", sep0) - 1)
+      tcl(f3.box.1.2, "current", match(",", sep0) - 1)
     } else if (ext %in% c("tsv", "tab")) {
-      tcl(frame3.box.1.2, "current", match("\t", sep0) - 1)
+      tcl(f3.box.1.2, "current", match("\t", sep0) - 1)
     }
     RebuildTable()
   }
 
-  # Paste clipboard
+
+  # paste clipboard
   PasteData <- function() {
-    tkselection.set(frame4.tbl, "origin")
-    cb <- try(scan(file="clipboard", what="character", sep="\n", quiet=TRUE),
-              silent=TRUE)
+    tkselection.set(f4.tbl, "origin")
+    cb <- try(scan(file="clipboard", what="character", sep="\n", quiet=TRUE), silent=TRUE)
     cb <<- if (inherits(cb, "try-error")) NULL else cb
-    if (is.null(cb))
-      return()
+    if (is.null(cb)) return()
     tclvalue(source.var) <- ""
     RebuildTable()
   }
 
-  # Clear all
+
+  # clear all
   ClearData <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
@@ -440,59 +407,52 @@ ImportText <- function(parent=NULL) {
     ResetGUI()
   }
 
-  # Reset GUI
+
+  # reset GUI
   ResetGUI <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
-    tkconfigure(frame4.tbl, state="normal")
+    tkconfigure(f4.tbl, state="normal")
     tcl("unset", table.var)
-    if (GetEndRow() > 0)
-      tkdelete(frame4.tbl, "rows", 1, GetEndRow())
-    if (GetEndCol() > 0)
-      tkdelete(frame4.tbl, "cols", 1, GetEndCol())
-    tcl(frame4.tbl, "clear", "all")
-    tkselection.set(frame4.tbl, "origin")
-    tkconfigure(frame4.tbl, state="disabled")
+    if (GetEndRow() > 0) tkdelete(f4.tbl, "rows", 1, GetEndRow())
+    if (GetEndCol() > 0) tkdelete(f4.tbl, "cols", 1, GetEndCol())
+    tcl(f4.tbl, "clear", "all")
+    tkselection.set(f4.tbl, "origin")
+    tkconfigure(f4.tbl, state="disabled")
     if (tclvalue(source.var) == "" && is.null(cb))
       s <- "disabled"
     else
       s <- "normal"
-    tkconfigure(frame0.but.4, state=s)
+    tkconfigure(f0.but.4, state=s)
   }
 
-  # Set tags in table
+
+  # set tags in table
   SetTags <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
-    if (GetEndRow() == 0 & GetEndCol() == 0)
-      return()
-    tcl(frame4.tbl, "clear", "tags")
-    tcl(frame4.tbl, "tag", "row", "h1", 0)
-    tcl(frame4.tbl, "tag", "row", "h2", 1)
+    if (GetEndRow() == 0 & GetEndCol() == 0) return()
+    tcl(f4.tbl, "clear", "tags")
+    tcl(f4.tbl, "tag", "row", "h1", 0)
+    tcl(f4.tbl, "tag", "row", "h2", 1)
     is.fmts <- as.logical(as.integer(tclvalue(conv.fmts.var)))
     is.cols <- as.logical(as.integer(tclvalue(col.names.var)))
     headCol <- c("#EBFFC6", "#FFD0D4")[c(is.fmts, is.cols)]
-    if (length(headCol) < 2)
-      headCol[(length(headCol) + 1):2] <- "white"
-    tktag.configure(frame4.tbl, "h1", background=headCol[1])
-    tktag.configure(frame4.tbl, "h2", background=headCol[2])
+    if (length(headCol) < 2) headCol[(length(headCol) + 1):2] <- "white"
+    tktag.configure(f4.tbl, "h1", background=headCol[1])
+    tktag.configure(f4.tbl, "h2", background=headCol[2])
   }
 
-  # Determine the tables maximum row and column
-  GetEndRow <- function() as.numeric(tkindex(frame4.tbl, "end", "row"))
-  GetEndCol <- function() as.numeric(tkindex(frame4.tbl, "end", "col"))
+  # determine the tables maximum row and column
+  GetEndRow <- function() as.numeric(tkindex(f4.tbl, "end", "row"))
+  GetEndCol <- function() as.numeric(tkindex(f4.tbl, "end", "col"))
 
 
-
-  ## Main program
-
-  # GUI requires TkTable
-  if (inherits(try(tcl("package", "present", "Tktable"), silent=TRUE),
-               "try-error"))
+  # gui requires TkTable
+  if (inherits(try(tcl("package", "present", "Tktable"), silent=TRUE), "try-error"))
     return("TkTable is not available")
 
-  # Initialize values
-
+  # initialize values
   cb <- NULL
 
   nrows <- 50
@@ -517,8 +477,7 @@ ImportText <- function(parent=NULL) {
   enc0 <- c("native.enc", iconvlist())
   enc1 <- c("Default", iconvlist())
 
-  # Assign variables linked to Tk widgets
-
+  # assign variables linked to Tk widgets
   table.var   <- tclArray()
   nrow.var    <- tclVar()
   source.var  <- tclVar()
@@ -544,304 +503,275 @@ ImportText <- function(parent=NULL) {
   else
     str.as.fact.var <- tclVar(Data(c("import", "str.as.fact")))
 
-  # Open GUI
-
+  # open gui
   tclServiceMode(FALSE)
-
   tt <- tktoplevel()
-
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
     tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
                              "+", as.integer(geo[3]) + 25))
   }
-
   tktitle(tt) <- "Import Data from Text File or Clipboard"
 
-  # Frame 0 contains load and cancel buttons, and size grip
+  # frame 0 contains load and cancel buttons, and size grip
+  f0 <- ttkframe(tt, relief="flat")
 
-  frame0 <- ttkframe(tt, relief="flat")
+  f0.but.1 <- ttkbutton(f0, width=8, text="Paste", command=PasteData)
+  f0.but.2 <- ttkbutton(f0, width=8, text="Clear", command=ClearData)
+  f0.but.4 <- ttkbutton(f0, width=12, text="Load",
+                        command=function() ReadFile(FALSE))
+  f0.but.5 <- ttkbutton(f0, width=12, text="Cancel",
+                        command=function() tclvalue(tt.done.var) <- 1)
+  f0.but.6 <- ttkbutton(f0, width=12, text="Help",
+                        command=function() {
+                          print(help("ImportText", package="RSurvey"))
+                        })
+  f0.grp.7 <- ttksizegrip(f0)
 
-  frame0.but.1 <- ttkbutton(frame0, width=8, text="Paste",
-                            command=PasteData)
-  frame0.but.2 <- ttkbutton(frame0, width=8, text="Clear",
-                            command=ClearData)
-  frame0.but.4 <- ttkbutton(frame0, width=12, text="Load",
-                            command=function() ReadFile(FALSE))
-  frame0.but.5 <- ttkbutton(frame0, width=12, text="Cancel",
-                            command=function() tclvalue(tt.done.var) <- 1)
-  frame0.but.6 <- ttkbutton(frame0, width=12, text="Help",
-                            command=function() {
-                              print(help("ImportText", package="RSurvey"))
-                            })
-  frame0.grp.7 <- ttksizegrip(frame0)
+  tkgrid(f0.but.1, f0.but.2, "x", f0.but.4, f0.but.5, f0.but.6, f0.grp.7)
 
-  tkgrid(frame0.but.1, frame0.but.2, "x", frame0.but.4, frame0.but.5,
-         frame0.but.6, frame0.grp.7)
+  tkgrid.columnconfigure(f0, 2, weight=1)
 
-  tkgrid.columnconfigure(frame0, 2, weight=1)
+  tkgrid.configure(f0.but.1, f0.but.2, sticky="n", padx=c(0, 4), pady=c(4, 0))
+  tkgrid.configure(f0.but.1, padx=c(10, 4))
+  tkgrid.configure(f0.but.4, f0.but.5, f0.but.6, padx=c(0, 4), pady=c(15, 10))
+  tkgrid.configure(f0.but.6, columnspan=2, padx=c(0, 10))
+  tkgrid.configure(f0.grp.7, sticky="se")
 
-  tkgrid.configure(frame0.but.1, frame0.but.2,
-                   sticky="n", padx=c(0, 4), pady=c(4, 0))
-  tkgrid.configure(frame0.but.1, padx=c(10, 4))
-  tkgrid.configure(frame0.but.4, frame0.but.5, frame0.but.6,
-                   padx=c(0, 4), pady=c(15, 10))
-  tkgrid.configure(frame0.but.6, columnspan=2, padx=c(0, 10))
-  tkgrid.configure(frame0.grp.7, sticky="se")
+  tkraise(f0.but.6, f0.grp.7)
 
-  tkraise(frame0.but.6, frame0.grp.7)
+  tkpack(f0, fill="x", side="bottom", anchor="e")
 
-  tkpack(frame0, fill="x", side="bottom", anchor="e")
+  tkconfigure(f0.but.4, state="disabled")
 
-  tkconfigure(frame0.but.4, state="disabled")
+  # frame 1, file locator
+  f1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
-  # Frame 1, file locator
-
-  frame1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
-
-  frame1.lab.1.1 <- ttklabel(frame1, text="Import from")
+  f1.lab.1.1 <- ttklabel(f1, text="Import from")
   txt <- paste("or transfer data from clipboard via a copy and paste",
                "operation.  The first part of the data table will be",
                "shown below.")
-  frame1.lab.2.1 <- ttklabel(frame1, text=txt)
+  f1.lab.2.1 <- ttklabel(f1, text=txt)
 
-  frame1.ent.1.2 <- ttkentry(frame1, textvariable=source.var)
-  frame1.but.1.3 <- ttkbutton(frame1, width=8, text="Browse",
-                              command=GetDataFile)
+  f1.ent.1.2 <- ttkentry(f1, textvariable=source.var)
+  f1.but.1.3 <- ttkbutton(f1, width=8, text="Browse", command=GetDataFile)
 
-  tkgrid(frame1.lab.1.1, frame1.ent.1.2, frame1.but.1.3, pady=c(10, 0))
-  tkgrid(frame1.lab.2.1, "x", "x", "x", pady=c(5, 0), padx=c(15, 0))
+  tkgrid(f1.lab.1.1, f1.ent.1.2, f1.but.1.3, pady=c(10, 0))
+  tkgrid(f1.lab.2.1, "x", "x", "x", pady=c(5, 0), padx=c(15, 0))
 
-  tkgrid.configure(frame1.lab.1.1, sticky="w")
-  tkgrid.configure(frame1.ent.1.2, sticky="we", padx=2)
+  tkgrid.configure(f1.lab.1.1, sticky="w")
+  tkgrid.configure(f1.ent.1.2, sticky="we", padx=2)
 
-  tkgrid.configure(frame1.lab.2.1, columnspan=3, sticky="w")
+  tkgrid.configure(f1.lab.2.1, columnspan=3, sticky="w")
 
-  tkgrid.columnconfigure(frame1, 1, weight=1)
+  tkgrid.columnconfigure(f1, 1, weight=1)
 
-  tkpack(frame1, fill="x", anchor="w", padx=10)
+  tkpack(f1, fill="x", anchor="w", padx=10)
 
-  # Frame 2, header line information
+  # frame 2, header line information
+  f2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text="Header lines")
 
-  frame2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Header lines")
+  txt <- "Format conversion specification strings of the variables, for example, '%10.6f' and '%Y-%m-%d %H:%M'."
+  f2.chk.1.1 <- ttkcheckbutton(f2, variable=conv.fmts.var, command=SetTags, text=txt)
+  txt <- "Field names of the variables, that is, names given to the columns in the data table."
+  f2.chk.2.1 <- ttkcheckbutton(f2, variable=col.names.var, command=SetTags, text=txt)
 
-  txt <- paste("Format conversion specification strings of the variables,",
-               "for example, '%10.6f' and '%Y-%m-%d %H:%M'.")
-  frame2.chk.1.1 <- ttkcheckbutton(frame2, variable=conv.fmts.var,
-                                   command=SetTags, text=txt)
-  txt <- paste("Field names of the variables, that is, names given to the",
-               "columns in the data table.")
-  frame2.chk.2.1 <- ttkcheckbutton(frame2, variable=col.names.var,
-                                   command=SetTags, text=txt)
+  tkgrid(f2.chk.1.1, pady=1, sticky="w")
+  tkgrid(f2.chk.2.1, pady=1, sticky="w")
 
-  tkgrid(frame2.chk.1.1, pady=1, sticky="w")
-  tkgrid(frame2.chk.2.1, pady=1, sticky="w")
+  tkpack(f2, anchor="w", fill="x", padx=10, pady=10)
 
-  tkpack(frame2, anchor="w", fill="x", padx=10, pady=10)
+  # frame 3, import parameters
+  f3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text="Options")
 
-  # Frame 3, import parameters
-
-  frame3 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                          text="Options")
-
-  frame3.lab.1.1 <- ttklabel(frame3, text="Separator")
-  frame3.lab.1.4 <- ttklabel(frame3, text="Decimal")
-  frame3.lab.1.6 <- ttklabel(frame3, text="Max lines")
-  frame3.lab.2.1 <- ttklabel(frame3, text="NA string")
-  frame3.lab.2.4 <- ttklabel(frame3, text="Quote")
-  frame3.lab.2.6 <- ttklabel(frame3, text="Skip lines")
-  frame3.lab.3.1 <- ttklabel(frame3, text="Comment")
-  frame3.lab.3.4 <- ttklabel(frame3, text="Encoding")
+  f3.lab.1.1 <- ttklabel(f3, text="Separator")
+  f3.lab.1.4 <- ttklabel(f3, text="Decimal")
+  f3.lab.1.6 <- ttklabel(f3, text="Max lines")
+  f3.lab.2.1 <- ttklabel(f3, text="NA string")
+  f3.lab.2.4 <- ttklabel(f3, text="Quote")
+  f3.lab.2.6 <- ttklabel(f3, text="Skip lines")
+  f3.lab.3.1 <- ttklabel(f3, text="Comment")
+  f3.lab.3.4 <- ttklabel(f3, text="Encoding")
   txt <- paste("Comments located above data records and header lines",
                "will be preserved (files only); all other comments are",
                "ignored.")
-  frame3.lab.4.1 <- ttklabel(frame3, text=txt, foreground="#A40802")
+  f3.lab.4.1 <- ttklabel(f3, text=txt, foreground="#A40802")
 
-  frame3.box.1.2 <- ttkcombobox(frame3, width=17, state="readonly", value=sep1)
-  frame3.box.1.5 <- ttkcombobox(frame3, width=17, state="readonly", value=dec1)
-  frame3.box.2.2 <- ttkcombobox(frame3, width=17, state="readonly", value=nas1)
-  frame3.box.2.5 <- ttkcombobox(frame3, width=17, state="readonly", value=quo1)
-  frame3.box.3.2 <- ttkcombobox(frame3, width=17, state="readonly", value=com1)
-  frame3.box.3.5 <- ttkcombobox(frame3, width=17, state="readonly", value=enc1)
+  f3.box.1.2 <- ttkcombobox(f3, width=17, state="readonly", value=sep1)
+  f3.box.1.5 <- ttkcombobox(f3, width=17, state="readonly", value=dec1)
+  f3.box.2.2 <- ttkcombobox(f3, width=17, state="readonly", value=nas1)
+  f3.box.2.5 <- ttkcombobox(f3, width=17, state="readonly", value=quo1)
+  f3.box.3.2 <- ttkcombobox(f3, width=17, state="readonly", value=com1)
+  f3.box.3.5 <- ttkcombobox(f3, width=17, state="readonly", value=enc1)
 
-  frame3.ent.1.3 <- ttkentry(frame3, width=12, textvariable=sep.var)
-  frame3.ent.2.7 <- ttkentry(frame3, width=12, textvariable=skip.var)
-  frame3.ent.2.3 <- ttkentry(frame3, width=12, textvariable=nas.var)
-  frame3.ent.1.7 <- ttkentry(frame3, width=12, textvariable=nrow.var)
-  frame3.ent.3.3 <- ttkentry(frame3, width=12, textvariable=com.var)
+  f3.ent.1.3 <- ttkentry(f3, width=12, textvariable=sep.var)
+  f3.ent.2.7 <- ttkentry(f3, width=12, textvariable=skip.var)
+  f3.ent.2.3 <- ttkentry(f3, width=12, textvariable=nas.var)
+  f3.ent.1.7 <- ttkentry(f3, width=12, textvariable=nrow.var)
+  f3.ent.3.3 <- ttkentry(f3, width=12, textvariable=com.var)
 
-  frame3.but.1.8 <- ttkbutton(frame3, width=2, image=GetBitmapImage("find"),
-                              command=CountLines)
+  f3.but.1.8 <- ttkbutton(f3, width=2, image=GetBitmapImage("find"), command=CountLines)
 
-  frame3.chk.3.6 <- ttkcheckbutton(frame3, variable=str.as.fact.var,
-                                   text="Convert strings to factors")
+  f3.chk.3.6 <- ttkcheckbutton(f3, variable=str.as.fact.var,
+                               text="Convert strings to factors")
 
-  tkgrid(frame3.lab.1.1, frame3.box.1.2, frame3.ent.1.3, frame3.lab.1.4,
-         frame3.box.1.5, frame3.lab.1.6, frame3.ent.1.7, frame3.but.1.8)
-  tkgrid(frame3.lab.2.1, frame3.box.2.2, frame3.ent.2.3, frame3.lab.2.4,
-         frame3.box.2.5, frame3.lab.2.6, frame3.ent.2.7, "x", pady=c(4, 0))
-  tkgrid(frame3.lab.3.1, frame3.box.3.2, frame3.ent.3.3, frame3.lab.3.4,
-         frame3.box.3.5, frame3.chk.3.6, "x", "x", pady=c(4, 0))
-  tkgrid(frame3.lab.4.1, "x", "x", "x", "x", "x", "x", "x", pady=c(5, 0))
+  tkgrid(f3.lab.1.1, f3.box.1.2, f3.ent.1.3, f3.lab.1.4,
+         f3.box.1.5, f3.lab.1.6, f3.ent.1.7, f3.but.1.8)
+  tkgrid(f3.lab.2.1, f3.box.2.2, f3.ent.2.3, f3.lab.2.4,
+         f3.box.2.5, f3.lab.2.6, f3.ent.2.7, "x", pady=c(4, 0))
+  tkgrid(f3.lab.3.1, f3.box.3.2, f3.ent.3.3, f3.lab.3.4,
+         f3.box.3.5, f3.chk.3.6, "x", "x", pady=c(4, 0))
+  tkgrid(f3.lab.4.1, "x", "x", "x", "x", "x", "x", "x", pady=c(5, 0))
 
-  tkgrid.configure(frame3.lab.1.1, frame3.lab.1.4, frame3.lab.1.6,
-                   frame3.lab.2.1, frame3.lab.2.4, frame3.lab.2.6,
-                   frame3.lab.3.1, frame3.lab.3.4, padx=c(10, 2), sticky="w")
+  tkgrid.configure(f3.lab.1.1, f3.lab.1.4, f3.lab.1.6,
+                   f3.lab.2.1, f3.lab.2.4, f3.lab.2.6,
+                   f3.lab.3.1, f3.lab.3.4, padx=c(10, 2), sticky="w")
 
-  tkgrid.configure(frame3.lab.1.1, frame3.lab.2.1, frame3.lab.3.1, padx=c(0, 2))
-  tkgrid.configure(frame3.ent.1.3, frame3.ent.2.3, frame3.ent.3.3, padx=c(2, 0))
-  tkgrid.configure(frame3.but.1.8, padx=c(2, 0))
-  tkgrid.configure(frame3.chk.3.6, padx=c(10, 0), columnspan=3, sticky="w")
-  tkgrid.configure(frame3.lab.4.1, columnspan=8, sticky="w")
+  tkgrid.configure(f3.lab.1.1, f3.lab.2.1, f3.lab.3.1, padx=c(0, 2))
+  tkgrid.configure(f3.ent.1.3, f3.ent.2.3, f3.ent.3.3, padx=c(2, 0))
+  tkgrid.configure(f3.but.1.8, padx=c(2, 0))
+  tkgrid.configure(f3.chk.3.6, padx=c(10, 0), columnspan=3, sticky="w")
+  tkgrid.configure(f3.lab.4.1, columnspan=8, sticky="w")
 
-  tkpack(frame3, anchor="w", fill="x", padx=10, pady=c(0, 15))
+  tkpack(f3, anchor="w", fill="x", padx=10, pady=c(0, 15))
 
-  tcl(frame3.box.1.2, "current", 0)
-  tcl(frame3.box.1.5, "current", 0)
-  tcl(frame3.box.2.2, "current", 0)
-  tcl(frame3.box.2.5, "current", 0)
-  tcl(frame3.box.3.2, "current", 0)
-  tcl(frame3.box.3.5, "current", 0)
+  tcl(f3.box.1.2, "current", 0)
+  tcl(f3.box.1.5, "current", 0)
+  tcl(f3.box.2.2, "current", 0)
+  tcl(f3.box.2.5, "current", 0)
+  tcl(f3.box.3.2, "current", 0)
+  tcl(f3.box.3.5, "current", 0)
 
   if (!is.null(Data(c("import", "sep")))) {
     if (Data(c("import", "sep")) %in% sep0) {
-      tcl(frame3.box.1.2, "current", match(Data(c("import", "sep")), sep0) - 1)
-      tkconfigure(frame3.ent.1.3, state="disabled")
+      tcl(f3.box.1.2, "current", match(Data(c("import", "sep")), sep0) - 1)
+      tkconfigure(f3.ent.1.3, state="disabled")
     } else {
-      tcl(frame3.box.1.2, "current", match(NA, sep0) - 1)
-      tkconfigure(frame3.ent.1.3, state="normal")
+      tcl(f3.box.1.2, "current", match(NA, sep0) - 1)
+      tkconfigure(f3.ent.1.3, state="normal")
       tclvalue(sep.var) <- Data(c("import", "sep"))
     }
   }
   if (!is.null(Data(c("import", "na")))) {
     if (Data(c("import", "na")) %in% nas0) {
-      tcl(frame3.box.2.2, "current", match(Data(c("import", "na")), nas0) - 1)
-      tkconfigure(frame3.ent.2.3, state="disabled")
+      tcl(f3.box.2.2, "current", match(Data(c("import", "na")), nas0) - 1)
+      tkconfigure(f3.ent.2.3, state="disabled")
     } else {
-      tcl(frame3.box.2.2, "current", match(NA, nas0) - 1)
-      tkconfigure(frame3.ent.2.3, state="normal")
+      tcl(f3.box.2.2, "current", match(NA, nas0) - 1)
+      tkconfigure(f3.ent.2.3, state="normal")
       tclvalue(nas.var) <- Data(c("import", "na"))
     }
   }
   if (!is.null(Data(c("import", "comment")))) {
     if (Data(c("import", "comment")) %in% com0) {
-      tcl(frame3.box.3.2, "current",
-          match(Data(c("import", "comment")), com0) - 1)
-      tkconfigure(frame3.ent.3.3, state="disabled")
+      tcl(f3.box.3.2, "current", match(Data(c("import", "comment")), com0) - 1)
+      tkconfigure(f3.ent.3.3, state="disabled")
     } else {
-      tcl(frame3.box.3.2, "current", match(NA, com0) - 1)
-      tkconfigure(frame3.ent.3.3, state="normal")
+      tcl(f3.box.3.2, "current", match(NA, com0) - 1)
+      tkconfigure(f3.ent.3.3, state="normal")
       tclvalue(com.var) <- Data(c("import", "comment"))
     }
   }
   if (!is.null(Data(c("import", "dec"))))
-    tcl(frame3.box.1.5, "current", match(Data(c("import", "dec")), dec0) - 1)
+    tcl(f3.box.1.5, "current", match(Data(c("import", "dec")), dec0) - 1)
   if (!is.null(Data(c("import", "quote"))))
-    tcl(frame3.box.2.5, "current", match(Data(c("import", "quote")), quo0) - 1)
+    tcl(f3.box.2.5, "current", match(Data(c("import", "quote")), quo0) - 1)
   if (!is.null(Data(c("import", "encoding"))))
-    tcl(frame3.box.3.5, "current",
-        match(Data(c("import", "encoding")), enc0) - 1)
+    tcl(f3.box.3.5, "current", match(Data(c("import", "encoding")), enc0) - 1)
 
-  # Frame 4, example data table
+  # frame 4, example data table
+  f4 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
-  frame4 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
+  f4.tbl <- tkwidget(f4, "table", rows=1, cols=1, variable=table.var,
+                     state="disabled", colwidth=13, rowheight=1, width=1,
+                     height=5, ipadx=3, ipady=1, wrap=0,
+                     highlightcolor="gray75", background="white",
+                     foreground="black", titlerows=0, titlecols=0,
+                     multiline=0, resizeborders="col",
+                     bordercursor="sb_h_double_arrow", cursor="plus",
+                     colstretchmode="none", rowstretchmode="none",
+                     anchor="nw", drawmode="single", rowseparator="\n",
+                     colseparator="\t", selectmode="extended",
+                     insertofftime=0, highlightthickness=0,
+                     font="TkFixedFont",
+                     xscrollcommand=function(...) tkset(f4.xsc, ...),
+                     yscrollcommand=function(...) tkset(f4.ysc, ...))
 
-  frame4.tbl <- tkwidget(frame4, "table", rows=1, cols=1, variable=table.var,
-                         state="disabled", colwidth=13, rowheight=1, width=1,
-                         height=5, ipadx=3, ipady=1, wrap=0,
-                         highlightcolor="gray75", background="white",
-                         foreground="black", titlerows=0, titlecols=0,
-                         multiline=0, resizeborders="col",
-                         bordercursor="sb_h_double_arrow", cursor="plus",
-                         colstretchmode="none", rowstretchmode="none",
-                         anchor="nw", drawmode="single", rowseparator="\n",
-                         colseparator="\t", selectmode="extended",
-                         insertofftime=0, highlightthickness=0,
-                         font="TkFixedFont",
-                         xscrollcommand=function(...) tkset(frame4.xsc, ...),
-                         yscrollcommand=function(...) tkset(frame4.ysc, ...))
+  f4.xsc <- ttkscrollbar(f4, orient="horizontal",
+                         command=function(...) tkxview(f4.tbl, ...))
+  f4.ysc <- ttkscrollbar(f4, orient="vertical",
+                         command=function(...) tkyview(f4.tbl, ...))
 
-  frame4.xsc <- ttkscrollbar(frame4, orient="horizontal",
-                             command=function(...) tkxview(frame4.tbl, ...))
-  frame4.ysc <- ttkscrollbar(frame4, orient="vertical",
-                             command=function(...) tkyview(frame4.tbl, ...))
+  tkgrid(f4.tbl, f4.ysc)
+  tkgrid(f4.xsc, "x")
 
-  tkgrid(frame4.tbl, frame4.ysc)
-  tkgrid(frame4.xsc, "x")
+  tkgrid.configure(f4.tbl, sticky="news", padx=c(10, 0))
+  tkgrid.configure(f4.ysc, sticky="ns", padx=c(0, 10))
+  tkgrid.configure(f4.xsc, sticky="we", padx=c(10, 0))
 
-  tkgrid.configure(frame4.tbl, sticky="news", padx=c(10, 0))
-  tkgrid.configure(frame4.ysc, sticky="ns", padx=c(0, 10))
-  tkgrid.configure(frame4.xsc, sticky="we", padx=c(10, 0))
+  tktag.configure(f4.tbl, "active", background="#EAEEFE", relief="")
+  tktag.configure(f4.tbl, "sel", background="#EAEEFE", foreground="black")
 
-  tktag.configure(frame4.tbl, "active", background="#EAEEFE", relief="")
-  tktag.configure(frame4.tbl, "sel", background="#EAEEFE", foreground="black")
+  tkgrid.columnconfigure(f4, 0, weight=1)
+  tkgrid.rowconfigure(f4, 0, weight=1)
 
-  tkgrid.columnconfigure(frame4, 0, weight=1)
-  tkgrid.rowconfigure(frame4, 0, weight=1)
+  tkpack(f4, fill="both", expand=TRUE)
 
-  tkpack(frame4, fill="both", expand=TRUE)
+  tkselection.set(f4.tbl, "origin")
 
-  tkselection.set(frame4.tbl, "origin")
-
-  # Bind events
-
+  # bind events
   tclServiceMode(TRUE)
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tkbind(frame1.ent.1.2, "<Return>", RebuildTable)
+  tkbind(f1.ent.1.2, "<Return>", RebuildTable)
 
-  tkbind(frame3.box.1.2, "<<ComboboxSelected>>",
+  tkbind(f3.box.1.2, "<<ComboboxSelected>>",
          function() {
            RebuildTable()
-           if (is.na(sep0[as.integer(tcl(frame3.box.1.2, "current")) + 1]))
-             tkfocus(frame3.ent.1.3)
+           if (is.na(sep0[as.integer(tcl(f3.box.1.2, "current")) + 1])) tkfocus(f3.ent.1.3)
          })
-  tkbind(frame3.box.2.2, "<<ComboboxSelected>>",
+  tkbind(f3.box.2.2, "<<ComboboxSelected>>",
          function() {
            RebuildTable()
-           if (is.na(nas0[as.integer(tcl(frame3.box.2.2, "current")) + 1]))
-             tkfocus(frame3.ent.2.3)
+           if (is.na(nas0[as.integer(tcl(f3.box.2.2, "current")) + 1])) tkfocus(f3.ent.2.3)
          })
-  tkbind(frame3.box.3.2, "<<ComboboxSelected>>",
+  tkbind(f3.box.3.2, "<<ComboboxSelected>>",
          function() {
            RebuildTable()
-           if (is.na(com0[as.integer(tcl(frame3.box.3.2, "current")) + 1]))
-             tkfocus(frame3.ent.3.3)
+           if (is.na(com0[as.integer(tcl(f3.box.3.2, "current")) + 1])) tkfocus(f3.ent.3.3)
          })
-  tkbind(frame3.box.1.5, "<<ComboboxSelected>>", RebuildTable)
-  tkbind(frame3.box.2.5, "<<ComboboxSelected>>", RebuildTable)
-  tkbind(frame3.box.3.5, "<<ComboboxSelected>>", RebuildTable)
+  tkbind(f3.box.1.5, "<<ComboboxSelected>>", RebuildTable)
+  tkbind(f3.box.2.5, "<<ComboboxSelected>>", RebuildTable)
+  tkbind(f3.box.3.5, "<<ComboboxSelected>>", RebuildTable)
 
-  tkbind(frame3.ent.1.3, "<KeyRelease>", RebuildTable)
-  tkbind(frame3.ent.2.3, "<KeyRelease>", RebuildTable)
-  tkbind(frame3.ent.3.3, "<KeyRelease>", RebuildTable)
-  tkbind(frame3.ent.2.7, "<KeyRelease>",
+  tkbind(f3.ent.1.3, "<KeyRelease>", RebuildTable)
+  tkbind(f3.ent.2.3, "<KeyRelease>", RebuildTable)
+  tkbind(f3.ent.3.3, "<KeyRelease>", RebuildTable)
+  tkbind(f3.ent.2.7, "<KeyRelease>",
          function() {
            tclvalue(skip.var) <- CheckEntry("integer", tclvalue(skip.var))
            RebuildTable()
          }
   )
-  tkbind(frame3.ent.2.7, "<KeyRelease>",
+  tkbind(f3.ent.2.7, "<KeyRelease>",
          function() {
            tclvalue(nrow.var) <- CheckEntry("integer", tclvalue(nrow.var))
            RebuildTable()
          }
   )
 
-  tkbind(frame4.tbl, "<<Paste>>", PasteData)
+  tkbind(f4.tbl, "<<Paste>>", PasteData)
 
   D <- ""  # force 'D' to be something other than a function
-  tkbind(frame4.tbl, "<MouseWheel>",
+  tkbind(f4.tbl, "<MouseWheel>",
          function(D) {
            number <- as.integer((-as.integer(D) / 120)^3)
-           tkyview(frame4.tbl, "scroll", number, "units")
+           tkyview(f4.tbl, "scroll", number, "units")
          })
 
-  # GUI control
-
+  # gui control
   RebuildTable()
 
   tkfocus(tt)

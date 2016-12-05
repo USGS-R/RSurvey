@@ -58,6 +58,7 @@ AutocropRegion <- function(d, parent=NULL, ...) {
   }
 
 
+  # require tripack package
   if (!requireNamespace("tripack", quietly=TRUE)) stop()
 
   # initialize parameters

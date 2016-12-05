@@ -71,47 +71,47 @@ Autocrop <- function(mesh, max.len, max.itr=10000) {
 }
 
 
-  # return outer elements with arc lengths greater than max.len
-  .ModTri <- function(tri, mesh, max.len, elem.build) {
-    n <- nrow(tri)
+# return outer elements with arc lengths greater than max.len
+.ModTri <- function(tri, mesh, max.len, elem.build) {
+  n <- nrow(tri)
 
-    arc.id <- rep(NA, n)
-    arc.id[tri[, "tr1"] == 0] <- tri[tri[, "tr1"] == 0, "arc1"]
-    arc.id[tri[, "tr2"] == 0] <- tri[tri[, "tr2"] == 0, "arc2"]
-    arc.id[tri[, "tr3"] == 0] <- tri[tri[, "tr3"] == 0, "arc3"]
+  arc.id <- rep(NA, n)
+  arc.id[tri[, "tr1"] == 0] <- tri[tri[, "tr1"] == 0, "arc1"]
+  arc.id[tri[, "tr2"] == 0] <- tri[tri[, "tr2"] == 0, "arc2"]
+  arc.id[tri[, "tr3"] == 0] <- tri[tri[, "tr3"] == 0, "arc3"]
 
-    elem.arc <- rep(NA, n)
-    elem.arc[arc.id == tri[, "arc1"]] <- 1
-    elem.arc[arc.id == tri[, "arc2"]] <- 2
-    elem.arc[arc.id == tri[, "arc3"]] <- 3
+  elem.arc <- rep(NA, n)
+  elem.arc[arc.id == tri[, "arc1"]] <- 1
+  elem.arc[arc.id == tri[, "arc2"]] <- 2
+  elem.arc[arc.id == tri[, "arc3"]] <- 3
 
-    pt1 <- array(elem.build[elem.arc, 1])
-    pt2 <- array(elem.build[elem.arc, 2])
+  pt1 <- array(elem.build[elem.arc, 1])
+  pt2 <- array(elem.build[elem.arc, 2])
 
-    pt1.id <- pt2.id <- rep(NA, n)
-    pt1.id[pt1 == 1 & !is.na(pt1)] <- tri[pt1 == 1 & !is.na(pt1), "node1"]
-    pt1.id[pt1 == 2 & !is.na(pt1)] <- tri[pt1 == 2 & !is.na(pt1), "node2"]
-    pt1.id[pt1 == 3 & !is.na(pt1)] <- tri[pt1 == 3 & !is.na(pt1), "node3"]
-    pt2.id[pt2 == 1 & !is.na(pt2)] <- tri[pt2 == 1 & !is.na(pt2), "node1"]
-    pt2.id[pt2 == 2 & !is.na(pt2)] <- tri[pt2 == 2 & !is.na(pt2), "node2"]
-    pt2.id[pt2 == 3 & !is.na(pt2)] <- tri[pt2 == 3 & !is.na(pt2), "node3"]
+  pt1.id <- pt2.id <- rep(NA, n)
+  pt1.id[pt1 == 1 & !is.na(pt1)] <- tri[pt1 == 1 & !is.na(pt1), "node1"]
+  pt1.id[pt1 == 2 & !is.na(pt1)] <- tri[pt1 == 2 & !is.na(pt1), "node2"]
+  pt1.id[pt1 == 3 & !is.na(pt1)] <- tri[pt1 == 3 & !is.na(pt1), "node3"]
+  pt2.id[pt2 == 1 & !is.na(pt2)] <- tri[pt2 == 1 & !is.na(pt2), "node1"]
+  pt2.id[pt2 == 2 & !is.na(pt2)] <- tri[pt2 == 2 & !is.na(pt2), "node2"]
+  pt2.id[pt2 == 3 & !is.na(pt2)] <- tri[pt2 == 3 & !is.na(pt2), "node3"]
 
-    pt1xy <- pt2xy <- list(x=rep(NA, n), y=rep(NA, n))
-    pt1xy$x[!is.na(pt1.id)] <- mesh$x[na.omit(pt1.id)]
-    pt1xy$y[!is.na(pt1.id)] <- mesh$y[na.omit(pt1.id)]
-    pt2xy$x[!is.na(pt2.id)] <- mesh$x[na.omit(pt2.id)]
-    pt2xy$y[!is.na(pt2.id)] <- mesh$y[na.omit(pt2.id)]
+  pt1xy <- pt2xy <- list(x=rep(NA, n), y=rep(NA, n))
+  pt1xy$x[!is.na(pt1.id)] <- mesh$x[na.omit(pt1.id)]
+  pt1xy$y[!is.na(pt1.id)] <- mesh$y[na.omit(pt1.id)]
+  pt2xy$x[!is.na(pt2.id)] <- mesh$x[na.omit(pt2.id)]
+  pt2xy$y[!is.na(pt2.id)] <- mesh$y[na.omit(pt2.id)]
 
-    arcLength <- sqrt((pt2xy$x - pt1xy$x)^2 + (pt2xy$y - pt1xy$y)^2)
+  arcLength <- sqrt((pt2xy$x - pt1xy$x)^2 + (pt2xy$y - pt1xy$y)^2)
 
-    omit.elems <- tri[!is.na(arcLength) & arcLength >  max.len, "elem"]
+  omit.elems <- tri[!is.na(arcLength) & arcLength >  max.len, "elem"]
 
-    new.tri <- NA
-    if (length(omit.elems) > 0) {
-      tri[tri[, "tr1"] %in% omit.elems, c("tr1", "arc1")] <- 0
-      tri[tri[, "tr2"] %in% omit.elems, c("tr2", "arc2")] <- 0
-      tri[tri[, "tr3"] %in% omit.elems, c("tr3", "arc3")] <- 0
-      new.tri <- tri[!(tri[,"elem"] %in% omit.elems), ]
-    }
-    new.tri
+  new.tri <- NA
+  if (length(omit.elems) > 0) {
+    tri[tri[, "tr1"] %in% omit.elems, c("tr1", "arc1")] <- 0
+    tri[tri[, "tr2"] %in% omit.elems, c("tr2", "arc2")] <- 0
+    tri[tri[, "tr3"] %in% omit.elems, c("tr3", "arc3")] <- 0
+    new.tri <- tri[!(tri[,"elem"] %in% omit.elems), ]
   }
+  new.tri
+}

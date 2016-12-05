@@ -226,8 +226,8 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
   all.ds <- suppressWarnings(data(package=all.pkgs)$results)
   all.pkgs <- sort(unique(all.ds[, "Package"]))
 
-  Fun <- function(i) all.ds[all.ds[, "Package"] == i, c("Item", "Title"), drop=FALSE]
-  ds.list <- sapply(all.pkgs, Fun, simplify=FALSE)
+  FUN <- function(i) all.ds[all.ds[, "Package"] == i, c("Item", "Title"), drop=FALSE]
+  ds.list <- sapply(all.pkgs, FUN, simplify=FALSE)
 
   ds.class <- list()
 
