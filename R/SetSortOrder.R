@@ -22,7 +22,7 @@ SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
   # initialize return value
   rtn <- sort.on
 
-  # assign variables linked to Tk widgets
+  # assign variables linked to tk widgets
   col.id.var     <- tclVar()
   decreasing.var <- tclVar(0)
   na.last.var    <- tclVar(1)
@@ -106,7 +106,6 @@ SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
 
   # bind events
   tclServiceMode(TRUE)
-
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
   # gui control

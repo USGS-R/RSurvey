@@ -323,8 +323,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     ids <- vapply(cols, function(i) i$id, "")
 
     for (i in seq_len(n))
-      tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var),
-                                i - 1, i - 1, ids[i])
+      tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var), i - 1, i - 1, ids[i])
     tkselection.clear(f1.lst, 0, "end")
     tkselection.set(f1.lst, new.idx - 1L)
     tkyview(f1.lst, new.idx - 1L)
@@ -428,8 +427,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
                          command=function() SaveChanges("apply"))
   f0.but.12 <- ttkbutton(f0, width=12, text="Help",
                          command=function() {
-                           print(help("ManageVariables", package="RSurvey",
-                                      verbose=FALSE))
+                           print(help("ManageVariables", package="RSurvey", verbose=FALSE))
                          })
   f0.grp.12 <- ttksizegrip(f0)
 
@@ -441,8 +439,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   tkgrid.configure(f0.but.1, f0.but.2, f0.but.3, f0.but.4, f0.but.5, f0.but.6, f0.but.7,
                    sticky="n", padx=c(0, 2), pady=c(0, 0))
   tkgrid.configure(f0.but.1, padx=c(10, 2))
-  tkgrid.configure(f0.but.9, f0.but.10, f0.but.11, f0.but.12,
-                   padx=c(0, 4), pady=c(15, 10))
+  tkgrid.configure(f0.but.9, f0.but.10, f0.but.11, f0.but.12, padx=c(0, 4), pady=c(15, 10))
   tkgrid.configure(f0.but.12, columnspan=2, padx=c(0, 10))
   tkgrid.configure(f0.grp.12, sticky="se")
 
@@ -486,8 +483,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   f2.ent.3.2 <- ttkentry(f2, textvariable=class.var)
 
   f2.txt.4.2 <- tktext(f2, padx=2, pady=2, width=45, height=6, undo=1, wrap="none",
-                       foreground="black", background="#ebebe4", borderwidth=1,
-                       font="TkFixedFont")
+                       foreground="black", background="#ebebe4", borderwidth=1, font="TkFixedFont")
 
   f2.but.2.3 <- ttkbutton(f2, text="Edit", width=5, command=CallFormat)
   f2.but.4.3 <- ttkbutton(f2, text="Edit", width=5, command=CallEditFunction)

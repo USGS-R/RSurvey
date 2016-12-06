@@ -306,8 +306,7 @@ ImportText <- function(parent=NULL) {
     if (insert.cols > 0) tkinsert(f4.tbl, "cols", "end", insert.cols)
 
     for (j in seq_len(ncol(d)))
-      sapply(seq_len(nrow(d)),
-             function(i) table.var[[i - 1, j - 1]] <- as.tclObj(d[i, j], drop=TRUE))
+      sapply(seq_len(nrow(d)), function(i) table.var[[i - 1, j - 1]] <- as.tclObj(d[i, j], drop=TRUE))
 
     for (i in seq_len(ncol(d))) {
       len <- max(nchar(gsub("\t", "    ", d[seq_len(nrows), i])), na.rm=TRUE)
@@ -408,7 +407,7 @@ ImportText <- function(parent=NULL) {
   }
 
 
-  # reset GUI
+  # reset gui
   ResetGUI <- function() {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
@@ -419,10 +418,7 @@ ImportText <- function(parent=NULL) {
     tcl(f4.tbl, "clear", "all")
     tkselection.set(f4.tbl, "origin")
     tkconfigure(f4.tbl, state="disabled")
-    if (tclvalue(source.var) == "" && is.null(cb))
-      s <- "disabled"
-    else
-      s <- "normal"
+    s <- if (tclvalue(source.var) == "" && is.null(cb)) "disabled" else "normal"
     tkconfigure(f0.but.4, state=s)
   }
 
@@ -549,9 +545,8 @@ ImportText <- function(parent=NULL) {
   f1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
   f1.lab.1.1 <- ttklabel(f1, text="Import from")
-  txt <- paste("or transfer data from clipboard via a copy and paste",
-               "operation.  The first part of the data table will be",
-               "shown below.")
+  txt <- paste("or transfer data from clipboard via a copy and paste operation. ",
+               "The first part of the data table will be shown below.")
   f1.lab.2.1 <- ttklabel(f1, text=txt)
 
   f1.ent.1.2 <- ttkentry(f1, textvariable=source.var)
@@ -572,7 +567,8 @@ ImportText <- function(parent=NULL) {
   # frame 2, header line information
   f2 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text="Header lines")
 
-  txt <- "Format conversion specification strings of the variables, for example, '%10.6f' and '%Y-%m-%d %H:%M'."
+  txt <- paste("Format conversion specification strings of the variables,",
+               "for example, '%10.6f' and '%Y-%m-%d %H:%M'.")
   f2.chk.1.1 <- ttkcheckbutton(f2, variable=conv.fmts.var, command=SetTags, text=txt)
   txt <- "Field names of the variables, that is, names given to the columns in the data table."
   f2.chk.2.1 <- ttkcheckbutton(f2, variable=col.names.var, command=SetTags, text=txt)
@@ -594,8 +590,7 @@ ImportText <- function(parent=NULL) {
   f3.lab.3.1 <- ttklabel(f3, text="Comment")
   f3.lab.3.4 <- ttklabel(f3, text="Encoding")
   txt <- paste("Comments located above data records and header lines",
-               "will be preserved (files only); all other comments are",
-               "ignored.")
+               "will be preserved (files only); all other comments are ignored.")
   f3.lab.4.1 <- ttklabel(f3, text=txt, foreground="#A40802")
 
   f3.box.1.2 <- ttkcombobox(f3, width=17, state="readonly", value=sep1)

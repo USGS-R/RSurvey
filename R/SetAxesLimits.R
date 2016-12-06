@@ -51,7 +51,7 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
 
   new <- lim
 
-  # assign variables linked to Tk widgets
+  # assign variables linked to tk widgets
   if (is.null(lim)) lim <- list()
 
   x1.var <- if (is.null(lim$x1)) tclVar() else tclVar(lim$x1)

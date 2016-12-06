@@ -49,7 +49,7 @@ Search <- function(is.replace=FALSE, defaults=NULL, parent=NULL) {
   # assigin global variables
   rtn <- NULL
 
-  # Assign variables linked to Tk widgets
+  # assign variables linked to Tk widgets
   find.what.var     <- tclVar()
   replace.with.var  <- tclVar()
   match.word.var    <- tclVar(0)
@@ -60,7 +60,7 @@ Search <- function(is.replace=FALSE, defaults=NULL, parent=NULL) {
   perl.var          <- tclVar(0)
   tt.done.var       <- tclVar(0)
 
-  # Set default values
+  # set default values
   replace.with <- ""
   if (!is.null(defaults) && is.list(defaults)) {
     if (!is.null(defaults$find.what) && is.character(defaults$find.what))

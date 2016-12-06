@@ -313,7 +313,7 @@ ImportSpreadsheet <- function(parent=NULL) {
     ws$s <- NA
   d <- tapply(ws$v, list(ws$rows, ws$cols), identity)
   d.style <- tapply(ws$s, list(ws$rows, ws$cols), identity)
-  d.style[is.na(d.style)] <- "0"  # set missing styles to General format string
+  d.style[is.na(d.style)] <- "0"  # set missing styles to general format string
   if (is.list(cell.range)) {
     rows <- which(rownames(d) %in% cell.range$rows)
     cols <- which(colnames(d) %in% cell.range$cols)
@@ -336,8 +336,7 @@ ImportSpreadsheet <- function(parent=NULL) {
   if (rm.col.na) {
     cols <- apply(d, 2, function(i) !all(is.na(i)))
     if (length(cols) == 0)
-      stop("removing columns with all missing values results in empty table.",
-           call.=FALSE)
+      stop("removing columns with all missing values results in empty table.", call.=FALSE)
     d <- d[, cols, drop=FALSE]
     d.style <- d.style[, cols, drop=FALSE]
   }
@@ -375,6 +374,7 @@ ImportSpreadsheet <- function(parent=NULL) {
   return(x)
 }
 
+
 .RbindFill <- function (lst) {  # substitute for plyr::rbind.fill
   available.args <- unique(unlist(lapply(lst, names)))
   FUN <- function(i) {
@@ -406,6 +406,7 @@ ImportSpreadsheet <- function(parent=NULL) {
   return(list(rows=as.character(seq(rows[1], rows[2])),
               cols=as.character(seq(cols[1], cols[2]))))
 }
+
 
 .Letters2Indexes <- function(x) {
   FUN <- function(i) paste0(LETTERS, i)

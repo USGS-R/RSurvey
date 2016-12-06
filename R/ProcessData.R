@@ -1,5 +1,4 @@
-ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL,
-                        grid.res=list(x=NA, y=NA),
+ProcessData <- function(d, type="p", coerce.rows=NULL, ply=NULL, grid.res=list(x=NA, y=NA),
                         grid.mba=list(n=NA, m=NA, h=11)) {
 
   # process point data

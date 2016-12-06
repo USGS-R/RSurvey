@@ -48,8 +48,7 @@ AutocropRegion <- function(d, parent=NULL, ...) {
 
   # refresh plot
   RefreshPlot <- function() {
-    if (is.null(dev))
-      return()
+    if (is.null(dev)) return()
     dev.off(which=dev)
     DrawBasePlot()
     dev <<- dev.cur()
@@ -95,7 +94,6 @@ AutocropRegion <- function(d, parent=NULL, ...) {
   tkwm.resizable(tt, 1, 0)
 
   # frame 0 contains buttons
-
   f0 <- ttkframe(tt, relief="flat")
 
   f0.but.1 <- ttkbutton(f0, width=10, text="Build", command=DrawPolygon)
@@ -142,8 +140,7 @@ AutocropRegion <- function(d, parent=NULL, ...) {
            tclvalue(max.len.var) <- CheckEntry("numeric", tclvalue(max.len.var))
          })
 
-  # GUI control
-
+  # gui control
   tkfocus(tt)
   tkgrab(tt)
   tkwait.variable(tt.done.var)

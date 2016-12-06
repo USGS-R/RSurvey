@@ -1,5 +1,4 @@
-# A progress bar for providing feedback; derived from
-# tcltk::tkProgressBar (v3.0.2)
+# derived from tcltk::tkProgressBar (v3.0.2)
 ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
                          nsteps=NULL, min.nsteps=10L, parent=NULL) {
 

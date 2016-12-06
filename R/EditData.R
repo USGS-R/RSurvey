@@ -475,8 +475,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
 
     if (direction == "next") {
       cell.below <- matched.cells[, 1] > active.i |
-                   (matched.cells[, 1] == active.i &
-                    matched.cells[, 2] > active.j)
+                   (matched.cells[, 1] == active.i & matched.cells[, 2] > active.j)
       cell.above <- !cell.below
       if (any(cell.below)) {
         cell <- head(matched.cells[cell.below, , drop=FALSE], n=1)
@@ -487,8 +486,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
       }
     } else {
       cell.above <- matched.cells[, 1] < active.i |
-                   (matched.cells[, 1] == active.i &
-                    matched.cells[, 2] < active.j)
+                   (matched.cells[, 1] == active.i & matched.cells[, 2] < active.j)
       cell.below <- !cell.above
       if (any(cell.above)) {
         cell <- tail(matched.cells[cell.above, , drop=FALSE], n=1)
@@ -543,9 +541,8 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
       old <- undo.stack.cell$old[1]
       new <- undo.stack.cell$new[m]
       if (identical(old, new)) next
-      lst <- list(timestamp=undo.stack.cell$timestamp[m],
-                  record=row.names[cell[1]], variable=col.names[cell[2]],
-                  old=old, new=new)
+      lst <- list(timestamp=undo.stack.cell$timestamp[m], record=row.names[cell[1]],
+                  variable=col.names[cell[2]], old=old, new=new)
       s <- rbind(s, as.data.frame(lst))
     }
     return(s)
@@ -649,7 +646,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
 
   # number of rows and columns in the viewable table
   nrows <- ifelse(m > 15, 15, m)
-  ncols <- ifelse(n > 6, 6, n)
+  ncols <- ifelse(n >  6,  6, n)
 
   # account for missing arguments
   if (is.character(col.names) && length(col.names) == n) {
@@ -1010,22 +1007,17 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   tkbind(tt, "<Control-f>", function() CallSearch(is.replace=FALSE))
   tkbind(tt, "<Control-r>", function() CallSearch(is.replace=TRUE))
 
-  tkbind(f3.tbl, "<Control-x>",
-         paste(.Tcl.callback(BypassCutCmd), "break", sep="; "))
-  tkbind(f3.tbl, "<Control-v>",
-         paste(.Tcl.callback(BypassPasteCmd), "break", sep="; "))
-  tkbind(f3.tbl, "<Return>",
-         paste(.Tcl.callback(BypassReturnCmd), "break", sep="; "))
-  tkbind(f3.tbl, "<Control-c>",
-         paste(.Tcl.callback(BypassCopyCmd), "break", sep="; "))
+  tkbind(f3.tbl, "<Control-x>", paste(.Tcl.callback(BypassCutCmd),    "break", sep="; "))
+  tkbind(f3.tbl, "<Control-v>", paste(.Tcl.callback(BypassPasteCmd),  "break", sep="; "))
+  tkbind(f3.tbl, "<Return>",    paste(.Tcl.callback(BypassReturnCmd), "break", sep="; "))
+  tkbind(f3.tbl, "<Control-c>", paste(.Tcl.callback(BypassCopyCmd),   "break", sep="; "))
   tkbind(f3.tbl, "<Control-z>", UndoEdit)
   tkbind(f3.tbl, "<Control-y>", RedoEdit)
   tkbind(f3.tbl, "<Double-Button-1>", function(x, y) ResizeColumn(x, y))
 
-  tkevent.add("<<TableSelect>>", "<ButtonRelease>",
-              "<Control-slash>", "<Shift-Control-Home>", "<Shift-Control-End>",
-              "<Shift-Up>", "<Shift-Down>", "<Shift-Right>", "<Shift-Left>",
-              "<Up>", "<Down>", "<Right>", "<Left>")
+  tkevent.add("<<TableSelect>>", "<ButtonRelease>", "<Control-slash>", "<Shift-Control-Home>",
+              "<Shift-Control-End>", "<Shift-Up>", "<Shift-Down>", "<Shift-Right>",
+              "<Shift-Left>", "<Up>", "<Down>", "<Right>", "<Left>")
   tkbind(f3.tbl, "<<TableSelect>>", ChangeCellSelection)
 
   D <- ""  # hack to force 'D' to be something other than a function

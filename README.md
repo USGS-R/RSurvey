@@ -6,7 +6,7 @@
 ## Overview
 
 The [R](http://www.r-project.org/) package **RSurvey** is a processing program for spatially distributed data.
-**RSurvey** features graphing, data management, query building, and polygon clipping tools.
+**RSurvey** features graphing, data management, and query building tools.
 A graphical user interface (GUI) is provided and requires R operate as an SDI application,
 using multiple top-level windows for the console, graphics, and pager.
 Immediate goals for software development include:
@@ -34,7 +34,7 @@ If any of the suggested packages are missing, **RSurvey** will offer to install 
 Note that the license for the suggested **tripack** package explicitly forbids commercial use.
 
 Support for displaying table data is provided by [tktable](http://tktable.sourceforge.net/ "tktable"),
-a spreadsheet-like [Tcl/Tk](http://www.tcl.tk/ "Tcl/Tk") widget (typically included with the binary distribution of R).
+a spreadsheet-like [Tcl/Tk](https://tcl.tk/ "Tcl/Tk") widget (typically included with the binary distribution of R).
 The following command will indicate whether tktable is available for use:
 
 ```r

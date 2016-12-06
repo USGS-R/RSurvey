@@ -302,8 +302,8 @@ ExportData <- function(file.type="txt", parent=NULL) {
   qme1 <- c("Escape quote", "Double quote")
 
   com0 <- c("#", "!", "\\", "~", NA)
-  com1 <- c("Number sign ( # )", "Exclamation ( ! )",
-            "Backslash ( \\\\ )", "Tilde ( ~ )", "Custom\u2026")
+  com1 <- c("Number sign ( # )", "Exclamation ( ! )", "Backslash ( \\\\ )",
+            "Tilde ( ~ )", "Custom\u2026")
 
   enc0 <- c("native.enc", iconvlist())
   enc1 <- c("Default", iconvlist())
@@ -436,8 +436,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
     txt <- "Format conversion specification strings"
     f2.chk.1.2 <- ttkcheckbutton(f2, variable=conv.fmts.var, text=txt)
     f2.chk.2.1 <- ttkcheckbutton(f2, variable=row.names.var, text="Record (row) names")
-    f2.chk.2.2 <- ttkcheckbutton(f2, variable=col.names.var,
-                                 text="Variable (column) names")
+    f2.chk.2.2 <- ttkcheckbutton(f2, variable=col.names.var, text="Variable (column) names")
 
     tkgrid(f2.chk.1.1, f2.chk.1.2, sticky="w")
     tkgrid(f2.chk.2.1, f2.chk.2.2, sticky="w")

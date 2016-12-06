@@ -17,24 +17,20 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       fun <- try(parse(text=fun), silent=TRUE)
       if (inherits(fun, "try-error")) {
         msg <- "There's a problem with function syntax, try revising."
-        tkmessageBox(icon="error", message=msg, detail=fun, title="Error",
-                     type="ok", parent=tt)
+        tkmessageBox(icon="error", message=msg, detail=fun, title="Error", type="ok", parent=tt)
         return()
       }
       obj <- EvalFunction(txt, cols)
       if (inherits(obj, "try-error")) {
         msg <- "Function results in error during evaluation, try revising."
-        tkmessageBox(icon="error", message=msg, detail=obj, title="Error",
-                     type="ok", parent=tt)
+        tkmessageBox(icon="error", message=msg, detail=obj, title="Error", type="ok", parent=tt)
         return()
       }
 
       if (!is.null(value.length) && length(obj) != value.length) {
-        msg <- sprintf("Evaluated function must be of length %s, try revising.",
-                       value.length)
+        msg <- sprintf("Evaluated function must be of length %s, try revising.", value.length)
         dtl <- sprintf("Resulting vector is currently of length %s.", length(obj))
-        tkmessageBox(icon="error", message=msg, detail=dtl, title="Error",
-                     type="ok", parent=tt)
+        tkmessageBox(icon="error", message=msg, detail=dtl, title="Error", type="ok", parent=tt)
         return()
       }
 
@@ -46,8 +42,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         return()
       }
 
-      rtn <<- list(fun=txt, class=class(obj)[1], sample=na.omit(obj)[1],
-                   summary=summary(obj))
+      rtn <<- list(fun=txt, class=class(obj)[1], sample=na.omit(obj)[1], summary=summary(obj))
     }
     tclvalue(tt.done.var) <- 1
   }
@@ -63,11 +58,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
 
     tclvalue(variable.var) <- ""
     for (i in seq_along(show.ids)) tcl("lappend", variable.var, show.ids[i])
-
     tkselection.clear(f1.lst.2.1, 0, "end")
-
     tclvalue(value.var) <- ""
-
     tkconfigure(f1.but.5.1, state="disabled")
     tkfocus(f2.txt.2.1)
   }
@@ -190,8 +182,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
       var.vals.txt <- format(var.vals, format=var.fmt)
     } else {
       var.vals.txt <- try(sprintf(var.fmt, var.vals), silent=TRUE)
-      if (inherits(var.vals.txt, "try-error"))
-        var.vals.txt <- format(var.vals)
+      if (inherits(var.vals.txt, "try-error")) var.vals.txt <- format(var.vals)
     }
     var.vals.txt <- gsub("^\\s+|\\s+$", "", var.vals.txt)
 
@@ -256,11 +247,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   }
 
 
-  if (is.null(index)) {
-    old.fun <- fun
-  } else {
-    old.fun <- cols[[as.integer(index)]]$fun
-  }
+  old.fun <- if (is.null(index)) fun else cols[[as.integer(index)]]$fun
   rtn <- NULL
   ids <- vapply(cols, function(i) i$id, "")
 
@@ -314,10 +301,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c", command=EditCopy)
   tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+v", command=EditPaste)
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Select all", accelerator="Ctrl+a",
-        command=EditSelectAll)
-  tkadd(menu.edit, "command", label="Clear console", accelerator="Ctrl+l",
-        command=ClearConsole)
+  tkadd(menu.edit, "command", label="Select all", accelerator="Ctrl+a", command=EditSelectAll)
+  tkadd(menu.edit, "command", label="Clear console", accelerator="Ctrl+l", command=ClearConsole)
 
   menu.convert <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Convert", menu=menu.convert, underline=0)
@@ -629,8 +614,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   f2 <- tkframe(pw, relief="flat")
 
   txt <- "Define function"
-  if (!is.null(index) && edit.fun.id != "")
-    txt <- paste0(txt, " for \"", edit.fun.id, "\"")
+  if (!is.null(index) && edit.fun.id != "") txt <- paste0(txt, " for \"", edit.fun.id, "\"")
   f2.lab.1.1 <- ttklabel(f2, text=txt, foreground="#141414")
 
   if (is.null(value.length)) {
@@ -645,7 +629,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   f2.txt.2.1 <- tktext(f2, bg="white", font="TkFixedFont",
                        padx=2, pady=2, width=80, height=12, undo=1,
                        autoseparators=1, wrap="none", foreground="black", relief="flat",
-                           yscrollcommand=function(...) tkset(f2.ysc.2.2, ...))
+                       yscrollcommand=function(...) tkset(f2.ysc.2.2, ...))
 
   f2.ysc.2.2 <- ttkscrollbar(f2, orient="vertical")
   tkconfigure(f2.ysc.2.2, command=paste(.Tk.ID(f2.txt.2.1), "yview"))

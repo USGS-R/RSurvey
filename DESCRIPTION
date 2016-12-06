@@ -3,7 +3,7 @@ Title: Analysis of Spatially Distributed Data
 Version: 0.8.3.9000
 Authors@R: person("Jason", "Fisher", email="jfisher@usgs.gov", role=c("aut", "cre"))
 Description: A processing program for spatially distributed data.
-  It features graphing tools, query building, and polygon clipping.
+  It features graphing, data management, and query building tools.
   A graphical user interface is provided.
 Depends:
     R (>= 3.1.0)

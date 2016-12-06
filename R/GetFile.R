@@ -65,14 +65,10 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
     args <- list("tk_getOpenFile", title=win.title, multiple=multi)
   else
     args <- list("tk_getSaveFile", title=win.title)
-  if (!is.null(parent))
-    args[["parent"]] <- parent
-  if (!is.null(defaultextension))
-    args <- c(args, defaultextension=defaultextension)
-  if (!is.null(initialdir))
-    args <- c(args, initialdir=initialdir)
-  if (!is.null(initialfile))
-    args <- c(args, initialfile=initialfile)
+  if (!is.null(parent)) args[["parent"]] <- parent
+  if (!is.null(defaultextension)) args <- c(args, defaultextension=defaultextension)
+  if (!is.null(initialdir)) args <- c(args, initialdir=initialdir)
+  if (!is.null(initialfile)) args <- c(args, initialfile=initialfile)
   args <- c(args, filetypes=filters)
 
   # open file dialog gui

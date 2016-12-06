@@ -131,8 +131,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt="", par
                         })
   f0.grp.6 <- ttksizegrip(f0)
 
-  tkgrid(f0.but.1, "x", f0.but.3, f0.but.4, f0.but.5,
-         f0.grp.6)
+  tkgrid(f0.but.1, "x", f0.but.3, f0.but.4, f0.but.5, f0.grp.6)
 
   tkgrid.columnconfigure(f0, 1, weight=1)
 

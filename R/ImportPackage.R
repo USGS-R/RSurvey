@@ -36,8 +36,7 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
     pkg.name <- pkg.names[idx]
     lib <- paste("package", pkg.name, sep=":")
     if (!lib %in% search())
-      suppressPackageStartupMessages(require(pkg.name, quietly=TRUE,
-                                             warn.conflicts=FALSE,
+      suppressPackageStartupMessages(require(pkg.name, quietly=TRUE, warn.conflicts=FALSE,
                                              character.only=TRUE))
     if (lib %in% search()) {
       idx <- as.integer(tcl(f1.box.3.1, "current"))

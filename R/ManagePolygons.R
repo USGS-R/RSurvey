@@ -103,8 +103,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
     }
 
     for (i in idxs)
-      DrawPolygon(rgeos::get.pts(polys[[i]]), tag=names(polys)[i],
-                  col.line=col.pal[i])
+      DrawPolygon(rgeos::get.pts(polys[[i]]), tag=names(polys)[i], col.line=col.pal[i])
   }
 
 

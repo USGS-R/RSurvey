@@ -23,8 +23,7 @@ Data <- local({
                   "color.palette" = grDevices::terrain.colors
               )
 
-  function(option, value, which.attr=NULL, clear.proj=FALSE, clear.data=FALSE,
-           replace.all=NULL) {
+  function(option, value, which.attr=NULL, clear.proj=FALSE, clear.data=FALSE, replace.all=NULL) {
 
     # replace all values
     if (is.list(replace.all)) {

@@ -132,8 +132,7 @@ StartGui <- function() {
 
       if (is.null(d) || nrow(d) == 0 || ncol(d) == 0) return()
       if (!is.null(Data("cols"))) {
-        ans <- as.character(tkmessageBox(icon="warning", title="Warning",
-                                         type="okcancel", parent=tt,
+        ans <- as.character(tkmessageBox(icon="warning", title="Warning", type="okcancel", parent=tt,
                                          message="This action will delete existing data."))
         if (ans == "cancel") return()
       }
@@ -310,8 +309,7 @@ StartGui <- function() {
   CloseDevices <- function() {
     graphics.off()
     if (is.rgl) {
-      while (rgl::rgl.cur() != 0)
-        rgl::rgl.close()
+      while (rgl::rgl.cur() != 0) rgl::rgl.close()
     }
   }
 
@@ -586,8 +584,7 @@ StartGui <- function() {
               logic <- logic & is.in
           }
           if (any(logic)) {
-            points(dat$x[logic], dat$y[logic], col="red",
-                   cex=Data("cex.pts"), pch=20)
+            points(dat$x[logic], dat$y[logic], col="red", cex=Data("cex.pts"), pch=20)
             Data("polys", ply.list)
             Data("poly.data", ply.name)
             Data("data.pts", NULL)
@@ -726,8 +723,7 @@ StartGui <- function() {
       FUN <- function(v) {
         if (is.null(v)) NULL else EvalFunction(cols[[v]]$fun, cols)
       }
-      d <- as.data.frame(lapply(var.names, function(i) FUN(vars[[i]])),
-                         stringsAsFactors=FALSE)
+      d <- as.data.frame(lapply(var.names, function(i) FUN(vars[[i]])), stringsAsFactors=FALSE)
 
       if (!is.null(Data("data.raw"))) {
         rows <- Data("rows")

@@ -158,6 +158,5 @@ Plot3d <- function(x=NULL, y=NULL, z=NULL, px=NULL, py=NULL, pz=NULL,
   rgl::surface3d(x, y, z, color=cols, back="fill")
   rgl::view3d(theta=0, phi=-55, fov=60, zoom=0.6)
 
-  if (show.points)
-    rgl::points3d(x=px, y=py, z=pz, size=cex.pts * 3, point_antialias=TRUE)
+  if (show.points) rgl::points3d(x=px, y=py, z=pz, size=cex.pts * 3, point_antialias=TRUE)
 }
