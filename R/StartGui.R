@@ -671,6 +671,7 @@ StartGui <- function() {
 
     # grid
     if (!is.null(Data("data.pts")) && is.null(Data("data.grd"))) {
+      if (!"z" %in% var.names) return()
       if (all(is.na(Data("data.pts")$z))) {
         tkmessageBox(icon="error", title="Error", type="ok", parent=tt,
                      message="Missing values for coordinate-variable 'z'.")
