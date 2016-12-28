@@ -671,75 +671,62 @@ StartGui <- function() {
 
     # grid
     if (!is.null(Data("data.pts")) && is.null(Data("data.grd"))) {
-
-      if (ncol(Data("data.pts")) == 0 || names(Data("data.pts")) != "z") {
+      if (all(is.na(Data("data.pts")$z))) {
         tkmessageBox(icon="error", title="Error", type="ok", parent=tt,
-                     message="No state-variable 'z' has been specified.")
+                     message="Missing values for coordinate-variable 'z'.")
         return()
       }
-
       x <- sp::coordinates(Data("data.pts"))[, 1]
       y <- sp::coordinates(Data("data.pts"))[, 2]
       z <- Data("data.pts")@data$z
-
       p <- if (is.null(Data("poly.crop"))) NULL else Data("polys")[[Data("poly.crop")]]
 
-      # build grid
-      grid.res <- Data("grid.res")
-      if (is.null(p)) {
-        xlim <- range(x, na.rm=TRUE)
-        ylim <- range(y, na.rm=TRUE)
-      } else {
-        bb <- sp::bbox(p)
-        xlim <- bb[1, ]
-        ylim <- bb[2, ]
+      # build grid template
+      r <- Data("grid.geo")
+      if (is.null(r) || !inherits(r, "RasterLayer")) {
+        if (is.null(p)) {
+          xlim <- grDevices::extendrange(x)
+          ylim <- grDevices::extendrange(y)
+        } else {
+          bb <- sp::bbox(p)
+          xlim <- grDevices::extendrange(bb[1, ])
+          ylim <- grDevices::extendrange(bb[2, ])
+        }
+        res <- Data("grid.res")
+        if (is.null(res)) {
+          nrows <- 100
+          ncols <- 100
+        } else {
+          xmod <- diff(xlim) %% res[1]
+          xadd <- ifelse(xmod == 0, 0, (res[1] - xmod) / 2)
+          xlim <- c(xlim[1] - xadd, xlim[2] + xadd)
+          ncols <- diff(xlim) %% res[1]
+          ymod <- diff(ylim) %% res[2]
+          yadd <- ifelse(ymod == 0, 0, (res[2] - ymod) / 2)
+          ylim <- c(ylim[1] - yadd, ylim[2] + yadd)
+          nrows <- diff(ylim) %% res[2]
+        }
+        r <- raster::raster(nrows=nrows, ncols=ncols,
+                            xmn=xlim[1], xmx=xlim[2], ymn=ylim[1], ymx=ylim[2],
+                            crs=sp::CRS(as.character(NA)), vals=NULL)
       }
-      nr <- nc <- 100
-      if (!is.na(grid.res$x)) nc <- as.integer(diff(xlim) / grid.res$x) + 1L
-      if (!is.na(grid.res$y)) nr <- as.integer(diff(ylim) / grid.res$y) + 1L
-      if (nc < 1 | nr < 1) stop("grid resolution equal to zero")
-      r <- raster::raster(nrows=nr, ncols=nc, xmn=xlim[1], xmx=xlim[2],
-                          ymn=ylim[1], ymx=ylim[2], crs=Data("crs"))
+      raster::crs(r) <- Data("crs")
+
+      # interpolate
+
+
+
+
+
+      # crop region using polygon
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#      grid.mba <- Data("grid.mba")
-
-
-       Data("data.grd", r)
+      Data("data.grd", r)
     }
-
-
-
-
-
-
-
-
   }
 
 

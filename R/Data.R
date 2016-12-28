@@ -18,8 +18,6 @@ Data <- local({
                   "minor.ticks"   = 0,
                   "ticks.inside"  = 0,
                   "rm.pnt.line"   = 0,
-                  "grid.res"      = list(x=NA, y=NA),
-                  "grid.mba"      = list(n=NA, m=NA, h=11),
                   "color.palette" = grDevices::terrain.colors,
                   "crs"           = sp::CRS(as.character(NA))
               )
