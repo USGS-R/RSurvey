@@ -1,12 +1,12 @@
 # RSurvey
 
 [![Travis-CI Build Status](https://travis-ci.org/jfisher-usgs/RSurvey.svg?branch=master)](https://travis-ci.org/jfisher-usgs/RSurvey)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/RSurvey)](http://cran.r-project.org/package=RSurvey)
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/RSurvey)](https://CRAN.R-project.org/package=RSurvey)
 
 ## Overview
 
-The [R](http://www.r-project.org/) package **RSurvey** is a processing program for spatially distributed data.
-**RSurvey** features graphing, data management, and query building tools.
+The [R](https://www.r-project.org/) package **RSurvey** is a program for processing and exploring spatially distributed data.
+**RSurvey** features graphing, data management, interpolation, and query building tools.
 A graphical user interface (GUI) is provided and requires R operate as an SDI application,
 using multiple top-level windows for the console, graphics, and pager.
 Immediate goals for software development include:
@@ -18,7 +18,7 @@ Immediate goals for software development include:
 ## Install
 
 If R is not already installed on your computer, download and install the latest binary distribution from
-[CRAN](http://cran.r-project.org/ "The Comprehensive R Archive Network").
+[CRAN](https://cran.r-project.org/ "The Comprehensive R Archive Network").
 Windows users should set R to operate as an SDI application during installation
 by choosing to customize the start-up options and specifying the SDI interface (not the default).
 
@@ -63,4 +63,4 @@ Additionally, anyone who distributes modified versions of the code (derivative w
 GPL-3 is a little stricter than GPL-2, closing some older loopholes.
 
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://img.shields.io/badge/License-GPL%20v2-blue.svg)
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)

@@ -31,7 +31,7 @@ SetConfiguration <- function(parent=NULL) {
   }
 
 
-  # assign variables linked to Tk widgets
+  # assign variables linked to tk widgets
   width.var        <- tclVar()
   nlevels.var      <- tclVar()
   cex.pts.var      <- tclVar()

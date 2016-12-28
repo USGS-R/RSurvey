@@ -1,33 +1,32 @@
 ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
-                           encoding=getOption("encoding"), parent=NULL) {
+                           crs=CRS(as.character(NA)), parent=NULL) {
 
 
   # save polygon
   SavePolygon <- function(type) {
-    if (length(polys) > 0)
-      polys <- polys[vapply(polys, function(i) inherits(i, "gpc.poly"), TRUE)]
-    if (length(polys) == 0) polys <- NULL
     if (!is.null(poly.data) && !poly.data %in% names(polys)) poly.data <- NULL
     if (!is.null(poly.crop) && !poly.crop %in% names(polys)) poly.crop <- NULL
-    rtn <<- list(polys=polys, poly.data=poly.data, poly.crop=poly.crop)
+    rtn <<- list(polys=polys, poly.data=poly.data, poly.crop=poly.crop, crs=crs)
     if (type == "ok") tclvalue(tt.done.var) <- 1
   }
 
-  # plot polygon
-  PlotPolygon <- function() {
 
-    # draw polygon in canvas
-    DrawPolygon <- function(contours, tag="", col.line="", col.fill="") {
-      for (cnt in contours) {
-        pts <- Xy2mn(cnt$x, cnt$y)
-        mn <- rep(NA, length(pts$m) * 2)
-        is.odd <- !array(0:1, length(mn))
-        mn[ is.odd] <- pts$m
-        mn[!is.odd] <- pts$n
-        tkcreate(f2.cvs, "polygon", .Tcl.args(mn), fill=col.fill,
-                 outline=col.line, width=1, tag=tag)
-      }
+  # draw single polygon on canvas
+  DrawPolygon <- function(contours, tag="", col.line="", col.fill="") {
+    for (cnt in contours) {
+      pts <- Xy2mn(cnt$x, cnt$y)
+      mn <- rep(NA, length(pts$m) * 2)
+      is.odd <- !array(0:1, length(mn))
+      mn[ is.odd] <- pts$m
+      mn[!is.odd] <- pts$n
+      tkcreate(f2.cvs, "polygon", .Tcl.args(mn), fill=col.fill, outline=col.line,
+               width=1, tag=tag)
     }
+  }
+
+
+  # refresh polygons on canvas
+  RefreshPolygons <- function() {
 
     idxs <- as.integer(tkcurselection(f1.lst)) + 1L
 
@@ -40,70 +39,63 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
     tclvalue(hole.var) <- ""
     tclvalue(vert.var) <- ""
 
-    polys.base <<- NULL
+    shape <<- NULL
 
     if (length(idxs) == 0) return()
 
     for (idx in idxs) {
-      bb <- rgeos::get.bbox(polys[[idx]])
-      xran <- range(c(xran, bb$x))
-      yran <- range(c(yran, bb$y))
+      bb <- sp::bbox(polys[[idx]])
+      xran <- range(c(xran, bb[1, ]))
+      yran <- range(c(yran, bb[2, ]))
     }
     xran <<- extendrange(xran, f=0.02)
     yran <<- extendrange(yran, f=0.02)
 
     cmd <- tclvalue(rb.var)
-
-    polys.base <<- NULL
-    if (cmd == "exc") {
-      if (length(idxs) > 1L) {
-        union.polys <- polys[[idxs[1]]]
-        inter.polys <- polys[[idxs[1]]]
-        for (idx in idxs[-1]) {
-          union.polys <- try(union(union.polys, polys[[idx]]), silent=TRUE)
-          inter.polys <- try(intersect(inter.polys, polys[[idx]]), silent=TRUE)
-        }
-        if (!inherits(union.polys, "try-error") && !inherits(inter.polys, "try-error"))
-          polys.base <<- setdiff(union.polys, inter.polys)
+    p <- polys[[idxs[1]]]
+    for (idx in idxs[-1]) {
+      if (cmd == "union") {
+        p <- try(rgeos::gUnion(p, polys[[idx]], checkValidity=TRUE), silent=TRUE)
+      } else if (cmd == "difference") {
+        p <- try(inlmisc::SetPolygons(p, polys[[idx]], cmd="gDifference"), silent=TRUE)
+      } else if (cmd == "intersection") {
+        p <- try(inlmisc::SetPolygons(p, polys[[idx]], cmd="gIntersection"), silent=TRUE)
       }
+    }
+    if (inherits(p, "try-error")) {
+      tkmessageBox(icon="error", message="Unable to build polygon", detail=p,
+                   title="Error", type="ok", parent=tt)
+      shape <<- NULL
     } else {
-      if (cmd == "add") {
-        fun <- "union"
-      } else if (cmd == "sub") {
-        fun <- "setdiff"
-      } else if (cmd == "int") {
-        fun <- "intersect"
-      }
-      build.polys <- polys[[idxs[1]]]
-      for (idx in idxs[-1]) {
-        build.polys <- try(do.call(fun, list(build.polys, polys[[idx]])), silent=TRUE)
-      }
-      if (!inherits(build.polys, "try-error")) polys.base <<- build.polys
+      shape <<- p
     }
 
-    if (!is.null(polys.base)) {
-      base.pts <- rgeos::get.pts(polys.base)
-      if (length(base.pts) == 0) polys.base <<- NULL
+    if (!is.null(shape)) {
+      shape.pts <- rgeos::get.pts(as(shape, "gpc.poly"))
+      if (length(shape.pts) == 0) shape <<- NULL
     }
-    if (!is.null(polys.base)) {
+
+    if (!is.null(shape)) {
       hole <- NULL
       vert <- 0
-      for (ctr in base.pts) {
+      for (ctr in shape.pts) {
         hole <- append(hole, ctr$hole)
         vert <- vert + length(ctr$x)
       }
       if (!is.null(hole)) {
-        DrawPolygon(base.pts[!hole], col.fill="#FDFEC4")
-        if (any(hole)) DrawPolygon(base.pts[hole], col.fill="white")
+        DrawPolygon(shape.pts[!hole], col.fill="#FDFEC4")
+        if (any(hole)) DrawPolygon(shape.pts[hole], col.fill="white")
       }
-      tclvalue(area.var) <- format(rgeos::area.poly(polys.base))
-      tclvalue(poly.var) <- length(base.pts)
+      tclvalue(area.var) <- format(rgeos::gArea(shape))
+      tclvalue(poly.var) <- length(shape.pts)
       tclvalue(hole.var) <- sum(hole)
       tclvalue(vert.var) <- vert
     }
 
-    for (i in idxs)
-      DrawPolygon(rgeos::get.pts(polys[[i]]), tag=names(polys)[i], col.line=col.pal[i])
+    for (i in idxs) {
+      DrawPolygon(rgeos::get.pts(suppressWarnings(as(polys[[i]], "gpc.poly"))),
+                  tag=names(polys)[i], col.line=col.pal[i])
+    }
   }
 
 
@@ -133,7 +125,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
   }
 
 
-  # update pointer coordinates
+  # refresh pointer coordinates
   MouseMotion <- function(x, y) {
     if (!is.null(xran)) {
       pnt <- Mn2xy(as.numeric(x), as.numeric(y))
@@ -187,16 +179,16 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
 
 
   # save new polygon
-  SaveNewPolygon <- function() {
-    if (is.null(polys.base)) return()
+  BuildPolygon <- function() {
+    if (is.null(shape)) return()
     nam <- NamePolygon(old=names(polys))
-    polys[[nam]] <<- polys.base
+    polys[[nam]] <<- shape
     tcl("lappend", list.var, nam)
     idx <- length(polys) - 1
     tkselection.clear(f1.lst, 0, idx)
     tkselection.set(f1.lst, idx, idx)
-    tclvalue(rb.var) <- "add"
-    PlotPolygon()
+    tclvalue(rb.var) <- "union"
+    RefreshPolygons()
   }
 
 
@@ -215,7 +207,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
     if (type == "inverse") {
       for (i in idxs[!(idxs %in% sel)]) tkselection.set(f1.lst, i)
     }
-    PlotPolygon()
+    RefreshPolygons()
   }
 
 
@@ -253,11 +245,11 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       tclvalue(list.var) <- tcl("lreplace", tclvalue(list.var), i - 1, i - 1, names(polys)[i])
     tkselection.clear(f1.lst, 0, "end")
     for (i in new.idxs - 1) tkselection.set(f1.lst, i)
-    PlotPolygon()
+    RefreshPolygons()
   }
 
 
-  # clear polygon
+  # clear polygon(s)
   ClearPolygon <- function() {
     idxs <- as.integer(tkcurselection(f1.lst)) + 1
     if (length(idxs) == 0) return()
@@ -270,45 +262,82 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
     n <- length(polys)
     tkselection.clear(f1.lst, 0, n - 1)
     tkselection.set(f1.lst, n - 1)
-    PlotPolygon()
+    RefreshPolygons()
   }
 
 
-  # import polygon
+  # import polygon(s) from file(s)
   ImportPolygon <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
 
-    f <- GetFile(cmd="Open", exts=c("ply"), win.title="Open Polygon File(s)",
-                 multi=TRUE, parent=tt)
-    if (is.null(f)) return()
-    if (!is.list(f)) f <- list(f)
-    for (i in seq_along(f)) {
-      con <- file(f[[i]], "r", encoding=encoding)
-      new.poly <- rgeos::read.polyfile(con, nohole=FALSE)
-      close(con)
-      if (!inherits(new.poly, "gpc.poly")) next
-      nam <- NamePolygon(old=names(polys), nam=attr(f[[i]], "name"))
+    file <- GetFile(cmd="Open", exts=c("shp", "shx", "dbf", "txt", "rda"),
+                    win.title="Open Polygon File(s)", multi=TRUE, parent=tt)
+    if (is.null(file)) return()
+    if (!is.list(file)) file <- list(file)
+
+    valid.classes <- c("SpatialPolygons", "SpatialPolygonsDataFrame", "gpc.poly")
+
+    for (f in file) {
+      ext <- attr(f, "extension")
+      if (ext == "txt") {
+        new.poly <- rgeos::read.polyfile(f, nohole=FALSE)
+        if (!inherits(new.poly, "gpc.poly")) next
+      } else if (ext == "rda") {
+        new.poly <- local({p.name <- load(file=file); return(eval(parse(text=p.name[1])))})
+      } else {
+        new.poly <- rgdal::readOGR(dsn=attr(f, "directory"), layer=attr(f, "name"), verbose=FALSE)
+      }
+
+      if (!inherits(new.poly, valid.classes)) {
+        warning(sprintf("Inappropriate class for object extracted from file: %s", file))
+        next
+      }
+
+      new.poly <- as(new.poly, "SpatialPolygons")
+      if (is.na(CRSargs(crs))) crs <<- new.poly@proj4string
+
+      nam <- NamePolygon(old=names(polys), nam=attr(f, "name"))
       polys[[nam]] <<- new.poly
       tcl("lappend", list.var, nam)
     }
+
+    if (!is.na(CRSargs(crs))) {
+      for (i in seq_along(polys)) {
+        if (is.na(CRSargs(polys[[i]]@proj4string)))
+          proj4string(polys[[i]]) <- crs
+        else
+          polys[[i]] <- spTransform(polys[[i]], crs)
+      }
+    }
+
     idxs <- as.integer(tkcurselection(f1.lst))
     if (length(idxs) == 0) {
       tkselection.set(f1.lst, length(polys) - 1)
-      PlotPolygon()
+      RefreshPolygons()
     }
   }
 
 
   # export polygon
-  ExportPolygon <- function() {
+  ExportPolygon <- function(file.type) {
+
     idxs <- as.integer(tkcurselection(f1.lst)) + 1
     if (length(idxs) == 0) return()
     for (i in idxs) {
-      f <- GetFile(cmd="Save As", exts="ply", win.title="Save Polygon As",
-                   initialfile=names(polys)[i], defaultextension="ply", parent=tt)
-      if (is.null(f)) next
-      rgeos::write.polyfile(polys[[i]], f)
+      file <- GetFile(cmd="Save As", exts=file.type, win.title="Save Polygon As",
+                      initialfile=names(polys)[i], defaultextension=file.type, parent=tt)
+      if (is.null(file)) next
+
+      if (file.type == "txt") {
+        rgeos::write.polyfile(suppressWarnings(as(polys[[i]], "gpc.poly")), file)
+      } else {
+        p <- polys[[i]]
+        id <- sapply(methods::slot(p, "polygons"), function(x) methods::slot(x, "ID"))
+        p <- SpatialPolygonsDataFrame(p, data.frame(ID=seq_along(p), row.names=id))
+        rgdal::writeOGR(p, dsn=attr(file, "directory"), layer=attr(file, "name"),
+                        driver="ESRI Shapefile", overwrite_layer=TRUE, encoding="UTF-8")
+      }
     }
     tkfocus(tt)
   }
@@ -327,12 +356,12 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
                "#3DBF34", "#315A5E", "#5E3831", "#FA330C", "#D45B0A", "#494012",
                substr(rainbow(100), 1, 7))
 
-  polys.base <- NULL
+  shape <- NULL
 
   if (is.null(polys)) polys <- list()
 
   # assign the variables linked to tk widgets
-  rb.var      <- tclVar("add")
+  rb.var      <- tclVar("union")
   area.var    <- tclVar("")
   poly.var    <- tclVar("")
   hole.var    <- tclVar("")
@@ -352,17 +381,20 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
     tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
                              "+", as.integer(geo[3]) + 25))
   }
-  tktitle(tt) <- "Manage Polygons"
+  tktitle(tt) <- "Polygons"
 
   # add menus
   top.menu <- tkmenu(tt, tearoff=0)
 
   menu.file <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
-
   tkadd(menu.file, "command", label="Open\u2026", accelerator="Ctrl+o", command=ImportPolygon)
-  tkadd(menu.file, "command", label="Save as\u2026", accelerator="Ctrl+s", command=ExportPolygon)
-
+  menu.file.export <- tkmenu(tt, tearoff=0)
+  tkadd(menu.file.export, "command", label="Text file\u2026",
+        command=function() ExportPolygon("txt"))
+  tkadd(menu.file.export, "command", label="Shapefile\u2026",
+        command=function() ExportPolygon("shp"))
+  tkadd(menu.file, "cascade", label="Export as", menu=menu.file.export)
   menu.edit <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
   tkadd(menu.edit, "command", label="Rename\u2026", accelerator="Ctrl+r", command=RenamePolygon)
@@ -468,21 +500,18 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
 
   f3a <- ttklabelframe(f3, relief="flat", borderwidth=5, padding=5, text="Shape modes")
 
-  f3a.rb.1 <- ttkradiobutton(f3a, variable=rb.var, command=PlotPolygon,
-                             value="add", text="Unite")
-  f3a.rb.2 <- ttkradiobutton(f3a, variable=rb.var, command=PlotPolygon,
-                             value="sub", text="Minus front")
-  f3a.rb.3 <- ttkradiobutton(f3a, variable=rb.var, command=PlotPolygon,
-                             value="int", text="Intersect")
-  f3a.rb.4 <- ttkradiobutton(f3a, variable=rb.var, command=PlotPolygon,
-                             value="exc", text="Exclude overlapping")
+  f3a.rb.1 <- ttkradiobutton(f3a, variable=rb.var, command=RefreshPolygons,
+                             value="union", text="Union")
+  f3a.rb.2 <- ttkradiobutton(f3a, variable=rb.var, command=RefreshPolygons,
+                             value="difference", text="Difference")
+  f3a.rb.3 <- ttkradiobutton(f3a, variable=rb.var, command=RefreshPolygons,
+                             value="intersection", text="Intersection")
 
-  f3a.but <- ttkbutton(f3a, width=12, text="Build", command=SaveNewPolygon)
+  f3a.but <- ttkbutton(f3a, width=12, text="Build", command=BuildPolygon)
 
-  tkgrid(f3a.rb.1, sticky="w")
+  tkgrid(f3a.rb.1, padx=c(0, 70), sticky="w")
   tkgrid(f3a.rb.2, sticky="w")
   tkgrid(f3a.rb.3, sticky="w")
-  tkgrid(f3a.rb.4, sticky="w")
   tkgrid(f3a.but, pady=10)
 
   tcl("grid", "anchor", f3a, "w")
@@ -551,7 +580,6 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
   tkbind(f2.cvs, "<Configure>", ScaleCanvas)
 
   tkbind(tt, "<Control-o>", ImportPolygon)
-  tkbind(tt, "<Control-s>", ExportPolygon)
 
   tkbind(tt, "<Control-a>", function() SelectPolygon("all"))
   tkbind(tt, "<Shift-Control-A>", function() SelectPolygon("none"))
@@ -565,11 +593,11 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
   tkbind(tt, "<Delete>", ClearPolygon)
   tkbind(tt, "<Control-r>", RenamePolygon)
 
-  tkbind(f1.lst, "<<ListboxSelect>>", PlotPolygon)
+  tkbind(f1.lst, "<<ListboxSelect>>", RefreshPolygons)
 
   # gui control
   ScaleCanvas()
-  PlotPolygon()
+  RefreshPolygons()
 
   tkfocus(tt)
   tkgrab(tt)

@@ -30,7 +30,7 @@ SetInterpolation <- function(parent=NULL) {
   }
 
 
-  # assign the variables linked to Tk widgets
+  # assign the variables linked to tk widgets
   grid.dx.var <- tclVar()
   grid.dy.var <- tclVar()
   mba.n.var   <- tclVar()
@@ -57,7 +57,7 @@ SetInterpolation <- function(parent=NULL) {
       tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
                                "+", as.integer(geo[3]) + 25))
   }
-  tktitle(tt) <- "Set Interpolation Method"
+  tktitle(tt) <- "Interpolation Options"
   tkwm.resizable(tt, 1, 0)
 
   # frame 0, ok and cancel buttons

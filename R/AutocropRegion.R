@@ -41,7 +41,7 @@ AutocropRegion <- function(d, parent=NULL, ...) {
 
   # draw base plot and points
   DrawBasePlot <- function() {
-    do.call(Plot2d, append(list(x=d, type="p"), list(...)))
+### do.call(Plot2d, append(list(x=d, type="p"), list(...)))
     dev <<- dev.cur()
   }
 
@@ -129,7 +129,7 @@ AutocropRegion <- function(d, parent=NULL, ...) {
 
   tcl("grid", "anchor", f1, "center")
 
-  tkpack(f1, fill="both")
+  tkpack(f1, padx=50, fill="both")
 
   # bind events
   tclServiceMode(TRUE)

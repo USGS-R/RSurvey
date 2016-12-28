@@ -11,7 +11,7 @@ A \acronym{GUI} for managing and manipulating polygons that is based on the
 
 \usage{
 ManagePolygons(polys = NULL, poly.data = NULL, poly.crop = NULL,
-               encoding = getOption("encoding"), parent = NULL)
+               crs = CRS(as.character(NA)), parent = NULL)
 }
 
 \arguments{
@@ -20,10 +20,7 @@ ManagePolygons(polys = NULL, poly.data = NULL, poly.crop = NULL,
   data limits boundary.}
 \item{poly.crop}{character; the name of the polygon that defines the crop
   region for interpolated data.}
-\item{encoding}{character; encoding to be assumed for input strings. If the
-  value is \code{"latin1"} or \code{"UTF-8"} it is used to mark character
-  strings as known to be in Latin-1 or UTF-8: it is not used to re-encode
-  the input.}
+\item{crs}{CRS; default coordinate reference system.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 
@@ -46,7 +43,7 @@ details.
 }
 
 \value{
-A list with components \code{polys}, \code{poly.data}, and \code{poly.crop}
+A list with components \code{polys}, \code{poly.data}, \code{poly.crop}, and \code{crs}
 (see \sQuote{Arguments}).
 }
 

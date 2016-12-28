@@ -1,7 +1,7 @@
 LoadPackages <- function() {
 
 
-  # install missing packages from CRAN mirror
+  # install missing packages from cran mirror
   InstallPackages <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
@@ -47,7 +47,6 @@ LoadPackages <- function() {
   pkgs <- sub(",$", "", strsplit(txt[grep("^Suggests:", txt)], " ")[[1]][-1])
 
   # account for missing packages
-
   is.pkg.missing <- !pkgs %in% .packages(all.available=TRUE)
   if (any(is.pkg.missing)) {
     missing.pkgs <- pkgs[is.pkg.missing]

@@ -14,7 +14,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
     # organize data
     vars <- Data("vars")
     cols <- Data("cols")
-    rows <- Data("data.raw", which.attr="row.names")
+    rows <- Data("rows")
 
     all.col.ids <- vapply(seq_along(cols), function(i) cols[[i]]$id, "")
     if (file.type == "shp") {
@@ -176,8 +176,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
 
     # write shapefile
     } else if (file.type == "shp") {
-      # names are finicky for shapefiles, rules are convoluted,
-      # that is, 8-bit names and no periods
+      # names are finicky for shapefiles, rules are convoluted, that is, 8-bit names and no periods
       col.ids.8bit <- gsub("\\.", "", make.names(substr(col.ids, 1, 7), unique=TRUE))
       colnames(d) <- col.ids.8bit
       idx.x <- which(col.ids %in% id.x)
@@ -185,6 +184,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
       is.coord.na <- is.na(d[, idx.x]) | is.na(d[, idx.y])
       d <- d[!is.coord.na, ]  # remove coordinates containing missing values
       coordinates(d) <- col.ids.8bit[c(idx.x, idx.y)]
+      proj4string(d) <- Data("crs")
       dsn <- dirname(file.name)
       layer <- basename(file.name)
       ext <- tolower(tail(unlist(strsplit(layer, "\\."))[-1], 1))
@@ -535,7 +535,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
   f4.box.2.2 <- ttkcombobox(f4, width=17, state="readonly", value=enc1)
   f4.box.3.2 <- ttkcombobox(f4, width=17, state="readonly", value=eol1)
   f4.box.4.2 <- ttkcombobox(f4, width=17, state="readonly", value=zip1)
-  txt <- "Export change log ( *.log )"
+  txt <- "Export changelog ( *.log )"
   f4.chk.2.3 <- ttkcheckbutton(f4, variable=changelog.var, text=txt)
 
   tkgrid(f4.ent.1.1, "x", "x", "x", f4.but.1.5)

@@ -131,6 +131,7 @@ ImportSpreadsheet <- function(parent=NULL) {
   tkgrid(f1.lab.1.1, f1.ent.1.2, f1.but.1.3, pady=c(10, 0))
   tkgrid.configure(f1.lab.1.1, sticky="w")
   tkgrid.configure(f1.ent.1.2, sticky="we", padx=2)
+  tkgrid.configure(f1.but.1.3, padx=c(2, 3))
   tkgrid.columnconfigure(f1, 1, weight=1)
   tkpack(f1, fill="x", padx=10)
 
@@ -138,7 +139,7 @@ ImportSpreadsheet <- function(parent=NULL) {
   f2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
   f2.lab.1.1 <- ttklabel(f2, text="Select worksheet in workbook", state="disabled")
   f2.lab.2.1 <- ttklabel(f2, text="Cell range in worksheet (optional)")
-  f2.lab.2.3 <- ttklabel(f2, width=9, text="e.g. B3:F18")
+  f2.lab.2.3 <- ttklabel(f2, width=10, text="e.g. B3:F18")
   f2.box.1.2 <- ttkcombobox(f2, width=20, state="disabled", value="{}")
   f2.ent.2.2 <- ttkentry(f2, width=20, textvariable=cell.range.var)
   tkgrid(f2.lab.1.1, f2.box.1.2, "x", pady=c(10, 0))

@@ -5,7 +5,7 @@
 \title{Set Histogram Input Parameters}
 
 \description{
-A \acronym{GUI} for specifying input parameters of the \code{\link{hist}}
+A \acronym{GUI} for specifying input parameters for the \code{\link{hist}}
 function.
 }
 

@@ -31,8 +31,6 @@ values.
 
 \author{J.C. Fisher}
 
-\seealso{\code{\link{mba.points}}}
-
 \examples{\dontrun{SetInterpolation()}}
 
 \keyword{misc}

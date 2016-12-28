@@ -5,24 +5,26 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
   # initialize file filters
   all.filters <- list(bmp   = "Windows Bitmap",
                       bz2   = "Compressed Text",
-                      csv   = "Text",
+                      csv   = "Comma-Separated Values",
+                      dbf   = "Shapefile",
                       eps   = "Encapsulated Postscript",
                       gz    = "Compressed Text",
-                      pdf   = "PDF",
-                      ply   = "Polygon",
-                      png   = "PNG",
-                      jpg   = "Jpeg",
-                      jpeg  = "Jpeg",
+                      pdf   = "Portable Document Format",
+                      png   = "Portable Network Graphics",
+                      prj   = "Projection Format",
+                      jpg   = "JPEG",
+                      jpeg  = "JPEG",
                       ps    = "Postscript",
                       Rda   = "R Data",
                       rda   = "R Data",
                       RData = "RSurvey Project",
-                      shp   = "ESRI Shapefile",
-                      tab   = "Text",
-                      tif   = "TIFF",
-                      tiff  = "TIFF",
-                      tsv   = "Text",
-                      txt   = "Text",
+                      shp   = "Shapefile",
+                      shx   = "Shapefile",
+                      tab   = "Tab-Separated Values",
+                      tif   = "Tagged Image File Format",
+                      tiff  = "Tagged Image File Format",
+                      tsv   = "Tab-Separated Values",
+                      txt   = "Plain Text",
                       xlsx  = "Open XML Spreadsheet",
                       xz    = "Compressed Text",
                       zip   = "Compressed Text"
@@ -55,7 +57,7 @@ GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
       filters <- rbind(filters, c(typ, paste0(".", ext)))
     }
   }
-  filters   <- rbind(filters, c("All files", "*"))
+  filters   <- rbind(filters, c("All Files", "*"))
   filters[] <- paste0("{", filters, "}")
   filters   <- apply(filters, 1, paste, collapse=" ")
   filters   <- paste(paste0("{", filters, "}"), collapse=" ")

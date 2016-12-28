@@ -1,17 +1,20 @@
 Package: RSurvey
-Title: Analysis of Spatially Distributed Data
+Title: Exploratory Analysis of Spatial Data
 Version: 0.8.3.9000
 Authors@R: person("Jason", "Fisher", email="jfisher@usgs.gov", role=c("aut", "cre"))
-Description: A processing program for spatially distributed data.
-  It features graphing, data management, and query building tools.
+Description: A program for processing and exploring spatially distributed data.
+  It features graphing, data management, interpolation, and query building tools.
   A graphical user interface is provided.
 Depends:
     R (>= 3.1.0)
 Imports:
+    fields,
     graphics,
     grDevices,
-    MBA,
+    inlmisc,
     methods,
+    raster,
+    rgdal,
     rgeos,
     sp,
     stats,
@@ -20,7 +23,6 @@ Imports:
 Suggests:
     colorspace,
     dichromat,
-    rgdal,
     rgl,
     tripack,
     XML

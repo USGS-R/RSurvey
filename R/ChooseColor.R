@@ -257,8 +257,7 @@ ChooseColor <- function(col, parent=NULL) {
   m <- 12
   dx <- dy <- 20
   d1 <- cbind(colorspace::rainbow_hcl(m), colorspace::heat_hcl(m),
-              colorspace::terrain_hcl(m),
-              rev(gray.colors(m, start=0.1, end=0.9, gamma=1.0)))
+              colorspace::terrain_hcl(m), rev(gray.colors(m, start=0.1, end=0.9, gamma=1.0)))
   d2 <- c("#000000", "#000033", "#000066", "#000099", "#0000CC", "#0000FF",
           "#990000", "#990033", "#990066", "#990099", "#9900CC", "#9900FF",
           "#003300", "#003333", "#003366", "#003399", "#0033CC", "#0033FF",

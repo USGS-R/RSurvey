@@ -1,7 +1,7 @@
 ImportPackage <- function(classes=NULL, parent=NULL) {
 
 
-  # load data set
+  # load dataset
   LoadDataset <- function() {
     tkconfigure(tt, cursor="watch")
     tclServiceMode(FALSE)
@@ -10,35 +10,24 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
     idx <- as.integer(tkcurselection(f1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
     idx <- as.integer(tkcurselection(f1.lst.2.4))
-    pkg.item <- paste(as.character(tkget(f1.lst.2.4, idx)), collapse=" ")
-    e <- environment(LoadDataset)
-    txt <- paste0("data(", pkg.item, ", package=\"", pkg.name, "\", envir=e)")
-    ds.name <- eval(parse(text=txt))
-    rtn <<- list(d=eval(parse(text=paste("(", ds.name, ")")), envir=e),
-                 src=c(dataset=ds.name, package=pkg.name, accessed=format(Sys.time())))
+    pkg.item <- as.character(tkget(f1.lst.2.4, idx))
+    rtn <<- list(d=eval(parse(text=paste(pkg.name, pkg.item, sep="::"))),
+                 src=c(dataset=pkg.item, package=pkg.name,
+                       accessed=format(Sys.time())))
     tclvalue(tt.done.var) <- 1
   }
 
 
-  # check if package(s) are loaded
-  IsPackageLoaded <- function(pkg.names) {
-    vapply(pkg.names, function(i) paste("package", i, sep=":") %in% search(), TRUE)
-  }
-
-
   # load package
-  LoadPackage <- function(pkg.name) {
+  LoadPackage <- function() {
     tkconfigure(tt, cursor="watch")
     tclServiceMode(FALSE)
     on.exit(tkconfigure(tt, cursor="arrow"))
     on.exit(tclServiceMode(TRUE), add=TRUE)
     idx <- as.integer(tkcurselection(f1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
-    lib <- paste("package", pkg.name, sep=":")
-    if (!lib %in% search())
-      suppressPackageStartupMessages(require(pkg.name, quietly=TRUE, warn.conflicts=FALSE,
-                                             character.only=TRUE))
-    if (lib %in% search()) {
+
+    if (requireNamespace(pkg.name, quietly=TRUE)) {
       idx <- as.integer(tcl(f1.box.3.1, "current"))
       if (idx == 2L) {
         tcl(f1.box.3.1, "current", 0)
@@ -50,14 +39,14 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
       }
       SelectPackage()
     } else {
-      tkmessageBox(icon="error", message="Unable to load package.",
+      tkmessageBox(icon="error", message="Unable to load package namespace.",
                    title="Error", type="ok", parent=tt)
     }
     tkfocus(f1.lst.2.1)
   }
 
 
-  # summarize data sets in package
+  # summarize datasets in package
   SummarizePackage <- function() {
     idx <- as.integer(tkcurselection(f1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
@@ -66,15 +55,15 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
     nmax <- max(nchar(pkg.datasets[, "Item"]))
     if (nmax < 20) nmax <- 20
     items <- sprintf(paste0("%-", nmax, "s"), pkg.datasets[, "Item"])
-    txt <- paste0("Data sets in package ", sQuote(pkg.name), ":\n")
+    txt <- sprintf("Datasets in package %s:\n", sQuote(pkg.name))
     txt <- c(txt, paste(items, pkg.datasets[, "Title"], sep="  "))
-    EditText(txt, read.only=TRUE, win.title="Summary of Data Sets",
+    EditText(txt, read.only=TRUE, win.title="Summary of Datasets",
              is.fixed.width.font=TRUE, parent=tt)
     tkfocus(f1.lst.2.1)
   }
 
 
-  # describe data set
+  # describe dataset
   DescribeDataset <- function() {
     idx <- as.integer(tkcurselection(f1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
@@ -90,13 +79,11 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
   }
 
 
-  # get class of data set
+  # get class of dataset
   GetClass <- function(pkg.name, pkg.item) {
-    e <- environment(GetClass)
-    txt <- paste0("data(", pkg.item, ", package=\"", pkg.name, "\", envir=e)")
-    suppressWarnings(eval(parse(text=txt)))
-    txt <- paste("(", pkg.item, ")")
-    pkg.item.class <- class(try(eval(parse(text=txt), envir=e), silent=TRUE))
+    txt <- paste(pkg.name, pkg.item, sep="::")
+    ans <- try(class(eval(parse(text=txt))), silent=TRUE)
+    pkg.item.class <- if (inherits(ans, "try-error")) "<Unknown>" else ans
     return(pkg.item.class[1])
   }
 
@@ -109,7 +96,7 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
     on.exit(tclServiceMode(TRUE), add=TRUE)
     idx <- as.integer(tkcurselection(f1.lst.2.1)) + 1L
     pkg.name <- pkg.names[idx]
-    if (IsPackageLoaded(pkg.name)) {
+    if (isNamespaceLoaded(pkg.name)) {
       tkconfigure(f1.but.4.2, state="disabled", default="disabled")
       pkg.datasets <- ds.list[[pkg.name]]
       all.pkg.items <- pkg.datasets[, "Item"]
@@ -165,7 +152,7 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
   }
 
 
-  # gui control for select data set
+  # gui control for select dataset
   SelectDataset <- function() {
     idx <- as.integer(tkcurselection(f1.lst.2.4))
     if (length(idx) == 0) {
@@ -193,7 +180,7 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
     if (idx == 0L) {
       pkg.names <<- all.pkgs
     } else {
-      is.pkg.loaded <- IsPackageLoaded(all.pkgs)
+      is.pkg.loaded <- all.pkgs %in% loadedNamespaces()
       if (idx == 1L)
         pkg.names <<- all.pkgs[is.pkg.loaded]
       else
@@ -223,6 +210,8 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
   all.pkgs <- all.pkgs[!all.pkgs %in% c("Rcmdr")]
 
   all.ds <- suppressWarnings(data(package=all.pkgs)$results)
+  all.ds[, "Item"] <- gsub(" \\((.*)\\).*", "", all.ds[, "Item"])
+
   all.pkgs <- sort(unique(all.ds[, "Package"]))
 
   FUN <- function(i) all.ds[all.ds[, "Package"] == i, c("Item", "Title"), drop=FALSE]
@@ -251,7 +240,7 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
     tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
                              "+", as.integer(geo[3]) + 25))
   }
-  tktitle(tt) <- "Import Data From Package"
+  tktitle(tt) <- "Import Dataset From R Package"
 
   # frame 0 contains load, cancel, and help buttons, and size grip
   f0 <- ttkframe(tt, relief="flat")
@@ -285,7 +274,7 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
   f1 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
   f1.lab.1.1 <- ttklabel(f1, text="Package", foreground="#141414")
-  f1.lab.1.4 <- ttklabel(f1, text="Data set", foreground="#141414")
+  f1.lab.1.4 <- ttklabel(f1, text="Dataset", foreground="#141414")
 
   f1.lst.2.1 <- tklistbox(f1, selectmode="browse", activestyle="none",
                           relief="flat", borderwidth=5, width=30, height=8,

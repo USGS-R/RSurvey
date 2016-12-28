@@ -60,7 +60,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
       fmt <- ifelse(is.fmt || is.time, col.formats[column], "")
       if (is.time) {
         if ("POSIXt" %in% col.class)
-          fmt.vals[idxs] <- POSIXct2Character(vals, fmt=fmt)
+          fmt.vals[idxs] <- inlmisc::POSIXct2Character(vals, fmt=fmt)
         else
           fmt.vals[idxs] <- format(vals, format=fmt)
       } else {
@@ -873,7 +873,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   # finish top menu
   tkconfigure(tt, menu=top.menu)
 
-  # frame 0
+  # frame 0, selected cell value bar
   f0 <- ttkframe(tt, relief="flat")
   f0.ent.1.1 <- ttkentry(f0, width=10, font="TkFixedFont",
                          state=if (read.only) "readonly" else "normal",
@@ -883,7 +883,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   tkgrid.columnconfigure(f0, 0, weight=1)
   tkpack(f0, fill="x", side="top")
 
-  # frame 1
+  # frame 1, close, save, cancel buttons
   f1 <- ttkframe(tt, relief="flat")
 
   if (read.only) {
@@ -914,7 +914,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
 
   tkpack(f1, fill="x", side="bottom", anchor="e")
 
-  # frame 2
+  # frame 2, search
   f2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0, height=200)
 
   f2.lab.1.1 <- ttklabel(f2, text="Record")
@@ -939,7 +939,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
 
   tkpack(f2, side="bottom", anchor="nw", padx=c(10, 0))
 
-  # frame 3
+  # frame 3, spreadsheet
   f3 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
 
   f3.tbl <- tkwidget(f3, "table", rows=m + 1, cols=n + 1,
@@ -1000,8 +1000,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
-  tkbind(f0.ent.1.1, "<Return>",
-         paste(.Tcl.callback(BypassReturnCmd), "break", sep="; "))
+  tkbind(f0.ent.1.1, "<Return>", paste(.Tcl.callback(BypassReturnCmd), "break", sep="; "))
   tkbind(f0.ent.1.1, "<FocusIn>", function() tksee(f3.tbl, "active"))
 
   tkbind(tt, "<Control-f>", function() CallSearch(is.replace=FALSE))

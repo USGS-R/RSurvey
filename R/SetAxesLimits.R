@@ -84,7 +84,7 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
 
   tt.done.var <- tclVar(0)
 
-  # open GUI
+  # open gui
   tclServiceMode(FALSE)
   tt <- tktoplevel()
   if (!is.null(parent)) {

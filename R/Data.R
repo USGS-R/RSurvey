@@ -20,7 +20,8 @@ Data <- local({
                   "rm.pnt.line"   = 0,
                   "grid.res"      = list(x=NA, y=NA),
                   "grid.mba"      = list(n=NA, m=NA, h=11),
-                  "color.palette" = grDevices::terrain.colors
+                  "color.palette" = grDevices::terrain.colors,
+                  "crs"           = sp::CRS(as.character(NA))
               )
 
   function(option, value, which.attr=NULL, clear.proj=FALSE, clear.data=FALSE, replace.all=NULL) {
@@ -33,7 +34,7 @@ Data <- local({
 
     # save parameters
     if (clear.proj | clear.data) {
-      save.params <- c("default.dir", "win.loc", "csi", "width", "cex.pts")
+      save.params <- c("default.dir", "win.loc", "width", "cex.pts")
       if (clear.data)
         save.params <- c(save.params, "nlevels", "asp.yx", "asp.zx", "rkey",
                          "show.poly", "img.contour", "show.lines", "show.points",

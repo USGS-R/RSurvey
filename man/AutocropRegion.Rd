@@ -15,7 +15,7 @@ function.
 \item{d}{data.frame; a data table with required coordinate components
   \code{d$x} and \code{d$y}.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
-\item{...}{other graphical parameters, see \code{\link{Plot2d}}.}
+\item{...}{other graphical parameters.}
 }
 
 \details{

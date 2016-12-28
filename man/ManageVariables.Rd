@@ -19,8 +19,7 @@
 \details{
 This \acronym{GUI} lets you:
 (1) specify the names and format of variables;
-(2) add new variables based on user defined functions,
-    see \code{\link{EditFunction}};
+(2) add new variables based on user defined functions, see \code{\link{EditFunction}};
 (3) display data in a spreadsheet, see \code{\link{EditData}}; and
 (4) remove and (or) reorder variables in the data table.
 }
@@ -33,8 +32,7 @@ to a specific variable, and contains the following components:
 \item{name}{character; variable name.}
 \item{format}{character; the conversion specification format (optional).}
 \item{id}{character; a unique identifier that is created from \code{name}.}
-\item{fun}{character; the expression evaluated when computing the variables
-  vector of values.}
+\item{fun}{character; the expression evaluated when computing the variables vector of values.}
 \item{index}{integer; the variables component index number in the
   \code{data.raw} data frame, see \code{\link{ImportText}}. Only required
   for variables directly linked to data columns in \code{data.raw}.}
@@ -47,8 +45,7 @@ The \code{vars} object is a list with components:
   state variable in \code{cols}. These indexes are updated to reflect
   the removal and (or) reordering of variables in \code{cols}.}
 \item{query}{character; if required, variable names are updated.}
-\item{changelog}{data.frame; if required, names in \code{variable} component are
-  updated.}
+\item{changelog}{data.frame; if required, names in \code{variable} component are updated.}
 }
 
 \author{J.C. Fisher}

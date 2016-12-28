@@ -55,6 +55,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     }
   }
 
+
   # adjust scale for number of cells
   AdjustScaleSingle <- function(x) {
     idx <- as.integer(tcl(f1.box.1.2, "current")) + 1L
@@ -65,16 +66,19 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     }
   }
 
+
   # adjust scale for bandwidth in density estimate
   AdjustScaleBandwidth <- function(x) {
     tclvalue(bandwidth.var) <- round(as.numeric(x), digits=1)
     PlotHist()
   }
 
+
   # draw histogram
   PlotHist <- function() {
     if (dev.cur() > dev) CalcHist()
   }
+
 
   # toggle state on break options
   ToggleStateBreaks <- function() {
@@ -100,6 +104,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     }
     PlotHist()
   }
+
 
   # toggle state on bandwidth
   ToggleStateBandwidth <- function() {
@@ -213,7 +218,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   f1.box.1.2 <- ttkcombobox(f1, state="readonly")
   tkgrid(f1.lab.1.1, f1.box.1.2, pady=c(10, 0))
 
-  tkgrid.configure(f1.lab.1.1, sticky="e", padx=c(10, 2))
+  tkgrid.configure(f1.lab.1.1, sticky="e",  padx=c(10, 2))
   tkgrid.configure(f1.box.1.2, sticky="we", padx=c(0, 10))
 
   val <- if (length(var.names) == 1) paste0("{", var.names, "}") else var.names

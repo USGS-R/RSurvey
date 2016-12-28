@@ -164,8 +164,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
       return()
     }
     if (!is.na(cols[[idx]]$index)) {
-      msg <- paste0("Variable \"", cols[[idx]]$id,
-                    "\" corresponds with menu.view.unpr data.\n\n",
+      msg <- paste0("Variable \"", cols[[idx]]$id, "\" corresponds with raw data.\n\n",
                     "Are you sure you want to remove it?")
       ans <- tkmessageBox(icon="question", message=msg, title="Question",
                           type="yesno", parent=tt)
@@ -340,9 +339,8 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     if (length(idx) == 0) return()
     SaveNb()
     d <- list(EvalFunction(cols[[idx]]$fun, cols))
-    EditData(d, col.names=cols[[idx]]$id, row.names=Data("rows"),
-             col.formats=cols[[idx]]$format, read.only=TRUE,
-             win.title="View Raw Data", parent=tt)
+    EditData(d, col.names=cols[[idx]]$id, col.formats=cols[[idx]]$format,
+             read.only=TRUE, win.title="View Raw Data", parent=tt)
     return()
   }
 
@@ -374,7 +372,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
                              "+", as.integer(geo[3]) + 25))
   }
-  tktitle(tt) <- "Manage Variables"
+  tktitle(tt) <- "Variables"
 
   # create menus
   top.menu <- tkmenu(tt, tearoff=0)
@@ -483,8 +481,8 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   f2.ent.3.2 <- ttkentry(f2, textvariable=class.var)
 
   f2.txt.4.2 <- tktext(f2, padx=2, pady=2, width=45, height=6, undo=1, wrap="none",
-                       foreground="black", background="#ebebe4", borderwidth=1, font="TkFixedFont")
-
+                       relief="flat", foreground="black", background="#ebebe4",
+                       borderwidth=1, font="TkFixedFont", state="disabled")
   f2.but.2.3 <- ttkbutton(f2, text="Edit", width=5, command=CallFormat)
   f2.but.4.3 <- ttkbutton(f2, text="Edit", width=5, command=CallEditFunction)
 
@@ -500,7 +498,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   tkgrid.configure(f2.ent.1.2, f2.ent.2.2, f2.ent.3.2,
                    sticky="we", padx=2, pady=2)
 
-  tkgrid.configure(f2.txt.4.2, padx=2, pady=2, sticky="nswe")
+  tkgrid.configure(f2.txt.4.2, padx=3, pady=3, sticky="nswe")
 
   tkgrid.configure(f2.but.2.3, sticky="w")
   tkgrid.configure(f2.lab.4.1, pady=c(4, 0))

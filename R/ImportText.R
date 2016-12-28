@@ -116,7 +116,7 @@ ImportText <- function(parent=NULL) {
               posix.fmt <- gsub("%OS[[:digit:]]+", "%OS", fmt)
               date.time <- try(as.POSIXlt(val, format=posix.fmt), silent=TRUE)
               if (!inherits(date.time, "try-error") && !all(is.na(date.time))) {
-                date.time.str <- POSIXct2Character(date.time, fmt)
+                date.time.str <- inlmisc::POSIXct2Character(date.time, fmt)
                 is.time <- TRUE
               }
             }
@@ -139,7 +139,7 @@ ImportText <- function(parent=NULL) {
 
       Data("comment", comments)
       Data("data.raw", as.list(d))
-      Data("rows", seq_len(m))
+      Data("rows", as.character(seq_len(m)))
       Data("cols", cols)
 
       memory.usage <- gc()
@@ -165,7 +165,7 @@ ImportText <- function(parent=NULL) {
   GetConnection <- function(src, enc, opn="r") {
     if (src == "") {
       con <- try(textConnection(cb, local=TRUE), silent=TRUE)
-    } else if (substr(src, 1, 6) %in% c("http:/", "ftp://", "file:/")) {
+    } else if (substr(src, 1, 6) %in% c("http:/", "https:/", "ftp://", "file:/")) {
       con <- try(url(description=src, open=opn, encoding=enc), silent=TRUE)
     } else {
       ext <- attr(GetFile(file=src), "extension")
@@ -363,7 +363,7 @@ ImportText <- function(parent=NULL) {
 
   # data file
   GetDataFile <- function() {
-    exts <- c("tsv", "csv", "txt", "gz", "bz2", "xz")
+    exts <- c("csv", "tsv", "tab", "txt", "gz", "bz2", "xz")
     f <- GetFile(cmd="Open", exts=exts, win.title="Open Data File", parent=tt)
     tkfocus(tt)
     if (is.null(f)) return()
