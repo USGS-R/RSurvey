@@ -8,10 +8,10 @@ Description: A program for processing and exploring spatially distributed data.
 Depends:
     R (>= 3.1.0)
 Imports:
-    fields,
     graphics,
     grDevices,
     inlmisc,
+    MBA,
     methods,
     raster,
     rgdal,

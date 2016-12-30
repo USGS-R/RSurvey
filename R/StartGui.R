@@ -502,14 +502,6 @@ StartGui <- function() {
   }
 
 
-
-
-
-
-
-
-
-
   # plot data
   CallPlot <- function() {
 
@@ -714,17 +706,18 @@ StartGui <- function() {
       raster::crs(r) <- Data("crs")
 
       # interpolate
-
-
-
-
+      xlen <- diff(c(raster::xmin(r), raster::xmax(r)))
+      ylen <- diff(c(raster::ymin(r), raster::ymax(r)))
+      m <- n <- 1
+      if ((ylen / xlen) < 1)
+        m <- 2
+      else
+        n <- 2
+      r[] <- MBA::mba.points(xyz=cbind(x, y, z)[!is.na(z), ], xy.est=coordinates(r),
+                             n=n, m=m, h=11, verbose=FALSE)$xyz.est[, "z"]
 
       # crop raster using polygon
-
-
-
-
-
+      if (!is.null(p)) r <- raster::mask(r, p)
 
       Data("data.grd", r)
     }
