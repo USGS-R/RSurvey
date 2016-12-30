@@ -601,14 +601,6 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   }
 
 
-  # plot histogram
-  PlotHistogram <- function() {
-    tkconfigure(tt, cursor="watch")
-    on.exit(tkconfigure(tt, cursor="arrow"))
-    BuildHistogram(d, var.names=col.names, parent=tt)
-  }
-
-
   # gui requires tktable
   is.tktable <- try(tcl("package", "present", "Tktable"), silent=TRUE)
   if (inherits(is.tktable, "try-error")) stop("tkTable is not available")
@@ -864,11 +856,6 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
           command=function() tkevent.generate(f3.tbl, "<Control-e>"))
     tkadd(menu.nav, "cascade", label="Move inside cell to the", menu=menu.nav.in)
   }
-
-  # graph menu
-  menu.graph <- tkmenu(tt, tearoff=0)
-  tkadd(top.menu, "cascade", label="Plot", menu=menu.graph, underline=0)
-  tkadd(menu.graph, "command", label="Build histogram\u2026", command=PlotHistogram)
 
   # finish top menu
   tkconfigure(tt, menu=top.menu)

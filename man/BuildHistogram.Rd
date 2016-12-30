@@ -9,7 +9,7 @@ A \acronym{GUI} for specifying input parameters for the \code{\link{hist}}
 function.
 }
 
-\usage{BuildHistogram(d, var.names = NULL, var.default = 1L, parent = NULL)}
+\usage{BuildHistogram(d, var.names = NULL, var.default = 1L, processed.rec = NULL, parent = NULL)}
 
 \arguments{
 \item{d}{list, data.frame, matrix, or numeric; vector(s) of values for which the
@@ -18,6 +18,7 @@ function.
   \code{d}.}
 \item{var.default}{character or integer; vector name or index in \code{d},
   defaults to \code{1L}.}
+\item{processed.rec}{integer; vector of record indexes for processed data.}
 \item{parent}{tkwin; the \acronym{GUI} parent window.}
 }
 

@@ -15,10 +15,13 @@
       packageStartupMessage(paste(strwrap(s, indent=1), collapse="\n "))
     }
     StartGui()
+
   }
   invisible()
 }
 
 .onLoad <- function(...) {
-  if (interactive()) LoadPackages()
+  if (interactive()) {
+    LoadPackages()
+  }
 }

@@ -682,7 +682,7 @@ StartGui <- function() {
       z <- Data("data.pts")@data$z
       p <- if (is.null(Data("poly.crop"))) NULL else Data("polys")[[Data("poly.crop")]]
 
-      # build grid template
+      # build raster template
       r <- Data("grid.geo")
       if (is.null(r) || !inherits(r, "RasterLayer")) {
         if (is.null(p)) {
@@ -695,16 +695,16 @@ StartGui <- function() {
         }
         res <- Data("grid.res")
         if (is.null(res)) {
-          nrows <- 100
           ncols <- 100
+          nrows <- 100
         } else {
           xmod <- diff(xlim) %% res[1]
           xadd <- ifelse(xmod == 0, 0, (res[1] - xmod) / 2)
           xlim <- c(xlim[1] - xadd, xlim[2] + xadd)
-          ncols <- diff(xlim) %% res[1]
           ymod <- diff(ylim) %% res[2]
           yadd <- ifelse(ymod == 0, 0, (res[2] - ymod) / 2)
           ylim <- c(ylim[1] - yadd, ylim[2] + yadd)
+          ncols <- diff(xlim) %% res[1]
           nrows <- diff(ylim) %% res[2]
         }
         r <- raster::raster(nrows=nrows, ncols=ncols,
@@ -719,7 +719,7 @@ StartGui <- function() {
 
 
 
-      # crop region using polygon
+      # crop raster using polygon
 
 
 
@@ -763,6 +763,25 @@ StartGui <- function() {
     if (is.null(txt)) return()
     if (length(txt) == 0 || (length(txt) == 1 & txt == "")) txt <- NULL
     Data("comment", txt)
+  }
+
+
+  # build historgram
+  CallBuildHistogram <- function() {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
+    ProcessData()
+    cols <- Data("cols")
+    if (is.null(cols)) return()
+    col.nams <- vapply(cols, function(i) i$id,  "")
+    col.funs <- vapply(cols, function(i) i$fun, "")
+    l <- lapply(col.funs, function(i) EvalFunction(i, cols))
+    rows <- Data("rows")
+    if (is.null(Data("data.pts")))
+      idxs <- seq_along(rows)
+    else
+      idxs <- match(rownames(Data("data.pts")@data), rows)
+    BuildHistogram(l, var.names=col.nams, processed.rec=idxs, parent=tt)
   }
 
 
@@ -877,7 +896,7 @@ StartGui <- function() {
         })
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Manage variables\u2026", command=CallManageVariables)
-  tkadd(menu.edit, "command", label="Open data editor\u2026",
+  tkadd(menu.edit, "command", label="Edit imported data\u2026",
         command=function() CallEditData(read.only=FALSE))
   tkadd(menu.edit, "command", label="Comment\u2026", command=EditComment)
 
@@ -901,8 +920,8 @@ StartGui <- function() {
         command=function() Data(c("vars", "sort.on"), NULL))
 
   tkadd(menu.edit, "separator")
-  tkadd(menu.edit, "command", label="Set interpolation options\u2026",
-        command=function() SetInterpolation(tt))
+  tkadd(menu.edit, "command", label="Define interpolation grid\u2026",
+        command=function() DefineInterpGrid(tt))
 
   # view menu
   menu.view <- tkmenu(tt, tearoff=0)
@@ -967,6 +986,8 @@ StartGui <- function() {
                                             n=Data("nlevels"), parent=tt)
           if (!is.null(pal)) Data("color.palette", pal)
         })
+  tkadd(menu.graph, "separator")
+  tkadd(menu.graph, "command", label="Build histogram\u2026", command=CallBuildHistogram)
   tkadd(menu.graph, "separator")
   tkadd(menu.graph, "command", label="Close all graphic devices", accelerator="Ctrl+F4",
         command=CloseDevices)

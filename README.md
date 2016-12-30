@@ -11,9 +11,9 @@ A graphical user interface (GUI) is provided and requires R operate as an SDI ap
 using multiple top-level windows for the console, graphics, and pager.
 Immediate goals for software development include:
 
-- add the ability to manipulate geospatial data;
-- revise management of graphic devices; and
-- create a GUI for geostatistical modeling.
+- increase the number of available interpolation methods;
+- add color management tool, with custom color range assignment based on variable; and
+- add profile tool, generate (elevation) profiles for line of cross section.
 
 ## Install
 

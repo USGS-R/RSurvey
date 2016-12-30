@@ -1,14 +1,14 @@
-\name{SetInterpolation}
+\name{DefineInterpGrid}
 
-\alias{SetInterpolation}
+\alias{DefineInterpGrid}
 
-\title{Set Interpolation Preferences}
+\title{Define Interpolation Grid}
 
 \description{
-A \acronym{GUI} for specifying the interpolation algorithms input parameters.
+A \acronym{GUI} for defining the interpolation grid.
 }
 
-\usage{SetInterpolation(parent = NULL)}
+\usage{DefineInterpGrid(parent = NULL)}
 
 \arguments{\item{parent}{tkwin; the \acronym{GUI} parent window.}}
 
@@ -31,6 +31,6 @@ values.
 
 \author{J.C. Fisher}
 
-\examples{\dontrun{SetInterpolation()}}
+\examples{\dontrun{DefineInterpGrid()}}
 
 \keyword{misc}

@@ -164,7 +164,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
       return()
     }
     if (!is.na(cols[[idx]]$index)) {
-      msg <- paste0("Variable \"", cols[[idx]]$id, "\" corresponds with raw data.\n\n",
+      msg <- paste0("Variable \"", cols[[idx]]$id, "\" corresponds with imported data.\n\n",
                     "Are you sure you want to remove it?")
       ans <- tkmessageBox(icon="question", message=msg, title="Question",
                           type="yesno", parent=tt)
@@ -329,22 +329,6 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   }
 
 
-  # view data for selected variable
-  CallEditData <- function() {
-    tkconfigure(tt, cursor="watch")
-    on.exit(tkconfigure(tt, cursor="arrow"))
-    tclServiceMode(FALSE)
-    on.exit(tclServiceMode(TRUE), add=TRUE)
-    idx <- as.integer(tkcurselection(f1.lst)) + 1L
-    if (length(idx) == 0) return()
-    SaveNb()
-    d <- list(EvalFunction(cols[[idx]]$fun, cols))
-    EditData(d, col.names=cols[[idx]]$id, col.formats=cols[[idx]]$format,
-             read.only=TRUE, win.title="View Raw Data", parent=tt)
-    return()
-  }
-
-
   # assign variables
   rtn <- NULL
 
@@ -376,17 +360,11 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
   # create menus
   top.menu <- tkmenu(tt, tearoff=0)
-
   menu.edit <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
   tkadd(menu.edit, "command", label="New\u2026", accelerator="Ctrl+n",
         command=SaveNewVar)
   tkadd(menu.edit, "command", label="Delete", command=DeleteVar)
-
-  menu.view <- tkmenu(tt, tearoff=0, relief="flat")
-  tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
-  tkadd(menu.view, "command", label="Raw data", command=CallEditData)
-
   menu.arrange <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Arrange", menu=menu.arrange, underline=0)
   tkadd(menu.arrange, "command", label="Send to top", accelerator="Shift+Ctrl+[",
@@ -397,7 +375,6 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
         command=function() Arrange("forward"))
   tkadd(menu.arrange, "command", label="Bring to bottom", accelerator="Shift+Ctrl+]",
         command=function() Arrange("front"))
-
   tkconfigure(tt, menu=top.menu)
 
   # frame 0, ok and cancel buttons, and size grip
@@ -410,38 +387,37 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
                         command=function() Arrange("forward"))
   f0.but.4 <- ttkbutton(f0, width=2, image=GetBitmapImage("bottom"),
                         command=function() Arrange("front"))
-  f0.but.5 <- ttkbutton(f0, width=2, image=GetBitmapImage("view"),
-                        command=CallEditData)
-  f0.but.6 <- ttkbutton(f0, width=2, image=GetBitmapImage("plus"),
+  f0.but.5 <- ttkbutton(f0, width=2, image=GetBitmapImage("plus"),
                         command=SaveNewVar)
-  f0.but.7 <- ttkbutton(f0, width=2, image=GetBitmapImage("delete"),
+  f0.but.6 <- ttkbutton(f0, width=2, image=GetBitmapImage("delete"),
                         command=DeleteVar)
 
-  f0.but.9 <- ttkbutton(f0, width=12, text="OK",
+  f0.but.8 <- ttkbutton(f0, width=12, text="OK",
                         command=function() SaveChanges("ok"))
-  f0.but.10 <- ttkbutton(f0, width=12, text="Cancel",
+  f0.but.9 <- ttkbutton(f0, width=12, text="Cancel",
                          command=function() tclvalue(tt.done.var) <- 1)
-  f0.but.11 <- ttkbutton(f0, width=12, text="Apply",
+  f0.but.10 <- ttkbutton(f0, width=12, text="Apply",
                          command=function() SaveChanges("apply"))
-  f0.but.12 <- ttkbutton(f0, width=12, text="Help",
+  f0.but.11 <- ttkbutton(f0, width=12, text="Help",
                          command=function() {
                            print(help("ManageVariables", package="RSurvey", verbose=FALSE))
                          })
   f0.grp.12 <- ttksizegrip(f0)
 
-  tkgrid(f0.but.1, f0.but.2, f0.but.3, f0.but.4, f0.but.5, f0.but.6, f0.but.7, "x",
-         f0.but.9, f0.but.10, f0.but.11, f0.but.12, f0.grp.12)
+  tkgrid(f0.but.1, f0.but.2, f0.but.3, f0.but.4, f0.but.5, f0.but.6, "x",
+         f0.but.8, f0.but.9, f0.but.10, f0.but.11, f0.grp.12)
 
-  tkgrid.columnconfigure(f0, 7, weight=1)
+  tkgrid.columnconfigure(f0, 6, weight=1)
 
-  tkgrid.configure(f0.but.1, f0.but.2, f0.but.3, f0.but.4, f0.but.5, f0.but.6, f0.but.7,
+  tkgrid.configure(f0.but.1, f0.but.2, f0.but.3, f0.but.4, f0.but.5, f0.but.6,
                    sticky="n", padx=c(0, 2), pady=c(0, 0))
   tkgrid.configure(f0.but.1, padx=c(10, 2))
-  tkgrid.configure(f0.but.9, f0.but.10, f0.but.11, f0.but.12, padx=c(0, 4), pady=c(15, 10))
-  tkgrid.configure(f0.but.12, columnspan=2, padx=c(0, 10))
+  tkgrid.configure(f0.but.6, padx=c(26, 0))
+  tkgrid.configure(f0.but.8, f0.but.9, f0.but.10, f0.but.11, padx=c(0, 4), pady=c(15, 10))
+  tkgrid.configure(f0.but.11, columnspan=2, padx=c(0, 10))
   tkgrid.configure(f0.grp.12, sticky="se")
 
-  tkraise(f0.but.12, f0.grp.12)
+  tkraise(f0.but.11, f0.grp.12)
 
   tkpack(f0, fill="x", side="bottom", anchor="e")
 

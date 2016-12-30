@@ -1,4 +1,4 @@
-SetInterpolation <- function(parent=NULL) {
+DefineInterpGrid <- function(parent=NULL) {
 
 
   # update parameter values
@@ -108,7 +108,7 @@ SetInterpolation <- function(parent=NULL) {
       tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
                                "+", as.integer(geo[3]) + 25))
   }
-  tktitle(tt) <- "Interpolation Options"
+  tktitle(tt) <- "Interpolation Grid"
   tkwm.resizable(tt, 1, 0)
 
   # frame 0, ok and cancel buttons
@@ -120,7 +120,7 @@ SetInterpolation <- function(parent=NULL) {
 
   f0.but.4 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(help("SetInterpolation", package="RSurvey"))
+                          print(help("DefineInterpGrid", package="RSurvey"))
                         })
   tkgrid("x", f0.but.2, f0.but.3, f0.but.4, pady=c(15, 10), padx=c(4, 0))
   tkgrid.columnconfigure(f0, 0, weight=1)
@@ -129,7 +129,7 @@ SetInterpolation <- function(parent=NULL) {
 
   # frame 1, grid options
   f1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                      text="Define interpolation grid using")
+                      text="Define grid using")
   f1.rbt.1.1 <- ttkradiobutton(f1, variable=opt.var, value=1, text="defaults",
                                command=ToggleState)
   f1.rbt.1.2 <- ttkradiobutton(f1, variable=opt.var, value=2, text="cell resolution",

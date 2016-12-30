@@ -1,4 +1,5 @@
-BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
+BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL,
+                           parent=NULL) {
 
 
   # calculate and plot histogram
@@ -8,6 +9,9 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
 
     idx <- as.integer(tcl(f1.box.1.2, "current")) + 1L
     xlab <- as.character(var.names[idx])
+
+    processed <- as.logical(as.integer(tclvalue(processed.var)))
+    row.idxs <- if (processed) processed.rec else seq_along(d[[idx]])
 
     type <- as.integer(tclvalue(breaks.var))
     if (type == 1L) {
@@ -23,20 +27,21 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     }
 
     right <- as.logical(as.integer(tclvalue(right.var)))
-    obs <- as.logical(as.integer(tclvalue(obs.var)))
-    freq <- as.logical(as.integer(tclvalue(freq.var)))
-    obj <- try(hist(d[[idx]], breaks=breaks, right=right, plot=FALSE), silent=TRUE)
+    obs   <- as.logical(as.integer(tclvalue(obs.var)))
+    freq  <- as.logical(as.integer(tclvalue(freq.var)))
+
+    obj <- try(hist(d[[idx]][row.idxs], breaks=breaks, right=right, plot=FALSE),
+               silent=TRUE)
     if (inherits(obj, "try-error")) {
-      msg <- "Unable to construct historgram."
-      tkmessageBox(icon="error", message=msg, detail=obj, title="Error",
-                   type="ok", parent=tt)
+      tkmessageBox(icon="error", message="Unable to build historgram.", detail=obj,
+                   title="Error", type="ok", parent=tt)
       return()
     }
 
     if (draw.plot) {
       if (dev.cur() == dev) {
         dev.new()
-        par(mar=c(5, 5, 2, 2) + 0.1)
+        par(mar=c(5, 5, 2, 2) + 0.1, cex=0.8)
       }
       plot(obj, col="light grey", freq=freq, main=NULL, xlab=xlab)
       if (obs) rug(d[[idx]], quiet=TRUE)
@@ -62,7 +67,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     breaks <- as.integer(x * (maxs[idx] - 1) + 1)
     if (breaks != as.integer(tclvalue(single.var))) {
       tclvalue(single.var) <- breaks
-      PlotHist()
     }
   }
 
@@ -70,13 +74,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   # adjust scale for bandwidth in density estimate
   AdjustScaleBandwidth <- function(x) {
     tclvalue(bandwidth.var) <- round(as.numeric(x), digits=1)
-    PlotHist()
-  }
-
-
-  # draw histogram
-  PlotHist <- function() {
-    if (dev.cur() > dev) CalcHist()
   }
 
 
@@ -102,7 +99,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     } else if (states[3]) {
       tkfocus(f2.ent.6.1)
     }
-    PlotHist()
   }
 
 
@@ -116,7 +112,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     s <- if (freq) "disabled" else "normal"
     tkconfigure(f4.ent.2.3, state=s)
     if (freq) tkfocus(f4.ent.2.3)
-    PlotHist()
   }
 
 
@@ -145,6 +140,10 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   }
   var.names <- var.names[is.num]
 
+  if (!is.null(processed.rec) && !inherits(processed.rec, "integer"))
+    stop("problem with 'processed.rec' argument value")
+
+  # set defaults
   if (inherits(var.default, c("character", "integer"))) {
     if (is.character(var.default))
       var.default <- which(var.default[1] == var.names)
@@ -154,7 +153,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
     var.default <- 1L
   }
 
-  # set limits and default value
   maxs <- vapply(d, function(i) length(unique(i)), 0L)
   maxs[maxs > 100] <- 100
   maxs[maxs <  10] <-  10
@@ -167,6 +165,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   # assign the variables linked to Tk widgets
   fun.names <- c("sturges", "scott", "freedman-diaconis")
 
+  processed.var <- tclVar(FALSE)
   breaks.var    <- tclVar(1L)
   single.var    <- tclVar(defs[var.default])
   scale.sgl.var <- tclVar(xdef)
@@ -216,7 +215,13 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
 
   f1.lab.1.1 <- ttklabel(f1, text="Variable")
   f1.box.1.2 <- ttkcombobox(f1, state="readonly")
+
+  txt <- "Only include processed records"
+  f1.chk.2.2 <- ttkcheckbutton(f1, text=txt, variable=processed.var)
+
   tkgrid(f1.lab.1.1, f1.box.1.2, pady=c(10, 0))
+
+  if (!is.null(processed.rec)) tkgrid("x", f1.chk.2.2, pady=c(5, 0), sticky="w")
 
   tkgrid.configure(f1.lab.1.1, sticky="e",  padx=c(10, 2))
   tkgrid.configure(f1.box.1.2, sticky="we", padx=c(0, 10))
@@ -226,6 +231,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
   tcl(f1.box.1.2, "current", var.default - 1L)
 
   tkgrid.columnconfigure(f1, 1, weight=1, minsize=25)
+
   tkpack(f1, fill="x", expand=TRUE, padx=10, pady=5)
 
   # frame 2
@@ -266,10 +272,10 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
 
   # frame 3
   f3 <- ttkframe(tt, relief="flat")
-  txt <- "The histogram cells are right-closed (left-open) intervals"
-  f3.chk.1.1 <- ttkcheckbutton(f3, text=txt, variable=right.var, command=PlotHist)
-  f3.chk.2.1 <- ttkcheckbutton(f3, text="Show individual observations", variable=obs.var,
-                               command=PlotHist)
+  txt <- "Histogram cells are right-closed (left-open) intervals"
+  f3.chk.1.1 <- ttkcheckbutton(f3, text=txt, variable=right.var)
+  txt <- "Show individual observations"
+  f3.chk.2.1 <- ttkcheckbutton(f3, text=txt, variable=obs.var)
   tkgrid(f3.chk.1.1, sticky="w")
   tkgrid(f3.chk.2.1, sticky="w")
   tkpack(f3, fill="x", expand=TRUE, padx=20, pady=5)
@@ -306,9 +312,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
            idx <- as.integer(tcl(f1.box.1.2, "current")) + 1
            x <- as.numeric(tclvalue(scale.sgl.var))
            tclvalue(single.var) <- as.integer(x * (maxs[idx] - 1) + 1)
-           PlotHist()
          })
-  tkbind(f2.box.2.1, "<<ComboboxSelected>>", PlotHist)
 
   tkbind(f2.ent.4.3, "<Return>",
          function() {
@@ -321,7 +325,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
            }
            tclvalue(single.var) <- ent
            tclvalue(scale.sgl.var) <- (ent - 1) / (maxs[idx] - 1)
-           PlotHist()
          })
 
   tkbind(f4.ent.2.3, "<Return>",
@@ -336,7 +339,6 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, parent=NULL) {
            }
            tclvalue(bandwidth.var) <- ent
            tclvalue(scale.bw.var) <- ent
-           PlotHist()
          })
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
