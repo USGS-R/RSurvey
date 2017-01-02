@@ -273,11 +273,11 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
   # frame 1, format using
   f1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5, text="Format using")
 
-  f1.rbt.1.1 <- ttkradiobutton(f1, variable=opt.var, value=1L, text="common format",
+  f1.rbt.1.1 <- ttkradiobutton(f1, variable=opt.var, value=1L, text="Common format",
                                command=ToggleState)
-  f1.rbt.1.2 <- ttkradiobutton(f1, variable=opt.var, value=2L, text="c-style options",
+  f1.rbt.1.2 <- ttkradiobutton(f1, variable=opt.var, value=2L, text="C-style options",
                                command=ToggleState)
-  f1.rbt.1.3 <- ttkradiobutton(f1, variable=opt.var, value=3L, text="c-style string",
+  f1.rbt.1.3 <- ttkradiobutton(f1, variable=opt.var, value=3L, text="C-style string",
                                command=ToggleState)
 
   tkgrid(f1.rbt.1.1, f1.rbt.1.2, f1.rbt.1.3)

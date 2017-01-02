@@ -76,7 +76,7 @@ SetCrs <- function(crs=sp::CRS(as.character(NA)), parent=NULL) {
 
   menu.file <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="File", menu= menu.file, underline=0)
-  tkadd(menu.file, "command", label="Import from projection file\u2026",
+  tkadd(menu.file, "command", label="Import\u2026",
         command=function() GetCrs())
 
   menu.crs <- tkmenu(tt, tearoff=0)

@@ -130,11 +130,11 @@ DefineInterpGrid <- function(parent=NULL) {
   # frame 1, grid options
   f1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
                       text="Define grid using")
-  f1.rbt.1.1 <- ttkradiobutton(f1, variable=opt.var, value=1, text="defaults",
+  f1.rbt.1.1 <- ttkradiobutton(f1, variable=opt.var, value=1, text="Defaults",
                                command=ToggleState)
-  f1.rbt.1.2 <- ttkradiobutton(f1, variable=opt.var, value=2, text="cell resolution",
+  f1.rbt.1.2 <- ttkradiobutton(f1, variable=opt.var, value=2, text="Cell resolution",
                                command=ToggleState)
-  f1.rbt.1.3 <- ttkradiobutton(f1, variable=opt.var, value=3, text="explicit geometry",
+  f1.rbt.1.3 <- ttkradiobutton(f1, variable=opt.var, value=3, text="Explicit geometry",
                                command=ToggleState)
   tkgrid(f1.rbt.1.1, f1.rbt.1.2, f1.rbt.1.3)
   tkgrid.configure(f1.rbt.1.2, padx=10)

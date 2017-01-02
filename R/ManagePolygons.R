@@ -388,12 +388,12 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
 
   menu.file <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
-  tkadd(menu.file, "command", label="Open\u2026", accelerator="Ctrl+o", command=ImportPolygon)
+  tkadd(menu.file, "command", label="Import\u2026", accelerator="Ctrl+o", command=ImportPolygon)
   menu.file.export <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.export, "command", label="Text file\u2026",
-        command=function() ExportPolygon("txt"))
   tkadd(menu.file.export, "command", label="Shapefile\u2026",
         command=function() ExportPolygon("shp"))
+  tkadd(menu.file.export, "command", label="Text file\u2026",
+        command=function() ExportPolygon("txt"))
   tkadd(menu.file, "cascade", label="Export as", menu=menu.file.export)
   menu.edit <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)

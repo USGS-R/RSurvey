@@ -82,18 +82,39 @@ StartGui <- function() {
   WriteData <- function(file.type) {
     if (is.null(Data("cols"))) return()
     is.coordinate <- !is.null(Data("vars")$x) & !is.null(Data("vars")$y)
-    if (!is.coordinate & file.type %in% c("shp", "grd")) return()
-    if (file.type == "grd") {
-      ProcessData()
-      d <- Data("data.grd")
-      if (is.null(d)) return()
-      file <- GetFile(cmd="Save As", exts="rda", file=NULL,
-                      win.title="Save Grid Data As", defaultextension="rda")
-      if (is.null(file)) return()
-      save(d, file=file)
+    if (!is.coordinate & file.type %in% c("shp", "rda")) return()
+    ProcessData()
+    ExportData(file.type=file.type, parent=tt)
+  }
+
+
+  # write raster
+  WriteRaster <- function(file.type) {
+    if (is.null(Data("cols"))) return()
+    is.coordinate <- !is.null(Data("vars")$x) & !is.null(Data("vars")$y)
+    if (!is.coordinate & file.type %in% c("tif", "rda")) return()
+    ProcessData()
+    r <- Data("data.grd")
+    if (!inherits(r, "RasterLayer")) return()
+    if (file.type == "txt") file.type <- c("tsv", "tab", "csv", "txt")
+    file <- GetFile(cmd="Save As", exts=file.type, file=NULL,
+                    win.title="Save Grid Data As", defaultextension="tif")
+    if (is.null(file)) return()
+    ext <- attr(file, "extension")
+    if (ext == "tif") {
+      raster::writeRaster(r, filename=file, format="GTiff", overwrite=TRUE, NAflag=-999)
+    } else if (ext == "rda") {
+      save(r, file=file)
     } else {
-      ProcessData()
-      ExportData(file.type=file.type, parent=tt)
+      if (ext == "csv") {
+        sep <- ","
+      } else if (ext %in% c("tsv", "tab")) {
+         sep <- "\t"
+      } else {
+        sep <- " "
+      }
+      utils::write.table(raster::as.matrix(r), file=file, quote=FALSE, sep=sep,
+                         row.names=FALSE, col.names=FALSE)
     }
   }
 
@@ -556,12 +577,12 @@ StartGui <- function() {
       idxs <- if (is.all) seq_along(rows) else match(row.nams, rows)
       l <- lapply(col.funs, function(i) EvalFunction(i, cols)[idxs])
       ans <- EditData(l, col.names=col.nams, row.names=row.nams, col.formats=col.fmts,
-                      read.only=TRUE, win.title="View Data", parent=tt)
+                      read.only=TRUE, win.title="Data Viewer", parent=tt)
     } else {
       ans <- EditData(Data("data.raw")[col.idxs], col.names=col.nams,
                       row.names=row.nams, col.formats=col.fmts,
                       read.only=FALSE, changelog=Data("changelog"),
-                      win.title="Edit Data", parent=tt)
+                      win.title="Data Editor", parent=tt)
     }
     if (is.null(ans)) return()
 
@@ -792,7 +813,6 @@ StartGui <- function() {
   # check if suggested packages are loaded
   is.pkg.xml        <- requireNamespace("XML",        quietly=TRUE)
   is.pkg.rgl        <- requireNamespace("rgl",        quietly=TRUE)
-  is.pkg.rgdal      <- requireNamespace("rgdal",      quietly=TRUE)
   is.pkg.tripack    <- requireNamespace("tripack",    quietly=TRUE)
   is.pkg.colorspace <- requireNamespace("colorspace", quietly=TRUE)
 
@@ -837,32 +857,39 @@ StartGui <- function() {
 
   tkadd(menu.file, "separator")
   menu.file.import <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.import, "command", label="Text file or clipboard\u2026",
-        command=function() ReadData("txt"))
-  tkadd(menu.file.import, "command", label="XML-spreadsheet file\u2026",
-        state=ifelse(is.pkg.xml, "normal", "disabled"),
-        command=function() ReadData("xlsx"))
   tkadd(menu.file.import, "command", label="Shapefile\u2026",
         command=function() ReadData("shp"))
   tkadd(menu.file.import, "command", label="R-data file\u2026",
         command=function() ReadData("rda"))
   tkadd(menu.file.import, "command", label="R-package dataset\u2026",
         command=function() ReadData("rpackage"))
+  tkadd(menu.file.import, "command", label="Text file or clipboard\u2026",
+        command=function() ReadData("txt"))
+  tkadd(menu.file.import, "command", label="XML-spreadsheet file\u2026",
+        state=ifelse(is.pkg.xml, "normal", "disabled"),
+        command=function() ReadData("xlsx"))
   tkadd(menu.file, "cascade", label="Import point data from", menu=menu.file.import)
-  menu.file.export <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.export, "command", label="Text file\u2026",
-        command=function() WriteData("txt"))
-  tkadd(menu.file.export, "command", label="Shapefile\u2026",
-        state=if (is.pkg.rgdal) "normal" else "disabled",
+  menu.file.export.pnt <- tkmenu(tt, tearoff=0)
+  tkadd(menu.file.export.pnt, "command", label="Shapefile\u2026",
         command=function() WriteData("shp"))
-  tkadd(menu.file.export, "command", label="R-data file\u2026",
+  tkadd(menu.file.export.pnt, "command", label="R-data file\u2026",
         command=function() WriteData("rda"))
-  tkadd(menu.file, "cascade", label="Export point data as", menu=menu.file.export)
-  tkadd(menu.file, "command", label="Export grid data as\u2026",
-        command=function() WriteData("grd"))
-
+  tkadd(menu.file.export.pnt, "command", label="Text file\u2026",
+        command=function() WriteData("txt"))
+  tkadd(menu.file, "cascade", label="Export point data as", menu=menu.file.export.pnt)
+  menu.file.export.grd <- tkmenu(tt, tearoff=0)
+  tkadd(menu.file.export.grd, "command", label="GeoTIFF\u2026",
+        command=function() WriteRaster("tif"))
+  tkadd(menu.file.export.grd, "command", label="R-data file\u2026",
+        command=function() WriteRaster("rda"))
+  tkadd(menu.file.export.grd, "command", label="Text file\u2026",
+        command=function() WriteRaster("txt"))
+  tkadd(menu.file, "cascade", label="Export interpolated grid data as", menu=menu.file.export.grd)
   tkadd(menu.file, "separator")
   menu.file.save <- tkmenu(tt, tearoff=0)
+
+
+
 
   tkadd(menu.file, "cascade", label="Save plot as\u2026", command=function() print("notyet"))
 
@@ -983,7 +1010,7 @@ StartGui <- function() {
   tkadd(menu.graph, "command", label="Build histogram\u2026", command=CallBuildHistogram)
   tkadd(menu.graph, "separator")
   menu.graph.new <- tkmenu(tt, tearoff=0)
-  tkadd(menu.graph.new, "command", label="R graphics", command=dev.new)
+  tkadd(menu.graph.new, "command", label="R graphics", accelerator="Ctrl+F3", command=dev.new)
   tkadd(menu.graph.new, "command", label="RGL graphics", command=rgl::open3d)
   tkadd(menu.graph, "cascade", label="Open a new device for", menu=menu.graph.new)
   tkadd(menu.graph, "command", label="Close all graphic devices", accelerator="Ctrl+F4",
@@ -1100,10 +1127,8 @@ StartGui <- function() {
   # frame 3, graphics device
   f3 <- tkframe(tt, relief="flat")
   f3.lab.1.1 <- ttklabel(f3, text="Graphics device")
-  f3.rad.1.2 <- ttkradiobutton(f3, variable=device.var, value="R", text="R",
-                               command=SetState)
-  f3.rad.1.3 <- ttkradiobutton(f3, variable=device.var, value="RGL", text="RGL",
-                               command=SetState)
+  f3.rad.1.2 <- ttkradiobutton(f3, variable=device.var, value="R", text="R", command=SetState)
+  f3.rad.1.3 <- ttkradiobutton(f3, variable=device.var, value="RGL", text="RGL", command=SetState)
   tkgrid(f3.lab.1.1, f3.rad.1.2, f3.rad.1.3, pady=c(0, 10), sticky="e")
   tkgrid.configure(f3.lab.1.1, padx=c(0, 4))
   tkgrid.configure(f3.rad.1.2, padx=2)
@@ -1121,6 +1146,7 @@ StartGui <- function() {
   tkbind(tt, "<Control-s>",       SaveProj)
   tkbind(tt, "<Shift-Control-S>", SaveProjAs)
   tkbind(tt, "<Control-r>",       SaveRDevice)
+  tkbind(tt, "<Control-F3>",      dev.new)
   tkbind(tt, "<Control-F4>",      CloseDevices)
 
   tkbind(f1.box.1.2, "<<ComboboxSelected>>", RefreshVars)
