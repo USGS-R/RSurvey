@@ -870,10 +870,10 @@ StartGui <- function() {
 
 
 
-  tkadd(menu.file.save, "command", label="R graphic\u2026", accelerator="Ctrl+r",
+  tkadd(menu.file.save, "command", label="R device\u2026", accelerator="Ctrl+r",
         command=SaveRDevice)
-  tkadd(menu.file.save, "command", label="RGL graphic\u2026", command=SaveRGLDevice)
-  tkadd(menu.file, "cascade", label="Save snapshot from", menu=menu.file.save)
+  tkadd(menu.file.save, "command", label="RGL device\u2026", command=SaveRGLDevice)
+  tkadd(menu.file, "cascade", label="Save snapshot from current", menu=menu.file.save)
 
   tkadd(menu.file, "separator")
   tkadd(menu.file, "command", label="Exit", command=CloseGUI)
@@ -889,7 +889,7 @@ StartGui <- function() {
         })
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Manage variables\u2026", command=CallManageVariables)
-  tkadd(menu.edit, "command", label="Edit imported data\u2026",
+  tkadd(menu.edit, "command", label="Change imported data\u2026",
         command=function() CallEditData(read.only=FALSE))
   tkadd(menu.edit, "command", label="Comment\u2026", command=EditComment)
 
@@ -920,16 +920,16 @@ StartGui <- function() {
   menu.view <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
   menu.view.raw <- tkmenu(tt, tearoff=0)
-  tkadd(menu.view.raw, "command", label="All variables\u2026",
-        command=function() CallEditData(is.all=TRUE, is.state=FALSE))
   tkadd(menu.view.raw, "command", label="Coordinate variables\u2026",
         command=function() CallEditData(is.all=TRUE, is.state=TRUE))
+  tkadd(menu.view.raw, "command", label="All variables\u2026",
+        command=function() CallEditData(is.all=TRUE, is.state=FALSE))
   tkadd(menu.view, "cascade", label="All data records for", menu=menu.view.raw)
   menu.view.pr <- tkmenu(tt, tearoff=0)
-  tkadd(menu.view.pr, "command", label="All variables\u2026",
-        command=function() CallEditData(is.all=FALSE, is.state=FALSE))
   tkadd(menu.view.pr, "command", label="Coordinate variables\u2026",
         command=function() CallEditData(is.all=FALSE, is.state=TRUE))
+  tkadd(menu.view.pr, "command", label="All variables\u2026",
+        command=function() CallEditData(is.all=FALSE, is.state=FALSE))
   tkadd(menu.view, "cascade", label="Processed data records for", menu=menu.view.pr)
 
   # polygon menu
@@ -982,6 +982,10 @@ StartGui <- function() {
   tkadd(menu.graph, "separator")
   tkadd(menu.graph, "command", label="Build histogram\u2026", command=CallBuildHistogram)
   tkadd(menu.graph, "separator")
+  menu.graph.new <- tkmenu(tt, tearoff=0)
+  tkadd(menu.graph.new, "command", label="R graphics", command=dev.new)
+  tkadd(menu.graph.new, "command", label="RGL graphics", command=rgl::open3d)
+  tkadd(menu.graph, "cascade", label="Open a new device for", menu=menu.graph.new)
   tkadd(menu.graph, "command", label="Close all graphic devices", accelerator="Ctrl+F4",
         command=CloseDevices)
 

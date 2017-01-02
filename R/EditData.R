@@ -870,7 +870,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   tkgrid.columnconfigure(f0, 0, weight=1)
   tkpack(f0, fill="x", side="top")
 
-  # frame 1, close, save, cancel buttons
+  # frame 1, bottom buttons
   f1 <- ttkframe(tt, relief="flat")
 
   if (read.only) {
@@ -889,12 +889,11 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   f1.grp.1.5 <- ttksizegrip(f1)
 
   tkgrid("x", f1.but.1.2, f1.but.1.3, f1.but.1.4, f1.grp.1.5)
-
   tkgrid.columnconfigure(f1, 0, weight=1)
-
   if (!read.only) tkgrid.configure(f1.but.1.2, padx=c(10, 0))
   tkgrid.configure(f1.but.1.3, padx=c(4, 0))
-  tkgrid.configure(f1.but.1.4, pady=10, padx=c(4, 10), columnspan=2)
+  tkgrid.configure(f1.but.1.4, padx=c(4, 10), columnspan=2)
+  tkgrid.configure(f1.but.1.2, f1.but.1.3, f1.but.1.4, pady=c(0, 10))
   tkgrid.configure(f1.grp.1.5, sticky="se")
 
   tkraise(f1.but.1.4, f1.grp.1.5)
@@ -905,26 +904,26 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   f2 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0, height=200)
 
   f2.lab.1.1 <- ttklabel(f2, text="Record")
-  f2.lab.2.1 <- ttklabel(f2, text="Find")
+  f2.lab.1.4 <- ttklabel(f2, text="Find")
 
   f2.ent.1.2 <- ttkentry(f2, width=15, font="TkFixedFont", textvariable=record.var)
-  f2.ent.2.2 <- ttkentry(f2, width=15, font="TkFixedFont", textvariable=pattern.var)
+  f2.ent.1.5 <- ttkentry(f2, width=15, font="TkFixedFont", textvariable=pattern.var)
 
-  f2.but.1.3 <- ttkbutton(f2, width=4, text="View", command=ViewRecord)
-  f2.but.2.3 <- ttkbutton(f2, width=2, image=GetBitmapImage("previous"),
+  f2.but.1.3 <- ttkbutton(f2, width=5, text="View", command=ViewRecord)
+  f2.but.1.6 <- ttkbutton(f2, width=2, image=GetBitmapImage("previous"),
                           command=function() Find("prev"))
-  f2.but.2.4 <- ttkbutton(f2, width=2, image=GetBitmapImage("next"),
+  f2.but.1.7 <- ttkbutton(f2, width=2, image=GetBitmapImage("next"),
                           command=function() Find("next"))
 
-  tkgrid(f2.lab.1.1, f2.ent.1.2, f2.but.1.3, pady=c(0, 4))
-  tkgrid(f2.lab.2.1, f2.ent.2.2, f2.but.2.3, f2.but.2.4)
+  tkgrid(f2.lab.1.1, f2.ent.1.2, f2.but.1.3,
+         f2.lab.1.4, f2.ent.1.5, f2.but.1.6, f2.but.1.7, pady=c(0, 4))
+  tkgrid.configure(f2.lab.1.1, f2.ent.1.2, f2.lab.1.4, f2.ent.1.5,
+                   padx=c(0, 2), sticky="w")
 
-  tkgrid.configure(f2.ent.2.2, f2.ent.1.2, padx=c(0, 2))
-  tkgrid.configure(f2.lab.2.1, f2.lab.1.1, padx=c(0, 2), sticky="w")
-  tkgrid.configure(f2.but.1.3, columnspan=2, padx=c(0, 70), sticky="we")
-  tkgrid.configure(f2.but.2.4, padx=c(2, 70))
+  tkgrid.configure(f2.lab.1.4, padx=c(15, 2))
+  tkgrid.configure(f2.but.1.7, padx=c(1, 10))
 
-  tkpack(f2, side="bottom", anchor="nw", padx=c(10, 0))
+  tkpack(f2, side="bottom", anchor="nw", padx=c(10, 15))
 
   # frame 3, spreadsheet
   f3 <- ttkframe(tt, relief="flat", padding=0, borderwidth=0)
@@ -1013,10 +1012,10 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
            tkyview(f3.tbl, "scroll", number, "units")
          })
 
-  tkbind(f2.ent.2.2, "<KeyRelease>", function() matched.cells <<- NULL)
-  tkbind(f2.ent.2.2, "<Return>",     function() Find("next"))
-  tkbind(f2.ent.2.2, "<Up>",         function() Find("prev"))
-  tkbind(f2.ent.2.2, "<Down>",       function() Find("next"))
+  tkbind(f2.ent.1.5, "<KeyRelease>", function() matched.cells <<- NULL)
+  tkbind(f2.ent.1.5, "<Return>",     function() Find("next"))
+  tkbind(f2.ent.1.5, "<Up>",         function() Find("prev"))
+  tkbind(f2.ent.1.5, "<Down>",       function() Find("next"))
   tkbind(f2.ent.1.2, "<Return>",     function() ViewRecord())
 
   # gui control
