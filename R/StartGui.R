@@ -897,10 +897,10 @@ StartGui <- function() {
 
 
 
-  tkadd(menu.file.save, "command", label="R device\u2026", accelerator="Ctrl+r",
+  tkadd(menu.file.save, "command", label="R graphics device\u2026", accelerator="Ctrl+r",
         command=SaveRDevice)
-  tkadd(menu.file.save, "command", label="RGL device\u2026", command=SaveRGLDevice)
-  tkadd(menu.file, "cascade", label="Save snapshot from current", menu=menu.file.save)
+  tkadd(menu.file.save, "command", label="RGL graphics device\u2026", command=SaveRGLDevice)
+  tkadd(menu.file, "cascade", label="Save snapshot from active", menu=menu.file.save)
 
   tkadd(menu.file, "separator")
   tkadd(menu.file, "command", label="Exit", command=CloseGUI)
