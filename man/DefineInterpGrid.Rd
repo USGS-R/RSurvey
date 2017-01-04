@@ -8,12 +8,16 @@
 A \acronym{GUI} for defining the interpolation grid.
 }
 
-\usage{DefineInterpGrid(parent = NULL)}
+\usage{DefineInterpGrid(grid.res = NULL, grid.geo = NULL, parent = NULL)}
 
-\arguments{\item{parent}{tkwin; the \acronym{GUI} parent window.}}
+\arguments{
+\item{grid.res}{list; see \sQuote{Value}.}
+\item{grid.geo}{list; see \sQuote{Value}.}
+\item{parent}{tkwin; the \acronym{GUI} parent window.}
+}
 
 \value{
-Queries and sets the following components in \code{\link{Data}}:
+Returns a list with the following components:
 \item{grid.res}{list; numeric components \code{x} and \code{y}
   giving the grid spacing along the x- and y-axis of the
   interpolated surface, respectively.}
@@ -25,8 +29,7 @@ Queries and sets the following components in \code{\link{Data}}:
 }
 
 \note{
-If data is re-imported, parameters in this \acronym{GUI} are set to default
-values.
+If data is re-imported, parameters in this \acronym{GUI} are set to default values.
 }
 
 \author{J.C. Fisher}

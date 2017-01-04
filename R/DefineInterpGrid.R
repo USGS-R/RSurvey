@@ -1,20 +1,19 @@
-DefineInterpGrid <- function(parent=NULL) {
+DefineInterpGrid <- function(grid.res=NULL, grid.geo=NULL, parent=NULL) {
 
 
   # update parameter values
   UpdatePar <- function() {
     opt <- as.integer(tclvalue(opt.var))
-    if (opt == 1 || opt == 2) Data("grid.geo", NULL)
-    if (opt == 1 || opt == 3) Data("grid.res", NULL)
+    if (opt == 1 || opt == 2) grid.geo <- NULL
+    if (opt == 1 || opt == 3) grid.res <- NULL
 
     if (opt == 2) {
-      res <- c(as.numeric(tclvalue(xres.var)), as.numeric(tclvalue(yres.var)))
-      if (any(is.na(res))) {
+     grid.res <- c(as.numeric(tclvalue(xres.var)), as.numeric(tclvalue(yres.var)))
+      if (any(is.na(grid.res))) {
         tkmessageBox(icon="error", title="Error", type="ok", parent=tt,
                      message="All grid spacing fields are required.")
         return()
       }
-      Data("grid.res", res)
     } else if (opt == 3) {
       nrows <- as.integer(tclvalue(nrow.var))
       ncols <- as.integer(tclvalue(ncol.var))
@@ -27,10 +26,18 @@ DefineInterpGrid <- function(parent=NULL) {
                      message="All grid geometry fields are required.")
         return()
       }
-      r <- raster::raster(nrows=nrows, ncols=ncols, xmn=xmn, xmx=xmx, ymn=ymn, ymx=ymx,
-                          crs=sp::CRS(as.character(NA)), vals=NULL)
-      Data("grid.geo", r)
+      ans <- try(raster::raster(nrows=nrows, ncols=ncols,
+                                     xmn=xmn, xmx=xmx, ymn=ymn, ymx=ymx,
+                                     crs=sp::CRS(as.character(NA)), vals=NULL),
+                                     silent=TRUE)
+      if (inherits(ans, "try-error")) {
+        tkmessageBox(icon="error", detail=ans, title="Error", type="ok", parent=tt,
+                     message="Problem with grid geometry.")
+        return()
+      }
+      grid.geo <- ans
     }
+    rtn <<- list(grid.res=grid.res, grid.geo=grid.geo)
     tclvalue(tt.done.var) <- 1
   }
 
@@ -69,6 +76,8 @@ DefineInterpGrid <- function(parent=NULL) {
   }
 
 
+  rtn <- NULL
+
   # assign variables linked to tk widgets
   opt.var     <- tclVar(1)
   xres.var    <- tclVar()
@@ -81,14 +90,12 @@ DefineInterpGrid <- function(parent=NULL) {
   ymax.var    <- tclVar()
   tt.done.var <- tclVar(0)
 
-  grid.res <- Data("grid.res")
   if (!is.null(grid.res) && inherits(grid.res, "numeric") && length(grid.res) == 2) {
     tclvalue(xres.var) <- grid.res[1]
     tclvalue(yres.var) <- grid.res[2]
     tclvalue(opt.var) <- 2
   }
 
-  grid.geo <- Data("grid.geo")
   if (!is.null(grid.geo) && inherits(grid.geo, "RasterLayer")) {
     tclvalue(ncol.var) <- raster::ncol(grid.geo)
     tclvalue(nrow.var) <- raster::nrow(grid.geo)
@@ -213,4 +220,6 @@ DefineInterpGrid <- function(parent=NULL) {
   tkgrab.release(tt)
   tkdestroy(tt)
   tclServiceMode(TRUE)
+
+  return(rtn)
 }

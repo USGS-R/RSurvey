@@ -738,9 +738,14 @@ StartGui <- function() {
         m <- 2
       else
         n <- 2
-      r[] <- MBA::mba.points(xyz=cbind(x, y, z)[!is.na(z), ],
-                             xy.est=sp::coordinates(r),
-                             n=n, m=m, h=11, verbose=FALSE)$xyz.est[, "z"]
+      ans <- try(MBA::mba.points(xyz=cbind(x, y, z)[!is.na(z), ],
+                                 xy.est=sp::coordinates(r),
+                                 n=n, m=m, h=11, verbose=FALSE)$xyz.est[, "z"])
+     if (inherits(ans, "try-error"))
+       r <- NULL
+     else
+       r[] <- ans
+
       Data("data.grd", r)
     }
   }
@@ -942,7 +947,17 @@ StartGui <- function() {
 
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Define interpolation grid\u2026",
-        command=function() DefineInterpGrid(tt))
+        command=function() {
+          grid.res.old <- Data("grid.res")
+          grid.geo.old <- Data("grid.geo")
+          ans <- DefineInterpGrid(grid.res.old, grid.geo.old, tt)
+          if (is.null(ans)) return()
+          Data("grid.res", ans$grid.res)
+          Data("grid.geo", ans$grid.geo)
+          if (!identical(grid.res.old, Data("grid.res")) |
+              !identical(grid.geo.old, Data("grid.geo")))
+            Data("data.grd", NULL)
+        })
 
   # view menu
   menu.view <- tkmenu(tt, tearoff=0)
