@@ -279,8 +279,8 @@ StartGui <- function() {
     is.pnt <- as.integer(tcl(f2.box.1.2, "current")) == 0
     is.r   <- as.character(tclvalue(device.var)) == "R"
 
-    state <- ifelse(is.xyz | (is.xy & is.pnt & is.r), "normal", "disabled")
-    tkconfigure(f2.but.1.1, state=state)
+    s <- ifelse(is.xyz | (is.xy & is.pnt & is.r), "normal", "disabled")
+    tkconfigure(f2.but.1.1, state=s)
 
     # radiobutton
     tkconfigure(f3.rad.1.3, state=ifelse(is.pkg.rgl, "normal", "disabled"))
@@ -412,7 +412,6 @@ StartGui <- function() {
   CallManagePolygons <- function() {
     old.polys     <- Data("polys")
     old.poly.data <- Data("poly.data")
-    old.poly.crop <- Data("poly.crop")
     old.crs       <- Data("crs")
 
     ans <- ManagePolygons(Data("polys"), Data("poly.data"), Data("poly.crop"),
@@ -426,10 +425,6 @@ StartGui <- function() {
       Data("data.pts", NULL)
       Data("data.grd", NULL)
     }
-
-    old <- if (is.null(old.poly.crop)) NULL else old.polys[[old.poly.crop]]
-    new <- if (is.null(ans$poly.crop)) NULL else ans$polys[[ans$poly.crop]]
-    if (!identical(new, old)) Data("data.grd",  NULL)
 
     Data("polys", if (length(ans$polys) == 0) NULL else ans$polys)
     Data("poly.data", ans$poly.data)
@@ -451,7 +446,6 @@ StartGui <- function() {
       Data("data.pts", NULL)
       Data("data.grd", NULL)
     }
-    if (!identical(new.poly.crop, old.poly.crop)) Data("data.grd", NULL)
     Data("poly.data", new.poly.data)
     Data("poly.crop", new.poly.crop)
   }
@@ -525,24 +519,41 @@ StartGui <- function() {
 
   # plot data
   CallPlot <- function() {
-
     graphics.device <- as.character(tclvalue(device.var))
-
     plot.type <- paste(as.character(tcl(f2.box.1.2, "get")), collapse=" ")
-
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
     ProcessData()
+    ans <- NULL
+    if (graphics.device == "R") {
 
 
+      ans <- NULL
 
 
-
+    } else if (graphics.device == "RGL") {
+      if (plot.type == "Points") {
+        r <- NULL
+        p <- Data("data.pts")
+        if (is.null(p)) return()
+      } else {
+        p <- if (plot.type == "Surface") NULL else Data("data.pts")
+        r <- Data("data.grd")
+        if (is.null(r)) return()
+        ply <- if (is.null(Data("poly.crop"))) NULL else Data("polys")[[Data("poly.crop")]]
+        if (!is.null(ply)) r <- raster::trim(raster::mask(r, ply))
+      }
+      lim <- Data("lim.axes")
+      ans <- try(Plot3d(x=r, px=p, xlim=lim$x, ylim=lim$y, zlim=lim$z,
+                        vasp=Data("asp.zx"), hasp=Data("asp.yx"), width=Data("width"),
+                        cex.pts=Data("cex.pts"), nlevels=Data("nlevels"),
+                        color.palette=Data("color.palette")), silent=TRUE)
+    }
+    if (inherits(ans, "try-error"))
+      tkmessageBox(icon="error", detail=ans, title="Error", type="ok", parent=tt,
+                   message="Error in plotting routine.")
+    tkfocus(tt)
   }
-
-
-
-
-
-
 
 
   # call edit data
@@ -693,19 +704,12 @@ StartGui <- function() {
       x <- sp::coordinates(Data("data.pts"))[, 1]
       y <- sp::coordinates(Data("data.pts"))[, 2]
       z <- Data("data.pts")@data$z
-      p <- if (is.null(Data("poly.crop"))) NULL else Data("polys")[[Data("poly.crop")]]
 
       # build raster template
       r <- Data("grid.geo")
       if (is.null(r) || !inherits(r, "RasterLayer")) {
-        if (is.null(p)) {
-          xlim <- grDevices::extendrange(x)
-          ylim <- grDevices::extendrange(y)
-        } else {
-          bb <- sp::bbox(p)
-          xlim <- grDevices::extendrange(bb[1, ])
-          ylim <- grDevices::extendrange(bb[2, ])
-        }
+        xlim <- grDevices::extendrange(x)
+        ylim <- grDevices::extendrange(y)
         res <- Data("grid.res")
         if (is.null(res)) {
           ncols <- 100
@@ -734,12 +738,9 @@ StartGui <- function() {
         m <- 2
       else
         n <- 2
-      r[] <- MBA::mba.points(xyz=cbind(x, y, z)[!is.na(z), ], xy.est=coordinates(r),
+      r[] <- MBA::mba.points(xyz=cbind(x, y, z)[!is.na(z), ],
+                             xy.est=sp::coordinates(r),
                              n=n, m=m, h=11, verbose=FALSE)$xyz.est[, "z"]
-
-      # crop raster using polygon
-      if (!is.null(p)) r <- raster::mask(r, p)
-
       Data("data.grd", r)
     }
   }

@@ -2,9 +2,9 @@
 
 \alias{Plot3d}
 
-\title{Plot 3D Surface using OpenGL}
+\title{Plot Points and Surface in 3D}
 
-\description{Draws a three-dimensional (\acronym{3D}) surface plot.}
+\description{Draws plot of points and surface in three-dimensional (\acronym{3D}) space.}
 
 \usage{
 Plot3d(x = NULL, y = NULL, z = NULL,
@@ -14,21 +14,26 @@ Plot3d(x = NULL, y = NULL, z = NULL,
        cex.pts = 1, nlevels = 20,
        color.palette = terrain.colors,
        mouse.mode = c("trackball", "zAxis", "zoom"),
-       bg = "white")
+       bg = "white", maxpixels = 500000)
 }
 
 \arguments{
-\item{x, y}{numeric; locations of grid lines at which the values in z are
-  measured. These must be in ascending order. If \code{x} is a list, its
+\item{x}{numeric, list, or RasterLayer; if \code{x} is numeric,
+  values corresponding to rows of \code{y}.
+  These must be in ascending order. If \code{x} is a list, its numeric
   components \code{x$x} and \code{x$y} are used for \code{x} and \code{y},
-  respectively. If the list has component \code{x$z} this is used for \code{z}.}
+  respectively. If the list has component \code{x$z} this is used for \code{z}.
+  If \code{x} is a RasterLayer, \code{y} and \code{z} are ignored.}
+\item{y}{numeric; values corresponding to columns of \code{x}.}
 \item{z}{matrix; the values to be plotted. The number of rows and columns
   should be equal to the \code{length(x)} and \code{length(y)}, respectively.}
-\item{px}{numeric; a vector of \code{x} coordinates for points in the plot.
+\item{px}{numeric, list, or SpatialPointsDataFrame; if \code{px} numeric,
+  a vector of \code{x} values for points in the plot.
   If \code{px} is a list, its components \code{px$px}, \code{px$py} and
-  \code{px$pz} are used for \code{px}, \code{py} and \code{pz}, respectively.}
-\item{py}{numeric; a vector of \code{y} coordinates for points in the plot.}
-\item{pz}{numeric; a vector of \code{z} coordinates for points in the plot.}
+  \code{px$pz} are used for \code{px}, \code{py} and \code{pz}, respectively.
+  If \code{px} is a SpatialPointsDataFrame, \code{py} and \code{pz} are ignored.}
+\item{py}{numeric; a vector of \code{y} values for points in the plot.}
+\item{pz}{numeric; a vector of \code{z} values for points in the plot.}
 \item{xlim}{numeric; a vector of \code{x} limits \code{(x1,x2)} for the plot.}
 \item{ylim}{numeric; a vector of \code{y} limits \code{(y1,y2)} for the plot.}
 \item{zlim}{numeric; a vector of \code{z} limits \code{(z1,z2)} for the plot.}
@@ -44,6 +49,7 @@ Plot3d(x = NULL, y = NULL, z = NULL,
 \item{mouse.mode}{character; a vector of 3 strings describing what the 3 mouse
   buttons do, see \code{par3d}.}
 \item{bg}{character; the primary background color.}
+\item{maxpixels}{integer; maximum number of cells to use for the plot.}
 }
 
 \details{
