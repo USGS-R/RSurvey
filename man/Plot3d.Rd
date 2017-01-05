@@ -13,8 +13,7 @@ Plot3d(x = NULL, y = NULL, z = NULL,
        vasp = NA, hasp = NA, width = 7, ppi = 96,
        cex.pts = 1, nlevels = 20,
        color.palette = terrain.colors,
-       mouse.mode = c("trackball", "zAxis", "zoom"),
-       bg = "white", maxpixels = 500000)
+       maxpixels = 500000)
 }
 
 \arguments{
@@ -46,9 +45,6 @@ Plot3d(x = NULL, y = NULL, z = NULL,
 \item{nlevels}{integer; number of contour levels desired.}
 \item{color.palette}{function; a color \link{palette} to be used to assign
   colors in the plot.}
-\item{mouse.mode}{character; a vector of 3 strings describing what the 3 mouse
-  buttons do, see \code{par3d}.}
-\item{bg}{character; the primary background color.}
 \item{maxpixels}{integer; maximum number of cells to use for the plot.}
 }
 

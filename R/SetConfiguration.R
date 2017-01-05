@@ -20,7 +20,6 @@ SetConfiguration <- function(parent=NULL) {
     Data("rkey",         as.integer(tclvalue(rkey.var)))
     Data("img.contour",  as.integer(tclvalue(img.contour.var)))
     Data("show.lines",   as.integer(tclvalue(show.lines.var)))
-    Data("show.points",  as.integer(tclvalue(show.points.var)))
     Data("show.poly",    as.integer(tclvalue(show.poly.var)))
     Data("show.2.axes",  as.integer(tclvalue(show.2.axes.var)))
     Data("minor.ticks",  as.integer(tclvalue(minor.ticks.var)))
@@ -41,7 +40,6 @@ SetConfiguration <- function(parent=NULL) {
   show.poly.var    <- tclVar()
   img.contour.var  <- tclVar()
   show.lines.var   <- tclVar()
-  show.points.var  <- tclVar()
   show.2.axes.var  <- tclVar()
   minor.ticks.var  <- tclVar()
   ticks.inside.var <- tclVar()
@@ -56,7 +54,6 @@ SetConfiguration <- function(parent=NULL) {
   if (!is.null(Data("show.poly")))    tclvalue(show.poly.var)    <- Data("show.poly")
   if (!is.null(Data("img.contour")))  tclvalue(img.contour.var)  <- Data("img.contour")
   if (!is.null(Data("show.lines")))   tclvalue(show.lines.var)   <- Data("show.lines")
-  if (!is.null(Data("show.points")))  tclvalue(show.points.var)  <- Data("show.points")
   if (!is.null(Data("show.2.axes")))  tclvalue(show.2.axes.var)  <- Data("show.2.axes")
   if (!is.null(Data("minor.ticks")))  tclvalue(minor.ticks.var)  <- Data("minor.ticks")
   if (!is.null(Data("ticks.inside"))) tclvalue(ticks.inside.var) <- Data("ticks.inside")
@@ -131,15 +128,13 @@ SetConfiguration <- function(parent=NULL) {
                                 variable=img.contour.var)
   f2.chk.04.1 <- ttkcheckbutton(f2, text="Show contour lines",
                                 variable=show.lines.var)
-  f2.chk.05.1 <- ttkcheckbutton(f2, text="Show points on maps",
-                                variable=show.points.var)
-  f2.chk.06.1 <- ttkcheckbutton(f2, text="Show tickmarks on second axis",
+  f2.chk.05.1 <- ttkcheckbutton(f2, text="Show tickmarks on second axis",
                                 variable=show.2.axes.var)
-  f2.chk.07.1 <- ttkcheckbutton(f2, text="Add minor tickmarks",
+  f2.chk.06.1 <- ttkcheckbutton(f2, text="Add minor tickmarks",
                                 variable=minor.ticks.var)
-  f2.chk.08.1 <- ttkcheckbutton(f2, text="Place tickmarks inside plot region",
+  f2.chk.07.1 <- ttkcheckbutton(f2, text="Place tickmarks inside plot region",
                                 variable=ticks.inside.var)
-  f2.chk.09.1 <- ttkcheckbutton(f2, text="Remove point symbol boundary line",
+  f2.chk.08.1 <- ttkcheckbutton(f2, text="Remove point symbol boundary line",
                                 variable=rm.pnt.line.var)
 
   tkgrid(f2.chk.01.1, sticky="w", pady=c(0, 2))
@@ -149,8 +144,7 @@ SetConfiguration <- function(parent=NULL) {
   tkgrid(f2.chk.05.1, sticky="w", pady=c(0, 2))
   tkgrid(f2.chk.06.1, sticky="w", pady=c(0, 2))
   tkgrid(f2.chk.07.1, sticky="w", pady=c(0, 2))
-  tkgrid(f2.chk.08.1, sticky="w", pady=c(0, 2))
-  tkgrid(f2.chk.09.1, sticky="w")
+  tkgrid(f2.chk.08.1, sticky="w")
 
   # final layout
   tkgrid(f1, f2, sticky="nswe")

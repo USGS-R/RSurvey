@@ -31,9 +31,6 @@ Queries and sets the following components of \code{\link{Data}}:
   \code{\link{filled.contour}} function is used.}
 \item{show.lines}{logical; if \code{TRUE} the line contours will be plotted on
   the two-dimensional interpolated surface; its default is \code{FALSE}.}
-\item{show.points}{logical; if \code{TRUE} the point values associated with
-  \code{(x,y)} will be plotted on the interpolated surface; its default is
-  \code{FALSE}.}
 \item{show.poly}{logical; if \code{TRUE} polygons describing the spatial
   domain are added to the scatter plot and two-dimensional surface plot; its
   default is \code{FALSE}.}

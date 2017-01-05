@@ -1,9 +1,7 @@
 Plot3d <- function(x=NULL, y=NULL, z=NULL, px=NULL, py=NULL, pz=NULL,
                    xlim=NULL, ylim=NULL, zlim=NULL,
-                   vasp=NA, hasp=NA, width=7, ppi=96, cex.pts=1,
-                   nlevels=20, color.palette=terrain.colors,
-                   mouse.mode=c("trackball", "zAxis", "zoom"), bg="white",
-                   maxpixels=500000) {
+                   vasp=NA, hasp=NA, width=7, ppi=96, cex.pts=1, nlevels=20,
+                   color.palette=terrain.colors, maxpixels=500000) {
 
   if (!requireNamespace("rgl", quietly=TRUE)) stop()
 
@@ -166,14 +164,16 @@ Plot3d <- function(x=NULL, y=NULL, z=NULL, px=NULL, py=NULL, pz=NULL,
     rgl::open3d()
     win.dim <- ppi + width * ppi
     win.rect <- c(ppi, ppi, win.dim, win.dim * 0.75)
-    rgl::par3d(windowRect=win.rect, mouseMode=mouse.mode)
-    rgl::bg3d(color=bg)
-    rgl::view3d(theta=0, phi=-55, fov=60, zoom=0.6)
+    rgl::par3d(windowRect=win.rect)
+    rgl::view3d(theta=0, phi=-55, fov=60, zoom=0.7)
   } else {
-    rgl::rgl.clear(subscene=0)
+    rgl::clear3d()
   }
 
   # draw graphics
   if (show.surface) rgl::surface3d(x, y, z, color=cols)
-  if (show.points) rgl::points3d(x=px, y=py, z=pz, size=cex.pts * 3, point_antialias=TRUE)
+  if (show.points)  rgl::points3d(x=px, y=py, z=pz, size=cex.pts * 3, point_antialias=TRUE)
+
+  rgl::box3d()
+  rgl::title3d(xlab="x", ylab="y", zlab="z", line=0.1)
 }

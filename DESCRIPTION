@@ -23,6 +23,7 @@ Imports:
 Suggests:
     colorspace,
     dichromat,
+    leaflet,
     rgl,
     tripack,
     XML

@@ -531,6 +531,17 @@ StartGui <- function() {
       ans <- NULL
 
 
+
+
+
+
+
+
+
+
+
+
+
     } else if (graphics.device == "RGL") {
       if (plot.type == "Points") {
         r <- NULL
@@ -556,7 +567,7 @@ StartGui <- function() {
   }
 
 
-  # call edit data
+  # call data editor
   CallEditData <- function(read.only=TRUE, is.all=TRUE, is.state=FALSE) {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
@@ -706,27 +717,28 @@ StartGui <- function() {
       z <- Data("data.pts")@data$z
 
       # build raster template
-      r <- Data("grid.geo")
-      if (is.null(r) || !inherits(r, "RasterLayer")) {
+      grid <- Data("grid")
+      if (!inherits(grid$opt, "integer") || !grid$opt %in% 1:3) grid$opt <- 1
+      if (grid$opt == 3) {
+        r <- grid$geo
+      } else {
         xlim <- grDevices::extendrange(x)
         ylim <- grDevices::extendrange(y)
-        res <- Data("grid.res")
-        if (is.null(res)) {
+        if (grid$opt == 2) {
+          xmod <- diff(xlim) %% grid$res[1]
+          xadd <- ifelse(xmod == 0, 0, (grid$res[1] - xmod) / 2)
+          xlim <- c(xlim[1] - xadd, xlim[2] + xadd)
+          ymod <- diff(ylim) %% grid$res[2]
+          yadd <- ifelse(ymod == 0, 0, (grid$res[2] - ymod) / 2)
+          ylim <- c(ylim[1] - yadd, ylim[2] + yadd)
+          ncols <- diff(xlim) %/% grid$res[1]
+          nrows <- diff(ylim) %/% grid$res[2]
+        } else {
           ncols <- 100
           nrows <- 100
-        } else {
-          xmod <- diff(xlim) %% res[1]
-          xadd <- ifelse(xmod == 0, 0, (res[1] - xmod) / 2)
-          xlim <- c(xlim[1] - xadd, xlim[2] + xadd)
-          ymod <- diff(ylim) %% res[2]
-          yadd <- ifelse(ymod == 0, 0, (res[2] - ymod) / 2)
-          ylim <- c(ylim[1] - yadd, ylim[2] + yadd)
-          ncols <- diff(xlim) %% res[1]
-          nrows <- diff(ylim) %% res[2]
         }
-        r <- raster::raster(nrows=nrows, ncols=ncols,
-                            xmn=xlim[1], xmx=xlim[2], ymn=ylim[1], ymx=ylim[2],
-                            crs=sp::CRS(as.character(NA)), vals=NULL)
+        r <- raster::raster(nrows=nrows, ncols=ncols, xmn=xlim[1], xmx=xlim[2],
+                            ymn=ylim[1], ymx=ylim[2], crs=sp::CRS(as.character(NA)))
       }
       raster::crs(r) <- Data("crs")
 
@@ -786,7 +798,7 @@ StartGui <- function() {
   }
 
 
-  # build historgram
+  # build histogram
   CallBuildHistogram <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
@@ -802,6 +814,61 @@ StartGui <- function() {
     else
       idxs <- match(rownames(Data("data.pts")@data), rows)
     BuildHistogram(l, var.names=col.nams, processed.rec=idxs, parent=tt)
+  }
+
+
+  # display interactive map
+  DisplayInteractiveMap <- function() {
+    tkconfigure(tt, cursor="watch")
+    on.exit(tkconfigure(tt, cursor="arrow"))
+    if (is.na(CRSargs(Data("crs")))) return()
+    ProcessData()
+    new.crs <- CRS("+init=epsg:4326")
+
+    if (!requireNamespace("leaflet", quietly=TRUE)) return()
+    map <- leaflet::leaflet()
+    opt <- leaflet::WMSTileOptions(format="image/png", transparent=TRUE)
+    base.groups <- c("Open Street Map", "USGS The National Map")
+    map <- leaflet::addTiles(map, group=base.groups[1])
+    url <- "https://basemap.nationalmap.gov/arcgis/services/USGSTopo/MapServer/WmsServer?"
+    txt <-  "<a href='https://nationalmap.gov/'>USGS</a>"
+    map <- leaflet::addWMSTiles(map, url, options=opt, layers="0", attribution=txt, group=base.groups[2])
+
+    overlay.groups <- NULL
+
+    # points
+    pts <- Data("data.pts")
+    if (!is.null(pts)) {
+      rec <- rownames(pts@data)
+      xyz <- as.data.frame(pts)
+      txt <- sprintf("<b>Record:</b> %s<br/><b>x:</b> %s<br/><b>y:</b> %s<br/><b>z:</b> %s",
+                     rec, xyz$x, xyz$y, xyz$z)
+      pts <- spTransform(pts, new.crs)
+      opt <- leaflet::markerClusterOptions()
+      grp <- "Points"
+      map <- leaflet::addMarkers(map, data=pts, popup=txt, clusterOptions=opt, group=grp)
+      overlay.groups <- c(overlay.groups, grp)
+    }
+
+    # polygons
+    ply <- if (is.null(Data("poly.data"))) NULL else Data("polys")[[Data("poly.data")]]
+    if (!is.null(ply)) {
+      ply <- spTransform(ply, new.crs)
+      grp <- "Polygon (data limits)"
+      map <- leaflet::addPolylines(map, data=ply, weight=1, color="#000000", group=grp)
+      overlay.groups <- c(overlay.groups, grp)
+    }
+    ply <- if (is.null(Data("poly.crop"))) NULL else Data("polys")[[Data("poly.crop")]]
+    if (!is.null(ply)) {
+      ply <- spTransform(ply, new.crs)
+      grp <- "Polygon (crop region)"
+      map <- leaflet::addPolylines(map, data=ply, weight=1, color="#000000", group=grp)
+      overlay.groups <- c(overlay.groups, grp)
+    }
+
+    opt <- leaflet::layersControlOptions(collapsed=FALSE)
+    map <- leaflet::addLayersControl(map, baseGroups=base.groups, overlayGroups=overlay.groups, options=opt)
+    print(map)
   }
 
 
@@ -948,15 +1015,13 @@ StartGui <- function() {
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Define interpolation grid\u2026",
         command=function() {
-          grid.res.old <- Data("grid.res")
-          grid.geo.old <- Data("grid.geo")
-          ans <- DefineInterpGrid(grid.res.old, grid.geo.old, tt)
-          if (is.null(ans)) return()
-          Data("grid.res", ans$grid.res)
-          Data("grid.geo", ans$grid.geo)
-          if (!identical(grid.res.old, Data("grid.res")) |
-              !identical(grid.geo.old, Data("grid.geo")))
+          grid.old <- Data("grid")
+          grid.new <- DefineInterpGrid(grid.old, tt)
+          if (is.null(grid.new)) return()
+          if (!identical(grid.old, grid.new)) {
+            Data("grid", grid.new)
             Data("data.grd", NULL)
+          }
         })
 
   # view menu
@@ -1003,33 +1068,34 @@ StartGui <- function() {
         command=CallAutocropRegion)
 
   # plot menu
-  menu.graph <- tkmenu(tt, tearoff=0)
-  tkadd(top.menu, "cascade", label="Plot", menu=menu.graph, underline=0)
-  tkadd(menu.graph, "command", label="Set axes limits\u2026",
+  menu.plot <- tkmenu(tt, tearoff=0)
+  tkadd(top.menu, "cascade", label="Plot", menu=menu.plot, underline=0)
+  tkadd(menu.plot, "command", label="Set axes limits\u2026",
         command=function() {
           lim <- SetAxesLimits(Data("lim.axes"), tt)
           Data("lim.axes", lim)
         })
-  tkadd(menu.graph, "command", label="Clear axes limits",
+  tkadd(menu.plot, "command", label="Clear axes limits",
         command=function() Data("lim.axes", NULL))
-  tkadd(menu.graph, "separator")
-  tkadd(menu.graph, "command", label="Configuration",
+  tkadd(menu.plot, "separator")
+  tkadd(menu.plot, "command", label="Configuration",
         command=function() SetConfiguration(tt))
-  tkadd(menu.graph, "command", label="Choose color palette\u2026",
+  tkadd(menu.plot, "command", label="Color palette\u2026",
         state=if (is.pkg.colorspace) "normal" else "disabled",
         command=function() {
           pal <- colorspace::choose_palette(pal=Data("color.palette"),
                                             n=Data("nlevels"), parent=tt)
           if (!is.null(pal)) Data("color.palette", pal)
         })
-  tkadd(menu.graph, "separator")
-  tkadd(menu.graph, "command", label="Build histogram\u2026", command=CallBuildHistogram)
-  tkadd(menu.graph, "separator")
-  menu.graph.new <- tkmenu(tt, tearoff=0)
-  tkadd(menu.graph.new, "command", label="R graphics", accelerator="Ctrl+F3", command=dev.new)
-  tkadd(menu.graph.new, "command", label="RGL graphics", command=rgl::open3d)
-  tkadd(menu.graph, "cascade", label="Open a new device for", menu=menu.graph.new)
-  tkadd(menu.graph, "command", label="Close all graphic devices", accelerator="Ctrl+F4",
+  tkadd(menu.plot, "separator")
+  tkadd(menu.plot, "command", label="Build histogram\u2026", command=CallBuildHistogram)
+  tkadd(menu.plot, "command", label="Display interactive map", command=DisplayInteractiveMap)
+  tkadd(menu.plot, "separator")
+  menu.plot.new <- tkmenu(tt, tearoff=0)
+  tkadd(menu.plot.new, "command", label="R graphics", accelerator="Ctrl+F3", command=dev.new)
+  tkadd(menu.plot.new, "command", label="RGL graphics", command=rgl::open3d)
+  tkadd(menu.plot, "cascade", label="Open a new device for", menu=menu.plot.new)
+  tkadd(menu.plot, "command", label="Close all graphic devices", accelerator="Ctrl+F4",
         command=CloseDevices)
 
   # help menu
