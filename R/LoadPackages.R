@@ -63,7 +63,7 @@ LoadPackages <- function() {
     # open gui
     tclServiceMode(FALSE)
     tt <- tktoplevel()
-    tktitle(tt) <- "Manage Packages"
+    tktitle(tt) <- "Package Manager"
     tkwm.resizable(tt, 0, 0)
 
     # frame 0, ok and cancel buttons

@@ -828,10 +828,10 @@ StartGui <- function() {
     if (!requireNamespace("leaflet", quietly=TRUE)) return()
     map <- leaflet::leaflet()
     opt <- leaflet::WMSTileOptions(format="image/png", transparent=TRUE)
-    base.groups <- c("Open Street Map", "USGS The National Map")
+    base.groups <- c("Open Street Map", "The National Map")
     map <- leaflet::addTiles(map, group=base.groups[1])
     url <- "https://basemap.nationalmap.gov/arcgis/services/USGSTopo/MapServer/WmsServer?"
-    txt <-  "<a href='https://nationalmap.gov/'>USGS</a>"
+    txt <-  "USGS <a href='https://nationalmap.gov/'>The National Map</a>"
     map <- leaflet::addWMSTiles(map, url, options=opt, layers="0", attribution=txt, group=base.groups[2])
 
     overlay.groups <- NULL
@@ -844,7 +844,7 @@ StartGui <- function() {
       txt <- sprintf("<b>Record:</b> %s<br/><b>x:</b> %s<br/><b>y:</b> %s<br/><b>z:</b> %s",
                      rec, xyz$x, xyz$y, xyz$z)
       pts <- spTransform(pts, new.crs)
-      opt <- leaflet::markerClusterOptions()
+      opt <- leaflet::markerClusterOptions(showCoverageOnHover=FALSE)
       grp <- "Points"
       map <- leaflet::addMarkers(map, data=pts, popup=txt, clusterOptions=opt, group=grp)
       overlay.groups <- c(overlay.groups, grp)
@@ -866,6 +866,7 @@ StartGui <- function() {
       overlay.groups <- c(overlay.groups, grp)
     }
 
+    if (is.null(overlay.groups)) return()
     opt <- leaflet::layersControlOptions(collapsed=FALSE)
     map <- leaflet::addLayersControl(map, baseGroups=base.groups, overlayGroups=overlay.groups, options=opt)
     print(map)
