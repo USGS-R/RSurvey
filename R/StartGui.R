@@ -519,44 +519,65 @@ StartGui <- function() {
 
   # plot data
   CallPlot <- function() {
-    graphics.device <- as.character(tclvalue(device.var))
     plot.type <- paste(as.character(tcl(f2.box.1.2, "get")), collapse=" ")
+    graphics.device <- as.character(tclvalue(device.var))
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
     ProcessData()
-    ans <- NULL
+
+    if (plot.type == "Points") {
+      p <- Data("data.pts")
+      r <- NULL
+      if (is.null(p)) return()
+    } else {
+      p <- if (plot.type == "Surface") NULL else Data("data.pts")
+      r <- Data("data.grd")
+      if (is.null(r)) return()
+      ply <- if (is.null(Data("poly.crop"))) NULL else Data("polys")[[Data("poly.crop")]]
+      if (!is.null(ply)) r <- raster::trim(raster::mask(r, ply))
+    }
+
+    lim <- Data("lim.axes")
+    asp <- Data("asp.yx")
+
+
     if (graphics.device == "R") {
 
 
-      ans <- NULL
+      if (is.null(r)) {
+        r <- Data("crs")
+        xlim <- grDevices::extendrange(c(raster::xmin(p), raster::xmax(p)))
+        ylim <- grDevices::extendrange(c(raster::ymin(p), raster::ymax(p)))
+        lim$x[1] <- if (is.null(lim$x[1]) || is.na(lim$x[1])) xlim[1]
+        lim$x[2] <- if (is.null(lim$x[2]) || is.na(lim$x[2])) xlim[2]
+        lim$y[1] <- if (is.null(lim$y[1]) || is.na(lim$y[1])) ylim[1]
+        lim$y[2] <- if (is.null(lim$y[2]) || is.na(lim$y[2])) ylim[2]
+      }
+
+
+      ans <- try(inlmisc::PlotMap(r, xlim=lim$x, ylim=lim$y, zlim=lim$z, n=Data("nlevels"),
+                                  asp=Data("asp.yx"), pal=Data("color.palette")), silent=TRUE)
+
+      if (!is.null(p)) {
+        if (plot.type == "Points") {
+
+
+
+          points(p, pch=21, col="#050505", bg="red", lwd=0.5)
 
 
 
 
 
-
-
-
-
-
-
-
+        } else {
+          points(p, pch=21, col="#050505", bg="#050505", lwd=0.5, cex=0.6)
+        }
+      }
 
     } else if (graphics.device == "RGL") {
-      if (plot.type == "Points") {
-        r <- NULL
-        p <- Data("data.pts")
-        if (is.null(p)) return()
-      } else {
-        p <- if (plot.type == "Surface") NULL else Data("data.pts")
-        r <- Data("data.grd")
-        if (is.null(r)) return()
-        ply <- if (is.null(Data("poly.crop"))) NULL else Data("polys")[[Data("poly.crop")]]
-        if (!is.null(ply)) r <- raster::trim(raster::mask(r, ply))
-      }
-      lim <- Data("lim.axes")
+      if (is.null(asp) && !is.na(CRSargs(Data("crs")))) asp <- 1
       ans <- try(Plot3d(x=r, px=p, xlim=lim$x, ylim=lim$y, zlim=lim$z,
-                        vasp=Data("asp.zx"), hasp=Data("asp.yx"), width=Data("width"),
+                        vasp=Data("asp.zx"), hasp=asp, width=Data("width"),
                         cex.pts=Data("cex.pts"), nlevels=Data("nlevels"),
                         color.palette=Data("color.palette")), silent=TRUE)
     }
@@ -757,6 +778,7 @@ StartGui <- function() {
        r <- NULL
      else
        r[] <- ans
+     names(r) <- "z"
 
       Data("data.grd", r)
     }
@@ -817,58 +839,63 @@ StartGui <- function() {
   }
 
 
-  # display interactive map
-  DisplayInteractiveMap <- function() {
+  # plot web map
+  PlotWebMap <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
-    if (is.na(CRSargs(Data("crs")))) return()
+    if (!requireNamespace("leaflet", quietly=TRUE)) return()
+    if (is.na(CRSargs(Data("crs")))) {
+      msg <- "Data must be associated with a coordinate reference system."
+      tkmessageBox(icon="info", message=msg, title="Information", type="ok", parent=tt)
+      return()
+    }
     ProcessData()
     new.crs <- CRS("+init=epsg:4326")
-
-    if (!requireNamespace("leaflet", quietly=TRUE)) return()
     map <- leaflet::leaflet()
     opt <- leaflet::WMSTileOptions(format="image/png", transparent=TRUE)
     base.groups <- c("Open Street Map", "The National Map")
     map <- leaflet::addTiles(map, group=base.groups[1])
     url <- "https://basemap.nationalmap.gov/arcgis/services/USGSTopo/MapServer/WmsServer?"
     txt <-  "USGS <a href='https://nationalmap.gov/'>The National Map</a>"
-    map <- leaflet::addWMSTiles(map, url, options=opt, layers="0", attribution=txt, group=base.groups[2])
-
+    map <- leaflet::addWMSTiles(map, url, options=opt, layers="0",
+                                attribution=txt, group=base.groups[2])
     overlay.groups <- NULL
 
     # points
     pts <- Data("data.pts")
     if (!is.null(pts)) {
+      grp <- "Points"
       rec <- rownames(pts@data)
       xyz <- as.data.frame(pts)
       txt <- sprintf("<b>Record:</b> %s<br/><b>x:</b> %s<br/><b>y:</b> %s<br/><b>z:</b> %s",
                      rec, xyz$x, xyz$y, xyz$z)
       pts <- spTransform(pts, new.crs)
       opt <- leaflet::markerClusterOptions(showCoverageOnHover=FALSE)
-      grp <- "Points"
-      map <- leaflet::addMarkers(map, data=pts, popup=txt, clusterOptions=opt, group=grp)
+      map <- leaflet::addCircleMarkers(map, data=pts, radius=10, popup=txt,
+                                       clusterOptions=opt, weight=3, group=grp)
       overlay.groups <- c(overlay.groups, grp)
     }
 
     # polygons
     ply <- if (is.null(Data("poly.data"))) NULL else Data("polys")[[Data("poly.data")]]
     if (!is.null(ply)) {
-      ply <- spTransform(ply, new.crs)
       grp <- "Polygon (data limits)"
+      ply <- spTransform(ply, new.crs)
       map <- leaflet::addPolylines(map, data=ply, weight=1, color="#000000", group=grp)
       overlay.groups <- c(overlay.groups, grp)
     }
     ply <- if (is.null(Data("poly.crop"))) NULL else Data("polys")[[Data("poly.crop")]]
     if (!is.null(ply)) {
-      ply <- spTransform(ply, new.crs)
       grp <- "Polygon (crop region)"
+      ply <- spTransform(ply, new.crs)
       map <- leaflet::addPolylines(map, data=ply, weight=1, color="#000000", group=grp)
       overlay.groups <- c(overlay.groups, grp)
     }
 
     if (is.null(overlay.groups)) return()
     opt <- leaflet::layersControlOptions(collapsed=FALSE)
-    map <- leaflet::addLayersControl(map, baseGroups=base.groups, overlayGroups=overlay.groups, options=opt)
+    map <- leaflet::addLayersControl(map, baseGroups=base.groups,
+                                     overlayGroups=overlay.groups, options=opt)
     print(map)
   }
 
@@ -1090,7 +1117,7 @@ StartGui <- function() {
         })
   tkadd(menu.plot, "separator")
   tkadd(menu.plot, "command", label="Build histogram\u2026", command=CallBuildHistogram)
-  tkadd(menu.plot, "command", label="Display interactive map", command=DisplayInteractiveMap)
+  tkadd(menu.plot, "command", label="Web mapping", command=PlotWebMap)
   tkadd(menu.plot, "separator")
   menu.plot.new <- tkmenu(tt, tearoff=0)
   tkadd(menu.plot.new, "command", label="R graphics", accelerator="Ctrl+F3", command=dev.new)

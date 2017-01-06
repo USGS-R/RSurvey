@@ -7,13 +7,10 @@
 \description{Draws plot of points and surface in three-dimensional (\acronym{3D}) space.}
 
 \usage{
-Plot3d(x = NULL, y = NULL, z = NULL,
-       px = NULL, py = NULL, pz = NULL,
-       xlim = NULL, ylim = NULL, zlim = NULL,
-       vasp = NA, hasp = NA, width = 7, ppi = 96,
-       cex.pts = 1, nlevels = 20,
-       color.palette = terrain.colors,
-       maxpixels = 500000)
+Plot3d(x = NULL, y = NULL, z = NULL, px = NULL, py = NULL, pz = NULL,
+       xlim = NULL, ylim = NULL, zlim = NULL, vasp = NA, hasp = NA,
+       width = 7, ppi = 96, cex.pts = 1, nlevels = 20,
+       color.palette = terrain.colors, maxpixels = 500000)
 }
 
 \arguments{

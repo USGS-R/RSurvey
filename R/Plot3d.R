@@ -131,14 +131,13 @@ Plot3d <- function(x=NULL, y=NULL, z=NULL, px=NULL, py=NULL, pz=NULL,
   if (is.na(zlim[2])) zlim[2] <- max(c(z, pz), na.rm=TRUE)
 
   # scale
-  yscale <- zscale <- 1
-
-  if (!is.null(hasp) && !is.na(hasp))
+  if (inherits(hasp, "numeric")) {
     yscale <- hasp
-  else
+  } else {
     yscale <- (diff(range(c(x, px), na.rm=TRUE)) / diff(range(c(y, py), na.rm=TRUE)))
+  }
 
-  if (!is.null(vasp) && !is.na(vasp)) {
+  if (inherits(vasp, "numeric")) {
     zscale <- vasp
   } else {
     maxdiff <- max(diff(range(c(x, px), na.rm=TRUE)),
@@ -165,7 +164,6 @@ Plot3d <- function(x=NULL, y=NULL, z=NULL, px=NULL, py=NULL, pz=NULL,
     win.dim <- ppi + width * ppi
     win.rect <- c(ppi, ppi, win.dim, win.dim * 0.75)
     rgl::par3d(windowRect=win.rect)
-    rgl::view3d(theta=0, phi=-55, fov=60, zoom=0.7)
   } else {
     rgl::clear3d()
   }
