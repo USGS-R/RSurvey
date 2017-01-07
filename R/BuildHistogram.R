@@ -216,7 +216,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL
   f1.lab.1.1 <- ttklabel(f1, text="Variable")
   f1.box.1.2 <- ttkcombobox(f1, state="readonly")
 
-  txt <- "Only include processed records"
+  txt <- "Include only processed records"
   f1.chk.2.2 <- ttkcheckbutton(f1, text=txt, variable=processed.var)
 
   tkgrid(f1.lab.1.1, f1.box.1.2, pady=c(10, 0))
