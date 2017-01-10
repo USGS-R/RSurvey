@@ -1,8 +1,8 @@
 ImportPackage <- function(classes=NULL, parent=NULL) {
 
 
-  # load dataset
-  LoadDataset <- function() {
+  # import dataset
+  ImportDataset <- function() {
     tkconfigure(tt, cursor="watch")
     tclServiceMode(FALSE)
     on.exit(tkconfigure(tt, cursor="arrow"))
@@ -245,7 +245,7 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
   # frame 0 contains load, cancel, and help buttons, and size grip
   f0 <- ttkframe(tt, relief="flat")
 
-  f0.but.1.2 <- ttkbutton(f0, width=12, text="Load", command=LoadDataset)
+  f0.but.1.2 <- ttkbutton(f0, width=12, text="Import", command=ImportDataset)
   f0.but.1.3 <- ttkbutton(f0, width=12, text="Cancel",
                           command=function() tclvalue(tt.done.var) <- 1)
   f0.but.1.4 <- ttkbutton(f0, width=12, text="Help",

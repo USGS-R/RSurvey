@@ -515,7 +515,7 @@ ImportText <- function(parent=NULL) {
 
   f0.but.1 <- ttkbutton(f0, width=8, text="Paste", command=PasteData)
   f0.but.2 <- ttkbutton(f0, width=8, text="Clear", command=ClearData)
-  f0.but.4 <- ttkbutton(f0, width=12, text="Load",
+  f0.but.4 <- ttkbutton(f0, width=12, text="Import",
                         command=function() ReadFile(FALSE))
   f0.but.5 <- ttkbutton(f0, width=12, text="Cancel",
                         command=function() tclvalue(tt.done.var) <- 1)

@@ -266,41 +266,39 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
   }
 
 
-  # import polygon(s) from file(s)
-  ImportPolygon <- function() {
+  # import polygon
+  ImportPolygon <- function(type) {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
 
-    file <- GetFile(cmd="Open", exts=c("shp", "shx", "dbf", "txt", "rda"),
-                    win.title="Open Polygon File(s)", multi=TRUE, parent=tt)
-    if (is.null(file)) return()
-    if (!is.list(file)) file <- list(file)
+    if (type == "txt") {
+      file <- GetFile(cmd="Open", exts="txt", win.title="Open Text File", parent=tt)
+      if (is.null(file)) return()
+      new.poly <- rgeos::read.polyfile(file, nohole=FALSE)
 
-    valid.classes <- c("SpatialPolygons", "SpatialPolygonsDataFrame", "gpc.poly")
+    } else if (type == "shp") {
+      file <- GetFile(cmd="Open", exts=c("shp", "shx", "dbf"),
+                      win.title="Open Polygon Shapefile", parent=tt)
+      if (is.null(file)) return()
+      new.poly <- rgdal::readOGR(dsn=attr(file, "directory"), layer=attr(file, "name"), verbose=FALSE)
 
-    for (f in file) {
-      ext <- attr(f, "extension")
-      if (ext == "txt") {
-        new.poly <- rgeos::read.polyfile(f, nohole=FALSE)
-        if (!inherits(new.poly, "gpc.poly")) next
-      } else if (ext == "rda") {
-        new.poly <- local({p.name <- load(file=file); return(eval(parse(text=p.name[1])))})
-      } else {
-        new.poly <- rgdal::readOGR(dsn=attr(f, "directory"), layer=attr(f, "name"), verbose=FALSE)
-      }
-
-      if (!inherits(new.poly, valid.classes)) {
-        warning(sprintf("Inappropriate class for object extracted from file: %s", file))
-        next
-      }
-
-      new.poly <- as(new.poly, "SpatialPolygons")
-      if (is.na(CRSargs(crs))) crs <<- new.poly@proj4string
-
-      nam <- NamePolygon(old=names(polys), nam=attr(f, "name"))
-      polys[[nam]] <<- new.poly
-      tcl("lappend", list.var, nam)
+    } else if (type == "rda") {
+      file <- GetFile(cmd="Open", exts="rda", win.title="Open R-Data File", parent=tt)
+      if (is.null(file)) return()
+      new.poly <- local({nam <- load(file=file); return(eval(parse(text=nam[1])))})
     }
+
+    if (!inherits(new.poly, c("SpatialPolygons", "SpatialPolygonsDataFrame", "gpc.poly"))) {
+      warning(sprintf("Inappropriate class for object extracted from file: %s", file))
+      next
+    }
+
+    new.poly <- as(new.poly, "SpatialPolygons")
+    if (is.na(CRSargs(crs))) crs <<- new.poly@proj4string
+
+    nam <- NamePolygon(old=names(polys), nam=attr(file, "name"))
+    polys[[nam]] <<- new.poly
+    tcl("lappend", list.var, nam)
 
     if (!is.na(CRSargs(crs))) {
       for (i in seq_along(polys)) {
@@ -320,54 +318,52 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
 
 
   # export polygon
-  ExportPolygon <- function(file.type) {
-
+  ExportPolygon <- function(type) {
     idxs <- as.integer(tkcurselection(f1.lst)) + 1
     if (length(idxs) == 0) return()
     for (i in idxs) {
-      file <- GetFile(cmd="Save As", exts=file.type, win.title="Save Polygon As",
-                      initialfile=names(polys)[i], defaultextension=file.type, parent=tt)
+      file <- GetFile(cmd="Save As", exts=type, win.title="Save Polygon As",
+                      initialfile=names(polys)[i], defaultextension=type, parent=tt)
       if (is.null(file)) next
 
-      if (file.type == "txt") {
+      if (type == "txt") {
         rgeos::write.polyfile(suppressWarnings(as(polys[[i]], "gpc.poly")), file)
-      } else {
+      } else if (type == "shp") {
         p <- polys[[i]]
         id <- sapply(methods::slot(p, "polygons"), function(x) methods::slot(x, "ID"))
         p <- SpatialPolygonsDataFrame(p, data.frame(ID=seq_along(p), row.names=id))
         rgdal::writeOGR(p, dsn=attr(file, "directory"), layer=attr(file, "name"),
                         driver="ESRI Shapefile", overwrite_layer=TRUE, encoding="UTF-8")
+      } else if (type == "rda") {
+        p <- polys[[idxs]]
+        save(p, file=file)
       }
     }
     tkfocus(tt)
   }
 
 
-  rtn <- NULL
-
-  w <- 300
-  h <- 300
-
-  xran <- NULL
-  yran <- NULL
-
+  # assign initial values
+  rtn   <- NULL
+  xran  <- NULL
+  yran  <- NULL
+  shape <- NULL
+  w     <- 300
+  h     <- 300
   col.pal <- c("#FA3A3A", "#3EB636", "#000000", "#227CE8", "#F060A8", "#F18D31",
                "#46C5BD", "#AAC704", "#E64804", "#915135", "#4F575A", "#B1CD02",
                "#3DBF34", "#315A5E", "#5E3831", "#FA330C", "#D45B0A", "#494012",
                substr(rainbow(100), 1, 7))
-
-  shape <- NULL
-
   if (is.null(polys)) polys <- list()
 
-  # assign the variables linked to tk widgets
-  rb.var      <- tclVar("union")
-  area.var    <- tclVar("")
-  poly.var    <- tclVar("")
-  hole.var    <- tclVar("")
-  vert.var    <- tclVar("")
-  xy.var      <- tclVar("")
-  list.var    <- tclVar()
+  # assign variables linked to tk widgets
+  rb.var   <- tclVar("union")
+  area.var <- tclVar("")
+  poly.var <- tclVar("")
+  hole.var <- tclVar("")
+  vert.var <- tclVar("")
+  xy.var   <- tclVar("")
+  list.var <- tclVar()
   for (i in names(polys)) tcl("lappend", list.var, i)
   tt.done.var <- tclVar(0)
 
@@ -388,12 +384,21 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
 
   menu.file <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
-  tkadd(menu.file, "command", label="Import\u2026", accelerator="Ctrl+o", command=ImportPolygon)
+  menu.file.import <- tkmenu(tt, tearoff=0)
+  tkadd(menu.file.import, "command", label="Shapefile\u2026",
+        command=function() ImportPolygon("shp"))
+  tkadd(menu.file.import, "command", label="Text file\u2026",
+        command=function() ImportPolygon("txt"))
+  tkadd(menu.file.import, "command", label="R-data file\u2026",
+        command=function() ImportPolygon("rda"))
+  tkadd(menu.file, "cascade", label="Import from", menu=menu.file.import)
   menu.file.export <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.export, "command", label="Shapefile\u2026",
         command=function() ExportPolygon("shp"))
   tkadd(menu.file.export, "command", label="Text file\u2026",
         command=function() ExportPolygon("txt"))
+  tkadd(menu.file.export, "command", label="R-data file\u2026",
+        command=function() ExportPolygon("rda"))
   tkadd(menu.file, "cascade", label="Export as", menu=menu.file.export)
   menu.edit <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
@@ -578,8 +583,6 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
   tkbind(f2.cvs, "<Motion>", function(x, y) MouseMotion(x, y))
   tkbind(f2.cvs, "<Leave>", MouseLeave)
   tkbind(f2.cvs, "<Configure>", ScaleCanvas)
-
-  tkbind(tt, "<Control-o>", ImportPolygon)
 
   tkbind(tt, "<Control-a>", function() SelectPolygon("all"))
   tkbind(tt, "<Shift-Control-A>", function() SelectPolygon("none"))

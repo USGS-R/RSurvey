@@ -41,7 +41,7 @@ ImportSpreadsheet <- function(parent=NULL) {
   }
 
 
-  LoadDataset <- function() {
+  ImportDataset <- function() {
     if (is.null(path) || is.null(sheets)) return()
     idx <- as.integer(tcl(f2.box.1.2, "current")) + 1L
     sheet.id <- sheets$id[idx]
@@ -108,7 +108,7 @@ ImportSpreadsheet <- function(parent=NULL) {
 
   # frame 0, buttons
   f0 <- ttkframe(tt, relief="flat")
-  f0.but.1.2 <- ttkbutton(f0, width=12, text="Load", command=LoadDataset)
+  f0.but.1.2 <- ttkbutton(f0, width=12, text="Import", command=ImportDataset)
   f0.but.1.3 <- ttkbutton(f0, width=12, text="Cancel",
                           command=function() tclvalue(tt.done.var) <- 1)
   f0.but.1.4 <- ttkbutton(f0, width=12, text="Help",
