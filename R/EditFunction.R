@@ -170,9 +170,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
     if (n > 50000) {
       msg <- paste("There are", n, "unique values; this operation can be",
                    "computationally expensive. Would you like to continue?")
-      ans <- as.character(tkmessageBox(icon="question", message=msg,
-                                       title="Warning", type="yesno", parent=tt))
-      if (ans == "no") return()
+      ans <- tkmessageBox(icon="question", message=msg, title="Warning", type="yesno", parent=tt)
+      if (as.character(ans) == "no") return()
     }
 
     var.vals <- sort(var.vals, na.last=TRUE)
@@ -283,8 +282,8 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
-                             "+", as.integer(geo[3]) + 25))
+    geo <- as.integer(geo[2:3]) + 25
+    tkwm.geometry(tt, sprintf("+%s+%s", geo[1], geo[2]))
   }
   tktitle(tt) <- win.title
 

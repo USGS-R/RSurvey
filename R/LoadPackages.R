@@ -23,8 +23,7 @@ LoadPackages <- function() {
                     "CRAN mirror:\n\n",
                     paste(paste0("\'", unavailable.pkgs, "\'"), collapse=", "),
                     "\n\nWould you like to try a different CRAN mirror?")
-      ans <- tkmessageBox(icon="question", message=msg, title="CRAN",
-                          type="yesno", parent=tt)
+      ans <- tkmessageBox(icon="question", message=msg, title="CRAN", type="yesno", parent=tt)
       if (tolower(substr(ans, 1, 1)) == "y") return()
     }
     if (length(available.pkgs) > 0)

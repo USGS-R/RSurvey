@@ -36,12 +36,9 @@ Autocrop <- function(mesh, max.len, max.itr=10000) {
     if (0 %in% nodes.in.elem) {
       arcs <- rbind(arcs, nodes.in.elem[nodes.in.elem != 0])
     } else {
-      if (tri[i, "tr1"] == 0)
-        arcs <- rbind(arcs, nodes.in.elem[c(2, 3)])
-      if (tri[i, "tr2"] == 0)
-        arcs <- rbind(arcs, nodes.in.elem[c(1, 3)])
-      if (tri[i, "tr3"] == 0)
-        arcs <- rbind(arcs, nodes.in.elem[c(1, 2)])
+      if (tri[i, "tr1"] == 0) arcs <- rbind(arcs, nodes.in.elem[c(2, 3)])
+      if (tri[i, "tr2"] == 0) arcs <- rbind(arcs, nodes.in.elem[c(1, 3)])
+      if (tri[i, "tr3"] == 0) arcs <- rbind(arcs, nodes.in.elem[c(1, 2)])
     }
   }
 

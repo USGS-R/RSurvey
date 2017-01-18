@@ -8,7 +8,7 @@ StartGui <- function() {
     on.exit(tclServiceMode(TRUE))
     geo <- unlist(strsplit(as.character(tkwm.geometry(tt)), "\\+"))
     tkdestroy(tt)
-    Data("win.loc", paste0("+", as.integer(geo[2]), "+", as.integer(geo[3])))
+    Data("win.loc", sprintf("+%s+%s", geo[2], geo[3]))
     tclvalue(tt.done.var) <- 1
     CloseDevices()
   }
@@ -21,8 +21,8 @@ StartGui <- function() {
     if (ClearObjs() == "cancel") return()
     ans <- try(load(file=file, envir=environment(OpenProj)), silent=TRUE)
     if (inherits(ans, "try-error")) {
-      tkmessageBox(icon="error", detail=ans, title="Error", type="ok", parent=tt,
-                   message="Not a valid project file.")
+      msg <- "Not a valid project file."
+      tkmessageBox(icon="error", message=msg, detail=ans, title="Error", type="ok", parent=tt)
       return()
     }
     Data(replace.all=get(ans, envir=environment(OpenProj)))
@@ -62,11 +62,13 @@ StartGui <- function() {
 
   # clear objects
   ClearObjs <- function() {
-    ans <- "no"
-    if (!is.null(Data("proj.file")))
-      ans <- as.character(tkmessageBox(icon="question", title="Warning",
-                                       type="yesnocancel", parent=tt,
-                                       message="Save the existing project?"))
+    if (!is.null(Data("proj.file"))) {
+      msg <- "Save the existing project?"
+      ans <- tkmessageBox(icon="question", message=msg, title="Warning", type="yesnocancel", parent=tt)
+      ans <- as.character(ans)
+    } else {
+      ans <- "no"
+    }
     if (ans == "cancel") {
       return(ans)
     } else if (ans == "yes") {
@@ -145,8 +147,8 @@ StartGui <- function() {
         if (is.null(file)) return()
         d <- local({d.name <- load(file=file); return(eval(parse(text=d.name[1])))})
         if (!inherits(d, valid.classes)) {
-          tkmessageBox(icon="error", title="Error", type="ok", parent=tt,
-                       message="R dataset is not a valid object class.")
+          msg <- "R dataset is not a valid object class."
+          tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
           return()
         }
         src <- c(pathname=file[1], accessed=format(Sys.time()))
@@ -161,17 +163,15 @@ StartGui <- function() {
         crs <- d@proj4string
         if (is.na(CRSargs(crs)) & !is.na(CRSargs(Data("crs")))) {
           msg <- "Dataset has no CRS so the global and project-wide CRS will be used."
-          ans <- as.character(tkmessageBox(icon="warning", title="Warning", type="okcancel",
-                                           parent=tt, message=msg))
-          if (ans == "cancel") return()
+          ans <- tkmessageBox(icon="warning", message=msg, title="Warning", type="okcancel", parent=tt)
+          if (as.character(ans) == "cancel") return()
           sp::proj4string(d) <- Data("crs")
           crs <- Data("crs")
         } else if (!is.na(CRSargs(crs)) & !is.na(CRSargs(Data("crs")))) {
           msg <- paste("The CRS for this dataset is different from the gloabl and project-wide CRS being used.",
                        "A transformation between datum(s) and conversion between projections will be made.")
-          ans <- as.character(tkmessageBox(icon="warning", title="Warning", type="okcancel",
-                                           parent=tt, message=msg))
-          if (ans == "cancel") return()
+          ans <- tkmessageBox(icon="warning", message=msg, title="Warning", type="okcancel", parent=tt)
+          if (as.character(ans) == "cancel") return()
           d <- spTransform(d, Data("crs"))
           crs <- Data("crs")
         }
@@ -182,9 +182,9 @@ StartGui <- function() {
 
       if (is.null(d) || nrow(d) == 0 || ncol(d) == 0) return()
       if (!is.null(Data("cols"))) {
-        ans <- as.character(tkmessageBox(icon="warning", title="Warning", type="okcancel", parent=tt,
-                                         message="This action will delete existing data."))
-        if (ans == "cancel") return()
+        msg <- "This action will delete existing data."
+        ans <- tkmessageBox(icon="warning", message=msg, title="Warning", type="okcancel", parent=tt)
+        if (as.character(ans) == "cancel") return()
       }
 
       m <- nrow(d)
@@ -210,7 +210,7 @@ StartGui <- function() {
       matched <- lapply(unique(ids), function(i) which(ids %in% i)[-1])
       names(matched) <- unique(ids)
       for (i in seq_along(matched))
-        ids[matched[[i]]] <- paste0(names(matched[i]), " (", seq_along(matched[[i]]), ")")
+        ids[matched[[i]]] <- sprintf("%s (%s)", names(matched[i]), seq_along(matched[[i]]))
       names(d) <- paste0("V", seq_len(n))
 
       cols <- list()
@@ -247,7 +247,7 @@ StartGui <- function() {
   }
 
 
-  # establish defaults for x-, y-, and z-coordinate variables
+  # establish defaults for x- and y-coordinate variables
   EstablishDefaultVars <- function() {
     vars <- list()
     idxs.n <- GetNumericCols(Data("cols"))
@@ -256,8 +256,6 @@ StartGui <- function() {
         vars$x <- idxs.n[i]
       } else if (is.null(vars$y)) {
         vars$y <- idxs.n[i]
-      } else if (is.null(vars$z)) {
-        vars$z <- idxs.n[i]
       }
     }
     Data("vars", vars)
@@ -510,7 +508,7 @@ StartGui <- function() {
     idx <- 1
     chk <- nam
     while (chk %in% old) {
-      chk <- paste0(nam, " (", idx, ")")
+      chk <- sprintf("%s (%d)", nam, idx)
       idx <- idx + 1
     }
     chk
@@ -525,67 +523,54 @@ StartGui <- function() {
     on.exit(tkconfigure(tt, cursor="arrow"))
     ProcessData()
 
-    if (plot.type == "Points") {
-      p <- Data("data.pts")
-      r <- NULL
-      if (is.null(p)) return()
-    } else {
-      p <- if (plot.type == "Surface") NULL else Data("data.pts")
-      r <- Data("data.grd")
-      if (is.null(r)) return()
+    if (is.null(Data("data.pts"))) return()
+    if (is.null(Data("data.grd")) & plot.type != "Points") return()
+
+    asp <- Data("asp.yx")
+    lim <- Data("lim.axes")
+
+
+    p <- if (plot.type == "Surface") NULL else Data("data.pts")
+    if (!is.null(p) & is.null(Data("vars")$z)) p <- as(p, "SpatialPoints")
+
+    r <- if (plot.type == "Points") NULL else Data("data.grd")
+    if (!is.null(r)) {
       ply <- if (is.null(Data("poly.crop"))) NULL else Data("polys")[[Data("poly.crop")]]
       if (!is.null(ply)) r <- raster::trim(raster::mask(r, ply))
     }
 
-    lim <- Data("lim.axes")
-    asp <- Data("asp.yx")
-
-
     if (graphics.device == "R") {
-
-
-      if (is.null(r)) {
-        r <- Data("crs")
-        xlim <- grDevices::extendrange(c(raster::xmin(p), raster::xmax(p)))
-        ylim <- grDevices::extendrange(c(raster::ymin(p), raster::ymax(p)))
-        lim$x[1] <- if (is.null(lim$x[1]) || is.na(lim$x[1])) xlim[1]
-        lim$x[2] <- if (is.null(lim$x[2]) || is.na(lim$x[2])) xlim[2]
-        lim$y[1] <- if (is.null(lim$y[1]) || is.na(lim$y[1])) ylim[1]
-        lim$y[2] <- if (is.null(lim$y[2]) || is.na(lim$y[2])) ylim[2]
-      }
-
-
-      ans <- try(inlmisc::PlotMap(r, xlim=lim$x, ylim=lim$y, zlim=lim$z, n=Data("nlevels"),
-                                  asp=Data("asp.yx"), pal=Data("color.palette")), silent=TRUE)
-
+      if (!is.null(r))
+        inlmisc::PlotMap(r, xlim=lim$x, ylim=lim$y, zlim=lim$z,
+                         n=Data("nlevels"), asp=asp, pal=Data("palette.grd"))
       if (!is.null(p)) {
-        if (plot.type == "Points") {
-
-
-
-          points(p, pch=21, col="#050505", bg="red", lwd=0.5)
-
-
-
-
-
-        } else {
-          points(p, pch=21, col="#050505", bg="#050505", lwd=0.5, cex=0.6)
-        }
+        add <- plot.type != "Points"
+        is <- inherits(p, "SpatialPointsDataFrame") & !add
+        bg <- if (is) Data("palette.pnt") else "#1F1F1FCB"
+        inlmisc::AddBubbles(p, xlim=lim$x, ylim=lim$y, zlim=lim$z,
+                            inches=0.03, bg=bg, fg="#FFFFFF40",
+                            draw.legend=is, loc="topright",
+                            make.intervals=is, add=add, asp=asp)
       }
-
     } else if (graphics.device == "RGL") {
-      if (is.null(asp) && !is.na(CRSargs(Data("crs")))) asp <- 1
-      ans <- try(Plot3d(x=r, px=p, xlim=lim$x, ylim=lim$y, zlim=lim$z,
-                        vasp=Data("asp.zx"), hasp=asp, width=Data("width"),
-                        cex.pts=Data("cex.pts"), nlevels=Data("nlevels"),
-                        color.palette=Data("color.palette")), silent=TRUE)
+
+      Plot3d(x=r, px=p, xlim=lim$x, ylim=lim$y, zlim=lim$z,
+             vasp=Data("asp.zx"), hasp=asp, width=Data("width"),
+             cex.pts=Data("cex.pts"), nlevels=Data("nlevels"),
+             color.palette=Data("palette.grd"))
+
     }
-    if (inherits(ans, "try-error"))
-      tkmessageBox(icon="error", detail=ans, title="Error", type="ok", parent=tt,
-                   message="Error in plotting routine.")
+
     tkfocus(tt)
   }
+
+
+
+
+
+
+
+
 
 
   # call data editor
@@ -720,8 +705,8 @@ StartGui <- function() {
         Data("data.pts", d)
         Data("data.grd", NULL)
       } else {
-        tkmessageBox(icon="error", title="Error", type="ok", parent=tt,
-                     message="Range excludes all data points.")
+        msg <- "Range excludes all data points."
+        tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
       }
     }
 
@@ -729,8 +714,8 @@ StartGui <- function() {
     if (!is.null(Data("data.pts")) && is.null(Data("data.grd"))) {
       if (!"z" %in% var.names) return()
       if (all(is.na(Data("data.pts")$z))) {
-        tkmessageBox(icon="error", title="Error", type="ok", parent=tt,
-                     message="Missing values for coordinate-variable 'z'.")
+        msg <- "Missing values for coordinate-variable 'z'."
+        tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
         return()
       }
       x <- sp::coordinates(Data("data.pts"))[, 1]
@@ -795,7 +780,10 @@ StartGui <- function() {
     file <- EditFunction(cols, fun=old.fun, value.length=m, value.class="logical",
                          win.title="Filter Data Records", parent=tt)
     if (is.null(file)) return()
-    if (file$fun == "") Data("query", NULL) else Data("query", file$fun)
+    if (file$fun == "")
+      Data("query", NULL)
+    else
+      Data("query", file$fun)
     Data("data.pts", NULL)
     Data("data.grd", NULL)
   }
@@ -912,10 +900,9 @@ StartGui <- function() {
   if (is.null(Data("default.dir"))) Data("default.dir", getwd())
 
   # check if suggested packages are loaded
-  is.pkg.xml        <- requireNamespace("XML",        quietly=TRUE)
-  is.pkg.rgl        <- requireNamespace("rgl",        quietly=TRUE)
-  is.pkg.tripack    <- requireNamespace("tripack",    quietly=TRUE)
-  is.pkg.colorspace <- requireNamespace("colorspace", quietly=TRUE)
+  is.pkg.xml        <- requireNamespace("XML",     quietly=TRUE)
+  is.pkg.rgl        <- requireNamespace("rgl",     quietly=TRUE)
+  is.pkg.tripack    <- requireNamespace("tripack", quietly=TRUE)
 
   # set options
   options(help_type="html")
@@ -1112,13 +1099,18 @@ StartGui <- function() {
   tkadd(menu.plot, "separator")
   tkadd(menu.plot, "command", label="Configuration",
         command=function() SetConfiguration(tt))
-  tkadd(menu.plot, "command", label="Color palette\u2026",
-        state=if (is.pkg.colorspace) "normal" else "disabled",
+  menu.plot.col <- tkmenu(tt, tearoff=0)
+  tkadd(menu.plot.col, "command", label="Point data\u2026",
         command=function() {
-          pal <- colorspace::choose_palette(pal=Data("color.palette"),
-                                            n=Data("nlevels"), parent=tt)
-          if (!is.null(pal)) Data("color.palette", pal)
+          Pal <- colorspace::choose_palette(Data("palette.pnt"), parent=tt)
+          if (!is.null(Pal)) Data("palette.pnt", Pal)
         })
+  tkadd(menu.plot.col, "command", label="Gridded data\u2026",
+        command=function() {
+          Pal <- colorspace::choose_palette(Data("palette.grd"), Data("nlevels"), parent=tt)
+          if (!is.null(Pal)) Data("palette.grd", Pal)
+        })
+  tkadd(menu.plot, "cascade", label="Choose color palette for", menu=menu.plot.col)
   tkadd(menu.plot, "separator")
   tkadd(menu.plot, "command", label="Histogram\u2026", command=CallBuildHistogram)
   tkadd(menu.plot, "command", label="Web mapping", command=PlotWebMap)
@@ -1127,7 +1119,7 @@ StartGui <- function() {
   tkadd(menu.plot.new, "command", label="R graphics", accelerator="Ctrl+F3", command=dev.new)
   tkadd(menu.plot.new, "command", label="RGL graphics", command=rgl::open3d)
   tkadd(menu.plot, "cascade", label="Open a new device for", menu=menu.plot.new)
-  tkadd(menu.plot, "command", label="Close all graphic devices", accelerator="Ctrl+F4",
+  tkadd(menu.plot, "command", label="Close graphic devices", accelerator="Ctrl+F4",
         command=CloseDevices)
 
   # help menu
@@ -1232,7 +1224,7 @@ StartGui <- function() {
   f2 <- tkframe(tt, relief="flat")
   f2.but.1.1 <- ttkbutton(f2, width=10, text="Plot", command=CallPlot)
   f2.box.1.2 <- ttkcombobox(f2, state="readonly", textvariable=plt.typ.var,
-                            values=c("Points", "Surface", "Points and surface"))
+                            values=c("Points", "Surface", "Surface and points"))
   tkgrid(f2.but.1.1, f2.box.1.2, pady=5)
   tkgrid.configure(f2.box.1.2, padx=c(5, 10), sticky="we")
   tkgrid.columnconfigure(f2, 1, weight=1, minsize=25)

@@ -8,6 +8,7 @@ Description: A program for processing and exploring spatially distributed data.
 Depends:
     R (>= 3.1.0)
 Imports:
+    colorspace,
     graphics,
     grDevices,
     inlmisc,
@@ -21,7 +22,6 @@ Imports:
     tcltk,
     utils
 Suggests:
-    colorspace,
     dichromat,
     leaflet,
     rgl,

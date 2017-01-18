@@ -156,8 +156,7 @@ ImportText <- function(parent=NULL) {
     msg <- NULL
     msg[1] <- "Connection to data source failed."
     msg[2] <- "Problems occured while reading data from text file."
-    tkmessageBox(icon="error", message=msg[type], detail=detail, title="Error",
-                 type="ok", parent=tt)
+    tkmessageBox(icon="error", message=msg[type], detail=detail, title="Error", type="ok", parent=tt)
   }
 
 
@@ -234,9 +233,8 @@ ImportText <- function(parent=NULL) {
       # raise warning message if data already exists
       if (!is.null(Data("cols"))) {
         msg <- "This action will delete existing data?"
-        ans <- as.character(tkmessageBox(icon="question", message=msg, title="Warning",
-                                         type="okcancel", parent=parent))
-        if (ans == "ok")
+        ans <- tkmessageBox(icon="question", message=msg, title="Warning", type="okcancel", parent=parent)
+        if (as.character(ans) == "ok")
           Data(clear.data=TRUE)
         else
           return()
@@ -505,8 +503,8 @@ ImportText <- function(parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
-                             "+", as.integer(geo[3]) + 25))
+    geo <- as.integer(geo[2:3]) + 25
+    tkwm.geometry(tt, sprintf("+%s+%s", geo[1], geo[2]))
   }
   tktitle(tt) <- "Import Data from Text File or Clipboard"
 

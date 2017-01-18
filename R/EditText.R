@@ -17,8 +17,8 @@ EditText <- function(txt, read.only=FALSE, win.title="View Text",
     if (txt != "" & !is.appended) {
       msg <- paste("This action will delete existing console text.",
                    "Would you like to continue?", sep="\n")
-      ans <- as.character(tkmessageBox(icon="question", message=msg,
-                                       title="Warning", type="yesno", parent=tt))
+      ans <- tkmessageBox(icon="question", message=msg, title="Warning", type="yesno", parent=tt)
+      ans <- as.character(ans)
       if (ans != "yes") return()
       ClearConsole()
     }
@@ -101,8 +101,8 @@ EditText <- function(txt, read.only=FALSE, win.title="View Text",
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
-                             "+", as.integer(geo[3]) + 25))
+    geo <- as.integer(geo[2:3]) + 25
+    tkwm.geometry(tt, sprintf("+%s+%s", geo[1], geo[2]))
   }
   tktitle(tt) <- win.title
 

@@ -39,8 +39,8 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
       }
       SelectPackage()
     } else {
-      tkmessageBox(icon="error", message="Unable to load package namespace.",
-                   title="Error", type="ok", parent=tt)
+      msg <- "Unable to load package namespace."
+      tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
     }
     tkfocus(f1.lst.2.1)
   }
@@ -70,11 +70,12 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
     idx <- as.integer(tkcurselection(f1.lst.2.4))
     pkg.item <- paste(as.character(tkget(f1.lst.2.4, idx)), collapse=" ")
     ans <- try(help(pkg.item, package=(pkg.name)), silent=TRUE)
-    if (inherits(ans, "try-error"))
-      tkmessageBox(icon="error", message="Problem with dataset documentation.",
-                   title="Error", type="ok", parent=tt)
-    else
+    if (inherits(ans, "try-error")) {
+      msg <- "Problem with dataset documentation."
+      tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
+    } else {
       print(ans)
+    }
     tkfocus(f1.lst.2.4)
   }
 
@@ -237,8 +238,8 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
-                             "+", as.integer(geo[3]) + 25))
+    geo <- as.integer(geo[2:3]) + 25
+    tkwm.geometry(tt, sprintf("+%s+%s", geo[1], geo[2]))
   }
   tktitle(tt) <- "Import Dataset From R Package"
 

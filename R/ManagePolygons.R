@@ -63,8 +63,8 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       }
     }
     if (inherits(p, "try-error")) {
-      tkmessageBox(icon="error", message="Unable to build polygon", detail=p,
-                   title="Error", type="ok", parent=tt)
+      msg <- "Unable to build polygon"
+      tkmessageBox(icon="error", message=msg, detail=p, title="Error", type="ok", parent=tt)
       shape <<- NULL
     } else {
       shape <<- p
@@ -374,8 +374,8 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
-                             "+", as.integer(geo[3]) + 25))
+    geo <- as.integer(geo[2:3]) + 25
+    tkwm.geometry(tt, sprintf("+%s+%s", geo[1], geo[2]))
   }
   tktitle(tt) <- "Polygons"
 

@@ -19,14 +19,14 @@ ImportSpreadsheet <- function(parent=NULL) {
     if (f == "") return()
     path <- try(.UnzipWorkbook(f), silent=TRUE)
     if (inherits(path, "try-error") || !is.character(path)) {
-      tkmessageBox(icon="error", message="Unable to access workbook.",
-                   detail=path, title="Error", type="ok", parent=tt)
+      msg <- "Unable to access workbook."
+      tkmessageBox(icon="error", message=msg, detail=path, title="Error", type="ok", parent=tt)
       return()
     }
     sheets <- try(.GetSheetNames(path), silent=TRUE)
     if (inherits(sheets, "try-error")) {
-      tkmessageBox(icon="error", message="Unable to access worksheets.",
-                   detail=sheets, title="Error", type="ok", parent=tt)
+      msg <- "Unable to access worksheets."
+      tkmessageBox(icon="error", message=msg, detail=sheets, title="Error", type="ok", parent=tt)
       return()
     }
     sheet.names <- as.character(sheets$name)
@@ -48,8 +48,8 @@ ImportSpreadsheet <- function(parent=NULL) {
     worksheet <- sheets$name[idx]
     cell.range <- .ParseCellRange(as.character(tclvalue(cell.range.var)))
     if (is.null(cell.range)) {
-      tkmessageBox(icon="error", message="Unable to parse cell range.",
-                   title="Error", type="ok", parent=tt)
+      msg <- "Unable to parse cell range."
+      tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
       tkfocus(f2.ent.2.2)
       return()
     }
@@ -66,8 +66,8 @@ ImportSpreadsheet <- function(parent=NULL) {
     d <- try(.ReadWorksheet(path, sheet.id, cell.range, header, rm.col.na,
                             rm.row.na, save.row.no, str.as.fact), silent=TRUE)
     if (inherits(d, "try-error")) {
-      tkmessageBox(icon="error", message="Unable to read worksheet.",
-                   title="Error", type="ok", detail=d, parent=tt)
+      msg <- "Unable to read worksheet."
+      tkmessageBox(icon="error", message=msg, title="Error", type="ok", detail=d, parent=tt)
       return()
     }
     rtn <<- list(d=d, src=c(pathname=pathname, worksheet=worksheet,
@@ -100,8 +100,8 @@ ImportSpreadsheet <- function(parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
-                             "+", as.integer(geo[3]) + 25))
+    geo <- as.integer(geo[2:3]) + 25
+    tkwm.geometry(tt, sprintf("+%s+%s", geo[1], geo[2]))
   }
   tktitle(tt) <- "Import Data From XML Spreadsheet File"
   tkwm.resizable(tt, 1, 0)

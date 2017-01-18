@@ -33,8 +33,8 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL
     obj <- try(hist(d[[idx]][row.idxs], breaks=breaks, right=right, plot=FALSE),
                silent=TRUE)
     if (inherits(obj, "try-error")) {
-      tkmessageBox(icon="error", message="Unable to build historgram.", detail=obj,
-                   title="Error", type="ok", parent=tt)
+      msg <- "Unable to build historgram."
+      tkmessageBox(icon="error", message=msg, detail=obj, title="Error", type="ok", parent=tt)
       return()
     }
 
@@ -125,7 +125,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL
 
   if (!is.character(var.names) || length(var.names) != length(d)) {
     var.names <- names(d)
-    if (is.null(var.names)) var.names <- paste0("Unknown (", length(d), ")")
+    if (is.null(var.names)) var.names <- sprintf("Unknown (%d)", length(d))
   }
 
   d <- lapply(d, function(i) try(as.numeric(i), silent=TRUE))
@@ -184,8 +184,8 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
-                             "+", as.integer(geo[3]) + 25))
+    geo <- as.integer(geo[2:3]) + 25
+    tkwm.geometry(tt, sprintf("+%s+%s", geo[1], geo[2]))
   }
   tktitle(tt) <- "Build Histogram"
   tkwm.resizable(tt, 1, 0)
@@ -193,10 +193,10 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL
   # frame 0
   f0 <- ttkframe(tt, relief="flat")
 
-  f0.but.1 <- ttkbutton(f0, width=12, text="View",
-                        command=function() CalcHist(draw.plot=FALSE))
-  f0.but.2 <- ttkbutton(f0, width=12, text="Plot",
+  f0.but.1 <- ttkbutton(f0, width=12, text="Plot",
                         command=function() CalcHist())
+  f0.but.2 <- ttkbutton(f0, width=12, text="View",
+                        command=function() CalcHist(draw.plot=FALSE))
   f0.but.4 <- ttkbutton(f0, width=12, text="Close",
                         command=function() tclvalue(tt.done.var) <- 1)
   f0.but.5 <- ttkbutton(f0, width=12, text="Help",
@@ -226,7 +226,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL
   tkgrid.configure(f1.lab.1.1, sticky="e",  padx=c(10, 2))
   tkgrid.configure(f1.box.1.2, sticky="we", padx=c(0, 10))
 
-  val <- if (length(var.names) == 1) paste0("{", var.names, "}") else var.names
+  val <- if (length(var.names) == 1) sprintf("{%s}", var.names) else var.names
   tkconfigure(f1.box.1.2, value=val)
   tcl(f1.box.1.2, "current", var.default - 1L)
 

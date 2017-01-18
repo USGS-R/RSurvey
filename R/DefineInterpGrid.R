@@ -8,8 +8,8 @@ DefineInterpGrid <- function(grid=NULL, parent=NULL) {
     if (grid$opt == 2) {
      grid$res <- c(as.numeric(tclvalue(xres.var)), as.numeric(tclvalue(yres.var)))
       if (any(is.na(grid$res))) {
-        tkmessageBox(icon="error", title="Error", type="ok", parent=tt,
-                     message="All grid spacing fields are required.")
+        msg <- "All grid spacing fields are required."
+        tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
         return()
       }
     } else if (grid$opt == 3) {
@@ -20,8 +20,8 @@ DefineInterpGrid <- function(grid=NULL, parent=NULL) {
       ymn   <- as.numeric(tclvalue(ymin.var))
       ymx   <- as.numeric(tclvalue(ymax.var))
       if (any(is.na(c(nrows, ncols, xmn, xmx, ymn, ymx)))) {
-        tkmessageBox(icon="error", title="Error", type="ok", parent=tt,
-                     message="All grid geometry fields are required.")
+        msg <- "All grid geometry fields are required."
+        tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
         return()
       }
       ans <- try(raster::raster(nrows=nrows, ncols=ncols,
@@ -29,8 +29,8 @@ DefineInterpGrid <- function(grid=NULL, parent=NULL) {
                                 crs=sp::CRS(as.character(NA)), vals=NULL),
                                 silent=TRUE)
       if (inherits(ans, "try-error")) {
-        tkmessageBox(icon="error", detail=ans, title="Error", type="ok", parent=tt,
-                     message="Problem with grid geometry.")
+        msg <- "Problem with grid geometry."
+        tkmessageBox(icon="error", message=msg, detail=ans, title="Error", type="ok", parent=tt)
         return()
       }
       grid$geo <- ans
@@ -109,10 +109,10 @@ DefineInterpGrid <- function(grid=NULL, parent=NULL) {
   tclServiceMode(FALSE)
   tt <- tktoplevel()
   if (!is.null(parent)) {
-      tkwm.transient(tt, parent)
-      geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-      tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
-                               "+", as.integer(geo[3]) + 25))
+    tkwm.transient(tt, parent)
+    geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
+    geo <- as.integer(geo[2:3]) + 25
+    tkwm.geometry(tt, sprintf("+%s+%s", geo[1], geo[2]))
   }
   tktitle(tt) <- "Interpolation Grid"
   tkwm.resizable(tt, 1, 0)

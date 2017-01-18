@@ -45,8 +45,8 @@ ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
   if (!is.null(parent)) {
     tkwm.transient(.tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(.tt, paste0("+", as.integer(geo[2]) + 25,
-                              "+", as.integer(geo[3]) + 25))
+    geo <- as.integer(geo[2:3]) + 25
+    tkwm.geometry(.tt, sprintf("+%s+%s", geo[1], geo[2]))
   }
   tktitle(.tt) <- win.title
   tkwm.resizable(.tt, 0, 0)

@@ -159,15 +159,13 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
                     "\" include:\n\n  ", paste(ids, collapse=", "),
                     "\n\nThese variables must first be removed before this ",
                     "operation can be completed.")
-      tkmessageBox(icon="error", message=msg, title="Deletion Prevented",
-                   type="ok", parent=tt)
+      tkmessageBox(icon="error", message=msg, title="Deletion Prevented", type="ok", parent=tt)
       return()
     }
     if (!is.na(cols[[idx]]$index)) {
       msg <- paste0("Variable \"", cols[[idx]]$id, "\" corresponds with imported data.\n\n",
                     "Are you sure you want to remove it?")
-      ans <- tkmessageBox(icon="question", message=msg, title="Question",
-                          type="yesno", parent=tt)
+      ans <- tkmessageBox(icon="question", message=msg, title="Question", type="yesno", parent=tt)
       if (as.character(ans) == "no") return()
     }
 
@@ -248,9 +246,8 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     if (f$fun == "") {
       msg <- paste0("Nothing has been defined for this function; therefore,\n",
                     "the variable '", cols[[idx]]$name, "' will be removed.")
-      ans <- as.character(tkmessageBox(icon="question", message=msg,
-                                       title="Warning", type="okcancel", parent=tt))
-      if (ans == "ok") DeleteVar()
+      ans <- tkmessageBox(icon="question", message=msg, title="Warning", type="okcancel", parent=tt)
+      if (as.character(ans) == "ok") DeleteVar()
       return()
     }
 
@@ -353,8 +350,8 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
-                             "+", as.integer(geo[3]) + 25))
+    geo <- as.integer(geo[2:3]) + 25
+    tkwm.geometry(tt, sprintf("+%s+%s", geo[1], geo[2]))
   }
   tktitle(tt) <- "Variables"
 

@@ -17,6 +17,7 @@ Plot3d <- function(x=NULL, y=NULL, z=NULL, px=NULL, py=NULL, pz=NULL,
       x <- raster::xFromCol(r, 1:ncol(r))
       y <- raster::yFromRow(r, nrow(r):1)
       z <- t((raster::getValues(r, format="matrix"))[nrow(r):1, ])
+      if (!is.numeric(hasp)) hasp <- 1
     }
 
     if (is.null(x)) x <- seq(0, 1, length.out=nrow(z))

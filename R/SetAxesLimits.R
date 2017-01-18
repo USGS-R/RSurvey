@@ -90,8 +90,8 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
   if (!is.null(parent)) {
     tkwm.transient(tt, parent)
     geo <- unlist(strsplit(as.character(tkwm.geometry(parent)), "\\+"))
-    tkwm.geometry(tt, paste0("+", as.integer(geo[2]) + 25,
-                             "+", as.integer(geo[3]) + 25))
+    geo <- as.integer(geo[2:3]) + 25
+    tkwm.geometry(tt, sprintf("+%s+%s", geo[1], geo[2]))
   }
   tktitle(tt) <- "Axes Limits"
   tkwm.resizable(tt, 1, 0)
@@ -125,21 +125,15 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
 
   f1.chk.1.3 <- ttkcheckbutton(f1, variable=x1.chk.var, text="Auto",
                                command=function() {
-                                 if (as.integer(tclvalue(x1.chk.var))) {
-                                   tclvalue(x1.sta.var) <- "disabled"
-                                 } else {
-                                   tclvalue(x1.sta.var) <- "normal"
-                                 }
+                                 is <- as.logical(as.integer(tclvalue(x1.chk.var)))
+                                 tclvalue(x1.sta.var) <- ifelse(is, "disabled", "normal")
                                  tkconfigure(f1.ent.1.2, state=tclvalue(x1.sta.var))
                                  tkfocus(f1.ent.1.2)
                                })
   f1.chk.2.3 <- ttkcheckbutton(f1, variable=x2.chk.var, text="Auto",
                                command=function() {
-                                 if (as.integer(tclvalue(x2.chk.var))) {
-                                   tclvalue(x2.sta.var) <- "disabled"
-                                 } else {
-                                   tclvalue(x2.sta.var) <- "normal"
-                                 }
+                                 is <- as.logical(as.integer(tclvalue(x2.chk.var)))
+                                 tclvalue(x2.sta.var) <- ifelse(is, "disabled", "normal")
                                  tkconfigure(f1.ent.2.2, state=tclvalue(x2.sta.var))
                                  tkfocus(f1.ent.2.2)
                                })
@@ -167,20 +161,15 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
 
   f2.chk.1.3 <- ttkcheckbutton(f2, variable=y1.chk.var, text="Auto",
                                command=function() {
-                                 if (as.integer(tclvalue(y1.chk.var))) {
-                                   tclvalue(y1.sta.var) <- "disabled"
-                                 } else {
-                                   tclvalue(y1.sta.var) <- "normal"
-                                 }
+                                 is <- as.logical(as.integer(tclvalue(y1.chk.var)))
+                                 tclvalue(y1.sta.var) <- ifelse(is, "disabled", "normal")
                                  tkconfigure(f2.ent.1.2, state=tclvalue(y1.sta.var))
                                  tkfocus(f2.ent.1.2)
                                })
   f2.chk.2.3 <- ttkcheckbutton(f2, variable=y2.chk.var, text="Auto",
                                command=function() {
-                                 if (as.integer(tclvalue(y2.chk.var)))
-                                   tclvalue(y2.sta.var) <- "disabled"
-                                 else
-                                   tclvalue(y2.sta.var) <- "normal"
+                                 is <- as.logical(as.integer(tclvalue(y2.chk.var)))
+                                 tclvalue(y2.sta.var) <- ifelse(is, "disabled", "normal")
                                  tkconfigure(f2.ent.2.2, state=tclvalue(y2.sta.var))
                                  tkfocus(f2.ent.2.2)
                                })
@@ -207,19 +196,15 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
 
   f3.chk.1.3 <- ttkcheckbutton(f3, variable=z1.chk.var, text="Auto",
                                command=function() {
-                                 if (as.integer(tclvalue(z1.chk.var)))
-                                   tclvalue(z1.sta.var) <- "disabled"
-                                 else
-                                   tclvalue(z1.sta.var) <- "normal"
+                                 is <- as.logical(as.integer(tclvalue(z1.chk.var)))
+                                 tclvalue(z1.sta.var) <- ifelse(is, "disabled", "normal")
                                  tkconfigure(f3.ent.1.2, state=tclvalue(z1.sta.var))
                                  tkfocus(f3.ent.1.2)
                                })
   f3.chk.2.3 <- ttkcheckbutton(f3, variable=z2.chk.var, text="Auto",
                                command=function() {
-                                 if (as.integer(tclvalue(z2.chk.var)))
-                                   tclvalue(z2.sta.var) <- "disabled"
-                                 else
-                                   tclvalue(z2.sta.var) <- "normal"
+                                 is <- as.logical(as.integer(tclvalue(z2.chk.var)))
+                                 tclvalue(z2.sta.var) <- ifelse(is, "disabled", "normal")
                                  tkconfigure(f3.ent.2.2, state=tclvalue(z2.sta.var))
                                  tkfocus(f3.ent.2.2)
                                })

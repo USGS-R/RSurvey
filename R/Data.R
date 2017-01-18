@@ -4,21 +4,22 @@ Data <- local({
   dat <- list()
 
   # set default values
-  default <- list("nlevels"       = 20,
-                  "width"         = 7,
-                  "cex.pts"       = 1,
-                  "default.dir"   = getwd(),
-                  "sep"           = "\t",
-                  "rkey"          = 0,
-                  "show.poly"     = 0,
-                  "img.contour"   = 0,
-                  "show.lines"    = 0,
-                  "show.2.axes"   = 0,
-                  "minor.ticks"   = 0,
-                  "ticks.inside"  = 0,
-                  "rm.pnt.line"   = 0,
-                  "color.palette" = grDevices::terrain.colors,
-                  "crs"           = sp::CRS(as.character(NA))
+  default <- list("nlevels"      = 20,
+                  "width"        = 7,
+                  "cex.pts"      = 1,
+                  "default.dir"  = getwd(),
+                  "sep"          = "\t",
+                  "rkey"         = 0,
+                  "show.poly"    = 0,
+                  "img.contour"  = 0,
+                  "show.lines"   = 0,
+                  "show.2.axes"  = 0,
+                  "minor.ticks"  = 0,
+                  "ticks.inside" = 0,
+                  "rm.pnt.line"  = 0,
+                  "palette.pnt"  = colorspace::rainbow_hcl,
+                  "palette.grd"  = colorspace::diverge_hcl,
+                  "crs"          = sp::CRS(as.character(NA))
               )
 
   function(option, value, which.attr=NULL, clear.proj=FALSE, clear.data=FALSE, replace.all=NULL) {
@@ -36,7 +37,8 @@ Data <- local({
         save.params <- c(save.params, "nlevels", "asp.yx", "asp.zx", "rkey",
                          "show.poly", "img.contour", "show.lines",
                          "date.fmt", "polys", "proj.file", "show.2.axes",
-                         "minor.ticks", "ticks.inside", "color.palette", "rm.pnt.line")
+                         "minor.ticks", "ticks.inside", "palette.pnt", "palette.grd",
+                         "rm.pnt.line")
       save.params <- save.params[save.params %in% names(dat)]
       dat <<- sapply(save.params, function(i) list(dat[[i]]))
       return(invisible())
