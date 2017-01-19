@@ -1,165 +1,61 @@
-Plot3d <- function(x=NULL, y=NULL, z=NULL, px=NULL, py=NULL, pz=NULL,
-                   xlim=NULL, ylim=NULL, zlim=NULL,
-                   vasp=NA, hasp=NA, width=7, ppi=96, cex.pts=1, nlevels=20,
+Plot3d <- function(p=NULL, r=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
+                   vasp=NULL, hasp=NULL, width=7, ppi=96, cex.pts=1, n=NULL,
                    color.palette=terrain.colors, maxpixels=500000) {
 
   if (!requireNamespace("rgl", quietly=TRUE)) stop()
 
-  # surface attributes
-  show.surface <- !is.null(x) | !is.null(z)
-  if (show.surface) {
-    if (inherits(x, "list")) {
-      z <- x$z
-      y <- x$y
-      x <- x$x
-    } else if (inherits(x, "RasterLayer")) {
-      r <- raster::sampleRegular(x, size=maxpixels, asRaster=TRUE)
-      x <- raster::xFromCol(r, 1:ncol(r))
-      y <- raster::yFromRow(r, nrow(r):1)
-      z <- t((raster::getValues(r, format="matrix"))[nrow(r):1, ])
-      if (!is.numeric(hasp)) hasp <- 1
-    }
+  is.p <- inherits(p, "SpatialPointsDataFrame")
+  is.r <- inherits(r, "RasterLayer")
 
-    if (is.null(x)) x <- seq(0, 1, length.out=nrow(z))
-    if (is.null(y)) y <- seq(0, 1, length.out=ncol(z))
-    if (any(diff(x) <= 0) || any(diff(y) <= 0))
-      stop("increasing 'x' and 'y' values expected")
-    if (!is.matrix(z) || nrow(z) <= 1 || ncol(z) <= 1)
-      stop("invalid 'z' matrix specified")
-  }
+  if (!is.numeric(xlim)) xlim <- c(NA, NA)
+  if (!is.numeric(ylim)) ylim <- c(NA, NA)
+  if (!is.numeric(zlim)) zlim <- c(NA, NA)
 
-
-  # point attributes
-  show.points <- !is.null(px)
-  if (show.points) {
-    if (inherits(px, "list")) {
-      pz <- px$z
-      py <- px$y
-      px <- px$x
-    } else if (inherits(px, "SpatialPointsDataFrame")) {
-      pz <- px@data$z
-      py <- sp::coordinates(px)[, 2]
-      px <- sp::coordinates(px)[, 1]
-    }
-  }
-
-  # options
   if (is.null(width)) width <- 7
   if (is.null(cex.pts)) cex.pts <- 1
 
-  # axis limits
-  if (!is.null(xlim)) {
-    if (!is.na(xlim[1])) {
-      if (show.surface) {
-        is <- x >= xlim[1]
-        x <- x[is]
-        z <- z[is, ]
-      }
-      if (show.points) {
-        is <- px >= xlim[1]
-        px <- px[is]
-        py <- py[is]
-        pz <- pz[is]
-      }
-    }
-    if (!is.na(xlim[2])) {
-      if (show.surface) {
-        is <- x <= xlim[2]
-        x <- x[is]
-        z <- z[is, ]
-      }
-      if (show.points) {
-        is <- px <= xlim[2]
-        px <- px[is]
-        py <- py[is]
-        pz <- pz[is]
-      }
-    }
+  # raster resolution
+  if (is.r) r <- raster::sampleRegular(r, size=maxpixels, asRaster=TRUE)
+
+  # limits
+  e <- cbind(if (is.p) as.vector(raster::extent(p)) else NULL,
+             if (is.r) as.vector(raster::extent(r)) else NULL)
+  e <- c(min(e[1, ]), max(e[2, ]), min(e[3, ]), max(e[4, ]))
+  if (!is.na(xlim[1])) e[1] <- xlim[1]
+  if (!is.na(xlim[2])) e[2] <- xlim[2]
+  if (!is.na(ylim[1])) e[3] <- ylim[1]
+  if (!is.na(ylim[2])) e[4] <- ylim[2]
+  if (is.p) p <- raster::crop(p, raster::extent(e), snap="near")
+  if (is.r) r <- raster::crop(r, raster::extent(e), snap="near")
+
+  zran <- range(c(if (is.p) p@data[, 1] else NULL, if (is.r) r[] else NULL), finite=TRUE)
+  if (is.na(zlim[1])) zlim[1] <- zran[1]
+  if (is.na(zlim[2])) zlim[2] <- zran[2]
+
+  if (is.p) {
+    is.ge <- p@data[, 1] >= zlim[1] & !is.na(p@data[, 1])
+    is.le <- p@data[, 1] <= zlim[2] & !is.na(p@data[, 1])
+    p <- p[is.ge & is.le, ]
+  }
+  if (is.r) {
+    r[r[] < zlim[1] | r[] > zlim[2]] <- NA
+    r <- raster::trim(r)
   }
 
-  if (!is.null(ylim)) {
-    if (!is.na(ylim[1])) {
-      if (show.surface) {
-        is <- y >= ylim[1]
-        y <- y[is]
-        z <- z[, is]
-      }
-      if (show.points) {
-        is <- py >= ylim[1]
-        px <- px[is]
-        py <- py[is]
-        pz <- pz[is]
-      }
-    }
-    if (!is.na(ylim[2])) {
-      if (show.surface) {
-        is <- y <= ylim[2]
-        y <- y[is]
-        z <- z[, is]
-      }
-      if (show.points) {
-        is <- py <= ylim[2]
-        px <- px[is]
-        py <- py[is]
-        pz <- pz[is]
-      }
-    }
-  }
-
-  if (!is.null(zlim)) {
-    if (!is.na(zlim[1])) {
-      if (show.surface) z[z < zlim[1]] <- NA
-      if (show.points) {
-        is <- pz >= zlim[1]
-        px <- px[is]
-        py <- py[is]
-        pz <- pz[is]
-      }
-    }
-    if (!is.na(zlim[2])) {
-      if (show.surface) z[z > zlim[2]] <- NA
-      if (show.points) {
-        is <- pz <= zlim[2]
-        px <- px[is]
-        py <- py[is]
-        pz <- pz[is]
-      }
-    }
-  } else {
-    zlim <- range(z, na.rm=TRUE)
-  }
-  if (is.na(zlim[1])) zlim[1] <- min(c(z, pz), na.rm=TRUE)
-  if (is.na(zlim[2])) zlim[2] <- max(c(z, pz), na.rm=TRUE)
+  xran <- range(c(if (is.p) bbox(p)[1, ] else NULL,
+                  if (is.r) bbox(r)[1, ] else NULL))
+  yran <- range(c(if (is.p) bbox(p)[2, ] else NULL,
+                  if (is.r) bbox(r)[2, ] else NULL))
+  if (is.na(xlim[1])) xlim[1] <- xran[1]
+  if (is.na(xlim[2])) xlim[2] <- xran[2]
+  if (is.na(ylim[1])) ylim[1] <- yran[1]
+  if (is.na(ylim[2])) ylim[2] <- yran[2]
 
   # scale
-  if (inherits(hasp, "numeric")) {
-    yscale <- hasp
-  } else {
-    yscale <- (diff(range(c(x, px), na.rm=TRUE)) / diff(range(c(y, py), na.rm=TRUE)))
-  }
+  yscale <- if (is.null(hasp)) diff(xlim) / diff(ylim) else hasp
+  zscale <- if (is.null(vasp)) (diff(xlim) * 0.25) / diff(zlim) else vasp
 
-  if (inherits(vasp, "numeric")) {
-    zscale <- vasp
-  } else {
-    maxdiff <- max(diff(range(c(x, px), na.rm=TRUE)),
-                   diff(range(c(y, py), na.rm=TRUE))) * 0.15
-    zscale <- if (all(is.na(c(z, pz)))) 1 else (maxdiff / diff(range(c(z, pz), na.rm=TRUE)))
-  }
-
-  if (show.surface) {
-    y <- y * yscale
-    z <- z * zscale
-    n <- length(pretty(zlim, nlevels)) - 1
-    zran <- range(z, na.rm=TRUE)
-    cols <- color.palette(n)[((z - zran[1]) / (zran[2] - zran[1])) * (n - 1) + 1]
-  }
-
-  if (show.points) {
-    py <- py * yscale
-    pz <- pz * zscale
-  }
-
-  # open device
+  # device
   if (rgl::rgl.cur() == 0) {
     rgl::open3d()
     win.dim <- ppi + width * ppi
@@ -169,9 +65,30 @@ Plot3d <- function(x=NULL, y=NULL, z=NULL, px=NULL, py=NULL, pz=NULL,
     rgl::clear3d()
   }
 
-  # draw graphics
-  if (show.surface) rgl::surface3d(x, y, z, color=cols)
-  if (show.points)  rgl::points3d(x=px, y=py, z=pz, size=cex.pts * 3, point_antialias=TRUE)
+  # grid
+  if (is.r) {
+    x <- raster::xFromCol(r, 1:ncol(r))
+    y <- raster::yFromRow(r, nrow(r):1) * yscale
+    z <- t((raster::getValues(r, format="matrix"))[nrow(r):1, ]) * zscale
+    zran <- range(r[], finite=TRUE)
+    if (is.null(n) || n > 200L) {
+      breaks <- seq(zlim[1], zlim[2], length.out=200L)
+    } else {
+      breaks <- pretty(zlim, n=n)
+    }
+    n <- length(breaks) - 1L
+    interval <- findInterval(z, breaks * zscale, all.inside=TRUE)
+    cols <- color.palette(n)[interval]
+    rgl::surface3d(x, y, z, color=cols)
+  }
+
+  # points
+  if (is.p) {
+    x <- sp::coordinates(p)[, 1]
+    y <- sp::coordinates(p)[, 2] * yscale
+    z <- p@data[, 1] * zscale
+    rgl::points3d(x=x, y=y, z=z, size=cex.pts * 3, point_antialias=TRUE)
+  }
 
   rgl::box3d()
   rgl::title3d(xlab="x", ylab="y", zlab="z", line=0.1)

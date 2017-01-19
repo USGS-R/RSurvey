@@ -515,6 +515,11 @@ StartGui <- function() {
   }
 
 
+
+
+
+
+
   # plot data
   CallPlot <- function() {
     plot.type <- paste(as.character(tcl(f2.box.1.2, "get")), collapse=" ")
@@ -554,16 +559,14 @@ StartGui <- function() {
       }
     } else if (graphics.device == "RGL") {
 
-      Plot3d(x=r, px=p, xlim=lim$x, ylim=lim$y, zlim=lim$z,
+      Plot3d(p, r, xlim=lim$x, ylim=lim$y, zlim=lim$z,
              vasp=Data("asp.zx"), hasp=asp, width=Data("width"),
-             cex.pts=Data("cex.pts"), nlevels=Data("nlevels"),
+             cex.pts=Data("cex.pts"), n=Data("nlevels"),
              color.palette=Data("palette.grd"))
-
     }
 
     tkfocus(tt)
   }
-
 
 
 
