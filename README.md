@@ -25,12 +25,12 @@ To check if Tk is available, startup an R session and type the following at the 
 capabilities("tcltk")
 ```
 
-Support for viewing and editing table data is provided by [tktable](http://tktable.sourceforge.net/ "tktable"),
+Support for viewing and editing table data is provided by [Tktable](http://tktable.sourceforge.net/),
 a spreadsheet-like Tk widget (typically included with the binary distribution of R).
-To check if tktable is available, use the command
+To check if Tktable is available, use the command
 
 ```r
-inherits(tcltk::tclRequire("Tktable", warn = FALSE), "tclObj")
+inherits(tcltk::tclRequire("Tktable", FALSE), "tclObj")
 ```
 
 Finally, install the stable version of **RSurvey** from CRAN using the command
