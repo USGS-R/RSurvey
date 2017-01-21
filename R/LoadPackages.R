@@ -86,7 +86,7 @@ LoadPackages <- function() {
 
     f1.lab.1.1 <- ttklabel(f1, image=rlogo.var, background="white")
 
-    txt <- "The following suggested (not required) package(s) are missing:"
+    txt <- "The following suggested (not necessarily needed) package(s) are missing:"
     f1.lab.1.2 <- ttklabel(f1, text=txt, justify="left", background="white")
 
     f1.lst.2.2 <- tklistbox(f1, selectmode="extended", activestyle="none", relief="groove",

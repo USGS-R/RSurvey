@@ -11,36 +11,50 @@ that provides data viewing, management, and analysis tools.
 ## Install
 
 If R is not already installed on your computer, download and install the latest binary distribution from
-[CRAN](https://cran.r-project.org/ "The Comprehensive R Archive Network").
-Windows users should set R to operate as an SDI application during installation
+the Comprehensive R Archive Network ([CRAN](https://cran.r-project.org/)).
+Windows users should set R to operate as a single document interface (SDI) application during installation
 by choosing to customize the start-up options and specifying the SDI interface (not the default).
 
-You can install the stable version of the **RSurvey** package from
-[CRAN](https://CRAN.R-project.org/package=RSurvey) using the following command:
+If your operating system is OS X, download and install [XQuartz](https://www.xquartz.org/), and reboot your computer.
+
+**RSurvey** uses the [Tk](http://www.tkdocs.com/) toolkit for GUI rendering,
+access to Tk is provided by the **tcltk** package.
+To check if Tk is available, startup an R session and type the following at the command prompt (>):
+
+```r
+capabilities("tcltk")
+```
+
+Support for viewing and editing table data is provided by [tktable](http://tktable.sourceforge.net/ "tktable"),
+a spreadsheet-like Tk widget (typically included with the binary distribution of R).
+To check if tktable is available, use the command
+
+```r
+inherits(tcltk::tclRequire("Tktable", warn = FALSE), "tclObj")
+```
+
+Finally, to install the stable version of **RSurvey** from
+[CRAN](https://CRAN.R-project.org/package=RSurvey), use the command
 
 ```r
 install.packages("RSurvey")
 ```
 
-In addition to the required packages, **RSurvey** is dependent on a number of functions in the suggested packages.
+In addition to its required packages, **RSurvey** can make use of the functionality in its suggested packages.
 If any of the suggested packages are missing, **RSurvey** will offer to install them when it first starts up.
-Note that the license for the suggested **tripack** package explicitly forbids commercial use.
-
-Support for displaying table data is provided by [tktable](http://tktable.sourceforge.net/ "tktable"),
-a spreadsheet-like [Tcl/Tk](https://tcl.tk/ "Tcl/Tk") widget (typically included with the binary distribution of R).
-The following command will indicate whether tktable is available for use:
-
-```r
-print(inherits(tcltk::tclRequire("Tktable", warn = FALSE), "tclObj"))
-```
+Note that the software license for the suggested **tripack** package explicitly forbids commercial use.
 
 ## Run
 
-Load **RSurvey** in the current R session and launch its GUI
+Load **RSurvey** in the current R session using the command
 
 ```r
 library(RSurvey)
 ```
+
+The main GUI will open automatically and should look something like this
+
+| ![](inst/images/screenshot.png)
 
 ## Bugs
 
