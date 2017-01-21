@@ -5,15 +5,8 @@
 
 ## Overview
 
-The [R](https://www.r-project.org/) package **RSurvey** is a program for processing and exploring spatially distributed data.
-**RSurvey** features graphing, data management, interpolation, and query building tools.
-A graphical user interface (GUI) is provided and requires R operate as an SDI application,
-using multiple top-level windows for the console, graphics, and pager.
-Immediate goals for software development include:
-
-- increase the number of available interpolation methods;
-- add color management tool, with custom color range assignment based on variable; and
-- add profile tool, generate (elevation) profiles for line of cross section.
+The [R](https://www.r-project.org/) package **RSurvey** is a geographic information system (GIS) graphical user interface (GUI).
+The **RSurvey** GUI provides data viewing, management, and analysis tools.
 
 ## Install
 

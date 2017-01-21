@@ -1,10 +1,9 @@
 Package: RSurvey
-Title: Exploratory Analysis of Spatial Data
+Title: Geographic Information System Application
 Version: 0.8.3.9000
 Authors@R: person("Jason", "Fisher", email="jfisher@usgs.gov", role=c("aut", "cre"))
-Description: A program for processing and exploring spatially distributed data.
-  It features graphing, data management, interpolation, and query building tools.
-  A graphical user interface is provided.
+Description: A geographic information system (GIS) graphical user interface (GUI) that
+  provides data viewing, management, and analysis tools.
 Depends:
     R (>= 3.1.0)
 Imports:
