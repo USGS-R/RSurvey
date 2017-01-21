@@ -19,7 +19,7 @@ If your operating system is OS X, download and install [XQuartz](https://www.xqu
 
 **RSurvey** uses the [Tk](http://www.tkdocs.com/) toolkit for GUI rendering,
 access to Tk is provided by the **tcltk** package.
-To check if Tk is available, startup an R session and type the following at the command prompt (>):
+To check if Tk is available, startup an R session and type the following at the command prompt
 
 ```r
 capabilities("tcltk")
@@ -33,8 +33,7 @@ To check if tktable is available, use the command
 inherits(tcltk::tclRequire("Tktable", warn = FALSE), "tclObj")
 ```
 
-Finally, to install the stable version of **RSurvey** from
-[CRAN](https://CRAN.R-project.org/package=RSurvey), use the command
+Finally, install the stable version of **RSurvey** from CRAN using the command
 
 ```r
 install.packages("RSurvey")
@@ -54,7 +53,7 @@ library(RSurvey)
 
 The main GUI will open automatically and should look something like this
 
-| ![](inst/images/screenshot.png)
+![](inst/images/screenshot.png)
 
 ## Bugs
 
