@@ -5,8 +5,8 @@
 
 ## Overview
 
-The [R](https://www.r-project.org/) package **RSurvey** is a geographic information system (GIS) graphical user interface (GUI).
-The **RSurvey** GUI provides data viewing, management, and analysis tools.
+The [R](https://www.r-project.org/) package **RSurvey** is a geographic information system (GIS) graphical user interface (GUI)
+that provides data viewing, management, and analysis tools.
 
 ## Install
 
