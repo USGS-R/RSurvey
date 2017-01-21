@@ -1,16 +1,22 @@
-Plot3d <- function(p=NULL, r=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
+Plot3d <- function(r=NULL, p=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
                    vasp=NULL, hasp=NULL, width=7, ppi=96, cex.pts=1, n=NULL,
                    color.palette=terrain.colors, maxpixels=500000) {
 
   if (!requireNamespace("rgl", quietly=TRUE)) stop()
-
-  is.p <- inherits(p, "SpatialPointsDataFrame")
   is.r <- inherits(r, "RasterLayer")
+  is.p <- inherits(p, "SpatialPointsDataFrame")
 
+  if (is.r) {
+    try(p <- spTransform(p, r@crs), silent=TRUE)
+    if (is.null(hasp) && !is.na(rgdal::CRSargs(raster::crs(r)))) hasp <- 1
+  } else if (is.p) {
+    if (is.null(hasp) && !is.na(rgdal::CRSargs(raster::crs(p)))) hasp <- 1
+  }
+
+  # defaults
   if (!is.numeric(xlim)) xlim <- c(NA, NA)
   if (!is.numeric(ylim)) ylim <- c(NA, NA)
   if (!is.numeric(zlim)) zlim <- c(NA, NA)
-
   if (is.null(width)) width <- 7
   if (is.null(cex.pts)) cex.pts <- 1
 
@@ -27,11 +33,9 @@ Plot3d <- function(p=NULL, r=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
   if (!is.na(ylim[2])) e[4] <- ylim[2]
   if (is.p) p <- raster::crop(p, raster::extent(e), snap="near")
   if (is.r) r <- raster::crop(r, raster::extent(e), snap="near")
-
   zran <- range(c(if (is.p) p@data[, 1] else NULL, if (is.r) r[] else NULL), finite=TRUE)
   if (is.na(zlim[1])) zlim[1] <- zran[1]
   if (is.na(zlim[2])) zlim[2] <- zran[2]
-
   if (is.p) {
     is.ge <- p@data[, 1] >= zlim[1] & !is.na(p@data[, 1])
     is.le <- p@data[, 1] <= zlim[2] & !is.na(p@data[, 1])
@@ -41,7 +45,6 @@ Plot3d <- function(p=NULL, r=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
     r[r[] < zlim[1] | r[] > zlim[2]] <- NA
     r <- raster::trim(r)
   }
-
   xran <- range(c(if (is.p) bbox(p)[1, ] else NULL,
                   if (is.r) bbox(r)[1, ] else NULL))
   yran <- range(c(if (is.p) bbox(p)[2, ] else NULL,
@@ -71,11 +74,10 @@ Plot3d <- function(p=NULL, r=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
     y <- raster::yFromRow(r, nrow(r):1) * yscale
     z <- t((raster::getValues(r, format="matrix"))[nrow(r):1, ]) * zscale
     zran <- range(r[], finite=TRUE)
-    if (is.null(n) || n > 200L) {
+    if (is.null(n) || n > 200L)
       breaks <- seq(zlim[1], zlim[2], length.out=200L)
-    } else {
+    else
       breaks <- pretty(zlim, n=n)
-    }
     n <- length(breaks) - 1L
     interval <- findInterval(z, breaks * zscale, all.inside=TRUE)
     cols <- color.palette(n)[interval]

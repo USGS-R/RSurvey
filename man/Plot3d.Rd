@@ -4,17 +4,17 @@
 
 \title{Plot Points and Surface in 3D}
 
-\description{Draws plot of points and surface in three-dimensional (\acronym{3D}) space.}
+\description{This function renders raster and point data in three-dimensional (\acronym{3D}) space.}
 
 \usage{
-Plot3d(p = NULL, r = NULL, xlim = NULL, ylim = NULL, zlim = NULL,
+Plot3d(r = NULL, p = NULL, xlim = NULL, ylim = NULL, zlim = NULL,
        vasp = NULL, hasp = NULL, width = 7, ppi = 96, cex.pts = 1, n = NULL,
        color.palette = terrain.colors, maxpixels = 500000)
 }
 
 \arguments{
-\item{p}{SpatialPointsDataFrame; points}
-\item{r}{RasterLayer; surface}
+\item{r}{RasterLayer; surface data}
+\item{p}{SpatialPointsDataFrame; point data}
 \item{xlim}{numeric; a vector of \code{x} limits \code{(x1,x2)} for the plot.}
 \item{ylim}{numeric; a vector of \code{y} limits \code{(y1,y2)} for the plot.}
 \item{zlim}{numeric; a vector of \code{z} limits \code{(z1,z2)} for the plot.}

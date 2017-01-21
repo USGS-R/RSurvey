@@ -545,23 +545,28 @@ StartGui <- function() {
     }
 
     if (graphics.device == "R") {
-      if (!is.null(r))
+
+      if (plot.type == "Points") {
+        is <- inherits(p, "SpatialPointsDataFrame")
+        bg <- if (is) Data("palette.pnt") else "#1F1F1FCB"
+        inlmisc::AddBubbles(p, xlim=lim$x, ylim=lim$y, zlim=lim$z, inches=0.03,
+                            bg=bg, fg="#FFFFFF40", draw.legend=is, loc="topright",
+                            make.intervals=is, add=FALSE, asp=asp)
+      }
+
+      if (plot.type == "Surface")
         inlmisc::PlotMap(r, xlim=lim$x, ylim=lim$y, zlim=lim$z,
                          n=Data("nlevels"), asp=asp, pal=Data("palette.grd"))
-      if (!is.null(p)) {
-        add <- plot.type != "Points"
-        is <- inherits(p, "SpatialPointsDataFrame") & !add
-        bg <- if (is) Data("palette.pnt") else "#1F1F1FCB"
-        inlmisc::AddBubbles(p, xlim=lim$x, ylim=lim$y, zlim=lim$z,
-                            inches=0.03, bg=bg, fg="#FFFFFF40",
-                            draw.legend=is, loc="topright",
-                            make.intervals=is, add=add, asp=asp)
-      }
+
+      if (plot.type == "Surface and points")
+        inlmisc::PlotMap(r, p, inches=0.03, bg="#1F1F1FCB", fg="#FFFFFF40",
+                         draw.legend=FALSE, xlim=lim$x, ylim=lim$y, zlim=lim$z,
+                         n=Data("nlevels"), asp=asp, pal=Data("palette.grd"))
+
     } else if (graphics.device == "RGL") {
 
-      Plot3d(p, r, xlim=lim$x, ylim=lim$y, zlim=lim$z,
-             vasp=Data("asp.zx"), hasp=asp, width=Data("width"),
-             cex.pts=Data("cex.pts"), n=Data("nlevels"),
+      Plot3d(r, p, xlim=lim$x, ylim=lim$y, zlim=lim$z, vasp=Data("asp.zx"),
+             hasp=asp, width=Data("width"), cex.pts=Data("cex.pts"), n=Data("nlevels"),
              color.palette=Data("palette.grd"))
     }
 
@@ -1110,10 +1115,11 @@ StartGui <- function() {
         })
   tkadd(menu.plot.col, "command", label="Gridded data\u2026",
         command=function() {
-          Pal <- colorspace::choose_palette(Data("palette.grd"), Data("nlevels"), parent=tt)
+          n <- ifelse(is.null(Data("nlevels")), 200, Data("nlevels"))
+          Pal <- colorspace::choose_palette(Data("palette.grd"), n, parent=tt)
           if (!is.null(Pal)) Data("palette.grd", Pal)
         })
-  tkadd(menu.plot, "cascade", label="Choose color palette for", menu=menu.plot.col)
+  tkadd(menu.plot, "cascade", label="Color palette for", menu=menu.plot.col)
   tkadd(menu.plot, "separator")
   tkadd(menu.plot, "command", label="Histogram\u2026", command=CallBuildHistogram)
   tkadd(menu.plot, "command", label="Web mapping", command=PlotWebMap)

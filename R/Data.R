@@ -4,8 +4,7 @@ Data <- local({
   dat <- list()
 
   # set default values
-  default <- list("nlevels"      = 20,
-                  "width"        = 7,
+  default <- list("width"        = 7,
                   "cex.pts"      = 1,
                   "default.dir"  = getwd(),
                   "sep"          = "\t",
