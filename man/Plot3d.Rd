@@ -8,7 +8,7 @@
 
 \usage{
 Plot3d(r = NULL, p = NULL, xlim = NULL, ylim = NULL, zlim = NULL,
-       vasp = NULL, hasp = NULL, width = 7, ppi = 96, cex.pts = 1, n = NULL,
+       vasp = NULL, hasp = NULL, cex.pts = 1, n = NULL,
        color.palette = terrain.colors, maxpixels = 500000)
 }
 
@@ -20,8 +20,6 @@ Plot3d(r = NULL, p = NULL, xlim = NULL, ylim = NULL, zlim = NULL,
 \item{zlim}{numeric; a vector of \code{z} limits \code{(z1,z2)} for the plot.}
 \item{vasp}{numeric; the \code{z/x} aspect ratio.}
 \item{hasp}{numeric; the \code{y/x} aspect ratio.}
-\item{width}{numeric; the width of the plotting window canvas in inches.}
-\item{ppi}{integer; screen resolution in points per inch.}
 \item{cex.pts}{numeric; the amount by which point symbols should be magnified
   relative to the default.}
 \item{n}{integer; number of contour levels desired.}

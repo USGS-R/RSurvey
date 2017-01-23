@@ -389,7 +389,7 @@ StartGui <- function() {
   SaveRDevice <- function() {
     if (is.null(dev.list())) return()
     exts <- c("eps", "png", "jpg", "jpeg", "pdf", "bmp", "tif", "tiff")
-    file <- GetFile(cmd="Save As", exts=exts, win.title="Save R Graphic As",
+    file <- GetFile(cmd="Save As", exts=exts, win.title="Save 2D Graphic As",
                     defaultextension="eps", parent=tt)
     if (is.null(file)) return()
     savePlot(filename=file, type=attr(file, "extension"))
@@ -400,7 +400,7 @@ StartGui <- function() {
   SaveRGLDevice <- function() {
     if (!is.pkg.rgl || rgl::rgl.cur() == 0) return()
     file <- GetFile(cmd="Save As", exts=c("png", "eps", "pdf"),
-                    win.title="Save RGL Graphic As", defaultextension="png", parent=tt)
+                    win.title="Save 3D Graphic As", defaultextension="png", parent=tt)
     if (is.null(file)) return()
     if (attr(file, "extension") == "png")
       rgl::rgl.snapshot(filename=file, fmt=attr(file, "extension"))
@@ -487,6 +487,51 @@ StartGui <- function() {
   }
 
 
+
+  # zoom in r device
+  Zoom <- function(zoom.direction, id=NULL) {
+    if (grDevices::dev.cur() == 1) return()
+    tclvalue(device.var) <- "R"
+    if (zoom.direction == "0") {
+      Data("lim.axes", NULL)
+      PlotData()
+      return()
+    }
+    if (is.null(id)) {
+      f <- ifelse(zoom.direction == "+", -1, 1) * 0.2
+      xlim <- grDevices::extendrange(par("usr")[1:2], f=f)
+      ylim <- grDevices::extendrange(par("usr")[3:4], f=f)
+    } else {
+      tkconfigure(tt, cursor="crosshair")
+      on.exit(tkconfigure(tt, cursor="arrow"))
+      if (id == "point") {
+        p <- unlist(locator(n=1, type="n"))
+        dx <- diff(par("usr")[1:2]) / 2
+        dy <- diff(par("usr")[3:4]) / 2
+        f <- -0.2
+        xlim <- grDevices::extendrange(c(p[1] - dx, p[1] + dx), f=f)
+        ylim <- grDevices::extendrange(c(p[2] - dy, p[2] + dy), f=f)
+      } else if (id == "bbox") {
+        v <- locator(n=2, type="p", col="black", bg="black", pch=22)
+        xlim <- sort(v$x)
+        ylim <- sort(v$y)
+      }
+    }
+    xlim <- signif(xlim, digits=6)
+    ylim <- signif(ylim, digits=6)
+    lim.old <- Data("lim.axes")
+    lim.new <- list(x1=xlim[1], x1.chk=0, x2=xlim[2], x2.chk=0, x=xlim,
+                    y1=ylim[1], y1.chk=0, y2=ylim[2], y2.chk=0, y=ylim)
+    lim.new$z1     <- lim.old$z1
+    lim.new$z1.chk <- lim.old$z1.chk
+    lim.new$z2     <- lim.old$z2
+    lim.new$z2.chk <- lim.old$z2.chk
+    lim.new$z      <- lim.old$z
+    Data("lim.axes", lim.new)
+    PlotData()
+  }
+
+
   # name polygon
   NamePolygon <- function(old=NULL, nam=NA){
     if (is.na(nam)) nam <- "New Polygon"
@@ -524,14 +569,14 @@ StartGui <- function() {
 
     if (graphics.device == "RGL") {
       Plot3d(r, p, xlim=lim$x, ylim=lim$y, zlim=lim$z, vasp=Data("asp.zx"),
-             hasp=asp, width=Data("width"), cex.pts=Data("cex.pts"), n=Data("nlevels"),
+             hasp=asp, cex.pts=Data("cex.pts"), n=Data("nlevels"),
              color.palette=Data("palette.grd"))
     } else {
       if (graphics.device == "R") {
         file <- NULL
       } else {
         file <- GetFile(cmd="Save As", exts=graphics.device,
-                        win.title="Save R Graphics",
+                        win.title="Save 2D Graphics",
                         defaultextension=graphics.device, parent=tt)
         if (is.null(file)) return()
       }
@@ -925,21 +970,16 @@ StartGui <- function() {
   # file menu
   menu.file <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
-
-  tkadd(menu.file, "command", label="New project", accelerator="Ctrl+n",
-        command=ClearObjs)
-  tkadd(menu.file, "command", label="Open project\u2026", accelerator="Ctrl+o",
-        command=OpenProj)
-  tkadd(menu.file, "command", label="Save project", accelerator="Ctrl+s",
-        command=SaveProj)
-  tkadd(menu.file, "command", label="Save project as\u2026",  accelerator="Shift+Ctrl+s",
+  tkadd(menu.file, "command", label="New project", accelerator="Ctrl+n", command=ClearObjs)
+  tkadd(menu.file, "command", label="Open project\u2026", accelerator="Ctrl+o", command=OpenProj)
+  tkadd(menu.file, "command", label="Save project", accelerator="Ctrl+s", command=SaveProj)
+  tkadd(menu.file, "command", label="Save project as\u2026",  accelerator="Ctrl+Shift+s",
         command=SaveProjAs)
-
   tkadd(menu.file, "separator")
   menu.file.import <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.import, "command", label="Shapefile\u2026",
+  tkadd(menu.file.import, "command", label="shapefile\u2026",
         command=function() ReadData("shp"))
-  tkadd(menu.file.import, "command", label="Text file or clipboard\u2026",
+  tkadd(menu.file.import, "command", label="text file or clipboard\u2026",
         command=function() ReadData("txt"))
   tkadd(menu.file.import, "command", label="XML-spreadsheet file\u2026",
         state=ifelse(is.pkg.xml, "normal", "disabled"),
@@ -950,9 +990,9 @@ StartGui <- function() {
         command=function() ReadData("rda"))
   tkadd(menu.file, "cascade", label="Import point data from", menu=menu.file.import)
   menu.file.export.pnt <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.export.pnt, "command", label="Shapefile\u2026",
+  tkadd(menu.file.export.pnt, "command", label="shapefile\u2026",
         command=function() WriteData("shp"))
-  tkadd(menu.file.export.pnt, "command", label="Text file\u2026",
+  tkadd(menu.file.export.pnt, "command", label="text file\u2026",
         command=function() WriteData("txt"))
   tkadd(menu.file.export.pnt, "command", label="R-data file\u2026",
         command=function() WriteData("rda"))
@@ -960,23 +1000,20 @@ StartGui <- function() {
   menu.file.export.grd <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.export.grd, "command", label="GeoTIFF\u2026",
         command=function() WriteRaster("tif"))
-  tkadd(menu.file.export.grd, "command", label="Text file\u2026",
+  tkadd(menu.file.export.grd, "command", label="text file\u2026",
         command=function() WriteRaster("txt"))
   tkadd(menu.file.export.grd, "command", label="R-data file\u2026",
         command=function() WriteRaster("rda"))
-  tkadd(menu.file, "cascade", label="Export interpolated grid data as",
-        menu=menu.file.export.grd)
+  tkadd(menu.file, "cascade", label="Export interpolated grid data as", menu=menu.file.export.grd)
   tkadd(menu.file, "separator")
   menu.file.graphics <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.graphics, "command", label="PNG file\u2026",
-        command=function() PlotData("png"))
-  tkadd(menu.file.graphics, "command", label="PDF file\u2026",
-        command=function() PlotData("pdf"))
-  tkadd(menu.file, "cascade", label="Save R graphics to a", menu=menu.file.graphics)
+  tkadd(menu.file.graphics, "command", label="PNG file\u2026", command=function() PlotData("png"))
+  tkadd(menu.file.graphics, "command", label="PDF file\u2026", command=function() PlotData("pdf"))
+  tkadd(menu.file, "cascade", label="Save graphics to a", menu=menu.file.graphics)
   menu.file.snapshot <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.snapshot, "command", label="R graphics device\u2026", accelerator="Ctrl+r",
+  tkadd(menu.file.snapshot, "command", label="2D graphics device\u2026", accelerator="Ctrl+r",
         command=SaveRDevice)
-  tkadd(menu.file.snapshot, "command", label="RGL graphics device\u2026", command=SaveRGLDevice)
+  tkadd(menu.file.snapshot, "command", label="3D graphics device\u2026", command=SaveRGLDevice)
   tkadd(menu.file, "cascade", label="Save snapshot from active", menu=menu.file.snapshot)
 
   tkadd(menu.file, "separator")
@@ -1000,11 +1037,9 @@ StartGui <- function() {
   tkadd(menu.edit, "command", label="Data editor\u2026",
         command=function() CallEditData(read.only=FALSE))
   tkadd(menu.edit, "command", label="Comment\u2026", command=EditComment)
-
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Filter data records\u2026", command=BuildQuery)
   tkadd(menu.edit, "command", label="Clear filter", command=ClearQuery)
-
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Set sort order\u2026",
         command=function() {
@@ -1019,7 +1054,6 @@ StartGui <- function() {
         })
   tkadd(menu.edit, "command", label="Clear sort order",
         command=function() Data(c("vars", "sort.on"), NULL))
-
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Define interpolation grid\u2026",
         command=function() {
@@ -1036,27 +1070,24 @@ StartGui <- function() {
   menu.view <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
   menu.view.raw <- tkmenu(tt, tearoff=0)
-  tkadd(menu.view.raw, "command", label="Coordinate variables\u2026",
-        command=function() CallEditData(is.all=TRUE, is.state=TRUE))
-  tkadd(menu.view.raw, "command", label="All variables\u2026",
+  tkadd(menu.view.raw, "command", label="all variables\u2026",
         command=function() CallEditData(is.all=TRUE, is.state=FALSE))
-  tkadd(menu.view, "cascade", label="All data records for", menu=menu.view.raw)
+  tkadd(menu.view.raw, "command", label="coordinate variables\u2026",
+        command=function() CallEditData(is.all=TRUE, is.state=TRUE))
+  tkadd(menu.view, "cascade", label="All data records of", menu=menu.view.raw)
   menu.view.pr <- tkmenu(tt, tearoff=0)
-  tkadd(menu.view.pr, "command", label="Coordinate variables\u2026",
-        command=function() CallEditData(is.all=FALSE, is.state=TRUE))
-  tkadd(menu.view.pr, "command", label="All variables\u2026",
+  tkadd(menu.view.pr, "command", label="all variables\u2026",
         command=function() CallEditData(is.all=FALSE, is.state=FALSE))
-  tkadd(menu.view, "cascade", label="Processed data records for", menu=menu.view.pr)
+  tkadd(menu.view.pr, "command", label="coordinate variables\u2026",
+        command=function() CallEditData(is.all=FALSE, is.state=TRUE))
+  tkadd(menu.view, "cascade", label="Processed data records of", menu=menu.view.pr)
 
   # polygon menu
   menu.poly <- tkmenu(tt, tearoff=0)
-
   tkadd(top.menu, "cascade", label="Polygon", menu=menu.poly, underline=0)
-
   tkadd(menu.poly, "command", label="Manage polygons\u2026", command=CallManagePolygons)
   tkadd(menu.poly, "separator")
-  tkadd(menu.poly, "command", label="Create polygon interactively\u2026",
-        command=CreatePolygon)
+  tkadd(menu.poly, "command", label="Interactively create a polygon\u2026", command=CreatePolygon)
   tkadd(menu.poly, "separator")
   tkadd(menu.poly, "command", label="Set polygon limits\u2026", command=CallSetPolygonLimits)
   tkadd(menu.poly, "command", label="Clear polygon limits",
@@ -1070,23 +1101,40 @@ StartGui <- function() {
   # plot menu
   menu.plot <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Plot", menu=menu.plot, underline=0)
-  tkadd(menu.plot, "command", label="Set axes limits\u2026",
+  tkadd(menu.plot, "command", label="Axes limits\u2026",
         command=function() {
           lim <- SetAxesLimits(Data("lim.axes"), tt)
           Data("lim.axes", lim)
         })
-  tkadd(menu.plot, "command", label="Clear axes limits",
-        command=function() Data("lim.axes", NULL))
+  tkadd(menu.plot, "command", label="Fit all",  accelerator="Ctrl+0", command=function() Zoom("0"))
+  tkadd(menu.plot, "command", label="Zoom in",  accelerator="Ctrl++", command=function() Zoom("+"))
+  tkadd(menu.plot, "command", label="Zoom out", accelerator="Ctrl+-", command=function() Zoom("-"))
+  menu.plot.axes <- tkmenu(tt, tearoff=0)
+  tkadd(menu.plot.axes, "command", label="focused zoom in\u2026",
+        command=function() Zoom("+", id="point"))
+  tkadd(menu.plot.axes, "command", label="defining bounding box\u2026",
+        command=function() Zoom("+", id="bbox"))
+
+
+
+
+
+
+
+
+
+
+
+  tkadd(menu.plot, "cascade", label="Interactively set limits by", menu=menu.plot.axes)
   tkadd(menu.plot, "separator")
-  tkadd(menu.plot, "command", label="Configuration",
-        command=function() SetConfiguration(tt))
+  tkadd(menu.plot, "command", label="Configuration\u2026", command=function() SetConfiguration(tt))
   menu.plot.col <- tkmenu(tt, tearoff=0)
-  tkadd(menu.plot.col, "command", label="Point data\u2026",
+  tkadd(menu.plot.col, "command", label="point data\u2026",
         command=function() {
           Pal <- colorspace::choose_palette(Data("palette.pnt"), parent=tt)
           if (!is.null(Pal)) Data("palette.pnt", Pal)
         })
-  tkadd(menu.plot.col, "command", label="Gridded data\u2026",
+  tkadd(menu.plot.col, "command", label="gridded data\u2026",
         command=function() {
           n <- ifelse(is.null(Data("nlevels")), 200, Data("nlevels"))
           Pal <- colorspace::choose_palette(Data("palette.grd"), n, parent=tt)
@@ -1098,8 +1146,8 @@ StartGui <- function() {
   tkadd(menu.plot, "command", label="Web mapping", command=PlotWebMap)
   tkadd(menu.plot, "separator")
   menu.plot.new <- tkmenu(tt, tearoff=0)
-  tkadd(menu.plot.new, "command", label="R graphics", accelerator="Ctrl+F3", command=dev.new)
-  tkadd(menu.plot.new, "command", label="RGL graphics", command=rgl::open3d)
+  tkadd(menu.plot.new, "command", label="2D graphics", accelerator="Ctrl+F3", command=dev.new)
+  tkadd(menu.plot.new, "command", label="3D graphics", command=rgl::open3d)
   tkadd(menu.plot, "cascade", label="Open a new device for", menu=menu.plot.new)
   tkadd(menu.plot, "command", label="Close graphic devices", accelerator="Ctrl+F4",
         command=CloseDevices)
@@ -1187,7 +1235,7 @@ StartGui <- function() {
 
   # frame 1, variables
   f1 <- ttklabelframe(tt, relief="flat", borderwidth=5, padding=5,
-                      text="Set coordinate variables")
+                      text="Coordinate variables")
   f1.lab.1.1 <- ttklabel(f1, text="x")
   f1.lab.2.1 <- ttklabel(f1, text="y")
   f1.lab.3.1 <- ttklabel(f1, text="z")
@@ -1214,9 +1262,9 @@ StartGui <- function() {
 
   # frame 3, graphics device
   f3 <- tkframe(tt, relief="flat")
-  f3.lab.1.1 <- ttklabel(f3, text="Graphics device")
-  f3.rad.1.2 <- ttkradiobutton(f3, variable=device.var, value="R", text="R", command=SetState)
-  f3.rad.1.3 <- ttkradiobutton(f3, variable=device.var, value="RGL", text="RGL", command=SetState)
+  f3.lab.1.1 <- ttklabel(f3, text="Graphics display")
+  f3.rad.1.2 <- ttkradiobutton(f3, variable=device.var, value="R", text="2D", command=SetState)
+  f3.rad.1.3 <- ttkradiobutton(f3, variable=device.var, value="RGL", text="3D", command=SetState)
   tkgrid(f3.lab.1.1, f3.rad.1.2, f3.rad.1.3, pady=c(0, 10), sticky="e")
   tkgrid.configure(f3.lab.1.1, padx=c(0, 4))
   tkgrid.configure(f3.rad.1.2, padx=2)
@@ -1228,19 +1276,21 @@ StartGui <- function() {
   # bind events
   tclServiceMode(TRUE)
 
-  tkbind(tt, "<Destroy>",         CloseGUI)
-  tkbind(tt, "<Control-n>",       ClearObjs)
-  tkbind(tt, "<Control-o>",       OpenProj)
-  tkbind(tt, "<Control-s>",       SaveProj)
-  tkbind(tt, "<Shift-Control-S>", SaveProjAs)
-  tkbind(tt, "<Control-r>",       SaveRDevice)
-  tkbind(tt, "<Control-F3>",      dev.new)
-  tkbind(tt, "<Control-F4>",      CloseDevices)
+  tkbind(tt, "<Destroy>",                  CloseGUI)
+  tkbind(tt, "<Control-KeyPress-n>",       ClearObjs)
+  tkbind(tt, "<Control-KeyPress-o>",       OpenProj)
+  tkbind(tt, "<Control-KeyPress-s>",       SaveProj)
+  tkbind(tt, "<Control-Shift-KeyPress-S>", SaveProjAs)
+  tkbind(tt, "<Control-KeyPress-r>",       SaveRDevice)
+  tkbind(tt, "<Control-KeyPress-F3>",      dev.new)
+  tkbind(tt, "<Control-KeyPress-F4>",      CloseDevices)
+  tkbind(tt, "<Control-KeyPress-plus>",    function() Zoom("+"))
+  tkbind(tt, "<Control-KeyPress-minus>",   function() Zoom("-"))
+  tkbind(tt, "<Control-KeyPress-0>",       function() Zoom("0"))
 
   tkbind(f1.box.1.2, "<<ComboboxSelected>>", RefreshVars)
   tkbind(f1.box.2.2, "<<ComboboxSelected>>", RefreshVars)
   tkbind(f1.box.3.2, "<<ComboboxSelected>>", RefreshVars)
-
   tkbind(f2.box.1.2, "<<ComboboxSelected>>", SetState)
 
   # gui closure

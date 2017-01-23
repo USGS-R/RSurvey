@@ -1,5 +1,5 @@
 Plot3d <- function(r=NULL, p=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
-                   vasp=NULL, hasp=NULL, width=7, ppi=96, cex.pts=1, n=NULL,
+                   vasp=NULL, hasp=NULL, cex.pts=1, n=NULL,
                    color.palette=terrain.colors, maxpixels=500000) {
 
   if (!requireNamespace("rgl", quietly=TRUE)) stop()
@@ -17,7 +17,6 @@ Plot3d <- function(r=NULL, p=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
   if (!is.numeric(xlim)) xlim <- c(NA, NA)
   if (!is.numeric(ylim)) ylim <- c(NA, NA)
   if (!is.numeric(zlim)) zlim <- c(NA, NA)
-  if (is.null(width)) width <- 7
   if (is.null(cex.pts)) cex.pts <- 1
 
   # raster resolution
@@ -59,14 +58,11 @@ Plot3d <- function(r=NULL, p=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
   zscale <- if (is.null(vasp)) (diff(xlim) * 0.25) / diff(zlim) else vasp
 
   # device
-  if (rgl::rgl.cur() == 0) {
+  if (rgl::rgl.cur() == 0)
     rgl::open3d()
-    win.dim <- ppi + width * ppi
-    win.rect <- c(ppi, ppi, win.dim, win.dim * 0.75)
-    rgl::par3d(windowRect=win.rect)
-  } else {
+  else
     rgl::clear3d()
-  }
+
 
   # grid
   if (is.r) {
