@@ -41,7 +41,6 @@ install.packages("RSurvey")
 
 In addition to its required packages, **RSurvey** can make use of the functionality in its suggested packages.
 If any of the suggested packages are missing, you will be prompted to install them when it first starts up.
-Note that the software license for the suggested **tripack** package explicitly forbids commercial use.
 
 ## Run
 

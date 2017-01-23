@@ -894,9 +894,8 @@ StartGui <- function() {
   if (is.null(Data("default.dir"))) Data("default.dir", getwd())
 
   # check if suggested packages are loaded
-  is.pkg.xml     <- requireNamespace("XML",     quietly=TRUE)
-  is.pkg.rgl     <- requireNamespace("rgl",     quietly=TRUE)
-  is.pkg.tripack <- requireNamespace("tripack", quietly=TRUE)
+  is.pkg.xml <- requireNamespace("XML", quietly=TRUE)
+  is.pkg.rgl <- requireNamespace("rgl", quietly=TRUE)
 
   # set options
   options(help_type="html")

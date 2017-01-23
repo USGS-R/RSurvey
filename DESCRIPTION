@@ -24,7 +24,6 @@ Suggests:
     dichromat,
     leaflet,
     rgl,
-    tripack,
     XML
 SystemRequirements: Tcl/Tk (>= 8.5), Tktable (>= 2.9, optional)
 License: GPL (>= 2)
