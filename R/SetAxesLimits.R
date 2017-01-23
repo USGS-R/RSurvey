@@ -44,6 +44,10 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
     d$z <- c(if (!is.null(d$z1) && !d$z1.chk) d$z1 else NA,
              if (!is.null(d$z2) && !d$z2.chk) d$z2 else NA)
 
+    if (all(is.na(d$x))) d$x <- NULL
+    if (all(is.na(d$y))) d$y <- NULL
+    if (all(is.na(d$z))) d$z <- NULL
+
     tclvalue(tt.done.var) <- 1
     new <<- d
   }

@@ -323,18 +323,38 @@ StartGui <- function() {
   RefreshVars <- function(item) {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
-
+    vars.old <- Data("vars")
     idxs.n <- GetNumericCols(Data("cols"))
-
     idx.x  <- as.integer(tcl(f1.box.1.2, "current"))
     idx.y  <- as.integer(tcl(f1.box.2.2, "current"))
     idx.z  <- as.integer(tcl(f1.box.3.2, "current"))
-    vars <- list()
-    if (idx.x > 0) vars$x[1] <- idxs.n[idx.x]
-    if (idx.y > 0) vars$y[1] <- idxs.n[idx.y]
-    if (idx.z > 0) vars$z[1] <- idxs.n[idx.z]
-    if (!identical(vars, Data("vars"))) {
-      Data("vars", vars)
+    vars.new <- list()
+    if (idx.x > 0) vars.new$x[1] <- idxs.n[idx.x]
+    if (idx.y > 0) vars.new$y[1] <- idxs.n[idx.y]
+    if (idx.z > 0) vars.new$z[1] <- idxs.n[idx.z]
+    if (!identical(vars.old, vars.new)) {
+      if (!identical(vars.old$x, vars.new$x)) {
+        Data(c("lim.axes", "x1.chk"), NULL)
+        Data(c("lim.axes", "x2.chk"), NULL)
+        Data(c("lim.axes", "x1"),     NULL)
+        Data(c("lim.axes", "x2"),     NULL)
+        Data(c("lim.axes", "x"),      NULL)
+      }
+      if (!identical(vars.old$y, vars.new$y)) {
+        Data(c("lim.axes", "y1.chk"), NULL)
+        Data(c("lim.axes", "y2.chk"), NULL)
+        Data(c("lim.axes", "y1"),     NULL)
+        Data(c("lim.axes", "y2"),     NULL)
+        Data(c("lim.axes", "y"),      NULL)
+      }
+      if (!identical(vars.old$z, vars.new$z)) {
+        Data(c("lim.axes", "z1.chk"), NULL)
+        Data(c("lim.axes", "z2.chk"), NULL)
+        Data(c("lim.axes", "z1"),     NULL)
+        Data(c("lim.axes", "z2"),     NULL)
+        Data(c("lim.axes", "z"),      NULL)
+      }
+      Data("vars", vars.new)
       Data("data.pts", NULL)
       Data("data.grd", NULL)
     }
@@ -365,7 +385,7 @@ StartGui <- function() {
     if (is.pkg.rgl) {while (rgl::rgl.cur() != 0) rgl::rgl.close()}
   }
 
-  # save r graphic devices
+  # save r graphics
   SaveRDevice <- function() {
     if (is.null(dev.list())) return()
     exts <- c("eps", "png", "jpg", "jpeg", "pdf", "bmp", "tif", "tiff")
@@ -376,7 +396,7 @@ StartGui <- function() {
   }
 
 
-  # save rgl graphic devices
+  # save rgl graphics
   SaveRGLDevice <- function() {
     if (!is.pkg.rgl || rgl::rgl.cur() == 0) return()
     file <- GetFile(cmd="Save As", exts=c("png", "eps", "pdf"),
@@ -449,56 +469,21 @@ StartGui <- function() {
   }
 
 
-  # construct polygon
-  ConstructPolygon <- function(type) {
-    if (is.null(Data("data.raw"))) return()
-    msg <- paste("After the graph has been created, use the mouse to identify",
-                 "the vertices of the polygon. The identification process can",
-                 "be terminated by clicking the second button and selecting",
-                 "[Stop] from the menu, or from the [Stop] menu on the",
-                 "graphics window.", sep="\n")
-    if (shown.construct.polygon.msgbox)
-      tkmessageBox(icon="info", message=msg, title="Build Polygon", type="ok", parent=tt)
-    shown.construct.polygon.msgbox <<- FALSE
-
-
-
-
-
-### CallPlot2d(type=type, build.poly=TRUE)
-  }
-
-
-
-
-
-
-
-  # autocrop polygon
-  CallAutocropRegion <- function() {
-    if (is.null(Data("data.raw"))) return()
-    ProcessData()
-    d       <- Data("data.pts")
-    xlab    <- Data("cols")[[Data("vars")$x]]$id
-    ylab    <- Data("cols")[[Data("vars")$y]]$id
-    zlab    <- Data("cols")[[Data("vars")$z]]$id
-    asp     <- Data("asp.yx")
-    width   <- Data("width")
-    nlevels <- Data("nlevels")
-    cex.pts <- Data("cex.pts")
-    rkey    <- Data("rkey")
-    ply.new <- AutocropRegion(d, tt, xlab=xlab, ylab=ylab, zlab=zlab,
-                              asp=asp, csi=0.2, width=width, nlevels=nlevels,
-                              cex.pts=cex.pts, rkey=rkey)
-    if (inherits(ply.new, "gpc.poly")) {
-      ply <- list()
-      if (!is.null(Data("polys"))) ply <- Data("polys")
-      ply.name <- NamePolygon(old=names(ply))
-      ply[[ply.name]] <- ply.new
-      Data("polys", ply)
-      Data("poly.crop", ply.name)
-      Data("data.grd", NULL)
-    }
+  # create polygon interactively
+  CreatePolygon <- function() {
+    tclvalue(device.var) <- "R"
+    PlotData()
+    tkconfigure(tt, cursor="crosshair")
+    on.exit(tkconfigure(tt, cursor="arrow"))
+    v <- locator(type="o", col="black", bg="black", pch=22)
+    loc.xy <- cbind(c(v$x, v$x[1]), c(v$y, v$y[1]))
+    lines(loc.xy, col="black")
+    ply <- raster::spPolygons(matrix(unlist(v), ncol=2), crs=Data("crs"))
+    if (!inherits(ply, "SpatialPolygons")) return()
+    polys <- if (is.null(Data("polys"))) list() else Data("polys")
+    nam <- NamePolygon(old=names(polys))
+    polys[[nam]] <- ply
+    Data("polys", polys)
   }
 
 
@@ -515,15 +500,10 @@ StartGui <- function() {
   }
 
 
-
-
-
-
-
   # plot data
-  CallPlot <- function() {
+  PlotData <- function(type) {
     plot.type <- paste(as.character(tcl(f2.box.1.2, "get")), collapse=" ")
-    graphics.device <- as.character(tclvalue(device.var))
+    graphics.device <- if (missing(type)) as.character(tclvalue(device.var)) else type
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
     ProcessData()
@@ -534,44 +514,50 @@ StartGui <- function() {
     asp <- Data("asp.yx")
     lim <- Data("lim.axes")
 
-
     p <- if (plot.type == "Surface") NULL else Data("data.pts")
     if (!is.null(p) & is.null(Data("vars")$z)) p <- as(p, "SpatialPoints")
-
     r <- if (plot.type == "Points") NULL else Data("data.grd")
     if (!is.null(r)) {
       ply <- if (is.null(Data("poly.crop"))) NULL else Data("polys")[[Data("poly.crop")]]
       if (!is.null(ply)) r <- raster::trim(raster::mask(r, ply))
     }
 
-    if (graphics.device == "R") {
-
+    if (graphics.device == "RGL") {
+      Plot3d(r, p, xlim=lim$x, ylim=lim$y, zlim=lim$z, vasp=Data("asp.zx"),
+             hasp=asp, width=Data("width"), cex.pts=Data("cex.pts"), n=Data("nlevels"),
+             color.palette=Data("palette.grd"))
+    } else {
+      if (graphics.device == "R") {
+        file <- NULL
+      } else {
+        file <- GetFile(cmd="Save As", exts=graphics.device,
+                        win.title="Save R Graphics",
+                        defaultextension=graphics.device, parent=tt)
+        if (is.null(file)) return()
+      }
       if (plot.type == "Points") {
         is <- inherits(p, "SpatialPointsDataFrame")
         bg <- if (is) Data("palette.pnt") else "#1F1F1FCB"
         inlmisc::AddBubbles(p, xlim=lim$x, ylim=lim$y, zlim=lim$z, inches=0.03,
                             bg=bg, fg="#FFFFFF40", draw.legend=is, loc="topright",
-                            make.intervals=is, add=FALSE, asp=asp)
+                            make.intervals=is, add=FALSE, asp=asp, file=file)
       }
-
       if (plot.type == "Surface")
         inlmisc::PlotMap(r, xlim=lim$x, ylim=lim$y, zlim=lim$z,
-                         n=Data("nlevels"), asp=asp, pal=Data("palette.grd"))
-
+                         n=Data("nlevels"), asp=asp, pal=Data("palette.grd"),
+                         file=file)
       if (plot.type == "Surface and points")
         inlmisc::PlotMap(r, p, inches=0.03, bg="#1F1F1FCB", fg="#FFFFFF40",
                          draw.legend=FALSE, xlim=lim$x, ylim=lim$y, zlim=lim$z,
-                         n=Data("nlevels"), asp=asp, pal=Data("palette.grd"))
-
-    } else if (graphics.device == "RGL") {
-
-      Plot3d(r, p, xlim=lim$x, ylim=lim$y, zlim=lim$z, vasp=Data("asp.zx"),
-             hasp=asp, width=Data("width"), cex.pts=Data("cex.pts"), n=Data("nlevels"),
-             color.palette=Data("palette.grd"))
+                         n=Data("nlevels"), asp=asp, pal=Data("palette.grd"),
+                         file=file)
     }
-
     tkfocus(tt)
   }
+
+
+
+
 
 
 
@@ -835,7 +821,7 @@ StartGui <- function() {
   }
 
 
-  # plot web map
+  # web mapping
   PlotWebMap <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
@@ -908,13 +894,12 @@ StartGui <- function() {
   if (is.null(Data("default.dir"))) Data("default.dir", getwd())
 
   # check if suggested packages are loaded
-  is.pkg.xml        <- requireNamespace("XML",     quietly=TRUE)
-  is.pkg.rgl        <- requireNamespace("rgl",     quietly=TRUE)
-  is.pkg.tripack    <- requireNamespace("tripack", quietly=TRUE)
+  is.pkg.xml     <- requireNamespace("XML",     quietly=TRUE)
+  is.pkg.rgl     <- requireNamespace("rgl",     quietly=TRUE)
+  is.pkg.tripack <- requireNamespace("tripack", quietly=TRUE)
 
   # set options
   options(help_type="html")
-  shown.construct.polygon.msgbox <- TRUE
 
   # assign variables linked to tk entry widgets
   import.var  <- tclVar()
@@ -980,23 +965,20 @@ StartGui <- function() {
         command=function() WriteRaster("txt"))
   tkadd(menu.file.export.grd, "command", label="R-data file\u2026",
         command=function() WriteRaster("rda"))
-  tkadd(menu.file, "cascade", label="Export interpolated grid data as", menu=menu.file.export.grd)
+  tkadd(menu.file, "cascade", label="Export interpolated grid data as",
+        menu=menu.file.export.grd)
   tkadd(menu.file, "separator")
-  menu.file.save <- tkmenu(tt, tearoff=0)
-
-
-
-
-  tkadd(menu.file, "cascade", label="Save plot as\u2026", command=function() print("notyet"))
-
-
-
-
-
-  tkadd(menu.file.save, "command", label="R graphics device\u2026", accelerator="Ctrl+r",
+  menu.file.graphics <- tkmenu(tt, tearoff=0)
+  tkadd(menu.file.graphics, "command", label="PNG file\u2026",
+        command=function() PlotData("png"))
+  tkadd(menu.file.graphics, "command", label="PDF file\u2026",
+        command=function() PlotData("pdf"))
+  tkadd(menu.file, "cascade", label="Save R graphics to a", menu=menu.file.graphics)
+  menu.file.snapshot <- tkmenu(tt, tearoff=0)
+  tkadd(menu.file.snapshot, "command", label="R graphics device\u2026", accelerator="Ctrl+r",
         command=SaveRDevice)
-  tkadd(menu.file.save, "command", label="RGL graphics device\u2026", command=SaveRGLDevice)
-  tkadd(menu.file, "cascade", label="Save snapshot from active", menu=menu.file.save)
+  tkadd(menu.file.snapshot, "command", label="RGL graphics device\u2026", command=SaveRGLDevice)
+  tkadd(menu.file, "cascade", label="Save snapshot from active", menu=menu.file.snapshot)
 
   tkadd(menu.file, "separator")
   tkadd(menu.file, "command", label="Exit", command=CloseGUI)
@@ -1074,6 +1056,9 @@ StartGui <- function() {
 
   tkadd(menu.poly, "command", label="Manage polygons\u2026", command=CallManagePolygons)
   tkadd(menu.poly, "separator")
+  tkadd(menu.poly, "command", label="Create polygon interactively\u2026",
+        command=CreatePolygon)
+  tkadd(menu.poly, "separator")
   tkadd(menu.poly, "command", label="Set polygon limits\u2026", command=CallSetPolygonLimits)
   tkadd(menu.poly, "command", label="Clear polygon limits",
         command=function() {
@@ -1082,17 +1067,6 @@ StartGui <- function() {
           Data("data.pts",  NULL)
           Data("data.grd",  NULL)
         })
-  tkadd(menu.poly, "separator")
-
-  menu.poly.con <- tkmenu(tt, tearoff=0)
-  tkadd(menu.poly.con, "command", label="Boundary defining data limits\u2026",
-        command=function() ConstructPolygon(type="p"))
-  tkadd(menu.poly.con, "command", label="Crop region for interpolated surface\u2026",
-        command=function() ConstructPolygon(type="l"))
-  tkadd(menu.poly, "cascade", label="Build", menu=menu.poly.con)
-  tkadd(menu.poly, "command", label="Autocrop region\u2026",
-        state=if (is.pkg.tripack) "normal" else "disabled",
-        command=CallAutocropRegion)
 
   # plot menu
   menu.plot <- tkmenu(tt, tearoff=0)
@@ -1231,7 +1205,7 @@ StartGui <- function() {
 
   # frame 2, plot
   f2 <- tkframe(tt, relief="flat")
-  f2.but.1.1 <- ttkbutton(f2, width=10, text="Plot", command=CallPlot)
+  f2.but.1.1 <- ttkbutton(f2, width=10, text="Plot", command=function() PlotData())
   f2.box.1.2 <- ttkcombobox(f2, state="readonly", textvariable=plt.typ.var,
                             values=c("Points", "Surface", "Surface and points"))
   tkgrid(f2.but.1.1, f2.box.1.2, pady=5)

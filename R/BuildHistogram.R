@@ -187,7 +187,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL
     geo <- as.integer(geo[2:3]) + 25
     tkwm.geometry(tt, sprintf("+%s+%s", geo[1], geo[2]))
   }
-  tktitle(tt) <- "Build Histogram"
+  tktitle(tt) <- "Histogram"
   tkwm.resizable(tt, 1, 0)
 
   # frame 0

@@ -1,6 +1,4 @@
 
-export(Autocrop)
-export(AutocropRegion)
 export(BuildHistogram)
 export(CheckEntry)
 export(ChooseColor)
