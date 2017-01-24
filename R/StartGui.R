@@ -488,10 +488,10 @@ StartGui <- function() {
 
 
 
-  # zoom in r device
-  Zoom <- function(zoom.direction, id=NULL) {
-    if (grDevices::dev.cur() == 1) return()
+  # view zoom
+  ViewZoom <- function(zoom.direction, id=NULL) {
     tclvalue(device.var) <- "R"
+    if (grDevices::dev.cur() == 1) return()
     if (zoom.direction == "0") {
       Data("lim.axes", NULL)
       PlotData()
@@ -1101,31 +1101,27 @@ StartGui <- function() {
   # plot menu
   menu.plot <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Plot", menu=menu.plot, underline=0)
-  tkadd(menu.plot, "command", label="Axes limits\u2026",
+  tkadd(menu.plot, "command", label="Set axes limits\u2026",
         command=function() {
           lim <- SetAxesLimits(Data("lim.axes"), tt)
           Data("lim.axes", lim)
         })
-  tkadd(menu.plot, "command", label="Fit all",  accelerator="Ctrl+0", command=function() Zoom("0"))
-  tkadd(menu.plot, "command", label="Zoom in",  accelerator="Ctrl++", command=function() Zoom("+"))
-  tkadd(menu.plot, "command", label="Zoom out", accelerator="Ctrl+-", command=function() Zoom("-"))
+  tkadd(menu.plot, "command", label="Clear axes limits",
+        command=function() {
+          Data("lim.axes", NULL)
+        })
+
+  tkadd(menu.plot, "separator")
+  tkadd(menu.plot, "command", label="Fit all",  accelerator="Ctrl+0", command=function() ViewZoom("0"))
+  tkadd(menu.plot, "command", label="Zoom in",  accelerator="Ctrl++", command=function() ViewZoom("+"))
+  tkadd(menu.plot, "command", label="Zoom out", accelerator="Ctrl+-", command=function() ViewZoom("-"))
   menu.plot.axes <- tkmenu(tt, tearoff=0)
-  tkadd(menu.plot.axes, "command", label="focused zoom in\u2026",
-        command=function() Zoom("+", id="point"))
-  tkadd(menu.plot.axes, "command", label="defining bounding box\u2026",
-        command=function() Zoom("+", id="bbox"))
+  tkadd(menu.plot.axes, "command", label="zoom in at point\u2026",
+        command=function() ViewZoom("+", id="point"))
+  tkadd(menu.plot.axes, "command", label="define bounding box\u2026",
+        command=function() ViewZoom("+", id="bbox"))
+  tkadd(menu.plot, "cascade", label="Interactively", menu=menu.plot.axes)
 
-
-
-
-
-
-
-
-
-
-
-  tkadd(menu.plot, "cascade", label="Interactively set limits by", menu=menu.plot.axes)
   tkadd(menu.plot, "separator")
   tkadd(menu.plot, "command", label="Configuration\u2026", command=function() SetConfiguration(tt))
   menu.plot.col <- tkmenu(tt, tearoff=0)
@@ -1284,9 +1280,9 @@ StartGui <- function() {
   tkbind(tt, "<Control-KeyPress-r>",       SaveRDevice)
   tkbind(tt, "<Control-KeyPress-F3>",      dev.new)
   tkbind(tt, "<Control-KeyPress-F4>",      CloseDevices)
-  tkbind(tt, "<Control-KeyPress-plus>",    function() Zoom("+"))
-  tkbind(tt, "<Control-KeyPress-minus>",   function() Zoom("-"))
-  tkbind(tt, "<Control-KeyPress-0>",       function() Zoom("0"))
+  tkbind(tt, "<Control-KeyPress-plus>",    function() ViewZoom("+"))
+  tkbind(tt, "<Control-KeyPress-minus>",   function() ViewZoom("-"))
+  tkbind(tt, "<Control-KeyPress-0>",       function() ViewZoom("0"))
 
   tkbind(f1.box.1.2, "<<ComboboxSelected>>", RefreshVars)
   tkbind(f1.box.2.2, "<<ComboboxSelected>>", RefreshVars)

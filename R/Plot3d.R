@@ -63,7 +63,6 @@ Plot3d <- function(r=NULL, p=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
   else
     rgl::clear3d()
 
-
   # grid
   if (is.r) {
     x <- raster::xFromCol(r, 1:ncol(r))
@@ -77,7 +76,8 @@ Plot3d <- function(r=NULL, p=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
     n <- length(breaks) - 1L
     interval <- findInterval(z, breaks * zscale, all.inside=TRUE)
     cols <- color.palette(n)[interval]
-    rgl::surface3d(x, y, z, color=cols)
+    rgl::persp3d(x, y, z, xlab="", ylab="", zlab="", xlim=xlim, ylim=ylim * yscale,
+                 zlim=zlim * zscale, aspect=FALSE, color=cols, axes=FALSE)
   }
 
   # points
@@ -85,7 +85,9 @@ Plot3d <- function(r=NULL, p=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
     x <- sp::coordinates(p)[, 1]
     y <- sp::coordinates(p)[, 2] * yscale
     z <- p@data[, 1] * zscale
-    rgl::points3d(x=x, y=y, z=z, size=cex.pts * 3, point_antialias=TRUE)
+    rgl::plot3d(x=x, y=y, z=z, xlab="", ylab="", zlab="", col="black", size=3,
+                add=is.r, aspect=FALSE, xlim=xlim, ylim=ylim * yscale,
+                zlim=zlim * zscale, axes=FALSE)
   }
 
   rgl::box3d()
