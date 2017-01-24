@@ -4,22 +4,17 @@ Data <- local({
   dat <- list()
 
   # set default values
-  default <- list("width"        = 7,
-                  "cex.pts"      = 1,
-                  "default.dir"  = getwd(),
-                  "sep"          = "\t",
-                  "rkey"         = 0,
-                  "show.poly"    = 0,
-                  "img.contour"  = 0,
-                  "show.lines"   = 0,
-                  "show.2.axes"  = 0,
-                  "minor.ticks"  = 0,
-                  "ticks.inside" = 0,
-                  "rm.pnt.line"  = 0,
-                  "palette.pnt"  = colorspace::rainbow_hcl,
-                  "palette.grd"  = colorspace::diverge_hcl,
-                  "crs"          = sp::CRS(as.character(NA))
-              )
+  default <- list("default.dir"   = getwd(),
+                  "palette.pnt"   = colorspace::rainbow_hcl,
+                  "palette.grd"   = viridis::viridis,
+                  "crs"           = sp::CRS(as.character(NA)),
+                  "sep"           = "\t",
+                  "width"         = 7,
+                  "cex.pts"       = 1,
+                  "contour.lines" = 0,
+                  "useRaster"     = 1,
+                  "dms.tick"      = 0,
+                  "bg.lines"      = 0)
 
   function(option, value, which.attr=NULL, clear.proj=FALSE, clear.data=FALSE, replace.all=NULL) {
 
@@ -33,11 +28,19 @@ Data <- local({
     if (clear.proj | clear.data) {
       save.params <- c("default.dir", "win.loc", "width", "cex.pts")
       if (clear.data)
-        save.params <- c(save.params, "nlevels", "asp.yx", "asp.zx", "rkey",
-                         "show.poly", "img.contour", "show.lines",
-                         "date.fmt", "polys", "proj.file", "show.2.axes",
-                         "minor.ticks", "ticks.inside", "palette.pnt", "palette.grd",
-                         "rm.pnt.line")
+        save.params <- c(save.params,
+                         "nlevels",
+                         "asp.yx",
+                         "asp.zx",
+                         "contour.lines",
+                         "date.fmt",
+                         "polys",
+                         "proj.file",
+                         "palette.pnt",
+                         "palette.grd",
+                         "useRaster",
+                         "dms.tick",
+                         "bg.lines")
       save.params <- save.params[save.params %in% names(dat)]
       dat <<- sapply(save.params, function(i) list(dat[[i]]))
       return(invisible())

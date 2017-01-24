@@ -19,7 +19,8 @@ Imports:
     sp,
     stats,
     tcltk,
-    utils
+    utils,
+    viridis
 Suggests:
     dichromat,
     leaflet,

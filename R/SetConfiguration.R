@@ -5,11 +5,11 @@ SetConfiguration <- function(parent=NULL) {
     val <- as.numeric(tclvalue(width.var))
     Data("width", if (is.na(val)) NULL else val)
 
-    val <- as.integer(tclvalue(nlevels.var))
-    Data("nlevels", if (is.na(val)) NULL else val)
-
     val <- as.numeric(tclvalue(cex.pts.var))
     Data("cex.pts", if (is.na(val)) NULL else val)
+
+    val <- as.integer(tclvalue(nlevels.var))
+    Data("nlevels", if (is.na(val)) NULL else val)
 
     val <- as.numeric(tclvalue(asp.yx.var))
     Data("asp.yx", if (is.na(val)) NULL else val)
@@ -17,47 +17,38 @@ SetConfiguration <- function(parent=NULL) {
     val <- as.numeric(tclvalue(asp.zx.var))
     Data("asp.zx", if (is.na(val)) NULL else val)
 
-    Data("rkey",         as.integer(tclvalue(rkey.var)))
-    Data("img.contour",  as.integer(tclvalue(img.contour.var)))
-    Data("show.lines",   as.integer(tclvalue(show.lines.var)))
-    Data("show.poly",    as.integer(tclvalue(show.poly.var)))
-    Data("show.2.axes",  as.integer(tclvalue(show.2.axes.var)))
-    Data("minor.ticks",  as.integer(tclvalue(minor.ticks.var)))
-    Data("ticks.inside", as.integer(tclvalue(ticks.inside.var)))
-    Data("rm.pnt.line",  as.integer(tclvalue(rm.pnt.line.var)))
+    Data("useRaster",     as.integer(tclvalue(useRaster.var)))
+    Data("contour.lines", as.integer(tclvalue(contour.lines.var)))
+    Data("dms.tick",      as.integer(tclvalue(dms.tick.var)))
+    Data("bg.lines",      as.integer(tclvalue(bg.lines.var)))
+
 
     tclvalue(tt.done.var) <- 1
   }
 
 
   # assign variables linked to tk widgets
-  width.var        <- tclVar()
-  nlevels.var      <- tclVar()
-  cex.pts.var      <- tclVar()
-  asp.yx.var       <- tclVar()
-  asp.zx.var       <- tclVar()
-  rkey.var         <- tclVar()
-  show.poly.var    <- tclVar()
-  img.contour.var  <- tclVar()
-  show.lines.var   <- tclVar()
-  show.2.axes.var  <- tclVar()
-  minor.ticks.var  <- tclVar()
-  ticks.inside.var <- tclVar()
-  rm.pnt.line.var  <- tclVar()
+  width.var         <- tclVar()
+  cex.pts.var       <- tclVar()
+  nlevels.var       <- tclVar()
+  asp.yx.var        <- tclVar()
+  asp.zx.var        <- tclVar()
 
-  if (!is.null(Data("width")))        tclvalue(width.var)        <- Data("width")
-  if (!is.null(Data("nlevels")))      tclvalue(nlevels.var)      <- Data("nlevels")
-  if (!is.null(Data("cex.pts")))      tclvalue(cex.pts.var)      <- Data("cex.pts")
-  if (!is.null(Data("asp.yx")))       tclvalue(asp.yx.var)       <- Data("asp.yx")
-  if (!is.null(Data("asp.zx")))       tclvalue(asp.zx.var)       <- Data("asp.zx")
-  if (!is.null(Data("rkey")))         tclvalue(rkey.var)         <- Data("rkey")
-  if (!is.null(Data("show.poly")))    tclvalue(show.poly.var)    <- Data("show.poly")
-  if (!is.null(Data("img.contour")))  tclvalue(img.contour.var)  <- Data("img.contour")
-  if (!is.null(Data("show.lines")))   tclvalue(show.lines.var)   <- Data("show.lines")
-  if (!is.null(Data("show.2.axes")))  tclvalue(show.2.axes.var)  <- Data("show.2.axes")
-  if (!is.null(Data("minor.ticks")))  tclvalue(minor.ticks.var)  <- Data("minor.ticks")
-  if (!is.null(Data("ticks.inside"))) tclvalue(ticks.inside.var) <- Data("ticks.inside")
-  if (!is.null(Data("rm.pnt.line")))  tclvalue(rm.pnt.line.var)  <- Data("rm.pnt.line")
+  useRaster.var     <- tclVar()
+  contour.lines.var <- tclVar()
+  dms.tick.var      <- tclVar()
+  bg.lines.var      <- tclVar()
+
+  if (!is.null(Data("width")))         tclvalue(width.var)         <- Data("width")
+  if (!is.null(Data("cex.pts")))       tclvalue(cex.pts.var)       <- Data("cex.pts")
+  if (!is.null(Data("nlevels")))       tclvalue(nlevels.var)       <- Data("nlevels")
+  if (!is.null(Data("asp.yx")))        tclvalue(asp.yx.var)        <- Data("asp.yx")
+  if (!is.null(Data("asp.zx")))        tclvalue(asp.zx.var)        <- Data("asp.zx")
+
+  if (!is.null(Data("useRaster")))     tclvalue(useRaster.var)     <- Data("useRaster")
+  if (!is.null(Data("contour.lines"))) tclvalue(contour.lines.var) <- Data("contour.lines")
+  if (!is.null(Data("dms.tick")))      tclvalue(dms.tick.var)      <- Data("dms.tick")
+  if (!is.null(Data("bg.lines")))      tclvalue(bg.lines.var)      <- Data("bg.lines")
 
   tt.done.var <- tclVar(0)
 
@@ -94,14 +85,14 @@ SetConfiguration <- function(parent=NULL) {
   f1 <- ttkframe(pw, relief="flat", borderwidth=0, padding=10)
 
   f1.lab.1.1 <- ttklabel(f1, text="Width of plotting window canvas, in inches")
-  f1.lab.2.1 <- ttklabel(f1, text="Approximate number of contour levels")
-  f1.lab.3.1 <- ttklabel(f1, text="Scaling for point symbols")
+  f1.lab.2.1 <- ttklabel(f1, text="Scaling for point symbols")
+  f1.lab.3.1 <- ttklabel(f1, text="Approximate number of contour levels")
   f1.lab.4.1 <- ttklabel(f1, text="Horizontal aspect ratio")
   f1.lab.5.1 <- ttklabel(f1, text="Vertical aspect ratio")
 
   f1.ent.1.2 <- ttkentry(f1, width=8, textvariable=width.var)
-  f1.ent.2.2 <- ttkentry(f1, width=8, textvariable=nlevels.var)
-  f1.ent.3.2 <- ttkentry(f1, width=8, textvariable=cex.pts.var)
+  f1.ent.2.2 <- ttkentry(f1, width=8, textvariable=cex.pts.var)
+  f1.ent.3.2 <- ttkentry(f1, width=8, textvariable=nlevels.var)
   f1.ent.4.2 <- ttkentry(f1, width=8, textvariable=asp.yx.var)
   f1.ent.5.2 <- ttkentry(f1, width=8, textvariable=asp.zx.var)
 
@@ -120,31 +111,15 @@ SetConfiguration <- function(parent=NULL) {
   # frame 2 contains plot features
   f2 <- ttkframe(pw, relief="flat", borderwidth=0, padding=10)
 
-  f2.chk.01.1 <- ttkcheckbutton(f2, text="Reverse legend",
-                                variable=rkey.var)
-  f2.chk.02.1 <- ttkcheckbutton(f2, text="Show polygons",
-                                variable=show.poly.var)
-  f2.chk.03.1 <- ttkcheckbutton(f2, text="Use image contour",
-                                variable=img.contour.var)
-  f2.chk.04.1 <- ttkcheckbutton(f2, text="Show contour lines",
-                                variable=show.lines.var)
-  f2.chk.05.1 <- ttkcheckbutton(f2, text="Show tickmarks on second axis",
-                                variable=show.2.axes.var)
-  f2.chk.06.1 <- ttkcheckbutton(f2, text="Add minor tickmarks",
-                                variable=minor.ticks.var)
-  f2.chk.07.1 <- ttkcheckbutton(f2, text="Place tickmarks inside plot region",
-                                variable=ticks.inside.var)
-  f2.chk.08.1 <- ttkcheckbutton(f2, text="Remove point symbol boundary line",
-                                variable=rm.pnt.line.var)
+  f2.chk.01.1 <- ttkcheckbutton(f2, text="Use bitmap raster",     variable=useRaster.var)
+  f2.chk.02.1 <- ttkcheckbutton(f2, text="Show contour lines",    variable=contour.lines.var)
+  f2.chk.03.1 <- ttkcheckbutton(f2, text="Axes tickmarks in DMS", variable=dms.tick.var)
+  f2.chk.04.1 <- ttkcheckbutton(f2, text="Draw graticule",        variable=bg.lines.var)
 
-  tkgrid(f2.chk.01.1, sticky="w", pady=c(0, 2))
-  tkgrid(f2.chk.02.1, sticky="w", pady=c(0, 2))
-  tkgrid(f2.chk.03.1, sticky="w", pady=c(0, 2))
-  tkgrid(f2.chk.04.1, sticky="w", pady=c(0, 2))
-  tkgrid(f2.chk.05.1, sticky="w", pady=c(0, 2))
-  tkgrid(f2.chk.06.1, sticky="w", pady=c(0, 2))
-  tkgrid(f2.chk.07.1, sticky="w", pady=c(0, 2))
-  tkgrid(f2.chk.08.1, sticky="w")
+  tkgrid(f2.chk.01.1, sticky="w", pady=c(15, 4))
+  tkgrid(f2.chk.02.1, sticky="w", pady=c(0, 4))
+  tkgrid(f2.chk.03.1, sticky="w", pady=c(0, 4))
+  tkgrid(f2.chk.04.1, sticky="w")
 
   # final layout
   tkgrid(f1, f2, sticky="nswe")

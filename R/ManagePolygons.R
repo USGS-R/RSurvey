@@ -409,7 +409,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
   tkadd(top.menu, "cascade", label="Select", menu=menu.select, underline=0)
   tkadd(menu.select, "command", label="All", accelerator="Ctrl+a",
         command=function() SelectPolygon("all"))
-  tkadd(menu.select, "command", label="Deselect", accelerator="Shift+Ctrl+a",
+  tkadd(menu.select, "command", label="Deselect", accelerator="Ctrl+Shift+a",
         command=function() SelectPolygon("none"))
   tkadd(menu.select, "command", label="Inverse",
         command=function() SelectPolygon("inverse"))
@@ -417,14 +417,14 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
   menu.arrange <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Arrange", menu=menu.arrange, underline=0)
   tkadd(menu.arrange, "command", label="Send to back",
-        accelerator="Shift+Ctrl+[",
+        accelerator="Ctrl+Shift+[",
         command=function() ArrangePolygon("back"))
   tkadd(menu.arrange, "command", label="Send backward", accelerator="Ctrl+[",
         command=function() ArrangePolygon("backward"))
   tkadd(menu.arrange, "command", label="Bring forward", accelerator="Ctrl+]",
         command=function() ArrangePolygon("forward"))
   tkadd(menu.arrange, "command", label="Bring to front",
-        accelerator="Shift+Ctrl+]",
+        accelerator="Ctrl+Shift+]",
         command=function() ArrangePolygon("front"))
 
   tkconfigure(tt, menu=top.menu)
@@ -585,12 +585,12 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
   tkbind(f2.cvs, "<Configure>", ScaleCanvas)
 
   tkbind(tt, "<Control-a>", function() SelectPolygon("all"))
-  tkbind(tt, "<Shift-Control-A>", function() SelectPolygon("none"))
+  tkbind(tt, "<Control-Shift-A>", function() SelectPolygon("none"))
 
   tkbind(tt, "<Control-]>", function() ArrangePolygon("forward"))
-  tkbind(tt, "<Shift-Control-}>", function() ArrangePolygon("front"))
+  tkbind(tt, "<Control-Shift-}>", function() ArrangePolygon("front"))
   tkbind(tt, "<Control-[>", function() ArrangePolygon("backward"))
-  tkbind(tt, "<Shift-Control-{>", function() ArrangePolygon("back"))
+  tkbind(tt, "<Control-Shift-{>", function() ArrangePolygon("back"))
 
   tkbind(tt, "<BackSpace>", ClearPolygon)
   tkbind(tt, "<Delete>", ClearPolygon)

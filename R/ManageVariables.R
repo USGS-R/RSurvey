@@ -364,13 +364,13 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   tkadd(menu.edit, "command", label="Delete", command=DeleteVar)
   menu.arrange <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Arrange", menu=menu.arrange, underline=0)
-  tkadd(menu.arrange, "command", label="Send to top", accelerator="Shift+Ctrl+[",
+  tkadd(menu.arrange, "command", label="Send to top", accelerator="Ctrl+Shift+[",
         command=function() Arrange("back"))
   tkadd(menu.arrange, "command", label="Send upward", accelerator="Ctrl+[",
         command=function() Arrange("backward"))
   tkadd(menu.arrange, "command", label="Bring downward", accelerator="Ctrl+]",
         command=function() Arrange("forward"))
-  tkadd(menu.arrange, "command", label="Bring to bottom", accelerator="Shift+Ctrl+]",
+  tkadd(menu.arrange, "command", label="Bring to bottom", accelerator="Ctrl+Shift+]",
         command=function() Arrange("front"))
   tkconfigure(tt, menu=top.menu)
 
@@ -512,9 +512,9 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
   tkbind(tt, "<Control-n>", SaveNewVar)
   tkbind(tt, "<Control-]>", function() Arrange("forward"))
-  tkbind(tt, "<Shift-Control-}>", function() Arrange("front"))
+  tkbind(tt, "<Control-Shift-}>", function() Arrange("front"))
   tkbind(tt, "<Control-[>", function() Arrange("backward"))
-  tkbind(tt, "<Shift-Control-{>", function() Arrange("back"))
+  tkbind(tt, "<Control-Shift-{>", function() Arrange("back"))
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
   tkbind(nb, "<<NotebookTabChanged>>", ChangeTab)

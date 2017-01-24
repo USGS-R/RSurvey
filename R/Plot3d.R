@@ -85,7 +85,8 @@ Plot3d <- function(r=NULL, p=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
     x <- sp::coordinates(p)[, 1]
     y <- sp::coordinates(p)[, 2] * yscale
     z <- p@data[, 1] * zscale
-    rgl::plot3d(x=x, y=y, z=z, xlab="", ylab="", zlab="", col="black", size=3,
+    size <- 3 * cex.pts
+    rgl::plot3d(x=x, y=y, z=z, xlab="", ylab="", zlab="", col="black", size=size,
                 add=is.r, aspect=FALSE, xlim=xlim, ylim=ylim * yscale,
                 zlim=zlim * zscale, axes=FALSE)
   }

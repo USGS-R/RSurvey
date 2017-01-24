@@ -772,11 +772,11 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   tkadd(menu.sel, "separator")
   menu.sel.extend <- tkmenu(tt, tearoff=0)
   tkadd(menu.sel.extend, "command", label="First cell",
-        accelerator="Shift+Ctrl+Home",
-        command=function() tkevent.generate(f3.tbl, "<Shift-Control-Home>"))
+        accelerator="Ctrl+Shift+Home",
+        command=function() tkevent.generate(f3.tbl, "<Control-Shift-Home>"))
   tkadd(menu.sel.extend, "command", label="Last cell",
-        accelerator="Shift+Ctrl+End",
-        command=function() tkevent.generate(f3.tbl, "<Shift-Control-End>"))
+        accelerator="Ctrl+Shift+End",
+        command=function() tkevent.generate(f3.tbl, "<Control-Shift-End>"))
   tkadd(menu.sel.extend, "separator")
   tkadd(menu.sel.extend, "command", label="Row above",
         accelerator="Shift+\u2191",
@@ -989,19 +989,19 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   tkbind(f0.ent.1.1, "<Return>", paste(.Tcl.callback(BypassReturnCmd), "break", sep="; "))
   tkbind(f0.ent.1.1, "<FocusIn>", function() tksee(f3.tbl, "active"))
 
-  tkbind(tt, "<Control-f>", function() CallSearch(is.replace=FALSE))
-  tkbind(tt, "<Control-r>", function() CallSearch(is.replace=TRUE))
+  tkbind(tt, "<Control-KeyRelease-f>", function() CallSearch(is.replace=FALSE))
+  tkbind(tt, "<Control-KeyRelease-r>", function() CallSearch(is.replace=TRUE))
 
-  tkbind(f3.tbl, "<Control-x>", paste(.Tcl.callback(BypassCutCmd),    "break", sep="; "))
-  tkbind(f3.tbl, "<Control-v>", paste(.Tcl.callback(BypassPasteCmd),  "break", sep="; "))
-  tkbind(f3.tbl, "<Return>",    paste(.Tcl.callback(BypassReturnCmd), "break", sep="; "))
-  tkbind(f3.tbl, "<Control-c>", paste(.Tcl.callback(BypassCopyCmd),   "break", sep="; "))
-  tkbind(f3.tbl, "<Control-z>", UndoEdit)
-  tkbind(f3.tbl, "<Control-y>", RedoEdit)
-  tkbind(f3.tbl, "<Double-Button-1>", function(x, y) ResizeColumn(x, y))
+  tkbind(f3.tbl, "<Control-KeyPress-x>", paste(.Tcl.callback(BypassCutCmd),    "break", sep="; "))
+  tkbind(f3.tbl, "<Control-KeyPress-v>", paste(.Tcl.callback(BypassPasteCmd),  "break", sep="; "))
+  tkbind(f3.tbl, "<Return>",             paste(.Tcl.callback(BypassReturnCmd), "break", sep="; "))
+  tkbind(f3.tbl, "<Control-KeyPress-c>", paste(.Tcl.callback(BypassCopyCmd),   "break", sep="; "))
+  tkbind(f3.tbl, "<Control-KeyPress-z>", UndoEdit)
+  tkbind(f3.tbl, "<Control-KeyPress-y>", RedoEdit)
+  tkbind(f3.tbl, "<Double-Button-1>",    function(x, y) ResizeColumn(x, y))
 
-  tkevent.add("<<TableSelect>>", "<ButtonRelease>", "<Control-slash>", "<Shift-Control-Home>",
-              "<Shift-Control-End>", "<Shift-Up>", "<Shift-Down>", "<Shift-Right>",
+  tkevent.add("<<TableSelect>>", "<ButtonRelease>", "<Control-slash>", "<Control-Shift-Home>",
+              "<Control-Shift-End>", "<Shift-Up>", "<Shift-Down>", "<Shift-Right>",
               "<Shift-Left>", "<Up>", "<Down>", "<Right>", "<Left>")
   tkbind(f3.tbl, "<<TableSelect>>", ChangeCellSelection)
 

@@ -576,26 +576,33 @@ StartGui <- function() {
         file <- NULL
       } else {
         file <- GetFile(cmd="Save As", exts=graphics.device,
-                        win.title="Save 2D Graphics",
+                        win.title="Save Graphics",
                         defaultextension=graphics.device, parent=tt)
         if (is.null(file)) return()
       }
+
+      inches <- 0.03 * Data("cex.pts")
+      contour.lines <- if (Data("contour.lines")) list(col="#1F1F1F") else NULL
+
       if (plot.type == "Points") {
         is <- inherits(p, "SpatialPointsDataFrame")
         bg <- if (is) Data("palette.pnt") else "#1F1F1FCB"
-        inlmisc::AddBubbles(p, xlim=lim$x, ylim=lim$y, zlim=lim$z, inches=0.03,
+        inlmisc::AddBubbles(p, xlim=lim$x, ylim=lim$y, zlim=lim$z, inches=inches,
                             bg=bg, fg="#FFFFFF40", draw.legend=is, loc="topright",
-                            make.intervals=is, add=FALSE, asp=asp, file=file)
+                            make.intervals=is, add=FALSE, asp=asp, file=file,
+                            dms.tick=Data("dms.tick"), bg.lines=Data("bg.lines"))
       }
       if (plot.type == "Surface")
         inlmisc::PlotMap(r, xlim=lim$x, ylim=lim$y, zlim=lim$z,
-                         n=Data("nlevels"), asp=asp, pal=Data("palette.grd"),
-                         file=file)
+                         n=Data("nlevels"), asp=asp, dms.tick=Data("dms.tick"),
+                         bg.lines=Data("bg.lines"), pal=Data("palette.grd"),
+                         contour.lines=contour.lines, file=file, useRaster=Data("useRaster"))
       if (plot.type == "Surface and points")
-        inlmisc::PlotMap(r, p, inches=0.03, bg="#1F1F1FCB", fg="#FFFFFF40",
+        inlmisc::PlotMap(r, p, inches=inches, bg="#1F1F1FCB", fg="#FFFFFF40",
                          draw.legend=FALSE, xlim=lim$x, ylim=lim$y, zlim=lim$z,
-                         n=Data("nlevels"), asp=asp, pal=Data("palette.grd"),
-                         file=file)
+                         n=Data("nlevels"), asp=asp, dms.tick=Data("dms.tick"),
+                         bg.lines=Data("bg.lines"), pal=Data("palette.grd"),
+                         contour.lines=contour.lines, file=file, useRaster=Data("useRaster"))
     }
     tkfocus(tt)
   }
@@ -1273,16 +1280,16 @@ StartGui <- function() {
   tclServiceMode(TRUE)
 
   tkbind(tt, "<Destroy>",                  CloseGUI)
-  tkbind(tt, "<Control-KeyPress-n>",       ClearObjs)
-  tkbind(tt, "<Control-KeyPress-o>",       OpenProj)
-  tkbind(tt, "<Control-KeyPress-s>",       SaveProj)
-  tkbind(tt, "<Control-Shift-KeyPress-S>", SaveProjAs)
-  tkbind(tt, "<Control-KeyPress-r>",       SaveRDevice)
-  tkbind(tt, "<Control-KeyPress-F3>",      dev.new)
-  tkbind(tt, "<Control-KeyPress-F4>",      CloseDevices)
-  tkbind(tt, "<Control-KeyPress-plus>",    function() ViewZoom("+"))
-  tkbind(tt, "<Control-KeyPress-minus>",   function() ViewZoom("-"))
-  tkbind(tt, "<Control-KeyPress-0>",       function() ViewZoom("0"))
+  tkbind(tt, "<Control-KeyRelease-n>",       ClearObjs)
+  tkbind(tt, "<Control-KeyRelease-o>",       OpenProj)
+  tkbind(tt, "<Control-KeyRelease-s>",       SaveProj)
+  tkbind(tt, "<Control-Shift-KeyRelease-S>", SaveProjAs)
+  tkbind(tt, "<Control-KeyRelease-r>",       SaveRDevice)
+  tkbind(tt, "<Control-KeyRelease-F3>",      dev.new)
+  tkbind(tt, "<Control-KeyRelease-F4>",      CloseDevices)
+  tkbind(tt, "<Control-KeyRelease-plus>",    function() ViewZoom("+"))
+  tkbind(tt, "<Control-KeyRelease-minus>",   function() ViewZoom("-"))
+  tkbind(tt, "<Control-KeyRelease-0>",       function() ViewZoom("0"))
 
   tkbind(f1.box.1.2, "<<ComboboxSelected>>", RefreshVars)
   tkbind(f1.box.2.2, "<<ComboboxSelected>>", RefreshVars)
