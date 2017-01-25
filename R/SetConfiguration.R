@@ -21,7 +21,7 @@ SetConfiguration <- function(parent=NULL) {
     Data("contour.lines", as.integer(tclvalue(contour.lines.var)))
     Data("dms.tick",      as.integer(tclvalue(dms.tick.var)))
     Data("bg.lines",      as.integer(tclvalue(bg.lines.var)))
-
+    Data("bubbles",       as.integer(tclvalue(bubbles.var)))
 
     tclvalue(tt.done.var) <- 1
   }
@@ -38,6 +38,7 @@ SetConfiguration <- function(parent=NULL) {
   contour.lines.var <- tclVar()
   dms.tick.var      <- tclVar()
   bg.lines.var      <- tclVar()
+  bubbles.var       <- tclVar()
 
   if (!is.null(Data("width")))         tclvalue(width.var)         <- Data("width")
   if (!is.null(Data("cex.pts")))       tclvalue(cex.pts.var)       <- Data("cex.pts")
@@ -49,6 +50,7 @@ SetConfiguration <- function(parent=NULL) {
   if (!is.null(Data("contour.lines"))) tclvalue(contour.lines.var) <- Data("contour.lines")
   if (!is.null(Data("dms.tick")))      tclvalue(dms.tick.var)      <- Data("dms.tick")
   if (!is.null(Data("bg.lines")))      tclvalue(bg.lines.var)      <- Data("bg.lines")
+  if (!is.null(Data("bubbles")))       tclvalue(bubbles.var)       <- Data("bubbles")
 
   tt.done.var <- tclVar(0)
 
@@ -111,15 +113,17 @@ SetConfiguration <- function(parent=NULL) {
   # frame 2 contains plot features
   f2 <- ttkframe(pw, relief="flat", borderwidth=0, padding=10)
 
-  f2.chk.01.1 <- ttkcheckbutton(f2, text="Use bitmap raster",     variable=useRaster.var)
-  f2.chk.02.1 <- ttkcheckbutton(f2, text="Show contour lines",    variable=contour.lines.var)
+  f2.chk.01.1 <- ttkcheckbutton(f2, text="Use bitmap raster", variable=useRaster.var)
+  f2.chk.02.1 <- ttkcheckbutton(f2, text="Show contour lines", variable=contour.lines.var)
   f2.chk.03.1 <- ttkcheckbutton(f2, text="Axes tickmarks in DMS", variable=dms.tick.var)
-  f2.chk.04.1 <- ttkcheckbutton(f2, text="Draw graticule",        variable=bg.lines.var)
+  f2.chk.04.1 <- ttkcheckbutton(f2, text="Show graticule", variable=bg.lines.var)
+  f2.chk.05.1 <- ttkcheckbutton(f2, text="Proportional points", variable=bubbles.var)
 
   tkgrid(f2.chk.01.1, sticky="w", pady=c(15, 4))
   tkgrid(f2.chk.02.1, sticky="w", pady=c(0, 4))
   tkgrid(f2.chk.03.1, sticky="w", pady=c(0, 4))
-  tkgrid(f2.chk.04.1, sticky="w")
+  tkgrid(f2.chk.04.1, sticky="w", pady=c(0, 4))
+  tkgrid(f2.chk.05.1, sticky="w")
 
   # final layout
   tkgrid(f1, f2, sticky="nswe")

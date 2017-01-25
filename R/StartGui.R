@@ -581,7 +581,8 @@ StartGui <- function() {
         if (is.null(file)) return()
       }
 
-      inches <- 0.03 * Data("cex.pts")
+      cex.pts <- Data("cex.pts")
+      inches <- if (Data("bubbles")) c(0, 0.2 * cex.pts) else 0.03 * cex.pts
       contour.lines <- if (Data("contour.lines")) list(col="#1F1F1F") else NULL
 
       if (plot.type == "Points") {
@@ -597,12 +598,14 @@ StartGui <- function() {
                          n=Data("nlevels"), asp=asp, dms.tick=Data("dms.tick"),
                          bg.lines=Data("bg.lines"), pal=Data("palette.grd"),
                          contour.lines=contour.lines, file=file, useRaster=Data("useRaster"))
-      if (plot.type == "Surface and points")
-        inlmisc::PlotMap(r, p, inches=inches, bg="#1F1F1FCB", fg="#FFFFFF40",
+      if (plot.type == "Surface and points") {
+        bg.neg <- if (Data("bubbles")) "#FAFAFACB" else NULL
+        inlmisc::PlotMap(r, p, inches=inches, bg="#1F1F1FCB", bg.neg=bg.neg, fg="#FFFFFF40",
                          draw.legend=FALSE, xlim=lim$x, ylim=lim$y, zlim=lim$z,
                          n=Data("nlevels"), asp=asp, dms.tick=Data("dms.tick"),
                          bg.lines=Data("bg.lines"), pal=Data("palette.grd"),
                          contour.lines=contour.lines, file=file, useRaster=Data("useRaster"))
+      }
     }
     tkfocus(tt)
   }

@@ -14,7 +14,8 @@ Data <- local({
                   "contour.lines" = 0,
                   "useRaster"     = 1,
                   "dms.tick"      = 0,
-                  "bg.lines"      = 0)
+                  "bg.lines"      = 0,
+                  "bubbles"       = 0)
 
   function(option, value, which.attr=NULL, clear.proj=FALSE, clear.data=FALSE, replace.all=NULL) {
 
@@ -40,7 +41,8 @@ Data <- local({
                          "palette.grd",
                          "useRaster",
                          "dms.tick",
-                         "bg.lines")
+                         "bg.lines",
+                         "bubbles")
       save.params <- save.params[save.params %in% names(dat)]
       dat <<- sapply(save.params, function(i) list(dat[[i]]))
       return(invisible())
