@@ -582,16 +582,19 @@ StartGui <- function() {
       }
 
       cex.pts <- Data("cex.pts")
-      inches <- if (Data("bubbles")) c(0, 0.2 * cex.pts) else 0.03 * cex.pts
       contour.lines <- if (Data("contour.lines")) list(col="#1F1F1F") else NULL
+      inches <- if (Data("bubbles")) c(0, 0.2 * cex.pts) else 0.03 * cex.pts
 
       if (plot.type == "Points") {
+
         is <- inherits(p, "SpatialPointsDataFrame")
-        bg <- if (is) Data("palette.pnt") else "#1F1F1FCB"
+
+        bg <- if (is) Data("palette.pts") else "#1F1F1FCB"
         inlmisc::AddBubbles(p, xlim=lim$x, ylim=lim$y, zlim=lim$z, inches=inches,
                             bg=bg, fg="#FFFFFF40", draw.legend=is, loc="topright",
-                            make.intervals=is, add=FALSE, asp=asp, file=file,
-                            dms.tick=Data("dms.tick"), bg.lines=Data("bg.lines"))
+                            make.intervals=Data("make.intervals"), add=FALSE, asp=asp, file=file,
+                            dms.tick=Data("dms.tick"), bg.lines=Data("bg.lines"),
+                            quantile.breaks=Data("quantile.breaks"))
       }
       if (plot.type == "Surface")
         inlmisc::PlotMap(r, xlim=lim$x, ylim=lim$y, zlim=lim$z,
@@ -601,7 +604,8 @@ StartGui <- function() {
       if (plot.type == "Surface and points") {
         bg.neg <- if (Data("bubbles")) "#FAFAFACB" else NULL
         inlmisc::PlotMap(r, p, inches=inches, bg="#1F1F1FCB", bg.neg=bg.neg, fg="#FFFFFF40",
-                         draw.legend=FALSE, xlim=lim$x, ylim=lim$y, zlim=lim$z,
+                         draw.legend=FALSE, quantile.breaks=Data("quantile.breaks"),
+                         make.intervals=Data("make.intervals"), xlim=lim$x, ylim=lim$y, zlim=lim$z,
                          n=Data("nlevels"), asp=asp, dms.tick=Data("dms.tick"),
                          bg.lines=Data("bg.lines"), pal=Data("palette.grd"),
                          contour.lines=contour.lines, file=file, useRaster=Data("useRaster"))
@@ -1137,8 +1141,8 @@ StartGui <- function() {
   menu.plot.col <- tkmenu(tt, tearoff=0)
   tkadd(menu.plot.col, "command", label="point data\u2026",
         command=function() {
-          Pal <- colorspace::choose_palette(Data("palette.pnt"), parent=tt)
-          if (!is.null(Pal)) Data("palette.pnt", Pal)
+          Pal <- colorspace::choose_palette(Data("palette.pts"), parent=tt)
+          if (!is.null(Pal)) Data("palette.pts", Pal)
         })
   tkadd(menu.plot.col, "command", label="gridded data\u2026",
         command=function() {

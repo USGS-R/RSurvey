@@ -4,18 +4,27 @@ Data <- local({
   dat <- list()
 
   # set default values
-  default <- list("default.dir"   = getwd(),
-                  "palette.pnt"   = colorspace::rainbow_hcl,
-                  "palette.grd"   = viridis::viridis,
-                  "crs"           = sp::CRS(as.character(NA)),
-                  "sep"           = "\t",
-                  "width"         = 7,
-                  "cex.pts"       = 1,
-                  "contour.lines" = 0,
-                  "useRaster"     = 1,
-                  "dms.tick"      = 0,
-                  "bg.lines"      = 0,
-                  "bubbles"       = 0)
+  default <- list("win.loc"         = NULL,
+                  "default.dir"     = getwd(),
+                  "palette.pts"     = function(n, c=80, l=60, start=0, end=300) {
+                                        colorspace::rainbow_hcl(n, c, l, start, end)
+                                      },
+                  "palette.grd"     = function(n, h=c(300, 75), c.=c(35, 95), l=c(15, 90), power=c(0.8, 1.2)) {
+                                        colorspace::heat_hcl(n, h, c., l, power)
+                                      },
+                  "crs"             = sp::CRS(as.character(NA)),
+                  "sep"             = "\t",
+                  "cex.pts"         = 1,
+                  "nlevels"         = NULL,
+                  "asp.yx"          = NULL,
+                  "asp.zx"          = NULL,
+                  "bg.lines"        = 0,
+                  "useRaster"       = 1,
+                  "contour.lines"   = 0,
+                  "dms.tick"        = 0,
+                  "bubbles"         = 0,
+                  "quantile.breaks" = 0,
+                  "make.intervals"  = 0)
 
   function(option, value, which.attr=NULL, clear.proj=FALSE, clear.data=FALSE, replace.all=NULL) {
 
@@ -26,23 +35,9 @@ Data <- local({
     }
 
     # save parameters
-    if (clear.proj | clear.data) {
-      save.params <- c("default.dir", "win.loc", "width", "cex.pts")
-      if (clear.data)
-        save.params <- c(save.params,
-                         "nlevels",
-                         "asp.yx",
-                         "asp.zx",
-                         "contour.lines",
-                         "date.fmt",
-                         "polys",
-                         "proj.file",
-                         "palette.pnt",
-                         "palette.grd",
-                         "useRaster",
-                         "dms.tick",
-                         "bg.lines",
-                         "bubbles")
+    if (clear.proj || clear.data) {
+      save.params <- c("win.loc", "default.dir")
+      if (clear.data) save.params <- unique(c(save.params, names(default)))
       save.params <- save.params[save.params %in% names(dat)]
       dat <<- sapply(save.params, function(i) list(dat[[i]]))
       return(invisible())

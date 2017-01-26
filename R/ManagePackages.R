@@ -1,7 +1,7 @@
 ManagePackages <- function() {
 
 
-  # install missing packages from cran mirror
+  # install missing packages from cran
   InstallPackages <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
@@ -19,10 +19,9 @@ ManagePackages <- function() {
     available.pkgs <- missing.pkgs[is.on.cran]
     unavailable.pkgs <- missing.pkgs[!is.on.cran]
     if (length(unavailable.pkgs) > 0) {
-      msg <- paste0("The following packages are unavailable on this ",
-                    "CRAN mirror:\n\n",
-                    paste(paste0("\'", unavailable.pkgs, "\'"), collapse=", "),
-                    "\n\nWould you like to try a different CRAN mirror?")
+      msg <- paste(paste0("\'", unavailable.pkgs, "\'"), collapse=", ")
+      msg <- paste0("The following packages are unavailable on this CRAN mirror:\n\n",
+                    msg, "\n\nWould you like to try a different CRAN mirror?")
       ans <- tkmessageBox(icon="question", message=msg, title="CRAN", type="yesno", parent=tt)
       if (tolower(substr(ans, 1, 1)) == "y") return()
     }
@@ -41,8 +40,8 @@ ManagePackages <- function() {
 
 
   # suggested packages
-  txt <- readLines(system.file("DESCRIPTION", package="RSurvey"))
-  pkgs <- sub(",$", "", strsplit(txt[grep("^Suggests:", txt)], " ")[[1]][-1])
+  pkgs <- read.dcf(system.file("DESCRIPTION", package="RSurvey"), "Suggests")
+  pkgs <- strsplit(pkgs, ", ")[[1]]
 
   # account for missing packages
   is.pkg.missing <- !pkgs %in% .packages(all.available=TRUE)
@@ -64,7 +63,7 @@ ManagePackages <- function() {
     tktitle(tt) <- "Package Manager"
     tkwm.resizable(tt, 0, 0)
 
-    # frame 0, ok and cancel buttons
+    # frame 0, bottom buttons
     f0 <- tkframe(tt, relief="flat")
     f0.but.2 <- ttkbutton(f0, width=12, text="OK", default="active", command=InstallPackages)
     f0.but.3 <- ttkbutton(f0, width=12, text="Cancel",
@@ -75,7 +74,7 @@ ManagePackages <- function() {
     tkgrid.configure(f0.but.3, padx=c(2, 10))
     tkpack(f0, fill="x", side="bottom", anchor="e")
 
-    # frame 1, message and mirror selection
+    # frame 1, body
     f1 <- tkframe(tt, relief="flat", background="white")
     if ("RSurvey" %in% .packages(all.available=TRUE))
       f <- system.file("images/rlogo.gif", package="RSurvey")
@@ -85,7 +84,9 @@ ManagePackages <- function() {
 
     f1.lab.1.1 <- ttklabel(f1, image=rlogo.var, background="white")
 
+    txt.width <- 75
     txt <- "The following suggested package(s) have not been installed:"
+    txt <- paste(strwrap(txt, txt.width), collapse="\n")
     f1.lab.1.2 <- ttklabel(f1, text=txt, justify="left", background="white")
 
     f1.lst.2.2 <- tklistbox(f1, selectmode="extended", activestyle="none", relief="groove",
@@ -97,13 +98,13 @@ ManagePackages <- function() {
     tkselection.set(f1.lst.2.2, 0, length(missing.pkgs))
 
     txt <- paste("These packages are not necessarily needed but are highly recommended for full functionality.",
-                 "You can deselect any of the packages listed and they will be excluded from installation.")
-    txt <- paste(strwrap(txt, 80), collapse="\n")
+                 "You can deselect <Ctrl-click> any of the listed packages and they will be excluded from installation.")
+    txt <- paste(strwrap(txt, txt.width), collapse="\n")
     f1.lab.3.2 <- ttklabel(f1, text=txt, justify="left", background="white")
 
     txt <- paste("Packages will be downloaded from the Comprehensive R Archive Network (CRAN)",
                  "and automatically installed.")
-    txt <- paste(strwrap(txt, 80), collapse="\n")
+    txt <- paste(strwrap(txt, txt.width), collapse="\n")
     f1.lab.4.2 <- ttklabel(f1, text=txt, justify="left", background="white")
 
     txt <- "Choose your preferred CRAN mirror"
@@ -118,7 +119,7 @@ ManagePackages <- function() {
     tkgrid("x", f1.lab.4.2, "x", pady=c(0, 10))
     tkgrid("x", f1.lab.5.2, f1.box.5.3, pady=c(10, 30))
 
-    tkgrid.configure(f1.lab.1.1, padx=c(20, 20), sticky="n", rowspan=4)
+    tkgrid.configure(f1.lab.1.1, padx=20, sticky="n", rowspan=4)
     tkgrid.configure(f1.lab.1.2, padx=c(0, 40), sticky="w", columnspan=2)
     tkgrid.configure(f1.lst.2.2, padx=c(0, 0), sticky="e")
     tkgrid.configure(f1.ysc.2.3, padx=c(0, 40), sticky="nsw")
@@ -131,7 +132,7 @@ ManagePackages <- function() {
 
     # binds events
     tclServiceMode(TRUE)
-    tkbind(tt, "<Return>", InstallPackages)
+    tkbind(tt, "<Return>",    InstallPackages)
     tkbind(tt, "<Key-space>", InstallPackages)
 
     # gui control
@@ -148,8 +149,7 @@ ManagePackages <- function() {
   tcl.pkg <- tryCatch(tcl("package", "require", "Tktable"), error=identity)
   if (inherits(tcl.pkg, "error")) {
     msg <- paste("Tcl package Tktable is missing and is strongly recommended",
-                 "for full functionality of RSurvey.\n\n ",
-                 "http://tktable.sourceforge.net")
+                 "for full functionality of RSurvey.\n\n http://tktable.sourceforge.net")
     tkmessageBox(icon="warning", message=msg, title="Missing Tktable", type="ok")
   }
 }

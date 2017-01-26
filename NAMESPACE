@@ -39,7 +39,7 @@ import(rgdal)
 
 importFrom(colorspace,choose_palette)
 importFrom(colorspace,rainbow_hcl)
-importFrom(colorspace,diverge_hcl)
+importFrom(colorspace,heat_hcl)
 
 importFrom(grDevices,chull)
 importFrom(grDevices,col2rgb)

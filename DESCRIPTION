@@ -20,7 +20,6 @@ Imports:
     stats,
     tcltk,
     utils,
-    viridis
 Suggests:
     dichromat,
     leaflet,
