@@ -377,7 +377,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
     geo <- as.integer(geo[2:3]) + 25
     tkwm.geometry(tt, sprintf("+%s+%s", geo[1], geo[2]))
   }
-  tktitle(tt) <- "Polygons"
+  tktitle(tt) <- "Polygon Manager"
 
   # add menus
   top.menu <- tkmenu(tt, tearoff=0)

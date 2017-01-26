@@ -1,8 +1,8 @@
-\name{LoadPackages}
+\name{ManagePackages}
 
-\alias{LoadPackages}
+\alias{ManagePackages}
 
-\title{Load Suggested Packages}
+\title{Manage Packages}
 
 \description{
 This function installs \R packages suggested by \pkg{RSurvey}. If a suggested
@@ -11,12 +11,12 @@ package from \href{https://cran.r-project.org/}{CRAN} using an existing network
 connection.
 }
 
-\usage{LoadPackages()}
+\usage{ManagePackages()}
 
 \author{J.C. Fisher}
 
 \seealso{\code{\link{install.packages}}, \code{\link{require}}}
 
-\examples{\dontrun{LoadPackages()}}
+\examples{\dontrun{ManagePackages()}}
 
 \keyword{misc}

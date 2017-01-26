@@ -1,4 +1,4 @@
-LoadPackages <- function() {
+ManagePackages <- function() {
 
 
   # install missing packages from cran mirror
@@ -29,12 +29,11 @@ LoadPackages <- function() {
     if (length(available.pkgs) > 0)
       install.packages(available.pkgs, repos=repo, verbose=TRUE)
 
-    # load packages into current session
+    # load name spaces for suggested packages into current session
     for (pkg in available.pkgs) {
-      is.loaded <- suppressWarnings(require(pkg, character.only=TRUE,
-                                            warn.conflicts=FALSE, quietly=TRUE))
-      if (!is.loaded)
-        warning(paste("unable to load suggested package:", pkg), call.=FALSE)
+      is.loaded <- requireNamespace(pkg, quietly=TRUE)
+      msg <- sprintf("unable to load the name space for suggested package: %s", pkg)
+      if (!is.loaded) warning(msg, call.=FALSE)
     }
 
     tclvalue(tt.done.var) <- 1
@@ -50,7 +49,7 @@ LoadPackages <- function() {
   if (any(is.pkg.missing)) {
     missing.pkgs <- pkgs[is.pkg.missing]
     cran.mirrors <- getCRANmirrors(all=FALSE, local.only=FALSE)
-    default.repo <- getOption("repos")
+    default.repo <- getOption("repos")["CRAN"]
     idx <- which(sub("/$", "", cran.mirrors$URL) %in% sub("/$", "", default.repo["CRAN"]))
     idx <- if (length(idx) > 0) idx[1] else 1
     repos.var <- tclVar(cran.mirrors$Name[idx])
@@ -86,44 +85,45 @@ LoadPackages <- function() {
 
     f1.lab.1.1 <- ttklabel(f1, image=rlogo.var, background="white")
 
-    txt <- "The following suggested (not necessarily needed) package(s) are missing:"
+    txt <- "The following suggested package(s) have not been installed:"
     f1.lab.1.2 <- ttklabel(f1, text=txt, justify="left", background="white")
 
     f1.lst.2.2 <- tklistbox(f1, selectmode="extended", activestyle="none", relief="groove",
                             height=4, width=25, exportselection=FALSE, listvariable=pkgs.var,
                             highlightthickness=0)
     f1.ysc.2.3 <- ttkscrollbar(f1, orient="vertical")
-    tkconfigure(f1.lst.2.2, background="white",
-                yscrollcommand=paste(.Tk.ID(f1.ysc.2.3), "set"))
+    tkconfigure(f1.lst.2.2, background="white", yscrollcommand=paste(.Tk.ID(f1.ysc.2.3), "set"))
     tkconfigure(f1.ysc.2.3, command=paste(.Tk.ID(f1.lst.2.2), "yview"))
     tkselection.set(f1.lst.2.2, 0, length(missing.pkgs))
 
-    txt <- paste("Some features will not be available without these packages.",
-                 "By default all missing packages are selected for installation.", sep="\n")
+    txt <- paste("These packages are not necessarily needed but are highly recommended for full functionality.",
+                 "You can deselect any of the packages listed and they will be excluded from installation.")
+    txt <- paste(strwrap(txt, 80), collapse="\n")
     f1.lab.3.2 <- ttklabel(f1, text=txt, justify="left", background="white")
 
-    txt <- paste("The selected packages will be downloaded and installed from the",
-                 "Comprehensive R Archive Network (CRAN).", sep="\n")
+    txt <- paste("Packages will be downloaded from the Comprehensive R Archive Network (CRAN)",
+                 "and automatically installed.")
+    txt <- paste(strwrap(txt, 80), collapse="\n")
     f1.lab.4.2 <- ttklabel(f1, text=txt, justify="left", background="white")
 
-    f1.lab.5.2 <- ttklabel(f1, text="Choose your preferred CRAN mirror",
-                           justify="left", background="white")
+    txt <- "Choose your preferred CRAN mirror"
+    f1.lab.5.2 <- ttklabel(f1, text=txt, justify="left", background="white")
     f1.box.5.3 <- ttkcombobox(f1, textvariable=repos.var, width=25,
                               values=cran.mirrors$Name, state="readonly")
     tcl(f1.box.5.3, "current", 0)
 
-    tkgrid(f1.lab.1.1, f1.lab.1.2, "x", pady=c(30, 8))
-    tkgrid("x", f1.lst.2.2, f1.ysc.2.3, pady=c(0, 8))
-    tkgrid("x", f1.lab.3.2, "x", pady=c(0, 8))
-    tkgrid("x", f1.lab.4.2, "x", pady=c(0, 8))
-    tkgrid("x", f1.lab.5.2, f1.box.5.3, pady=c(0, 30))
+    tkgrid(f1.lab.1.1, f1.lab.1.2, "x", pady=c(30, 10))
+    tkgrid("x", f1.lst.2.2, f1.ysc.2.3, pady=c(0, 10))
+    tkgrid("x", f1.lab.3.2, "x", pady=c(0, 10))
+    tkgrid("x", f1.lab.4.2, "x", pady=c(0, 10))
+    tkgrid("x", f1.lab.5.2, f1.box.5.3, pady=c(10, 30))
 
-    tkgrid.configure(f1.lab.1.1, padx=c(40, 20), rowspan=4, sticky="n")
-    tkgrid.configure(f1.lab.1.2, padx=c(0, 40), columnspan=2, sticky="w")
+    tkgrid.configure(f1.lab.1.1, padx=c(20, 20), sticky="n", rowspan=4)
+    tkgrid.configure(f1.lab.1.2, padx=c(0, 40), sticky="w", columnspan=2)
     tkgrid.configure(f1.lst.2.2, padx=c(0, 0), sticky="e")
     tkgrid.configure(f1.ysc.2.3, padx=c(0, 40), sticky="nsw")
-    tkgrid.configure(f1.lab.3.2, padx=c(0, 40), columnspan=2, sticky="w")
-    tkgrid.configure(f1.lab.4.2, padx=c(0, 40), columnspan=2, sticky="w")
+    tkgrid.configure(f1.lab.3.2, padx=c(0, 40), sticky="w", columnspan=2)
+    tkgrid.configure(f1.lab.4.2, padx=c(0, 40), sticky="w", columnspan=2)
     tkgrid.configure(f1.lab.5.2, padx=c(0, 4), sticky="e")
     tkgrid.configure(f1.box.5.3, padx=c(0, 40), sticky="w")
 
@@ -135,7 +135,7 @@ LoadPackages <- function() {
     tkbind(tt, "<Key-space>", InstallPackages)
 
     # gui control
-    tkfocus(tt)
+    tkfocus(force=tt)
     tkgrab(tt)
     tkwait.variable(tt.done.var)
     tclServiceMode(FALSE)

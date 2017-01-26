@@ -353,7 +353,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     geo <- as.integer(geo[2:3]) + 25
     tkwm.geometry(tt, sprintf("+%s+%s", geo[1], geo[2]))
   }
-  tktitle(tt) <- "Variables"
+  tktitle(tt) <- "Variable Manager"
 
   # create menus
   top.menu <- tkmenu(tt, tearoff=0)

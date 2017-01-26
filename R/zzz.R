@@ -21,7 +21,5 @@
 }
 
 .onLoad <- function(...) {
-  if (interactive()) {
-    LoadPackages()
-  }
+  if (interactive()) {ManagePackages()}
 }
