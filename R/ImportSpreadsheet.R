@@ -354,7 +354,7 @@ ImportSpreadsheet <- function(parent=NULL) {
   FUN <- function(i) as.numeric(names(which.max(table(i))))
   col.style <- vapply(d.style, FUN, 0)
   col.style[] <- styles[col.style + 1L]
-  origin <- "1899-12-30"  # TODO(jfisher): check mac os, might be "1904-01-01"
+  origin <- "1899-12-30"  # TODO(JCF): check mac os, might be "1904-01-01"
   for (i in seq_along(col.style)) {
     if (col.style[i] %in% 14:17) {  # date-time
       d[, i] <- as.Date(as.numeric(d[, i]), origin=origin)

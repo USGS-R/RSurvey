@@ -575,8 +575,7 @@ StartGui <- function() {
       if (graphics.device == "R") {
         file <- NULL
       } else {
-        file <- GetFile(cmd="Save As", exts=graphics.device,
-                        win.title="Save Graphics",
+        file <- GetFile(cmd="Save As", exts=graphics.device, win.title="Save Graphics",
                         defaultextension=graphics.device, parent=tt)
         if (is.null(file)) return()
       }
@@ -602,7 +601,7 @@ StartGui <- function() {
                          bg.lines=Data("bg.lines"), pal=Data("palette.grd"),
                          contour.lines=contour.lines, file=file, useRaster=Data("useRaster"))
       if (plot.type == "Surface and points") {
-        bg.neg <- if (Data("bubbles")) "#FAFAFACB" else NULL
+        bg.neg <- if (Data("bubbles")) "#FAFAFAB1" else NULL
         inlmisc::PlotMap(r, p, inches=inches, bg="#1F1F1FCB", bg.neg=bg.neg, fg="#FFFFFF40",
                          draw.legend=FALSE, quantile.breaks=Data("quantile.breaks"),
                          make.intervals=Data("make.intervals"), xlim=lim$x, ylim=lim$y, zlim=lim$z,
@@ -941,6 +940,29 @@ StartGui <- function() {
   }
 
 
+  # open new 2d device
+  Open2d <- function() {
+    if (grDevices::dev.cur() == 1) {
+      dev.new(width=7, height=7)
+    } else {
+      cin <- graphics::par("din")
+      # TODO(JCF): read xpos and ypos from current dev and pass to dev.new
+      dev.new(width=cin[1], height=cin[2])
+    }
+  }
+
+
+  # open new 3d device
+  Open3d <- function() {
+    if (rgl::rgl.cur() == 0) {
+      rgl::open3d()
+    } else {
+      windowRect <- rgl::par3d("windowRect") + 25
+      rgl::open3d(windowRect=windowRect)
+    }
+  }
+
+
   # warn if using windows os and running in mdi mode
   if (.Platform$OS.type == "windows" && utils::getIdentification() == "RGui")
     message("\n\n    You are running R in MDI mode which *may* interfere\n",
@@ -991,9 +1013,9 @@ StartGui <- function() {
         command=SaveProjAs)
   tkadd(menu.file, "separator")
   menu.file.import <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.import, "command", label="shapefile\u2026",
+  tkadd(menu.file.import, "command", label="Shapefile\u2026",
         command=function() ReadData("shp"))
-  tkadd(menu.file.import, "command", label="text file or clipboard\u2026",
+  tkadd(menu.file.import, "command", label="Text file or clipboard\u2026",
         command=function() ReadData("txt"))
   tkadd(menu.file.import, "command", label="XML-spreadsheet file\u2026",
         state=ifelse(is.pkg.xml, "normal", "disabled"),
@@ -1004,9 +1026,9 @@ StartGui <- function() {
         command=function() ReadData("rda"))
   tkadd(menu.file, "cascade", label="Import point data from", menu=menu.file.import)
   menu.file.export.pnt <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.export.pnt, "command", label="shapefile\u2026",
+  tkadd(menu.file.export.pnt, "command", label="Shapefile\u2026",
         command=function() WriteData("shp"))
-  tkadd(menu.file.export.pnt, "command", label="text file\u2026",
+  tkadd(menu.file.export.pnt, "command", label="Text file\u2026",
         command=function() WriteData("txt"))
   tkadd(menu.file.export.pnt, "command", label="R-data file\u2026",
         command=function() WriteData("rda"))
@@ -1014,7 +1036,7 @@ StartGui <- function() {
   menu.file.export.grd <- tkmenu(tt, tearoff=0)
   tkadd(menu.file.export.grd, "command", label="GeoTIFF\u2026",
         command=function() WriteRaster("tif"))
-  tkadd(menu.file.export.grd, "command", label="text file\u2026",
+  tkadd(menu.file.export.grd, "command", label="Text file\u2026",
         command=function() WriteRaster("txt"))
   tkadd(menu.file.export.grd, "command", label="R-data file\u2026",
         command=function() WriteRaster("rda"))
@@ -1084,15 +1106,15 @@ StartGui <- function() {
   menu.view <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="View", menu=menu.view, underline=0)
   menu.view.raw <- tkmenu(tt, tearoff=0)
-  tkadd(menu.view.raw, "command", label="all variables\u2026",
+  tkadd(menu.view.raw, "command", label="All variables\u2026",
         command=function() CallEditData(is.all=TRUE, is.state=FALSE))
-  tkadd(menu.view.raw, "command", label="coordinate variables\u2026",
+  tkadd(menu.view.raw, "command", label="Coordinate variables\u2026",
         command=function() CallEditData(is.all=TRUE, is.state=TRUE))
   tkadd(menu.view, "cascade", label="All data records of", menu=menu.view.raw)
   menu.view.pr <- tkmenu(tt, tearoff=0)
-  tkadd(menu.view.pr, "command", label="all variables\u2026",
+  tkadd(menu.view.pr, "command", label="All variables\u2026",
         command=function() CallEditData(is.all=FALSE, is.state=FALSE))
-  tkadd(menu.view.pr, "command", label="coordinate variables\u2026",
+  tkadd(menu.view.pr, "command", label="Coordinate variables\u2026",
         command=function() CallEditData(is.all=FALSE, is.state=TRUE))
   tkadd(menu.view, "cascade", label="Processed data records of", menu=menu.view.pr)
 
@@ -1130,21 +1152,21 @@ StartGui <- function() {
   tkadd(menu.plot, "command", label="Zoom in",  accelerator="Ctrl++", command=function() ViewZoom("+"))
   tkadd(menu.plot, "command", label="Zoom out", accelerator="Ctrl+-", command=function() ViewZoom("-"))
   menu.plot.axes <- tkmenu(tt, tearoff=0)
-  tkadd(menu.plot.axes, "command", label="zoom in at point\u2026",
+  tkadd(menu.plot.axes, "command", label="Zoom in at point\u2026",
         command=function() ViewZoom("+", id="point"))
-  tkadd(menu.plot.axes, "command", label="define bounding box\u2026",
+  tkadd(menu.plot.axes, "command", label="Define bounding box\u2026",
         command=function() ViewZoom("+", id="bbox"))
   tkadd(menu.plot, "cascade", label="Interactively", menu=menu.plot.axes)
 
   tkadd(menu.plot, "separator")
   tkadd(menu.plot, "command", label="Configuration\u2026", command=function() SetConfiguration(tt))
   menu.plot.col <- tkmenu(tt, tearoff=0)
-  tkadd(menu.plot.col, "command", label="point data\u2026",
+  tkadd(menu.plot.col, "command", label="Point data\u2026",
         command=function() {
           Pal <- colorspace::choose_palette(Data("palette.pts"), parent=tt)
           if (!is.null(Pal)) Data("palette.pts", Pal)
         })
-  tkadd(menu.plot.col, "command", label="gridded data\u2026",
+  tkadd(menu.plot.col, "command", label="Gridded data\u2026",
         command=function() {
           n <- ifelse(is.null(Data("nlevels")), 200, Data("nlevels"))
           Pal <- colorspace::choose_palette(Data("palette.grd"), n, parent=tt)
@@ -1156,8 +1178,8 @@ StartGui <- function() {
   tkadd(menu.plot, "command", label="Web mapping", command=PlotWebMap)
   tkadd(menu.plot, "separator")
   menu.plot.new <- tkmenu(tt, tearoff=0)
-  tkadd(menu.plot.new, "command", label="2D graphics", accelerator="Ctrl+F3", command=dev.new)
-  tkadd(menu.plot.new, "command", label="3D graphics", command=rgl::open3d)
+  tkadd(menu.plot.new, "command", label="2D graphics", accelerator="Ctrl+F3", command=Open2d)
+  tkadd(menu.plot.new, "command", label="3D graphics", command=Open3d)
   tkadd(menu.plot, "cascade", label="Open a new device for", menu=menu.plot.new)
   tkadd(menu.plot, "command", label="Close graphic devices", accelerator="Ctrl+F4",
         command=CloseDevices)
@@ -1286,13 +1308,13 @@ StartGui <- function() {
   # bind events
   tclServiceMode(TRUE)
 
-  tkbind(tt, "<Destroy>",                  CloseGUI)
+  tkbind(tt, "<Destroy>",                    CloseGUI)
   tkbind(tt, "<Control-KeyRelease-n>",       ClearObjs)
   tkbind(tt, "<Control-KeyRelease-o>",       OpenProj)
   tkbind(tt, "<Control-KeyRelease-s>",       SaveProj)
   tkbind(tt, "<Control-Shift-KeyRelease-S>", SaveProjAs)
   tkbind(tt, "<Control-KeyRelease-r>",       SaveRDevice)
-  tkbind(tt, "<Control-KeyRelease-F3>",      dev.new)
+  tkbind(tt, "<Control-KeyRelease-F3>",      Open2d)
   tkbind(tt, "<Control-KeyRelease-F4>",      CloseDevices)
   tkbind(tt, "<Control-KeyRelease-plus>",    function() ViewZoom("+"))
   tkbind(tt, "<Control-KeyRelease-minus>",   function() ViewZoom("-"))

@@ -75,7 +75,7 @@ Data <- local({
     }
 
     # determine number of options
-    noption     <- length(option)
+    noption <- length(option)
     noption.new <- length(option.new)
 
     # return value

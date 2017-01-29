@@ -19,7 +19,7 @@ Imports:
     sp,
     stats,
     tcltk,
-    utils,
+    utils
 Suggests:
     dichromat,
     leaflet,
