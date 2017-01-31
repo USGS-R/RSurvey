@@ -29,7 +29,8 @@ Data <- local({
                   "make.intervals"  = 0,
                   "proportional"    = 0,
                   "quantile.breaks" = 0,
-                  "draw.key"        = 0)
+                  "draw.key"        = 0,
+                  "max.dev.dim"     = c(43L, 56L))
 
 
 
