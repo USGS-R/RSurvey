@@ -160,24 +160,25 @@ StartGui <- function() {
       }
 
       if (inherits(d, "SpatialPointsDataFrame")) {
-        crs <- d@proj4string
-        if (is.na(CRSargs(crs)) & !is.na(CRSargs(Data("crs")))) {
+        crs.old <- Data("crs")
+        crs.new <- d@proj4string
+        if (is.na(CRSargs(crs.new)) & !is.na(CRSargs(crs.old))) {
           msg <- "Dataset has no CRS so the global and project-wide CRS will be used."
           ans <- tkmessageBox(icon="warning", message=msg, title="Warning", type="okcancel", parent=tt)
           if (as.character(ans) == "cancel") return()
-          sp::proj4string(d) <- Data("crs")
-          crs <- Data("crs")
-        } else if (!is.na(CRSargs(crs)) & !is.na(CRSargs(Data("crs")))) {
+          sp::proj4string(d) <- crs.old
+          crs.new <- crs.old
+        } else if (!is.na(CRSargs(crs.new)) & !is.na(CRSargs(crs.old))) {
           msg <- paste("The CRS for this dataset is different from the gloabl and project-wide CRS being used.",
                        "A transformation between datum(s) and conversion between projections will be made.")
           ans <- tkmessageBox(icon="warning", message=msg, title="Warning", type="okcancel", parent=tt)
           if (as.character(ans) == "cancel") return()
-          d <- spTransform(d, Data("crs"))
-          crs <- Data("crs")
+          d <- spTransform(d, crs.old)
+          crs.new <- crs.old
         }
         d <- cbind(coordinates(d), d@data)
       } else {
-        crs <- CRS(as.character(NA))
+        crs.new <- CRS(as.character(NA))
       }
 
       if (is.null(d) || nrow(d) == 0 || ncol(d) == 0) return()
@@ -232,7 +233,7 @@ StartGui <- function() {
       Data("rows", rows)
       Data("cols", cols)
       Data("import", list(source=src))
-      Data("crs", crs)
+      Data("crs", crs.new)
     }
     EstablishDefaultVars()
     SetVars()
@@ -428,22 +429,17 @@ StartGui <- function() {
 
   # manage polygons
   CallManagePolygons <- function() {
-    old.polys     <- Data("polys")
-    old.poly.data <- Data("poly.data")
-    old.crs       <- Data("crs")
-
+    polys.old     <- Data("polys")
+    poly.data.old <- Data("poly.data")
     ans <- ManagePolygons(Data("polys"), Data("poly.data"), Data("poly.crop"),
                           Data("crs"), parent=tt)
-
-    if (is.null(ans$polys) || identical(ans$polys, old.polys)) return()
-
-    old <- if (is.null(old.poly.data)) NULL else old.polys[[old.poly.data]]
+    if (is.null(ans$polys) || identical(ans$polys, polys.old)) return()
+    old <- if (is.null(poly.data.old)) NULL else polys.old[[poly.data.old]]
     new <- if (is.null(ans$poly.data)) NULL else ans$polys[[ans$poly.data]]
     if (!identical(new, old)) {
       Data("data.pts", NULL)
       Data("data.grd", NULL)
     }
-
     Data("polys", if (length(ans$polys) == 0) NULL else ans$polys)
     Data("poly.data", ans$poly.data)
     Data("poly.crop", ans$poly.crop)
@@ -454,13 +450,13 @@ StartGui <- function() {
   # set polygon range and limit
   CallSetPolygonLimits <- function() {
     polys <- Data("polys")
-    old.poly.data <- Data("poly.data")
-    old.poly.crop <- Data("poly.crop")
-    ans <- SetPolygonLimits(names(polys), old.poly.data, old.poly.crop, tt)
+    poly.data.old <- Data("poly.data")
+    poly.crop.old <- Data("poly.crop")
+    ans <- SetPolygonLimits(names(polys), poly.data.old, poly.crop.old, tt)
     if (is.null(ans)) return()
     new.poly.data <- ans$poly.data
     new.poly.crop <- ans$poly.crop
-    if (!identical(new.poly.data, old.poly.data)) {
+    if (!identical(new.poly.data, poly.data.old)) {
       Data("data.pts", NULL)
       Data("data.grd", NULL)
     }
@@ -582,32 +578,37 @@ StartGui <- function() {
 
       cex.pts <- Data("cex.pts")
       contour.lines <- if (Data("contour.lines")) list(col="#1F1F1F") else NULL
-      inches <- if (Data("bubbles")) c(0, 0.2 * cex.pts) else 0.03 * cex.pts
+      inches <- if (Data("proportional")) c(0, 0.2 * cex.pts) else 0.03 * cex.pts
+
+      is.z <- inherits(p, "SpatialPointsDataFrame")
+      legend.loc <- if (is.z) Data("legend.loc") else NULL
+      bg <- if (is.z) Data("palette.pts") else "#1F1F1FCB"
 
       if (plot.type == "Points") {
-
-        is <- inherits(p, "SpatialPointsDataFrame")
-
-        bg <- if (is) Data("palette.pts") else "#1F1F1FCB"
-        inlmisc::AddBubbles(p, xlim=lim$x, ylim=lim$y, zlim=lim$z, inches=inches,
-                            bg=bg, fg="#FFFFFF40", draw.legend=is, loc="topright",
-                            make.intervals=Data("make.intervals"), add=FALSE, asp=asp, file=file,
-                            dms.tick=Data("dms.tick"), bg.lines=Data("bg.lines"),
-                            quantile.breaks=Data("quantile.breaks"))
+        inlmisc::AddPoints(p, xlim=lim$x, ylim=lim$y, zlim=lim$z, inches=inches,
+                           bg=bg, fg="#FFFFFF40", legend.loc=legend.loc,
+                           make.intervals=Data("make.intervals"), add=FALSE, asp=asp, file=file,
+                           dms.tick=Data("dms.tick"), bg.lines=Data("bg.lines"),
+                           quantile.breaks=Data("quantile.breaks"),
+                           scale.loc=Data("scale.loc"), arrow.loc=Data("arrow.loc"))
       }
       if (plot.type == "Surface")
         inlmisc::PlotMap(r, xlim=lim$x, ylim=lim$y, zlim=lim$z,
                          n=Data("nlevels"), asp=asp, dms.tick=Data("dms.tick"),
                          bg.lines=Data("bg.lines"), pal=Data("palette.grd"),
-                         contour.lines=contour.lines, file=file, useRaster=Data("useRaster"))
+                         contour.lines=contour.lines, file=file, useRaster=Data("useRaster"),
+                         scale.loc=Data("scale.loc"), arrow.loc=Data("arrow.loc"),
+                         draw.key=Data("draw.key"))
       if (plot.type == "Surface and points") {
-        bg.neg <- if (Data("bubbles")) "#FAFAFAB1" else NULL
+        bg.neg <- if (Data("proportional")) "#999999B1" else NULL
         inlmisc::PlotMap(r, p, inches=inches, bg="#1F1F1FCB", bg.neg=bg.neg, fg="#FFFFFF40",
-                         draw.legend=FALSE, quantile.breaks=Data("quantile.breaks"),
+                         legend.loc=legend.loc, quantile.breaks=Data("quantile.breaks"),
                          make.intervals=Data("make.intervals"), xlim=lim$x, ylim=lim$y, zlim=lim$z,
                          n=Data("nlevels"), asp=asp, dms.tick=Data("dms.tick"),
                          bg.lines=Data("bg.lines"), pal=Data("palette.grd"),
-                         contour.lines=contour.lines, file=file, useRaster=Data("useRaster"))
+                         contour.lines=contour.lines, file=file, useRaster=Data("useRaster"),
+                         scale.loc=Data("scale.loc"), arrow.loc=Data("arrow.loc"),
+                         draw.key=Data("draw.key"))
       }
     }
     tkfocus(tt)
@@ -884,13 +885,14 @@ StartGui <- function() {
     tkconfigure(tt, cursor="watch")
     on.exit(tkconfigure(tt, cursor="arrow"))
     if (!requireNamespace("leaflet", quietly=TRUE)) return()
-    if (is.na(CRSargs(Data("crs")))) {
+    crs.old <- Data("crs")
+    if (is.na(CRSargs(crs.old))) {
       msg <- "Data must be associated with a coordinate reference system."
       tkmessageBox(icon="info", message=msg, title="Information", type="ok", parent=tt)
       return()
     }
     ProcessData()
-    new.crs <- CRS("+init=epsg:4326")
+    crs.new <- CRS("+init=epsg:4326")
     map <- leaflet::leaflet()
     opt <- leaflet::WMSTileOptions(format="image/png", transparent=TRUE)
     base.groups <- c("Open Street Map", "The National Map")
@@ -909,7 +911,7 @@ StartGui <- function() {
       xyz <- as.data.frame(pts)
       txt <- sprintf("<b>Record:</b> %s<br/><b>x:</b> %s<br/><b>y:</b> %s<br/><b>z:</b> %s",
                      rec, xyz$x, xyz$y, xyz$z)
-      pts <- spTransform(pts, new.crs)
+      pts <- spTransform(pts, crs.new)
       opt <- leaflet::markerClusterOptions(showCoverageOnHover=FALSE)
       map <- leaflet::addCircleMarkers(map, data=pts, radius=10, popup=txt,
                                        clusterOptions=opt, weight=3, group=grp)
@@ -920,14 +922,14 @@ StartGui <- function() {
     ply <- if (is.null(Data("poly.data"))) NULL else Data("polys")[[Data("poly.data")]]
     if (!is.null(ply)) {
       grp <- "Polygon (data limits)"
-      ply <- spTransform(ply, new.crs)
+      ply <- spTransform(ply, crs.new)
       map <- leaflet::addPolylines(map, data=ply, weight=1, color="#000000", group=grp)
       overlay.groups <- c(overlay.groups, grp)
     }
     ply <- if (is.null(Data("poly.crop"))) NULL else Data("polys")[[Data("poly.crop")]]
     if (!is.null(ply)) {
       grp <- "Polygon (crop region)"
-      ply <- spTransform(ply, new.crs)
+      ply <- spTransform(ply, crs.new)
       map <- leaflet::addPolylines(map, data=ply, weight=1, color="#000000", group=grp)
       overlay.groups <- c(overlay.groups, grp)
     }
@@ -971,7 +973,7 @@ StartGui <- function() {
             "    set in the command line or by clicking in the Menu:\n",
             "    Edit - GUI Preferences: SDI, then Save and restart R.\n\n")
 
-  # establish default directory
+  # initialize default directory
   if (is.null(Data("default.dir"))) Data("default.dir", getwd())
 
   # check if suggested packages are loaded

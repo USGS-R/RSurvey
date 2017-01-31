@@ -52,6 +52,9 @@ SetCrs <- function(crs=sp::CRS(as.character(NA)), parent=NULL) {
   }
 
 
+  # ensure valid crs argument
+  if (!inherits(crs, "CRS")) crs <- sp::CRS(as.character(NA))
+
   # initialize return value
   rtn <- crs
 

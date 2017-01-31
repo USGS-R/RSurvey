@@ -14,13 +14,23 @@ SetConfiguration <- function(parent=NULL) {
     val <- as.numeric(tclvalue(asp.zx.var))
     Data("asp.zx", if (is.na(val)) NULL else val)
 
-    Data("bg.lines",        as.integer(tclvalue(bg.lines.var)))
+    val <- as.character(tclvalue(legend.loc.var))
+    Data("legend.loc", if (val == "") NULL else val)
+
+    val <- as.character(tclvalue(scale.loc.var))
+    Data("scale.loc", if (val == "") NULL else val)
+
+    val <- as.character(tclvalue(arrow.loc.var))
+    Data("arrow.loc", if (val == "") NULL else val)
+
     Data("useRaster",       as.integer(tclvalue(useRaster.var)))
-    Data("contour.lines",   as.integer(tclvalue(contour.lines.var)))
+    Data("draw.key",        as.integer(tclvalue(draw.key.var)))
     Data("dms.tick",        as.integer(tclvalue(dms.tick.var)))
-    Data("bubbles",         as.integer(tclvalue(bubbles.var)))
-    Data("quantile.breaks", as.integer(tclvalue(quantile.breaks.var)))
+    Data("contour.lines",   as.integer(tclvalue(contour.lines.var)))
     Data("make.intervals",  as.integer(tclvalue(make.intervals.var)))
+    Data("proportional",    as.integer(tclvalue(proportional.var)))
+    Data("quantile.breaks", as.integer(tclvalue(quantile.breaks.var)))
+    Data("bg.lines",        as.integer(tclvalue(bg.lines.var)))
 
     tclvalue(tt.done.var) <- 1
   }
@@ -31,27 +41,36 @@ SetConfiguration <- function(parent=NULL) {
   nlevels.var         <- tclVar()
   asp.yx.var          <- tclVar()
   asp.zx.var          <- tclVar()
+  legend.loc.var      <- tclVar()
+  scale.loc.var       <- tclVar()
+  arrow.loc.var       <- tclVar()
+  dev.dim.var         <- tclVar()
 
-  bg.lines.var        <- tclVar()
   useRaster.var       <- tclVar()
-  contour.lines.var   <- tclVar()
+  draw.key.var        <- tclVar()
   dms.tick.var        <- tclVar()
-  bubbles.var         <- tclVar()
-  quantile.breaks.var <- tclVar()
+  contour.lines.var   <- tclVar()
   make.intervals.var  <- tclVar()
+  proportional.var    <- tclVar()
+  quantile.breaks.var <- tclVar()
+  bg.lines.var        <- tclVar()
 
   if (!is.null(Data("cex.pts")))         tclvalue(cex.pts.var)         <- Data("cex.pts")
   if (!is.null(Data("nlevels")))         tclvalue(nlevels.var)         <- Data("nlevels")
   if (!is.null(Data("asp.yx")))          tclvalue(asp.yx.var)          <- Data("asp.yx")
   if (!is.null(Data("asp.zx")))          tclvalue(asp.zx.var)          <- Data("asp.zx")
+  if (!is.null(Data("legend.loc")))      tclvalue(legend.loc.var)      <- Data("legend.loc")
+  if (!is.null(Data("scale.loc")))       tclvalue(scale.loc.var)       <- Data("scale.loc")
+  if (!is.null(Data("arrow.loc")))       tclvalue(arrow.loc.var)       <- Data("arrow.loc")
 
-  if (!is.null(Data("bg.lines")))        tclvalue(bg.lines.var)        <- Data("bg.lines")
   if (!is.null(Data("useRaster")))       tclvalue(useRaster.var)       <- Data("useRaster")
-  if (!is.null(Data("contour.lines")))   tclvalue(contour.lines.var)   <- Data("contour.lines")
+  if (!is.null(Data("draw.key")))        tclvalue(draw.key.var)        <- Data("draw.key")
   if (!is.null(Data("dms.tick")))        tclvalue(dms.tick.var)        <- Data("dms.tick")
-  if (!is.null(Data("bubbles")))         tclvalue(bubbles.var)         <- Data("bubbles")
-  if (!is.null(Data("quantile.breaks"))) tclvalue(quantile.breaks.var) <- Data("quantile.breaks")
+  if (!is.null(Data("contour.lines")))   tclvalue(contour.lines.var)   <- Data("contour.lines")
   if (!is.null(Data("make.intervals")))  tclvalue(make.intervals.var)  <- Data("make.intervals")
+  if (!is.null(Data("proportional")))    tclvalue(proportional.var)    <- Data("proportional")
+  if (!is.null(Data("quantile.breaks"))) tclvalue(quantile.breaks.var) <- Data("quantile.breaks")
+  if (!is.null(Data("bg.lines")))        tclvalue(bg.lines.var)        <- Data("bg.lines")
 
   tt.done.var <- tclVar(0)
 
@@ -67,7 +86,7 @@ SetConfiguration <- function(parent=NULL) {
   tktitle(tt) <- "Configuration"
   tkwm.resizable(tt, 1, 0)
 
-  # frame 0 contains ok and cancel buttons
+  # frame 0
   f0 <- ttkframe(tt, relief="flat")
   f0.but.2 <- ttkbutton(f0, width=12, text="OK", command=UpdatePar)
   f0.but.3 <- ttkbutton(f0, width=12, text="Cancel",
@@ -81,60 +100,72 @@ SetConfiguration <- function(parent=NULL) {
   tkgrid.configure(f0.but.4, padx=c(4, 10))
   tkpack(f0, fill="x", side="bottom", anchor="e")
 
-  # paned window
-  pw <- ttkpanedwindow(tt, orient="horizontal")
-
-  # frame 1 contains parameters
-  f1 <- ttkframe(pw, relief="flat", borderwidth=0, padding=10)
+  # frame 1
+  f1 <- ttkframe(tt, relief="flat", borderwidth=0, padding=10)
 
   f1.lab.1.1 <- ttklabel(f1, text="Scaling for point symbols")
-  f1.lab.2.1 <- ttklabel(f1, text="Approximate number of contour intervals")
+  f1.lab.2.1 <- ttklabel(f1, text="Approx. number of contours")
   f1.lab.3.1 <- ttklabel(f1, text="Horizontal aspect ratio")
   f1.lab.4.1 <- ttklabel(f1, text="Vertical aspect ratio")
+  f1.lab.5.1 <- ttklabel(f1, text="Point legend position")
+  f1.lab.6.1 <- ttklabel(f1, text="Scale bar position")
+  f1.lab.7.1 <- ttklabel(f1, text="North arrow position")
+  f1.lab.8.1 <- ttklabel(f1, text="Graphics page dimensions")
 
-  f1.ent.1.2 <- ttkentry(f1, width=8, textvariable=cex.pts.var)
-  f1.ent.2.2 <- ttkentry(f1, width=8, textvariable=nlevels.var)
-  f1.ent.3.2 <- ttkentry(f1, width=8, textvariable=asp.yx.var)
-  f1.ent.4.2 <- ttkentry(f1, width=8, textvariable=asp.zx.var)
+  f1.ent.1.2 <- ttkentry(f1, width=15, textvariable=cex.pts.var)
+  f1.ent.2.2 <- ttkentry(f1, width=15, textvariable=nlevels.var)
+  f1.ent.3.2 <- ttkentry(f1, width=15, textvariable=asp.yx.var)
+  f1.ent.4.2 <- ttkentry(f1, width=15, textvariable=asp.zx.var)
 
-  tkgrid(f1.lab.1.1, f1.ent.1.2, pady=c(15, 4))
-  tkgrid(f1.lab.2.1, f1.ent.2.2, pady=c(0, 4))
-  tkgrid(f1.lab.3.1, f1.ent.3.2, pady=c(0, 4))
-  tkgrid(f1.lab.4.1, f1.ent.4.2)
+  loc.vals <- c("", "bottomleft", "topleft", "topright", "bottomright")
+  dim.vals <- c("double-column", "single-column", "sidetitle", "custom\u2026")
+  f1.box.5.2 <- ttkcombobox(f1, width=15, state="readonly", values=loc.vals,
+                            textvariable=legend.loc.var)
+  f1.box.6.2 <- ttkcombobox(f1, width=15, state="readonly", values=loc.vals,
+                            textvariable=scale.loc.var)
+  f1.box.7.2 <- ttkcombobox(f1, width=15, state="readonly", values=loc.vals,
+                            textvariable=arrow.loc.var)
+  f1.box.8.2 <- ttkcombobox(f1, width=15, state="readonly", values=dim.vals,
+                            textvariable=dev.dim.var)
 
-  tkgrid.configure(f1.lab.1.1, f1.lab.2.1, f1.lab.3.1, f1.lab.4.1, sticky="w")
+  f1.chk.1.3 <- ttkcheckbutton(f1, text="Use bitmap raster image",
+                               variable=useRaster.var)
+  f1.chk.2.3 <- ttkcheckbutton(f1, text="Add color key for gridded data",
+                               variable=draw.key.var)
+  f1.chk.3.3 <- ttkcheckbutton(f1, text="Show axes tickmarks in DMS",
+                               variable=dms.tick.var)
+  f1.chk.4.3 <- ttkcheckbutton(f1, text="Add contour lines",
+                               variable=contour.lines.var)
+  f1.chk.5.3 <- ttkcheckbutton(f1, text="Apply data binning",
+                               variable=make.intervals.var)
+  f1.chk.6.3 <- ttkcheckbutton(f1, text="Show proportional point symbols",
+                               variable=proportional.var)
+  f1.chk.7.3 <- ttkcheckbutton(f1, text="Use quantile break points",
+                               variable=quantile.breaks.var)
+  f1.chk.8.3 <- ttkcheckbutton(f1, text="Add grids and graticules",
+                               variable=bg.lines.var)
+
+  tkgrid(f1.lab.1.1, f1.ent.1.2, f1.chk.1.3, pady=c(15, 4))
+  tkgrid(f1.lab.2.1, f1.ent.2.2, f1.chk.2.3, pady=c(0, 4))
+  tkgrid(f1.lab.3.1, f1.ent.3.2, f1.chk.3.3, pady=c(0, 4))
+  tkgrid(f1.lab.4.1, f1.ent.4.2, f1.chk.4.3, pady=c(0, 4))
+  tkgrid(f1.lab.5.1, f1.box.5.2, f1.chk.5.3, pady=c(0, 4))
+  tkgrid(f1.lab.6.1, f1.box.6.2, f1.chk.6.3, pady=c(0, 4))
+  tkgrid(f1.lab.7.1, f1.box.7.2, f1.chk.7.3, pady=c(0, 4))
+  tkgrid(f1.lab.8.1, f1.box.8.2, f1.chk.8.3)
+
+  tkgrid.configure(f1.lab.1.1, f1.lab.2.1, f1.lab.3.1, f1.lab.4.1,
+                   f1.lab.5.1, f1.lab.6.1, f1.lab.7.1, f1.lab.8.1,
+                   sticky="w")
   tkgrid.configure(f1.ent.1.2, f1.ent.2.2, f1.ent.3.2, f1.ent.4.2,
-                   padx=c(2, 15), sticky="we")
+                   f1.box.5.2, f1.box.6.2, f1.box.7.2, f1.box.8.2,
+                   sticky="we", padx=c(2, 15))
+  tkgrid.configure(f1.chk.1.3, f1.chk.2.3, f1.chk.3.3, f1.chk.4.3,
+                   f1.chk.5.3, f1.chk.6.3, f1.chk.7.3, f1.chk.8.3,
+                   sticky="w")
 
   tkgrid.columnconfigure(f1, 1, weight=1, minsize=6)
-
-  # frame 2 contains plot features
-  f2 <- ttkframe(pw, relief="flat", borderwidth=0, padding=10)
-
-  f2.chk.01 <- ttkcheckbutton(f2, text="Add grids and graticules", variable=bg.lines.var)
-
-  f2.chk.02 <- ttkcheckbutton(f2, text="Use bitmap raster image", variable=useRaster.var)
-  f2.chk.03 <- ttkcheckbutton(f2, text="Add contour lines", variable=contour.lines.var)
-  f2.chk.04 <- ttkcheckbutton(f2, text="Give axes tickmarks in DMS", variable=dms.tick.var)
-
-  f2.chk.05 <- ttkcheckbutton(f2, text="Show proportional symbols", variable=bubbles.var)
-  f2.chk.06 <- ttkcheckbutton(f2, text="Use quantile break points", variable=quantile.breaks.var)
-  f2.chk.07 <- ttkcheckbutton(f2, text="Apply data binning", variable=make.intervals.var)
-
-
-
-  tkgrid(f2.chk.01, sticky="w", pady=c(15, 4))
-  tkgrid(f2.chk.02, sticky="w", pady=c(0, 4))
-  tkgrid(f2.chk.03, sticky="w", pady=c(0, 4))
-  tkgrid(f2.chk.04, sticky="w", pady=c(0, 4))
-  tkgrid(f2.chk.05, sticky="w", pady=c(0, 4))
-  tkgrid(f2.chk.06, sticky="w", pady=c(0, 4))
-  tkgrid(f2.chk.07, sticky="w")
-
-  # final layout
-  tkgrid(f1, f2, sticky="nswe")
-  tkgrid.columnconfigure(pw, 0, weight=2)
-  tkpack(pw, fill="x", expand=TRUE)
+  tkpack(f1, fill="x", expand=TRUE)
 
   # bind events
   tclServiceMode(TRUE)

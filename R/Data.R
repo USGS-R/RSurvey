@@ -18,13 +18,23 @@ Data <- local({
                   "nlevels"         = NULL,
                   "asp.yx"          = NULL,
                   "asp.zx"          = NULL,
+                  "legend.loc"      = NULL,
+                  "scale.loc"       = NULL,
+                  "arrow.loc"       = NULL,
+                  "scale.loc"       = NULL,
                   "bg.lines"        = 0,
                   "useRaster"       = 1,
                   "contour.lines"   = 0,
                   "dms.tick"        = 0,
-                  "bubbles"         = 0,
+                  "make.intervals"  = 0,
+                  "proportional"    = 0,
                   "quantile.breaks" = 0,
-                  "make.intervals"  = 0)
+                  "draw.key"        = 0)
+
+
+
+
+
 
   function(option, value, which.attr=NULL, clear.proj=FALSE, clear.data=FALSE, replace.all=NULL) {
 
@@ -36,8 +46,7 @@ Data <- local({
 
     # save parameters
     if (clear.proj || clear.data) {
-      save.params <- c("win.loc", "default.dir")
-      if (clear.data) save.params <- unique(c(save.params, names(default)))
+      save.params <- if (clear.data) names(default) else c("win.loc", "default.dir")
       save.params <- save.params[save.params %in% names(dat)]
       dat <<- sapply(save.params, function(i) list(dat[[i]]))
       return(invisible())
