@@ -4,16 +4,16 @@ SetPlotAnnotation <- function(parent=NULL) {
   # update titles
   UpdateTitles <- function() {
     val <- as.character(tclvalue(credit.var))
-    Data("credit", ifelse(val == "", NULL, val))
+    Data("credit", if (val == "") NULL else val)
 
     val <- as.character(tclvalue(explanation.var))
-    Data("explanation", ifelse(val == "", NULL, val))
+    Data("explanation", if (val == "") NULL else val)
 
     val <- as.character(tclvalue(legend.title.var))
-    Data("legend.title", ifelse(val == "", NULL, val))
+    Data("legend.title", if (val == "") NULL else val)
 
     val <- as.character(tclvalue(legend.subtitle.var))
-    Data("legend.subtitle", ifelse(val == "", NULL, val))
+    Data("legend.subtitle", if (val == "") NULL else val)
 
     tclvalue(tt.done.var) <- 1
   }
