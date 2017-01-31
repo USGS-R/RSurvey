@@ -1,25 +1,20 @@
 SetConfiguration <- function(parent=NULL) {
 
 
+  # update parameters
   UpdatePar <- function() {
     val <- as.numeric(tclvalue(cex.pts.var))
     Data("cex.pts", if (is.na(val)) NULL else val)
-
     val <- as.integer(tclvalue(nlevels.var))
     Data("nlevels", if (is.na(val)) NULL else val)
-
     val <- as.numeric(tclvalue(asp.yx.var))
     Data("asp.yx", if (is.na(val)) NULL else val)
-
     val <- as.numeric(tclvalue(asp.zx.var))
     Data("asp.zx", if (is.na(val)) NULL else val)
-
     val <- as.character(tclvalue(legend.loc.var))
     Data("legend.loc", if (val == "") NULL else val)
-
     val <- as.character(tclvalue(scale.loc.var))
     Data("scale.loc", if (val == "") NULL else val)
-
     val <- as.character(tclvalue(arrow.loc.var))
     Data("arrow.loc", if (val == "") NULL else val)
 
@@ -33,9 +28,12 @@ SetConfiguration <- function(parent=NULL) {
     Data("bg.lines",        as.integer(tclvalue(bg.lines.var)))
 
     lim <- as.integer(c(tclvalue(width.var), tclvalue(height.var)))
-    # TODO(JCF): check for missing values
+    if (any(is.na(lim))) {
+        msg <- "All graphic dimension fields are required."
+        tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
+        return()
+      }
     Data("max.dev.dim", lim)
-
     tclvalue(tt.done.var) <- 1
   }
 
@@ -45,21 +43,18 @@ SetConfiguration <- function(parent=NULL) {
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
     dev.dim <- as.character(tclvalue(dev.dim.var))
-
-    if (dev.dim == "Single column") {
+    if (dev.dim == "single column") {
       lim <- c(21L, 56L)
-    } else if (dev.dim == "Double column") {
+    } else if (dev.dim == "double column") {
       lim <- c(43L, 56L)
-    } else if (dev.dim == "Sidetitle") {
+    } else if (dev.dim == "sidetitle") {
       lim <- c(56L, 43L)
     } else {
       lim <- c(tclvalue(width.var), tclvalue(height.var))
     }
-
     tclvalue(width.var)  <- lim[1]
     tclvalue(height.var) <- lim[2]
-
-    s <- ifelse(dev.dim == "Custom\u2026", "normal", "readonly")
+    s <- ifelse(dev.dim == "custom\u2026", "normal", "readonly")
     tkconfigure(f1.ent.09.2, state=s)
     tkconfigure(f1.ent.10.2, state=s)
   }
@@ -100,17 +95,17 @@ SetConfiguration <- function(parent=NULL) {
   if (!is.null(Data("quantile.breaks"))) tclvalue(quantile.breaks.var) <- Data("quantile.breaks")
   if (!is.null(Data("bg.lines")))        tclvalue(bg.lines.var)        <- Data("bg.lines")
 
-  lim <- if (is.null(Data("max.dev.dim"))) c(43L, 56L) else Data("max.dev.dim")
+  lim <- Data("max.dev.dim")
   width.var  <- tclVar(as.integer(lim[1]))
   height.var <- tclVar(as.integer(lim[2]))
   if (identical(lim, c(21L, 56L))) {
-    dev.dim <- "Single column"
+    dev.dim <- "single column"
   } else if (identical(lim, c(43L, 56L))) {
-    dev.dim <- "Double column"
+    dev.dim <- "double column"
   } else if (identical(lim, c(56L, 43L))) {
-    dev.dim <- "Sidetitle"
+    dev.dim <- "sidetitle"
   } else {
-    dev.dim <- "Custom\u2026"
+    dev.dim <- "custom\u2026"
   }
   dev.dim.var <- tclVar(dev.dim)
 
@@ -152,9 +147,9 @@ SetConfiguration <- function(parent=NULL) {
   f1.lab.05.1 <- ttklabel(f1, text="Point legend position")
   f1.lab.06.1 <- ttklabel(f1, text="Scale bar position")
   f1.lab.07.1 <- ttklabel(f1, text="North arrow position")
-  f1.lab.08.1 <- ttklabel(f1, text="Graphics page dimensions")
-  f1.lab.09.1 <- ttklabel(f1, text="Width of graphics device in picas")
-  f1.lab.10.1 <- ttklabel(f1, text="Height of graphics device in picas")
+  f1.lab.08.1 <- ttklabel(f1, text="Max. dimensions for saved graphics")
+  f1.lab.09.1 <- ttklabel(f1, text="Width of graphics in picas")
+  f1.lab.10.1 <- ttklabel(f1, text="Height of graphics in picas")
 
   f1.ent.01.2 <- ttkentry(f1, width=15, textvariable=cex.pts.var)
   f1.ent.02.2 <- ttkentry(f1, width=15, textvariable=nlevels.var)
@@ -164,7 +159,7 @@ SetConfiguration <- function(parent=NULL) {
   f1.ent.10.2 <- ttkentry(f1, width=15, textvariable=height.var)
 
   loc.vals <- c("", "bottomleft", "topleft", "topright", "bottomright")
-  dim.vals <- c("Double column", "Single column", "Sidetitle", "Custom\u2026")
+  dim.vals <- c("double column", "single column", "sidetitle", "custom\u2026")
   f1.box.05.2 <- ttkcombobox(f1, width=15, state="readonly", values=loc.vals,
                              textvariable=legend.loc.var)
   f1.box.06.2 <- ttkcombobox(f1, width=15, state="readonly", values=loc.vals,
@@ -173,13 +168,6 @@ SetConfiguration <- function(parent=NULL) {
                              textvariable=arrow.loc.var)
   f1.box.08.2 <- ttkcombobox(f1, width=15, state="readonly", values=dim.vals,
                              textvariable=dev.dim.var)
-
-
-
-
-
-
-
 
   f1.chk.01.3 <- ttkcheckbutton(f1, text="Use bitmap raster image",
                                 variable=useRaster.var)

@@ -584,46 +584,51 @@ StartGui <- function() {
       legend.loc <- if (is.z) Data("legend.loc") else NULL
       bg <- if (is.z) Data("palette.pts") else "#1F1F1FCB"
 
-      if (plot.type == "Points") {
-        inlmisc::AddPoints(p, xlim=lim$x, ylim=lim$y, zlim=lim$z, inches=inches,
-                           bg=bg, fg="#FFFFFF40", legend.loc=legend.loc,
-                           make.intervals=Data("make.intervals"), add=FALSE, asp=asp, file=file,
-                           dms.tick=Data("dms.tick"), bg.lines=Data("bg.lines"),
-                           quantile.breaks=Data("quantile.breaks"),
-                           scale.loc=Data("scale.loc"), arrow.loc=Data("arrow.loc"))
-      }
+      if (plot.type == "Points")
+        ans <- try(inlmisc::AddPoints(p, xlim=lim$x, ylim=lim$y, zlim=lim$z, inches=inches,
+                                      bg=bg, fg="#FFFFFF40", legend.loc=legend.loc,
+                                      make.intervals=Data("make.intervals"), add=FALSE,
+                                      asp=asp, file=file,
+                                      dms.tick=Data("dms.tick"), bg.lines=Data("bg.lines"),
+                                      quantile.breaks=Data("quantile.breaks"),
+                                      title=Data("legend.title"),
+                                      subtitle=Data("legend.subtitle"),
+                                      credit=Data("credit"), scale.loc=Data("scale.loc"),
+                                      arrow.loc=Data("arrow.loc"),
+                                      max.dev.dim=Data("max.dev.dim")),
+                                      silent=TRUE)
       if (plot.type == "Surface")
-        inlmisc::PlotMap(r, xlim=lim$x, ylim=lim$y, zlim=lim$z,
-                         n=Data("nlevels"), asp=asp, dms.tick=Data("dms.tick"),
-                         bg.lines=Data("bg.lines"), pal=Data("palette.grd"),
-                         contour.lines=contour.lines, file=file, useRaster=Data("useRaster"),
-                         scale.loc=Data("scale.loc"), arrow.loc=Data("arrow.loc"),
-                         draw.key=Data("draw.key"))
+        ans <- try(inlmisc::PlotMap(r, xlim=lim$x, ylim=lim$y, zlim=lim$z,
+                                    n=Data("nlevels"), asp=asp, dms.tick=Data("dms.tick"),
+                                    bg.lines=Data("bg.lines"), pal=Data("palette.grd"),
+                                    contour.lines=contour.lines, file=file,
+                                    useRaster=Data("useRaster"),
+                                    scale.loc=Data("scale.loc"), arrow.loc=Data("arrow.loc"),
+                                    draw.key=Data("draw.key"), max.dev.dim=Data("max.dev.dim"),
+                                    credit=Data("credit"), explanation=Data("explanation")),
+                                    silent=TRUE)
+
       if (plot.type == "Surface and points") {
         bg.neg <- if (Data("proportional")) "#999999B1" else NULL
-        inlmisc::PlotMap(r, p, inches=inches, bg="#1F1F1FCB", bg.neg=bg.neg, fg="#FFFFFF40",
-                         legend.loc=legend.loc, quantile.breaks=Data("quantile.breaks"),
-                         make.intervals=Data("make.intervals"), xlim=lim$x, ylim=lim$y, zlim=lim$z,
-                         n=Data("nlevels"), asp=asp, dms.tick=Data("dms.tick"),
-                         bg.lines=Data("bg.lines"), pal=Data("palette.grd"),
-                         contour.lines=contour.lines, file=file, useRaster=Data("useRaster"),
-                         scale.loc=Data("scale.loc"), arrow.loc=Data("arrow.loc"),
-                         draw.key=Data("draw.key"))
+        ans <- try(inlmisc::PlotMap(r, p, inches=inches, bg="#1F1F1FCB", bg.neg=bg.neg,
+                                    fg="#FFFFFF40", legend.loc=NULL,
+                                    xlim=lim$x, ylim=lim$y, zlim=lim$z,
+                                    n=Data("nlevels"), asp=asp, dms.tick=Data("dms.tick"),
+                                    bg.lines=Data("bg.lines"), pal=Data("palette.grd"),
+                                    contour.lines=contour.lines, file=file,
+                                    useRaster=Data("useRaster"),
+                                    scale.loc=Data("scale.loc"), arrow.loc=Data("arrow.loc"),
+                                    draw.key=Data("draw.key"), max.dev.dim=Data("max.dev.dim"),
+                                    credit=Data("credit"), explanation=Data("explanation")),
+                                    silent=TRUE)
       }
+    }
+    if (inherits(ans, "try-error")) {
+      msg <- "Plot routine failed."
+      tkmessageBox(icon="error", message=msg, detail=ans, title="Error", type="ok", parent=tt)
     }
     tkfocus(tt)
   }
-
-
-
-
-
-
-
-
-
-
-
 
 
   # call data editor
@@ -1175,6 +1180,7 @@ StartGui <- function() {
           if (!is.null(Pal)) Data("palette.grd", Pal)
         })
   tkadd(menu.plot, "cascade", label="Color palette for", menu=menu.plot.col)
+  tkadd(menu.plot, "command", label="Annotation\u2026", command=function() SetPlotAnnotation(tt))
   tkadd(menu.plot, "separator")
   tkadd(menu.plot, "command", label="Histogram\u2026", command=CallBuildHistogram)
   tkadd(menu.plot, "command", label="Web mapping", command=PlotWebMap)

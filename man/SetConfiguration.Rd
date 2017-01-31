@@ -5,8 +5,7 @@
 \title{Set Window and Plotting Parameters}
 
 \description{
-A \acronym{GUI} for specifying window geometry and universal plotting
-parameters.
+A \acronym{GUI} for specifying universal plotting parameters.
 }
 
 \usage{SetConfiguration(parent = NULL)}

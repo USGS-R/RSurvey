@@ -9,7 +9,8 @@ Data <- local({
                   "palette.pts"     = function(n, c=80, l=60, start=0, end=300) {
                                         colorspace::rainbow_hcl(n, c, l, start, end)
                                       },
-                  "palette.grd"     = function(n, h=c(300, 75), c.=c(35, 95), l=c(15, 90), power=c(0.8, 1.2)) {
+                  "palette.grd"     = function(n, h=c(300, 75), c.=c(35, 95), l=c(15, 90),
+                                               power=c(0.8, 1.2)) {
                                         colorspace::heat_hcl(n, h, c., l, power)
                                       },
                   "crs"             = sp::CRS(as.character(NA)),
@@ -31,11 +32,6 @@ Data <- local({
                   "quantile.breaks" = 0,
                   "draw.key"        = 0,
                   "max.dev.dim"     = c(43L, 56L))
-
-
-
-
-
 
   function(option, value, which.attr=NULL, clear.proj=FALSE, clear.data=FALSE, replace.all=NULL) {
 
