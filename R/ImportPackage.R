@@ -1,3 +1,33 @@
+#' Import Dataset from R Package
+#'
+#' A \acronym{GUI} for loading selected dataset types from \R packages.
+#'
+#' @param classes character.
+#'   The object classes of data sets that can be loaded.
+#'   Set to \code{NULL} to enable loading for all object classes.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Returns an object of list class with the following components:
+#'   \item{d}{table data}
+#'   \item{src}{vector of length 3 that includes the dataset name, package name, and access date.}
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link{data}}
+#'
+#' @keywords IO
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   ans <- ImportPackage(c("data.frame", "matrix"))
+#' }
+#'
+
 ImportPackage <- function(classes=NULL, parent=NULL) {
 
 
@@ -69,7 +99,7 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
     pkg.name <- pkg.names[idx]
     idx <- as.integer(tkcurselection(f1.lst.2.4))
     pkg.item <- paste(as.character(tkget(f1.lst.2.4, idx)), collapse=" ")
-    ans <- try(help(pkg.item, package=(pkg.name)), silent=TRUE)
+    ans <- try(utils::help(pkg.item, package=(pkg.name)), silent=TRUE)
     if (inherits(ans, "try-error")) {
       msg <- "Problem with dataset documentation."
       tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
@@ -210,7 +240,7 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
   all.pkgs <- .packages(all.available=TRUE, lib.loc=.libPaths())
   all.pkgs <- all.pkgs[!all.pkgs %in% c("Rcmdr")]
 
-  all.ds <- suppressWarnings(data(package=all.pkgs)$results)
+  all.ds <- suppressWarnings(utils::data(package=all.pkgs)$results)
   all.ds[, "Item"] <- gsub(" \\((.*)\\).*", "", all.ds[, "Item"])
 
   all.pkgs <- sort(unique(all.ds[, "Package"]))
@@ -251,7 +281,7 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
                           command=function() tclvalue(tt.done.var) <- 1)
   f0.but.1.4 <- ttkbutton(f0, width=12, text="Help",
                           command=function() {
-                            print(help("ImportPackage", package="RSurvey"))
+                            print(utils::help("ImportPackage", package="RSurvey"))
                           })
   f0.grp.1.5 <- ttksizegrip(f0)
 

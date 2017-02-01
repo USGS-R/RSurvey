@@ -1,4 +1,66 @@
-# derived from tcltk::tkProgressBar (v3.0.2)
+#' Progress Bar
+#'
+#' A progress bar that shows the status of long-running operations.
+#'
+#' @param win.title character.
+#'   String to display as the title of the dialog box.
+#' @param label character.
+#'   String to display in the dialog box.
+#' @param maximum numeric.
+#'   Maximum value for the progress bar.
+#'   The minimum value is zero.
+#' @param nsteps numeric.
+#'   Total number of increments the progress bar will make.
+#' @param min.nsteps numeric.
+#'   Minimum number of increments.
+#'   If greater than \code{nsteps}, the dialog box is not opened.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#' @param pb ProgressBar.
+#'   Object returned from \code{ProgressBar}, see \sQuote{Value} section.
+#' @param value numeric.
+#'   Value for the progress bar, between zero and \code{maximum}.
+#' @param step numeric.
+#'   Number of progress bar increments.
+#'   If equal to \code{nsteps}, the dialog box will close.
+#'
+#' @return For \code{ProgressBar} an object of class \code{"ProgressBar"} and mode \code{list} is returned.
+#'   Components of the list object include:
+#'     \item{GetValue}{function that returns the value of the progress bar.}
+#'     \item{MoveProgressBar}{function that moves progress bar, passes a numeric argument.}
+#'     \item{SetLabel}{function that sets label in the dialog box, passes a character argument.}
+#'     \item{DestroyWindow}{function that closes the dialog box.}
+#'     \item{GetWindowState}{function that returns false if the dialog box has been closed, otherwise true.}
+#'     \item{nsteps}{see \sQuote{Arguments} section}
+#'
+#'   For \code{SetProgressBar}, the previous value of the progress bar.
+#'   An error is returned if the progress has terminated prematurely.
+#'
+#' @references The code in this function was derived from the \code{\link[tcltk]{tkProgressBar}} function, version v3.0.2.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   maximum <- 10
+#'   label <- "Estimated time to completion is being calculated\u2026"
+#'   pb <- ProgressBar(label = label, maximum = maximum, nsteps = maximum)
+#'
+#'   for (i in seq_len(maximum)) {
+#'     est.time <- system.time(Sys.sleep(1))["elapsed"] * (maximum - i)
+#'     label <- paste("Estimated time to completion is", round(est.time), "secs")
+#'     ans <- try(SetProgressBar(pb, value = i, label = label, step = i))
+#'     if (inherits(ans, "try-error")) break
+#'   }
+#' }
+#'
+
 ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
                          nsteps=NULL, min.nsteps=10L, parent=NULL) {
 
@@ -74,7 +136,8 @@ ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
 }
 
 
-# update the value of the progress bar
+#' @rdname ProgressBar
+
 SetProgressBar <- function (pb, value, label=NULL, step=NULL) {
   if (!inherits(pb, "ProgressBar")) return()
   tclServiceMode(FALSE)

@@ -1,3 +1,36 @@
+#' Set Histogram Input Parameters
+#'
+#' A \acronym{GUI} for specifying input parameters for the \code{\link[graphics]{hist}} function.
+#'
+#' @param d list, data.frame, matrix, or numeric.
+#'   Vector(s) of values for which the histogram is desired.
+#' @param var.names character.
+#'   Names corresponding to each vector (column) in argument \code{d}.
+#' @param var.default character or integer.
+#'   Vector name or index in argument \code{d}.
+#' @param processed.rec integer.
+#'   Vector of record indexes for processed data.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return \code{NULL}
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link[graphics]{plot.histogram}}
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   BuildHistogram(iris)
+#' }
+#'
+
 BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL,
                            parent=NULL) {
 
@@ -30,8 +63,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL
     obs   <- as.logical(as.integer(tclvalue(obs.var)))
     freq  <- as.logical(as.integer(tclvalue(freq.var)))
 
-    obj <- try(hist(d[[idx]][row.idxs], breaks=breaks, right=right, plot=FALSE),
-               silent=TRUE)
+    obj <- try(graphics::hist(d[[idx]][row.idxs], breaks=breaks, right=right, plot=FALSE), silent=TRUE)
     if (inherits(obj, "try-error")) {
       msg <- "Unable to build historgram."
       tkmessageBox(icon="error", message=msg, detail=obj, title="Error", type="ok", parent=tt)
@@ -39,22 +71,22 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL
     }
 
     if (draw.plot) {
-      if (dev.cur() == dev) {
-        dev.new()
-        par(mar=c(5, 5, 2, 2) + 0.1, cex=0.8)
+      if (grDevices::dev.cur() == dev) {
+        grDevices::dev.new()
+        graphics::par(mar=c(5, 5, 2, 2) + 0.1, cex=0.8)
       }
-      plot(obj, col="light grey", freq=freq, main=NULL, xlab=xlab)
-      if (obs) rug(d[[idx]], quiet=TRUE)
+      graphics::plot(obj, col="light grey", freq=freq, main=NULL, xlab=xlab)
+      if (obs) graphics::rug(d[[idx]], quiet=TRUE)
       if (!freq) {
         bandwidth <- as.numeric(tclvalue(bandwidth.var))
         if (!is.na(bandwidth) && bandwidth > 0) {
-          dens <- density(d[[idx]], adjust=bandwidth, na.rm=TRUE)
-          lines(dens, col="blue")
+          dens <- stats::density(d[[idx]], adjust=bandwidth, na.rm=TRUE)
+          graphics::lines(dens, col="blue")
         }
       }
     } else {
       obj$xname <- xlab
-      txt <- paste(c(capture.output(obj), ""), collapse="\n")
+      txt <- paste(c(utils::capture.output(obj), ""), collapse="\n")
       EditText(txt, read.only=TRUE, win.title="Histogram Description",
                is.fixed.width.font=TRUE, parent=tt)
     }
@@ -156,11 +188,11 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL
   maxs <- vapply(d, function(i) length(unique(i)), 0L)
   maxs[maxs > 100] <- 100
   maxs[maxs <  10] <-  10
-  defs <- vapply(d, function(i) length(hist(i, plot=FALSE)$breaks), 0L)
+  defs <- vapply(d, function(i) length(graphics::hist(i, plot=FALSE)$breaks), 0L)
   xdef <- (defs[var.default] - 1L) / (maxs[var.default] - 1L)
 
   # initialize device
-  dev <- dev.cur()
+  dev <- grDevices::dev.cur()
 
   # assign the variables linked to Tk widgets
   fun.names <- c("sturges", "scott", "freedman-diaconis")
@@ -201,7 +233,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL
                         command=function() tclvalue(tt.done.var) <- 1)
   f0.but.5 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(help("BuildHistogram", package="RSurvey"))
+                          print(utils::help("BuildHistogram", package="RSurvey"))
                         })
   tkgrid(f0.but.1, f0.but.2, "x", f0.but.4, f0.but.5, pady=10)
   tkgrid.configure(f0.but.1, padx=c(10, 4))

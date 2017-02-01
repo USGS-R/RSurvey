@@ -1,3 +1,33 @@
+#' Coordinate Reference System
+#'
+#' A \acronym{GUI} for specifying PROJ.4 arguments associated with a coordinate reference system (CRS).
+#' The arguments must be entered exactly as in the PROJ.4 documentation,
+#' in particular there cannot be any white space in +<arg>=<value> strings,
+#' and successive such strings can only be separated by blanks.
+#'
+#' @param crs CRS.
+#'    Coordinate reference system described using PROJ.4 arguments.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Returns an updated value of the \code{crs} argument.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link[sp]{CRS}}, \code{\link[rgdal]{checkCRSArgs}}
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   SetCrs("+init=epsg:4326")
+#' }
+#'
+
 SetCrs <- function(crs=sp::CRS(as.character(NA)), parent=NULL) {
 
 
@@ -45,7 +75,7 @@ SetCrs <- function(crs=sp::CRS(as.character(NA)), parent=NULL) {
       file <- GetFile(cmd="Open", exts="prj", win.title="Open Projection File", parent=tt)
       if (is.null(file)) return()
       wkt <- readLines(file, n=1, warn=FALSE)
-      projargs <- showP4(wkt)
+      projargs <- rgdal::showP4(wkt)
     }
     tclvalue(projargs.var) <- projargs
     tkfocus(f1.ent.2.1)
@@ -120,7 +150,7 @@ SetCrs <- function(crs=sp::CRS(as.character(NA)), parent=NULL) {
                         command=function() tclvalue(tt.done.var) <- 1)
   f0.but.7 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(help("SetCrs", package="RSurvey"))
+                          print(utils::help("SetCrs", package="RSurvey"))
                         })
   tkgrid(f0.but.1, f0.but.2, f0.but.3, "x", f0.but.5, f0.but.6, f0.but.7)
   tkgrid.columnconfigure(f0, 3, weight=1)

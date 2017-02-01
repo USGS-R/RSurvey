@@ -1,3 +1,40 @@
+#' Search
+#'
+#' A \acronym{GUI} for establishing find and replace arguments in a data table.
+#'
+#' @param is.replace logical.
+#'    If true, the replace component is included.
+#' @param defaults list.
+#'    See \sQuote{Value} section
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Returns an object of list class with the following components:
+#'     \item{find.what}{string to search for}
+#'     \item{replace.with}{replacement string}
+#'     \item{is.match.word}{indicates whether matches be restricted to whole words only.}
+#'     \item{is.match.case}{indicates whether the search is case sensitive.}
+#'     \item{is.reg.exps}{if true, the search is made using \link{regular expression};
+#'       that is, a pattern that describes a set of strings.}
+#'     \item{is.search.col}{indicates whether the search is limited to a single column.}
+#'     \item{is.perl}{indicates whether Perl style regular expressions should be used.}
+#'     \item{is.replace.first}{indicates whether to replace for only the first instance.}
+#'     \item{is.search.sel}{indicates whether the search limited to selected cells.}
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   ans <- Search()
+#' }
+#'
+
 Search <- function(is.replace=FALSE, defaults=NULL, parent=NULL) {
 
 
@@ -112,7 +149,7 @@ Search <- function(is.replace=FALSE, defaults=NULL, parent=NULL) {
   }
   f0.but.1.5 <- ttkbutton(f0, width=12, text="Help",
                           command=function() {
-                            print(help("Search", package="RSurvey"))
+                            print(utils::help("Search", package="RSurvey"))
                           })
 
   tkgrid("x", f0.but.1.2, f0.but.1.3, f0.but.1.4, f0.but.1.5)

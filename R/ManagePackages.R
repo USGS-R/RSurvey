@@ -1,3 +1,28 @@
+#' Package Manager
+#'
+#' This function installs \R packages suggested by \pkg{RSurvey}.
+#' If a suggested package is unavailable on the local computer,
+#' an attempt is made to acquire the package from \href{https://cran.r-project.org/}{CRAN}
+#' using an existing network connection.
+#'
+#' @return \code{NULL}
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link[utils]{install.packages}}, \code{\link{requireNamespace}}
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   ManagePackages()
+#' }
+#'
+
 ManagePackages <- function() {
 
 
@@ -9,8 +34,8 @@ ManagePackages <- function() {
     on.exit(tclServiceMode(TRUE), add=TRUE)
     idx <- which(cran.mirrors$Name %in% as.character(tclvalue(repos.var)))
     repo <- cran.mirrors$URL[idx]
-    contriburl <- contrib.url(repos=repo, type=getOption("pkgType"))
-    cran.pkgs <- available.packages(contriburl)
+    contriburl <- utils::contrib.url(repos=repo, type=getOption("pkgType"))
+    cran.pkgs <- utils::available.packages(contriburl)
 
     idxs <- as.integer(tkcurselection(f1.lst.2.2)) + 1L
     missing.pkgs <- missing.pkgs[idxs]
@@ -26,7 +51,7 @@ ManagePackages <- function() {
       if (tolower(substr(ans, 1, 1)) == "y") return()
     }
     if (length(available.pkgs) > 0)
-      install.packages(available.pkgs, repos=repo, verbose=TRUE)
+      utils::install.packages(available.pkgs, repos=repo, verbose=TRUE)
 
     # load name spaces for suggested packages into current session
     for (pkg in available.pkgs) {
@@ -47,7 +72,7 @@ ManagePackages <- function() {
   is.pkg.missing <- !pkgs %in% .packages(all.available=TRUE)
   if (any(is.pkg.missing)) {
     missing.pkgs <- pkgs[is.pkg.missing]
-    cran.mirrors <- getCRANmirrors(all=FALSE, local.only=FALSE)
+    cran.mirrors <- utils::getCRANmirrors(all=FALSE, local.only=FALSE)
     default.repo <- getOption("repos")["CRAN"]
     idx <- which(sub("/$", "", cran.mirrors$URL) %in% sub("/$", "", default.repo["CRAN"]))
     idx <- if (length(idx) > 0) idx[1] else 1
@@ -143,6 +168,7 @@ ManagePackages <- function() {
     tkgrab.release(tt)
     tkdestroy(tt)
     tclServiceMode(TRUE)
+    invisible()
   }
 
   # warn if tktable is unavailable

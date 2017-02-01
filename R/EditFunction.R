@@ -1,3 +1,52 @@
+#' Function Editor
+#'
+#' A \acronym{GUI} for defining functions in the \R language.
+#'
+#' @param cols list.
+#'   y
+#' @param index integer.
+#'   An element index number in \code{cols}.
+#' @param fun character.
+#'   Existing function, only used if \code{index = NULL}
+#' @param value.length integer.
+#'   Required length for the evaluated function.
+#' @param value.class character.
+#'   Required class for the evaluated function.
+#' @param win.title character.
+#'   String to display as the title of the dialog box.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @details This \acronym{GUI} is appropriate for deriving new variables in a pre-existing data frame or query building.
+#'
+#' @return Returns an object of class list with the following components:
+#'   \item{fun}{user defined function (when evaluated, this string must be parseable).}
+#'   \item{class}{object class for the evaluated function.}
+#'   \item{summary}{default summary for the evaluated function.}
+#'   \item{sample}{first non-missing value for the evaluated function.}
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link{EvalFunction}}
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   d <- list(x = 1:10, y = 10:1)
+#'   Data("data.raw", d)
+#'   cols <- list()
+#'   cols[[1]] <- list(id = "X", index = 1, fun = "\"X\"")
+#'   cols[[2]] <- list(id = "Y", index = 2, fun = "\"Y\"")
+#'   cols[[3]] <- list(id = "New Variable", fun = "\"X\" + \"Y\"")
+#'   EditFunction(cols, index = 3)
+#' }
+#'
+
 EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                          value.class=NULL, win.title="Edit Function", parent=NULL) {
 
@@ -42,7 +91,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
         return()
       }
 
-      rtn <<- list(fun=txt, class=class(obj)[1], sample=na.omit(obj)[1], summary=summary(obj))
+      rtn <<- list(fun=txt, class=class(obj)[1], sample=stats::na.omit(obj)[1], summary=summary(obj))
     }
     tclvalue(tt.done.var) <- 1
   }
@@ -542,7 +591,7 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
                         command=function() tclvalue(tt.done.var) <- 1)
   f0.but.5 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(help("EditFunction", package="RSurvey"))
+                          print(utils::help("EditFunction", package="RSurvey"))
                         })
   f0.grp.6 <- ttksizegrip(f0)
 

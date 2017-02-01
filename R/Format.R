@@ -1,3 +1,35 @@
+#' Build C-Style String Formats
+#'
+#' A \acronym{GUI} for the system \code{sprintf} C-library function.
+#'
+#' @param sample logical, integer, numeric, character, or factor.
+#'    Sample value
+#' @param fmt character.
+#'    Conversion specification format, see \code{\link{sprintf}}.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Returns a character string.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link{format}}
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   Format(sample = pi, fmt = "\%3.8f")
+#'   Format(sample = 3L)
+#'   Format(sample = TRUE)
+#'   Format(sample = "string")
+#' }
+#'
+
 Format <- function(sample=pi, fmt="", parent=NULL) {
 
 
@@ -263,7 +295,7 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
                         command=function() tclvalue(tt.done.var) <- 1)
   f0.but.4 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(help("Format", package="RSurvey"))
+                          print(utils::help("Format", package="RSurvey"))
                         })
   tkgrid("x", f0.but.2, f0.but.3, f0.but.4, sticky="se", pady=10, padx=c(4, 0))
   tkgrid.columnconfigure(f0, 0, weight=1)

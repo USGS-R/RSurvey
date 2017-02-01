@@ -1,3 +1,32 @@
+#' Restore R Session from Source Files
+#'
+#' This function restores local objects within the current \R session.
+#'
+#' @param path character.
+#'   Directory pathname; if missing a folder browser pop up dialog box is implemented.
+#' @param save.objs character.
+#'   Vector of local object names.
+#'   These objects will be preserved during the recompiling process.
+#' @param fun.call character.
+#'   Name of the function to call after restoring the session (optional).
+#'
+#' @return Used for the side-effect of an updated \R session compiled from source code files (\file{.R})
+#'   located in \code{path} and its recursive directories.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link{list.files}}, \code{\link{source}}}
+#'
+#' @keywords internal
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   RestoreSession()
+#' }
+#'
+
 RestoreSession <- function(path, save.objs, fun.call) {
 
   if (missing(path)) {

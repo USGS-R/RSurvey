@@ -1,3 +1,32 @@
+#' Define Interpolation Grid
+#'
+#' A \acronym{GUI} for defining the interpolation grid.
+#'
+#' @param grid list.
+#'    Interpolation grid, see \sQuote{Value} section.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Returns an object of class list with the following components:
+#'   \item{opt}{something}
+#'   \item{res}{numeric components \code{x} and \code{y} giving the grid spacing
+#'     along the x- and y-axis of the interpolated surface, respectively.}
+#'   \item{geo}{something}
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   DefineInterpGrid()
+#' }
+#'
+
 DefineInterpGrid <- function(grid=NULL, parent=NULL) {
 
 
@@ -126,7 +155,7 @@ DefineInterpGrid <- function(grid=NULL, parent=NULL) {
 
   f0.but.4 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(help("DefineInterpGrid", package="RSurvey"))
+                          print(utils::help("DefineInterpGrid", package="RSurvey"))
                         })
   tkgrid("x", f0.but.2, f0.but.3, f0.but.4, pady=c(15, 10), padx=c(4, 0))
   tkgrid.columnconfigure(f0, 0, weight=1)

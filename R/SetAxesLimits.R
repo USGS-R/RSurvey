@@ -1,3 +1,37 @@
+#' Axes Limits
+#'
+#' A \acronym{GUI} for specifying axes limits.
+#'
+#' @param lim list.
+#'    Contains the current plotting limits, see \sQuote{Value} section.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Returns an object of class list containing the following components:
+#'   \item{x1, x2}{minimum and maximum \code{x} value.}
+#'   \item{y1, y2}{minimum and maximum \code{y} value.}
+#'   \item{z1, z2}{minimum and maximum \code{z} value.}
+#'   \item{x1.chk, x2.chk}{if true, a default value is used for the minimum and maximum \code{x} value.}
+#'   \item{y1.chk, y2.chk}{if true, a default value is used for the minimum and maximum \code{y} value.}
+#'   \item{z1.chk, z2.chk}{if true, a default value is used for the minimum and maximum \code{z} value.}
+#'   \item{x}{vector of \code{x} limits \code{(x1,x2)}, default is \code{(NA,NA)}.}
+#'   \item{y}{vector of \code{y} limits \code{(y1,y2)}, default is \code{(NA,NA)}.}
+#'   \item{z}{vector of \code{z} limits \code{(z1,z2)}, default is \code{(NA,NA)}.}
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   SetAxesLimits()
+#' }
+#'
+
 SetAxesLimits <- function(lim=NULL, parent=NULL) {
 
 
@@ -107,7 +141,7 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
                         command=function() tclvalue(tt.done.var) <- 1)
   f0.but.4 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(help("SetAxesLimits", package="RSurvey"))
+                          print(utils::help("SetAxesLimits", package="RSurvey"))
                         })
   tkgrid("x", f0.but.2, f0.but.3, f0.but.4, sticky="se", pady=10, padx=c(4, 0))
   tkgrid.columnconfigure(f0, 0, weight=1)

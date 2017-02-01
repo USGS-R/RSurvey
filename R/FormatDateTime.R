@@ -1,3 +1,33 @@
+#' Build Date-Time String Formats
+#'
+#' A \acronym{GUI} for converting between character representations and objects of class \code{POSIXt} or \code{Date}.
+#'
+#' @param sample POSIXt or Date.
+#'    Sample date-time
+#' @param fmt character.
+#'    Conversion specification format
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Returns a character string representing the formatted date-time value.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link{strptime}}, \code{\link{format}}
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   new.fmt <- FormatDateTime(fmt = "\%A \%B \%d \%I:\%M \%p")
+#'   FormatDateTime(Sys.Date())
+#' }
+#'
+
 FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt="", parent=NULL) {
 
 
@@ -127,7 +157,7 @@ FormatDateTime <- function(sample=as.POSIXct("1991-08-25 20:57:08"), fmt="", par
                         command=function() tclvalue(tt.done.var) <- 1)
   f0.but.5 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(help("FormatDateTime", package="RSurvey"))
+                          print(utils::help("FormatDateTime", package="RSurvey"))
                         })
   f0.grp.6 <- ttksizegrip(f0)
 

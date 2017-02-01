@@ -1,3 +1,27 @@
+#' Main Graphical User Interface
+#'
+#' Launches the main \acronym{GUI} for the \pkg{RSurvey} package.
+#' May be used to specify coordinate variables, render plots, and access all other package functionality.
+#'
+#' @return Quaries and sets the \code{vars} component of \code{\link{Data}}.
+#'   The \code{vars} object is a list with components:
+#'     \item{x, y, z}{index number for the corresponding coordinate-dimension variable in \code{cols},
+#'       see \code{\link{ManageVariables}} function for details.}
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   StartGui()
+#' }
+#'
+
 StartGui <- function() {
 
 
@@ -162,23 +186,23 @@ StartGui <- function() {
       if (inherits(d, "SpatialPointsDataFrame")) {
         crs.old <- Data("crs")
         crs.new <- d@proj4string
-        if (is.na(CRSargs(crs.new)) & !is.na(CRSargs(crs.old))) {
+        if (is.na(rgdal::CRSargs(crs.new)) & !is.na(rgdal::CRSargs(crs.old))) {
           msg <- "Dataset has no CRS so the global and project-wide CRS will be used."
           ans <- tkmessageBox(icon="warning", message=msg, title="Warning", type="okcancel", parent=tt)
           if (as.character(ans) == "cancel") return()
           sp::proj4string(d) <- crs.old
           crs.new <- crs.old
-        } else if (!is.na(CRSargs(crs.new)) & !is.na(CRSargs(crs.old))) {
+        } else if (!is.na(rgdal::CRSargs(crs.new)) & !is.na(rgdal::CRSargs(crs.old))) {
           msg <- paste("The CRS for this dataset is different from the gloabl and project-wide CRS being used.",
                        "A transformation between datum(s) and conversion between projections will be made.")
           ans <- tkmessageBox(icon="warning", message=msg, title="Warning", type="okcancel", parent=tt)
           if (as.character(ans) == "cancel") return()
-          d <- spTransform(d, crs.old)
+          d <- sp::spTransform(d, crs.old)
           crs.new <- crs.old
         }
-        d <- cbind(coordinates(d), d@data)
+        d <- cbind(sp::coordinates(d), d@data)
       } else {
-        crs.new <- CRS(as.character(NA))
+        crs.new <- sp::CRS(as.character(NA))
       }
 
       if (is.null(d) || nrow(d) == 0 || ncol(d) == 0) return()
@@ -223,7 +247,7 @@ StartGui <- function() {
         cols[[i]]$class   <- class(d[[i]])
         cols[[i]]$index   <- i
         cols[[i]]$fun     <- paste0("\"", ids[i], "\"")
-        cols[[i]]$sample  <- na.omit(d[[i]])[1]
+        cols[[i]]$sample  <- stats::na.omit(d[[i]])[1]
         cols[[i]]$summary <- summary(d[[i]])
       }
 
@@ -382,18 +406,18 @@ StartGui <- function() {
 
   # close graphic devices
   CloseDevices <- function() {
-    graphics.off()
+    grDevices::graphics.off()
     if (is.pkg.rgl) {while (rgl::rgl.cur() != 0) rgl::rgl.close()}
   }
 
   # save r graphics
   SaveRDevice <- function() {
-    if (is.null(dev.list())) return()
+    if (is.null(grDevices::dev.list())) return()
     exts <- c("eps", "png", "jpg", "jpeg", "pdf", "bmp", "tif", "tiff")
     file <- GetFile(cmd="Save As", exts=exts, win.title="Save 2D Graphic As",
                     defaultextension="eps", parent=tt)
     if (is.null(file)) return()
-    savePlot(filename=file, type=attr(file, "extension"))
+    grDevices::savePlot(filename=file, type=attr(file, "extension"))
   }
 
 
@@ -411,7 +435,7 @@ StartGui <- function() {
 
   # session information
   SessionInfo <- function() {
-    txt <- paste(c(capture.output(print(sessionInfo(), locale=TRUE)), ""), collapse="\n")
+    txt <- paste(c(utils::capture.output(print(utils::sessionInfo(), locale=TRUE)), ""), collapse="\n")
     EditText(txt, read.only=TRUE, win.title="Session Information",
              is.fixed.width.font=FALSE, parent=tt)
   }
@@ -471,9 +495,9 @@ StartGui <- function() {
     PlotData()
     tkconfigure(tt, cursor="crosshair")
     on.exit(tkconfigure(tt, cursor="arrow"))
-    v <- locator(type="o", col="black", bg="black", pch=22)
+    v <- graphics::locator(type="o", col="black", bg="black", pch=22)
     loc.xy <- cbind(c(v$x, v$x[1]), c(v$y, v$y[1]))
-    lines(loc.xy, col="black")
+    graphics::lines(loc.xy, col="black")
     ply <- raster::spPolygons(matrix(unlist(v), ncol=2), crs=Data("crs"))
     if (!inherits(ply, "SpatialPolygons")) return()
     polys <- if (is.null(Data("polys"))) list() else Data("polys")
@@ -495,20 +519,20 @@ StartGui <- function() {
     }
     if (is.null(id)) {
       f <- ifelse(zoom.direction == "+", -1, 1) * 0.2
-      xlim <- grDevices::extendrange(par("usr")[1:2], f=f)
-      ylim <- grDevices::extendrange(par("usr")[3:4], f=f)
+      xlim <- grDevices::extendrange(graphics::par("usr")[1:2], f=f)
+      ylim <- grDevices::extendrange(graphics::par("usr")[3:4], f=f)
     } else {
       tkconfigure(tt, cursor="crosshair")
       on.exit(tkconfigure(tt, cursor="arrow"))
       if (id == "point") {
-        p <- unlist(locator(n=1, type="n"))
-        dx <- diff(par("usr")[1:2]) / 2
-        dy <- diff(par("usr")[3:4]) / 2
+        p <- unlist(graphics::locator(n=1, type="n"))
+        dx <- diff(graphics::par("usr")[1:2]) / 2
+        dy <- diff(graphics::par("usr")[3:4]) / 2
         f <- -0.2
         xlim <- grDevices::extendrange(c(p[1] - dx, p[1] + dx), f=f)
         ylim <- grDevices::extendrange(c(p[2] - dy, p[2] + dy), f=f)
       } else if (id == "bbox") {
-        v <- locator(n=2, type="p", col="black", bg="black", pch=22)
+        v <- graphics::locator(n=2, type="p", col="black", bg="black", pch=22)
         xlim <- sort(v$x)
         ylim <- sort(v$y)
       }
@@ -556,7 +580,7 @@ StartGui <- function() {
     lim <- Data("lim.axes")
 
     p <- if (plot.type == "Surface") NULL else Data("data.pts")
-    if (!is.null(p) & is.null(Data("vars")$z)) p <- as(p, "SpatialPoints")
+    if (!is.null(p) & is.null(Data("vars")$z)) p <- methods::as(p, "SpatialPoints")
     r <- if (plot.type == "Points") NULL else Data("data.grd")
     if (!is.null(r)) {
       ply <- if (is.null(Data("poly.crop"))) NULL else Data("polys")[[Data("poly.crop")]]
@@ -688,7 +712,7 @@ StartGui <- function() {
     for (i in changed.idxs) {
       obj <- EvalFunction(cols[[i]]$fun, cols)
       cols[[i]]$summary <- summary(obj)
-      cols[[i]]$sample <- na.omit(obj)[1]
+      cols[[i]]$sample <- stats::na.omit(obj)[1]
     }
     Data("cols", cols)
     Data("data.pts", NULL)
@@ -750,8 +774,8 @@ StartGui <- function() {
       d <- d[is.coord, , drop=FALSE]
 
       # convert to spatial points
-      coordinates(d) <- ~ x + y
-      proj4string(d) <- Data("crs")
+      sp::coordinates(d) <- ~ x + y
+      sp::proj4string(d) <- Data("crs")
 
       # points in polygon
       if (!is.null(Data("poly.data"))) {
@@ -891,13 +915,13 @@ StartGui <- function() {
     on.exit(tkconfigure(tt, cursor="arrow"))
     if (!requireNamespace("leaflet", quietly=TRUE)) return()
     crs.old <- Data("crs")
-    if (is.na(CRSargs(crs.old))) {
+    if (is.na(rgdal::CRSargs(crs.old))) {
       msg <- "Data must be associated with a coordinate reference system."
       tkmessageBox(icon="info", message=msg, title="Information", type="ok", parent=tt)
       return()
     }
     ProcessData()
-    crs.new <- CRS("+init=epsg:4326")
+    crs.new <- sp::CRS("+init=epsg:4326")
     map <- leaflet::leaflet()
     opt <- leaflet::WMSTileOptions(format="image/png", transparent=TRUE)
     base.groups <- c("Open Street Map", "The National Map")
@@ -916,7 +940,7 @@ StartGui <- function() {
       xyz <- as.data.frame(pts)
       txt <- sprintf("<b>Record:</b> %s<br/><b>x:</b> %s<br/><b>y:</b> %s<br/><b>z:</b> %s",
                      rec, xyz$x, xyz$y, xyz$z)
-      pts <- spTransform(pts, crs.new)
+      pts <- sp::spTransform(pts, crs.new)
       opt <- leaflet::markerClusterOptions(showCoverageOnHover=FALSE)
       map <- leaflet::addCircleMarkers(map, data=pts, radius=10, popup=txt,
                                        clusterOptions=opt, weight=3, group=grp)
@@ -927,14 +951,14 @@ StartGui <- function() {
     ply <- if (is.null(Data("poly.data"))) NULL else Data("polys")[[Data("poly.data")]]
     if (!is.null(ply)) {
       grp <- "Polygon (data limits)"
-      ply <- spTransform(ply, crs.new)
+      ply <- sp::spTransform(ply, crs.new)
       map <- leaflet::addPolylines(map, data=ply, weight=1, color="#000000", group=grp)
       overlay.groups <- c(overlay.groups, grp)
     }
     ply <- if (is.null(Data("poly.crop"))) NULL else Data("polys")[[Data("poly.crop")]]
     if (!is.null(ply)) {
       grp <- "Polygon (crop region)"
-      ply <- spTransform(ply, crs.new)
+      ply <- sp::spTransform(ply, crs.new)
       map <- leaflet::addPolylines(map, data=ply, weight=1, color="#000000", group=grp)
       overlay.groups <- c(overlay.groups, grp)
     }
@@ -950,11 +974,11 @@ StartGui <- function() {
   # open new 2d device
   Open2d <- function() {
     if (grDevices::dev.cur() == 1) {
-      dev.new(width=7, height=7)
+      grDevices::dev.new(width=7, height=7)
     } else {
       cin <- graphics::par("din")
       # TODO(JCF): read xpos and ypos from current dev and pass to dev.new
-      dev.new(width=cin[1], height=cin[2])
+      grDevices::dev.new(width=cin[1], height=cin[2])
     }
   }
 
@@ -1196,14 +1220,14 @@ StartGui <- function() {
   menu.help <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Help", menu=menu.help, underline=0)
   tkadd(menu.help, "command", label="Documentation",
-        command=function() help(package="RSurvey"))
+        command=function() utils::help(package="RSurvey"))
 
   tkadd(menu.help, "separator")
   menu.help.rep <- tkmenu(tt, tearoff=0)
   tkadd(menu.help.rep, "command", label="CRAN",
-        command=function() browseURL("https://CRAN.R-project.org/package=RSurvey"))
+        command=function() utils::browseURL("https://CRAN.R-project.org/package=RSurvey"))
   tkadd(menu.help.rep, "command", label="GitHub",
-        command=function() browseURL("https://github.com/jfisher-usgs/RSurvey"))
+        command=function() utils::browseURL("https://github.com/jfisher-usgs/RSurvey"))
   tkadd(menu.help, "cascade", label="Repository on  ", menu=menu.help.rep)
 
   tkadd(menu.help, "separator")
@@ -1217,8 +1241,7 @@ StartGui <- function() {
               CloseGUI()
               Data("data.pts", NULL)
               Data("data.grd", NULL)
-              RestoreSession(file.path(getwd(), "R"), save.objs="Data",
-                             fun.call="StartGui")
+              RestoreSession(file.path(getwd(), "R"), save.objs="Data", fun.call="StartGui")
             })
   }
 

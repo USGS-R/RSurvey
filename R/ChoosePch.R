@@ -1,3 +1,30 @@
+#' Plotting Symbol Picker
+#'
+#' A \acronym{GUI} for selecting a plotting symbol to use.
+#'
+#' @param pch numeric or character.
+#'    Initial plotting symbol
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Returns an object of class numeric or integer, specifying the selected plotting symbol.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link[graphics]{points}}
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   ChoosePch(pch = "+")
+#' }
+#'
+
 ChoosePch <- function(pch=NA, parent=NULL) {
 
 
@@ -82,15 +109,15 @@ ChoosePch <- function(pch=NA, parent=NULL) {
     n <- 15
     cex <- rep(1, length(pch.show))
     cex[1:26] <- rep(1.5, 26)
-    postscript(file="pch.template.eps")
-    op <- par(pty="s")
-    plot(c(-1, m), c(-1, n), type="n", xlab="", ylab="", xaxs="i", yaxs="i")
-    grid(2 * (m + 1), 2 * (n + 1), lty=1)
+    grDevices::postscript(file="pch.template.eps")
+    op <- graphics::par(pty="s")
+    graphics::plot(c(-1, m), c(-1, n), type="n", xlab="", ylab="", xaxs="i", yaxs="i")
+    graphics::grid(2 * (m + 1), 2 * (n + 1), lty=1)
     for (i in seq_along(pch.show))
-      points((i - 1) %% m, (n - 1) - ((i - 1) %/% n), pch=pch.show[i],
-             col="black", bg="green", cex=cex[i])
-    par(op)
-    dev.off()
+      graphics::points((i - 1) %% m, (n - 1) - ((i - 1) %/% n), pch=pch.show[i],
+                       col="black", bg="green", cex=cex[i])
+    graphics::par(op)
+    grDevices::dev.off()
   }
 
 

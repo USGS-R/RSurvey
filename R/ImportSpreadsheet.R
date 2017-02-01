@@ -1,6 +1,32 @@
-# Derived with permission from xlsxToR function, accessed on 2014-01-01:
-#   Schaun Wheeler <schaun.wheeler at gmail.com>
-#   https://gist.github.com/schaunwheeler/5825002
+#' Import Data from XML Spreadsheet File
+#'
+#' A \acronym{GUI} for loading selected data sets from an Open XML Spreadsheet file (\file{.xlsx}).
+#'
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Returns an object of list class with the following components:
+#'   \item{d}{table data}
+#'   \item{src}{vector of length 2 that includes the pathname of the spreadsheet file and access date.}
+#'
+#' @references The code in this function was derived with permission from Schaun Wheeler's
+#'   \href{https://gist.github.com/schaunwheeler/5825002}{xlsxToR} function, accessed on 2014-01-01.
+#'
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @keywords IO
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   ans <- ImportSpreadsheet()
+#' }
+#'
+
 ImportSpreadsheet <- function(parent=NULL) {
 
 
@@ -113,7 +139,7 @@ ImportSpreadsheet <- function(parent=NULL) {
                           command=function() tclvalue(tt.done.var) <- 1)
   f0.but.1.4 <- ttkbutton(f0, width=12, text="Help",
                           command=function() {
-                            print(help("ImportSpreadsheet", package="RSurvey"))
+                            print(utils::help("ImportSpreadsheet", package="RSurvey"))
                           })
   tkgrid("x", f0.but.1.2, f0.but.1.3, f0.but.1.4, pady=c(15, 10))
   tkgrid.configure(f0.but.1.2, padx=c(10, 0))
@@ -193,7 +219,7 @@ ImportSpreadsheet <- function(parent=NULL) {
   suppressWarnings(dir.create(path))
   suppressWarnings(file.copy(f, path))
   f.tmp <- list.files(path, pattern=basename(f), full.names=TRUE)
-  unzip(f.tmp, exdir=path)
+  utils::unzip(f.tmp, exdir=path)
   return(path)
 }
 
@@ -284,7 +310,7 @@ ImportSpreadsheet <- function(parent=NULL) {
   rows <- unlist(lapply(seq_along(ws), function(i) rep(i, length(ws[[i]]))))
   ws <- unlist(ws)
   ws <- data.frame(row=rows, ind=names(ws), value=ws, stringsAsFactors=FALSE)
-  ws <- reshape(ws, idvar="row", timevar="ind", direction="wide")
+  ws <- stats::reshape(ws, idvar="row", timevar="ind", direction="wide")
   colnames(ws) <- gsub("^value\\.", "", colnames(ws))
   return(ws)
 }
@@ -361,7 +387,7 @@ ImportSpreadsheet <- function(parent=NULL) {
     } else if (col.style[i] %in% c(18:21, 22, 45:47)) {
       d[, i] <- as.POSIXct(as.numeric(d[, i]) * 86400, origin=origin, tz="GMT")
     } else {
-      d[, i] <- type.convert(.TrimSpace(d[, i]), as.is=!str.as.fact)
+      d[, i] <- utils::type.convert(.TrimSpace(d[, i]), as.is=!str.as.fact)
     }
   }
   if (!save.row.no)

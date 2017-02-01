@@ -1,3 +1,70 @@
+#' Import Data from Text File
+#'
+#' A \acronym{GUI} for reading table formatted data from a text file.
+#'
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @details This \acronym{GUI} is a wrapper for the \code{\link[utils]{read.table}} function.
+#'   Data connections are defined as the path to the file to be opened,
+#'   a complete \acronym{URL} (e.g. http://, https://, ftp:// or file://), or windows clipboard.
+#'   Files are limited to text format (e.g., \file{.tsv} \file{.csv}, or \file{.txt});
+#'   however, they can be compressed by \href{http://www.gzip.org/}{gzip}, \href{http://www.bzip.org/}{bzip2},
+#'   or \href{http://tukaani.org/xz/format.html}{xz} with additional extension
+#'   \file{.gz}, \file{.bz2}, or \file{.xz}, respectively.
+#'
+#'   Conversion specification formats are the character representation of object types used to:
+#'   identify column classes prior to reading in data, and format values for printing.
+#'   Conversion specifications are based on C-style string formatting commands for
+#'   \code{numeric}, \code{integer}, and \code{character} object classes, see \code{\link{sprintf}};
+#'   for example, a format string of "\%.5f" applied to the mathematical constant \emph{pi} results in "3.14159".
+#'   Calendar date and time objects of class \code{POSIXct} are defined by the ISO C99 / POSIX standard, see \code{\link{strftime}};
+#'   for example, "02/26/2010 02:05:39 PM" is represented using "\%d/\%m/\%Y \%I:\%M:\%S \%p".
+#'
+#'   Comments located above data records and header lines are preserved; all other comments are ignored.
+#'   Requires the specification of a comment character.
+#'
+#'   Performance issues associated with reading in large files can be alleviated by specifying formats in a header line,
+#'   and giving the maximum number of rows to read in.
+#'
+#' @return Sets the following components in \code{\link{Data}}:
+#'   \item{data.raw}{imported data table.}
+#'   \item{cols}{a list with length equal to the current number of data variables.
+#'     Each component in \code{cols} is linked to a specific variable,
+#'     see \code{\link{ManageVariables}}.}
+#'   \item{comment}{vector of comment strings}
+#'   \item{import}{a list of saved \acronym{GUI} options}
+#'   Components of the \code{import} list include:
+#'   \item{source}{a vector of length 2 that includes the pathname of the text file and access date.}
+#'   \item{fmts}{indicates whether the file contains the conversion specification format strings of the variables.}
+#'   \item{cols}{indicates whether the file contains the names of the variables.}
+#'   \item{skip}{Number of lines skiped before data is read.}
+#'   \item{sep}{Field separator string}
+#'   \item{dec}{Used in the file for decimal points.}
+#'   \item{na}{String interpreted as \code{\link{NA}} values.}
+#'   \item{quote}{Set of quoting characters}
+#'   \item{comment}{Comment character}
+#'   \item{encoding}{Encoding that was assumed for input strings, see \code{\link{Encoding}}.}
+#'   \item{str.as.fact}{If true, character variables are converted to factors.}
+#'
+#' @note Requires the Tcl package \href{http://tktable.sourceforge.net/}{Tktable}.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link[utils]{read.table}}
+#'
+#' @keywords IO
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   ImportText()
+#' }
+#'
+
 ImportText <- function(parent=NULL) {
 
 
@@ -40,7 +107,7 @@ ImportText <- function(parent=NULL) {
       nheaders <- sum(headers)
       if (nheaders > 0L) {
         h.args <- c(args, skip=skip, nrows=nheaders, colClasses=col.classes)
-        h <- try(do.call(read.table, h.args), silent=TRUE)
+        h <- try(do.call(utils::read.table, h.args), silent=TRUE)
         if (inherits(h, "try-error")) return(h)
 
         i <- 1L
@@ -80,7 +147,7 @@ ImportText <- function(parent=NULL) {
 
       # load data
       d.args <- c(args, skip=skip, nrows=nrows, list(colClasses=col.classes))
-      d <- try(do.call(read.table, d.args), silent=TRUE)
+      d <- try(do.call(utils::read.table, d.args), silent=TRUE)
       if (inherits(d, "try-error")) return(d)
 
       # table dimensions
@@ -121,7 +188,7 @@ ImportText <- function(parent=NULL) {
               }
             }
           }
-          val <- if (is.time) as.POSIXct(date.time) else type.convert(val, as.is=!str.as.fact)
+          val <- if (is.time) as.POSIXct(date.time) else utils::type.convert(val, as.is=!str.as.fact)
         }
 
         # organize metadata
@@ -132,7 +199,7 @@ ImportText <- function(parent=NULL) {
         cols[[j]]$class   <- class(val)
         cols[[j]]$index   <- j
         cols[[j]]$fun     <- paste0("\"", ids[j], "\"")
-        cols[[j]]$sample  <- na.omit(val)[1]
+        cols[[j]]$sample  <- stats::na.omit(val)[1]
         cols[[j]]$summary <- summary(val)
         d[, j] <- val
       }
@@ -212,12 +279,12 @@ ImportText <- function(parent=NULL) {
     if (is.na(com)) com <- as.character(tclvalue(com.var))
 
     if (summary.only) {
-      d <- try(read.table(con, header=FALSE, sep=sep, quote=quo, dec=dec,
-                          row.names=NULL, na.strings=c("", nas),
-                          colClasses="character", nrows=nrows, skip=skp,
-                          check.names=TRUE, fill=TRUE, strip.white=TRUE,
-                          blank.lines.skip=TRUE, comment.char=com,
-                          allowEscapes=TRUE, flush=TRUE), silent=TRUE)
+      d <- try(utils::read.table(con, header=FALSE, sep=sep, quote=quo, dec=dec,
+                                 row.names=NULL, na.strings=c("", nas),
+                                 colClasses="character", nrows=nrows, skip=skp,
+                                 check.names=TRUE, fill=TRUE, strip.white=TRUE,
+                                 blank.lines.skip=TRUE, comment.char=com,
+                                 allowEscapes=TRUE, flush=TRUE), silent=TRUE)
       if (inherits(d, "try-error")) {
         RaiseError(2L, d)
         return()
@@ -371,7 +438,7 @@ ImportText <- function(parent=NULL) {
     ext <- attr(f, "extension")
     if (ext %in% c("gz", "bz2", "xz")) {
       nam <- sub("[.][^.]*$", "", basename(f))
-      ext <- tail(unlist(strsplit(nam, "\\."))[-1], 1)
+      ext <- utils::tail(unlist(strsplit(nam, "\\."))[-1], 1)
       if (length(ext) == 0L) ext <- ""
     }
     if (ext == "csv") {
@@ -519,7 +586,7 @@ ImportText <- function(parent=NULL) {
                         command=function() tclvalue(tt.done.var) <- 1)
   f0.but.6 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(help("ImportText", package="RSurvey"))
+                          print(utils::help("ImportText", package="RSurvey"))
                         })
   f0.grp.7 <- ttksizegrip(f0)
 

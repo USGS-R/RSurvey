@@ -1,3 +1,33 @@
+#' Color Picker
+#'
+#' A \acronym{GUI} for selecting a color.
+#'
+#' @param col character.
+#'   Initial color, see \sQuote{Value} section
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Returns a selected color in terms of its \code{RGB} components,
+#' a string of the form \code{"#RRGGBB"} where each of the pairs
+#' \code{RR}, \code{GG}, \code{BB} consist of two hexadecimal digits
+#' giving a value in the range \code{00} to \code{FF}.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link[grDevices]{col2rgb}}
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   ChooseColor(col = "#669933")
+#' }
+#'
+
 ChooseColor <- function(col, parent=NULL) {
 
 
@@ -43,7 +73,7 @@ ChooseColor <- function(col, parent=NULL) {
   # update color ramp
   UpdateColorRamp <- function(col.hex) {
     cols <- c("#FFFFFF", col.hex, "#000000")
-    col.ramp <<- colorRampPalette(cols, space="Lab")(n + 4)[3:(n + 2)]
+    col.ramp <<- grDevices::colorRampPalette(cols, space="Lab")(n + 4)[3:(n + 2)]
     tcl(f2.cvs, "delete", "ramp")
     dx <- (w - 1) / n
     x2 <- 1
@@ -76,8 +106,8 @@ ChooseColor <- function(col, parent=NULL) {
     UpdateColorRamp(col.hex)
 
     if (!is.hsva) {
-      col.rgb <- col2rgb(col.hex, alpha=FALSE)
-      col.hsv <- rgb2hsv(col.rgb, maxColorValue=255)
+      col.rgb <- grDevices::col2rgb(col.hex, alpha=FALSE)
+      col.hsv <- grDevices::rgb2hsv(col.rgb, maxColorValue=255)
       nh <<- col.hsv[1]
       ns <<- col.hsv[2]
       nv <<- col.hsv[3]
@@ -125,7 +155,7 @@ ChooseColor <- function(col, parent=NULL) {
       fmt <- "%06s"
     fmt.txt <- gsub(" ", "0", sprintf(fmt, substr(txt, 2, nchar(txt))))
     txt <- paste0("#", fmt.txt)
-    if (inherits(try(col2rgb(txt), silent=TRUE), "try-error"))
+    if (inherits(try(grDevices::col2rgb(txt), silent=TRUE), "try-error"))
       txt <- ifelse(is.transparent, "#000000FF", "#000000")
     return(txt)
   }
@@ -134,9 +164,9 @@ ChooseColor <- function(col, parent=NULL) {
   # coerce numeric HSV values to hexadecimal color
   Hsv2hex <- function() {
     if (is.transparent)
-      col.hex <- hsv(h=nh, s=ns, v=nv, alpha=na)
+      col.hex <- grDevices::hsv(h=nh, s=ns, v=nv, alpha=na)
     else
-      col.hex <- hsv(h=nh, s=ns, v=nv)
+      col.hex <- grDevices::hsv(h=nh, s=ns, v=nv)
     return(col.hex)
   }
 
@@ -257,7 +287,7 @@ ChooseColor <- function(col, parent=NULL) {
   m <- 12
   dx <- dy <- 20
   d1 <- cbind(colorspace::rainbow_hcl(m), colorspace::heat_hcl(m),
-              colorspace::terrain_hcl(m), rev(gray.colors(m, start=0.1, end=0.9, gamma=1.0)))
+              colorspace::terrain_hcl(m), rev(grDevices::gray.colors(m, start=0.1, end=0.9, gamma=1.0)))
   d2 <- c("#000000", "#000033", "#000066", "#000099", "#0000CC", "#0000FF",
           "#990000", "#990033", "#990066", "#990099", "#9900CC", "#9900FF",
           "#003300", "#003333", "#003366", "#003399", "#0033CC", "#0033FF",
@@ -321,8 +351,8 @@ ChooseColor <- function(col, parent=NULL) {
   col.hex <- Txt2hex(col)
 
   # initialize hue, saturation, value, and alpha color components
-  col.rgb <- col2rgb(col.hex, alpha=TRUE)
-  col.hsv <- rgb2hsv(col.rgb[seq_len(3)], maxColorValue=255)
+  col.rgb <- grDevices::col2rgb(col.hex, alpha=TRUE)
+  col.hsv <- grDevices::rgb2hsv(col.rgb[seq_len(3)], maxColorValue=255)
   nh <- col.hsv[1]
   ns <- col.hsv[2]
   nv <- col.hsv[3]

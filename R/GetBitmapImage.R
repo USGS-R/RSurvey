@@ -1,6 +1,52 @@
-# Create small bitmap icon images.
-# Bitmap editor: http://www.posoft.de/html/poBitmapMain.html
-# Size: width 11 pixel, height 11 pixel
+#' Create Icon Bitmap Image
+#'
+#' Create a small \acronym{Tk} bitmap image.
+#'
+#' @param type character.
+#'   Icon image type, see \sQuote{Details}
+#'
+#' @details Icon image types include:
+#'   \var{left}, \var{right}, \var{up}, \var{down}, \var{top}, \var{bottom},
+#'   \var{upleft}, \var{upright}, \var{downleft}, \var{downright}, \var{next},
+#'   \var{previous}, \var{copy}, \var{paste}, \var{find}, \var{delete},
+#'   \var{view}, \var{info}, \var{plus}, \var{minus}, \var{print}, and \var{histogram}.
+#'   A recommended editor for bitmap design is Paul Obermeier's
+#'   \href{http://www.posoft.de/html/poBitmapMain.html}{poBitmap} tool;
+#'   icon size is a width of 11 pixels and height of 11 pixels.
+#'
+#' @return An image of class \code{\link{tclObj}}.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link[tcltk]{tkimage.create}}
+#'
+#' @keywords misc
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   types <- c("left", "right", "up", "down", "top", "bottom", "upleft", "upright",
+#'              "downleft", "downright", "next", "previous", "copy", "paste", "find",
+#'              "delete", "view", "info", "plus", "minus", "print", "histogram")
+#'   Fun <- function(k) print(types[k])
+#'   tt <- tcltk::tktoplevel(padx = 50, pady = 50)
+#'   i <- 0
+#'   j <- 0
+#'   d <- 5
+#'   for (k in seq_along(types)) {
+#'     img <- paste("img", k, sep = ".")
+#'     but <- paste("but", k, sep = ".")
+#'     assign(img, GetBitmapImage(types[k]))
+#'     assign(but, tcltk::ttkbutton(tt, width = 2, image = get(img),
+#'                                  command = local({k <- k; function() Fun(k)})))
+#'     tcltk::tkgrid(get(but), row = i, column = j, padx = 5, pady = 5)
+#'     i <- k \%/\% d
+#'     j <- ifelse(j < d - 1, j + 1, 0)
+#'   }
+#' }
+#'
+
 GetBitmapImage <- function(type) {
 
   bits <- list()
@@ -102,5 +148,5 @@ GetBitmapImage <- function(type) {
                     "static unsigned char v_bits[] = { ",
                     paste0(bits[[type]], collapse=", "), " }; ")
 
-  return(tkimage.create("bitmap", data=as.tclObj(bits.str)))
+  return(tcltk::tkimage.create("bitmap", data=tcltk::as.tclObj(bits.str)))
 }

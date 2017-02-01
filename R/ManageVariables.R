@@ -1,3 +1,58 @@
+#' Variable Manager
+#'
+#' A \acronym{GUI} for managing variables in the data table.
+#'
+#' @param cols list.
+#'   See \sQuote{Value} section
+#' @param vars list.
+#'   See \sQuote{Value} section
+#' @param query character.
+#'   See \sQuote{Value} section
+#' @param changelog data.frame.
+#'   See \sQuote{Value} section
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @details This \acronym{GUI} lets you:
+#'   (1) specify the names and format of variables;
+#'   (2) add new variables based on user defined functions, see \code{\link{EditFunction}};
+#'   (3) display data in a spreadsheet, see \code{\link{EditData}}; and
+#'   (4) remove and (or) reorder variables in the data table.
+#'
+#' @return Returns an object of class list with components \code{cols} and \code{vars}.
+#'   The \code{cols} object is a list whose length is equal to the current number of data variables.
+#'   Each component in \code{cols} is linked to a specific variable,
+#'   and contains the following components:
+#'     \item{name}{variable name}
+#'     \item{format}{conversion specification format (optional)}
+#'     \item{id}{unique identifier that is created from \code{name}.}
+#'     \item{fun}{expression evaluated when computing the variables vector of values.}
+#'     \item{index}{variable's component index number in the \code{data.raw} data table, see \code{\link{ImportText}}.
+#'       Only required for variables directly linked to data columns in \code{data.raw}.}
+#'     \item{class}{data class of the vector object.}
+#'     \item{summary}{summary of the variable's descriptive statistics (see \code{\link{summary}}).}
+#'     \item{comments}{user comments}
+#'   The \code{vars} object is a list with components:
+#'     \item{x, y, z, sort.on}{the index number of the corresponding state variable in \code{cols}.
+#'       These indexes are updated to reflect the removal and (or) reordering of variables in \code{cols}.}
+#'     \item{query}{if required, variable names are updated.}
+#'     \item{changelog}{if required, names in the \code{variable} component are updated.}
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   Data(replace.all = obj)
+#'   ManageVariables(obj$cols, obj$vars, obj$query, obj$changelog)
+#' }
+#'
+
 ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
 
 
@@ -115,7 +170,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
     tkconfigure(f3.txt, state="normal")
     tcl(f3.txt, "delete", "1.0", "end")
     if (!is.null(cols[[idx]]$summary)) {
-      txt <- paste(c("", capture.output(cols[[idx]]$summary)), collapse="\n")
+      txt <- paste(c("", utils::capture.output(cols[[idx]]$summary)), collapse="\n")
       tkinsert(f3.txt, "end", txt)
     }
     tkconfigure(f3.txt, state="disabled")
@@ -397,7 +452,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
                          command=function() SaveChanges("apply"))
   f0.but.11 <- ttkbutton(f0, width=12, text="Help",
                          command=function() {
-                           print(help("ManageVariables", package="RSurvey", verbose=FALSE))
+                           print(utils::help("ManageVariables", package="RSurvey", verbose=FALSE))
                          })
   f0.grp.12 <- ttksizegrip(f0)
 

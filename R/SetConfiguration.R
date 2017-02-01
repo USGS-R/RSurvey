@@ -1,3 +1,49 @@
+#' Set Window and Plotting Parameters
+#'
+#' A \acronym{GUI} for specifying universal plotting parameters.
+#'
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Queries and sets the following components of \code{\link{Data}}:
+#'   \item{cex.pts}{amount by which point symbols should be magnified relative to the default value, \code{1.0}.
+#'     For example, \code{cex.pts = 0.5} reduces the point symbol to half of its default size.}
+#'   \item{nlevels}{approximate number of contour levels desired.}
+#'   \item{asp.yx, asp.zx}{the \code{y/x} and \code{z/x} aspect ratios, respectively.}
+#'   \item{legend.loc}{position of the points legend in the main plot region:
+#'     \var{bottomleft}, \var{topleft}, \var{topright}, or \var{bottomright} to denote legend location.}
+#'   \item{scale.loc}{position of the scale bar in the main plot region:
+#'     \var{bottomleft}, \var{topleft}, \var{topright}, or \var{bottomright} to denote scale location.}
+#'   \item{arrow.loc}{Position of the north arrow in the main plot region:
+#'     \var{bottomleft}, \var{topleft}, \var{topright}, or \var{bottomright} to denote arrow location.}
+#'   \item{useRaster}{if true, a bitmap raster is used to plot the gridded data instead of using polygons.}
+#'   \item{draw.key}{if true, a color key should be drawn for the gridded data.}
+#'   \item{dms.tick}{if true and the gridded data is projected,
+#'     the axes tickmarks are specified in degrees, minutes, and decimal seconds (DMS).}
+#'   \item{contour.lines}{if true, contour lines will be plotted on the \acronym{2D} interpolated surface.}
+#'   \item{make.intervals}{if true, represent point values within intervals.
+#'     See \code{\link{findInterval}} function for details.
+#'     Unused if \code{quantile.breaks} is true.}
+#'   \item{proportional}{indicates whether proportional circle symbols should be used to represent the point data.}
+#'   \item{quantile.breaks}{if true, breaks in the point data are set to the sample quantiles.}
+#'   \item{bg.lines}{if true, grids and graticules are drawn.}
+#'
+#' @note Re-importing data does not affect values specified in this \acronym{GUI}.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   SetConfiguration()
+#' }
+#'
+
 SetConfiguration <- function(parent=NULL) {
 
 
@@ -130,7 +176,7 @@ SetConfiguration <- function(parent=NULL) {
                         command=function() tclvalue(tt.done.var) <- 1)
   f0.but.4 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(help("SetConfiguration", package="RSurvey"))
+                          print(utils::help("SetConfiguration", package="RSurvey"))
                         })
   tkgrid("x", f0.but.2, f0.but.3, f0.but.4, sticky="se", pady=10, padx=c(4, 0))
   tkgrid.columnconfigure(f0, 0, weight=1)

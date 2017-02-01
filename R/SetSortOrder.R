@@ -1,3 +1,41 @@
+#' Sort Order
+#'
+#' A \acronym{GUI} for specifying the variable used to sort the data set.
+#'
+#' @param col.ids character.
+#'   Vector of variable names
+#' @param sort.on integer.
+#'   Index for the variable used to sort the data set.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Returns an object of integer class that specifies the index of the variable used to sort the data set.
+#'   Attributes for this object include:
+#'   \code{decreasing}, a logical value indicating if the sort order is increasing or decreasing; and
+#'   \code{na.last}, a logical value for controlling the treatment of \code{NA}s during sorting.
+#'   If true, missing values in the data are put last; otherwise, they are put first;
+#'   if \code{NA}, they are removed.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link{order}}
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   col.ids <- c("Variable1", "Variable2", "Variable3")
+#'   sort.on <- 2
+#'   attr(sort.on, "decreasing") <- TRUE
+#'   attr(sort.on, "na.last") <- FALSE
+#'   SetSortOrder(col.ids, sort.on)
+#' }
+#'
+
 SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
 
 
@@ -61,7 +99,7 @@ SetSortOrder <- function(col.ids, sort.on=NULL, parent=NULL) {
                         command=function() tclvalue(tt.done.var) <- 1)
   f0.but.4 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(help("SetSortOrder", package="RSurvey"))
+                          print(utils::help("SetSortOrder", package="RSurvey"))
                         })
 
   tkgrid("x", f0.but.2, f0.but.3, f0.but.4, pady=c(15, 10), padx=c(4, 0))

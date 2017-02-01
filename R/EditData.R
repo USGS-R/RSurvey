@@ -1,3 +1,73 @@
+#' Data Editor
+#'
+#' A \acronym{GUI} for viewing and editing table formatted data.
+#'
+#' @param d list, matrix, or data.frame.
+#'   Data used to populate the data table.
+#' @param col.names character.
+#'   Vector of column names
+#' @param row.names character.
+#'   Vector of row names
+#' @param col.formats character.
+#'   Vector of format conversion specification strings, see \code{\link{sprintf}} and \code{\link{strftime}}.
+#' @param read.only logical.
+#'   Specifies whether the data table is in read only mode.
+#' @param changelog data.frame.
+#'   History of all data table edits, see \sQuote{Value} section.
+#' @param win.title character.
+#'   String to display as the title of the dialog box.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @details Row titles are taken from the row names attribute of argument \code{d}.
+#'   Pattern searches are performed using \code{\link{grep}}.
+#'   Edits are reflected in the \code{changelog}.
+#'
+#' @return Returns \code{NULL} if no edits were made; otherwise,
+#'   new values of \code{d} and \code{changelog} are returned as components in a \code{list}.
+#'   The \code{changelog} data table contains the following variables:
+#'     \item{timestamp}{a date-time value that identifies when the edit event occurred.}
+#'     \item{record}{row name}
+#'     \item{variable}{column name}
+#'     \item{old}{value before editing}
+#'     \item{new}{value after editing}
+#'
+#' @note Requires the Tcl package \href{http://tktable.sourceforge.net/}{Tktable}.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link{BuildHistogram}}
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   tcltk::tclRequire("Tktable", warn = TRUE)
+#'
+#'   n <- 1000L
+#'   V1 <- sample(c(1:9, NA), n, replace = TRUE)
+#'   V2 <- sample(LETTERS, n, replace = TRUE)
+#'   V3 <- as.POSIXct(rnorm(n, mean = 0, sd = 1e6), origin = "2010-01-01")
+#'   V4 <- sample(V1 * pi, n)
+#'   d <- data.frame(V1, V2, V3, V4)
+#'   col.names <- c("Integers", "Letters", "DateTime", "Numeric")
+#'   col.formats <- c("\%d", "\%s", "\%m/\%d/\%Y \%H:\%M", "")
+#'   ans <- EditData(d, col.names, col.formats)
+#'   str(ans)
+#'
+#'   rownames(d) <- paste0(sample(LETTERS, n, replace = TRUE), seq_len(n))
+#'   EditData(d, read.only = TRUE)
+#'
+#'   colnames(d) <- NULL
+#'   rownames(d) <- NULL
+#'   EditData(d, read.only = TRUE)
+#' }
+#'
+
 EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
                      read.only=FALSE, changelog=NULL, win.title="Data", parent=NULL) {
 
@@ -100,10 +170,10 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
         new.vals <- as.Date(new.vals, format=ifelse(fmt == "", "%Y-%m-%d", fmt))
       } else if ("factor" %in% col.class) {
         old.levels <- levels(d[[column]])
-        new.levels <- unique(c(old.levels, na.omit(new.vals)))
+        new.levels <- unique(c(old.levels, stats::na.omit(new.vals)))
         if (!all(new.levels %in% old.levels)) levels(d[[column]]) <<- new.levels
       } else {
-        new.vals <- suppressWarnings(as(new.vals, col.class[1]))
+        new.vals <- suppressWarnings(methods::as(new.vals, col.class[1]))
       }
       d[[column]][i[idxs]] <<- new.vals
     }
@@ -263,8 +333,8 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
       return()
     }
     vals <- FormatValues(ij[, 1], ij[, 2])
-    write.table(matrix(vals, nrow=ni, ncol=nj, byrow=TRUE), file="clipboard",
-                sep="\t", eol="\n", row.names=FALSE, col.names=FALSE)
+    utils::write.table(matrix(vals, nrow=ni, ncol=nj, byrow=TRUE), file="clipboard",
+                       sep="\t", eol="\n", row.names=FALSE, col.names=FALSE)
     return()
   }
 
@@ -299,7 +369,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     active.cell <- as.character(tkindex(f3.tbl, "active"))
     args <- list(file="clipboard", colClasses="character", sep="\t",
                  flush=TRUE, fill=TRUE, na.strings=NULL)
-    new.vals <- suppressWarnings(try(do.call(read.table, args), silent=TRUE))
+    new.vals <- suppressWarnings(try(do.call(utils::read.table, args), silent=TRUE))
     if (inherits(new.vals, "try-error")) return()
     match.length <- attr(regexpr("\t", new.vals, fixed=TRUE), "match.length")
     if (!all(match.length == match.length[1])) {
@@ -478,9 +548,9 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
                    (matched.cells[, 1] == active.i & matched.cells[, 2] > active.j)
       cell.above <- !cell.below
       if (any(cell.below)) {
-        cell <- head(matched.cells[cell.below, , drop=FALSE], n=1)
+        cell <- utils::head(matched.cells[cell.below, , drop=FALSE], n=1)
       } else if (any(cell.above)) {
-        cell <- head(matched.cells[cell.above, , drop=FALSE], n=1)
+        cell <- utils::head(matched.cells[cell.above, , drop=FALSE], n=1)
       } else {
         return()
       }
@@ -489,9 +559,9 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
                    (matched.cells[, 1] == active.i & matched.cells[, 2] < active.j)
       cell.below <- !cell.above
       if (any(cell.above)) {
-        cell <- tail(matched.cells[cell.above, , drop=FALSE], n=1)
+        cell <- utils::tail(matched.cells[cell.above, , drop=FALSE], n=1)
       } else if (any(cell.below)) {
-        cell <- tail(matched.cells[cell.below, , drop=FALSE], n=1)
+        cell <- utils::tail(matched.cells[cell.below, , drop=FALSE], n=1)
       } else {
         return()
       }
@@ -555,7 +625,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     on.exit(tkconfigure(tt, cursor="arrow"))
     ow <- options(width=200)$width
     on.exit(options(width=ow), add=TRUE)
-    txt <- paste(capture.output(GetEdits()), collapse="\n")
+    txt <- paste(utils::capture.output(GetEdits()), collapse="\n")
     EditText(txt, read.only=TRUE, win.title="Changelog",
              is.fixed.width.font=TRUE, parent=tt)
     return()
@@ -570,9 +640,9 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     on.exit(options(width=ow), add=TRUE)
     names(d) <- col.names
     if (type == "Structure")
-      txt <- capture.output(str(d))
+      txt <- utils::capture.output(utils::str(d))
     else
-      txt <- capture.output(lapply(d, summary))
+      txt <- utils::capture.output(lapply(d, summary))
     txt <- paste(c(txt, ""), collapse="\n")
     EditText(txt, read.only=TRUE, win.title=type,
              is.fixed.width.font=TRUE, parent=tt)
@@ -884,7 +954,7 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   }
   f1.but.1.4 <- ttkbutton(f1, width=12, text="Help",
                           command=function() {
-                            print(help("EditData", package="RSurvey"))
+                            print(utils::help("EditData", package="RSurvey"))
                           })
   f1.grp.1.5 <- ttksizegrip(f1)
 

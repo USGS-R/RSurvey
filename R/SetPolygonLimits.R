@@ -1,3 +1,36 @@
+#' Polygon Limits
+#'
+#' A \acronym{GUI} for specifying polygon limits.
+#'
+#' @param poly.names character.
+#'   Vector of polygon names
+#' @param poly.data character.
+#'   Name of the polygon that defines the data limits boundary.
+#' @param poly.crop character.
+#'   Name of the polygon that defines the crop region for interpolated data.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Queries and sets the following components of \code{\link{Data}}:
+#'   \item{credit}{mapping credit note}
+#'   \item{explanation}{explanation of gridded-data values.}
+#'   \item{legend.title}{title to be placed at the top of the points legend.}
+#'   \item{legend.subtitle}{subtitle to be placed at the top of the points legend.}
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   SetPolygonLimits(c("Polygon1", "Polygon2", "Polygon3"))
+#' }
+#'
+
 SetPolygonLimits <- function(poly.names=NULL, poly.data=NULL, poly.crop=NULL, parent=NULL) {
 
 
@@ -44,7 +77,7 @@ SetPolygonLimits <- function(poly.names=NULL, poly.data=NULL, poly.crop=NULL, pa
                         command=function() tclvalue(tt.done.var) <- 1)
   f0.but.4 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(help("SetPolygonLimits", package="RSurvey"))
+                          print(utils::help("SetPolygonLimits", package="RSurvey"))
                         })
   tkgrid("x", f0.but.2, f0.but.3, f0.but.4, sticky="se", pady=10, padx=c(4, 0))
   tkgrid.columnconfigure(f0, 0, weight=1)

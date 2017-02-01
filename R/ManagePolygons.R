@@ -1,5 +1,54 @@
+#' Polygon Manager
+#'
+#' A \acronym{GUI} for managing and manipulating polygons that is based on the \pkg{rgeos} package.
+#'
+#' @param polys list.
+#'   A list of polygons, components are objects of class \code{\link[=gpc.poly-class]{gpc.poly}}.
+#' @param poly.data character.
+#'   Name of the polygon that defines the data boundary limits.
+#' @param poly.crop character.
+#'   Name of the polygon that defines the crop region for interpolated data.
+#' @param crs CRS.
+#'   Default coordinate reference system
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @details The text file representation of a polygon is of the following format:\cr\cr
+#'   <number of contours>\cr
+#'   <number of points in first contour>\cr
+#'   <hole flag>\cr
+#'   x1 y1\cr
+#'   x2 y2\cr
+#'   ...\cr
+#'   <number of points in second contour>\cr
+#'   <hole flag>\cr
+#'   x1 y1\cr
+#'   x2 y2\cr
+#'   ...\cr\cr
+#'   The hole flag is either 1 to indicate a hole, or 0 for a regular contour.
+#'   See the \code{\link[rgeos]{read.polyfile}} function for details.
+#'
+#' @return Returns an object of class list with components
+#'   \code{polys}, \code{poly.data}, \code{poly.crop}, and \code{crs} (see \sQuote{Arguments} section).
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link[rgeos]{polyfile}}, \code{\link[rgeos]{gUnion}}, \code{\link[inlmisc]{SetPolygons}}
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   ManagePolygons()
+#' }
+#'
+
 ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
-                           crs=CRS(as.character(NA)), parent=NULL) {
+                           crs=sp::CRS(as.character(NA)), parent=NULL) {
 
 
   # save polygon
@@ -48,8 +97,8 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       xran <- range(c(xran, bb[1, ]))
       yran <- range(c(yran, bb[2, ]))
     }
-    xran <<- extendrange(xran, f=0.02)
-    yran <<- extendrange(yran, f=0.02)
+    xran <<- grDevices::extendrange(xran, f=0.02)
+    yran <<- grDevices::extendrange(yran, f=0.02)
 
     cmd <- tclvalue(rb.var)
     p <- polys[[idxs[1]]]
@@ -71,7 +120,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
     }
 
     if (!is.null(shape)) {
-      shape.pts <- rgeos::get.pts(as(shape, "gpc.poly"))
+      shape.pts <- rgeos::get.pts(methods::as(shape, "gpc.poly"))
       if (length(shape.pts) == 0) shape <<- NULL
     }
 
@@ -93,7 +142,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
     }
 
     for (i in idxs) {
-      DrawPolygon(rgeos::get.pts(suppressWarnings(as(polys[[i]], "gpc.poly"))),
+      DrawPolygon(rgeos::get.pts(suppressWarnings(methods::as(polys[[i]], "gpc.poly"))),
                   tag=names(polys)[i], col.line=col.pal[i])
     }
   }
@@ -237,7 +286,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       for (i in rev(all.idxs)) {
         if (i %in% new.idxs) all.idxs[c(i, i + 1)] <- all.idxs[c(i + 1, i)]
       }
-      all.idxs <- na.omit(all.idxs)
+      all.idxs <- stats::na.omit(all.idxs)
       polys <<- polys[all.idxs]
       new.idxs <- if (length(new.idxs) == 0) n else seq_len(n)[all.idxs %in% new.idxs]
     }
@@ -280,7 +329,8 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       file <- GetFile(cmd="Open", exts=c("shp", "shx", "dbf"),
                       win.title="Open Polygon Shapefile", parent=tt)
       if (is.null(file)) return()
-      new.poly <- rgdal::readOGR(dsn=attr(file, "directory"), layer=attr(file, "name"), verbose=FALSE)
+      new.poly <- rgdal::readOGR(dsn=attr(file, "directory"), layer=attr(file, "name"),
+                                 verbose=FALSE)
 
     } else if (type == "rda") {
       file <- GetFile(cmd="Open", exts="rda", win.title="Open R-Data File", parent=tt)
@@ -293,19 +343,19 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       next
     }
 
-    new.poly <- as(new.poly, "SpatialPolygons")
-    if (is.na(CRSargs(crs))) crs <<- new.poly@proj4string
+    new.poly <- methods::as(new.poly, "SpatialPolygons")
+    if (is.na(rgdal::CRSargs(crs))) crs <<- new.poly@proj4string
 
     nam <- NamePolygon(old=names(polys), nam=attr(file, "name"))
     polys[[nam]] <<- new.poly
     tcl("lappend", list.var, nam)
 
-    if (!is.na(CRSargs(crs))) {
+    if (!is.na(rgdal::CRSargs(crs))) {
       for (i in seq_along(polys)) {
-        if (is.na(CRSargs(polys[[i]]@proj4string)))
-          proj4string(polys[[i]]) <- crs
+        if (is.na(rgdal::CRSargs(polys[[i]]@proj4string)))
+          sp::proj4string(polys[[i]]) <- crs
         else
-          polys[[i]] <- spTransform(polys[[i]], crs)
+          polys[[i]] <- sp::spTransform(polys[[i]], crs)
       }
     }
 
@@ -327,11 +377,11 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       if (is.null(file)) next
 
       if (type == "txt") {
-        rgeos::write.polyfile(suppressWarnings(as(polys[[i]], "gpc.poly")), file)
+        rgeos::write.polyfile(suppressWarnings(methods::as(polys[[i]], "gpc.poly")), file)
       } else if (type == "shp") {
         p <- polys[[i]]
         id <- sapply(methods::slot(p, "polygons"), function(x) methods::slot(x, "ID"))
-        p <- SpatialPolygonsDataFrame(p, data.frame(ID=seq_along(p), row.names=id))
+        p <- sp::SpatialPolygonsDataFrame(p, data.frame(ID=seq_along(p), row.names=id))
         rgdal::writeOGR(p, dsn=attr(file, "directory"), layer=attr(file, "name"),
                         driver="ESRI Shapefile", overwrite_layer=TRUE, encoding="UTF-8")
       } else if (type == "rda") {
@@ -353,7 +403,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
   col.pal <- c("#FA3A3A", "#3EB636", "#000000", "#227CE8", "#F060A8", "#F18D31",
                "#46C5BD", "#AAC704", "#E64804", "#915135", "#4F575A", "#B1CD02",
                "#3DBF34", "#315A5E", "#5E3831", "#FA330C", "#D45B0A", "#494012",
-               substr(rainbow(100), 1, 7))
+               substr(grDevices::rainbow(100), 1, 7))
   if (is.null(polys)) polys <- list()
 
   # assign variables linked to tk widgets
@@ -451,7 +501,7 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
                          command=function() SavePolygon("apply"))
   f0.but.10 <- ttkbutton(f0, width=12, text="Help",
                          command=function() {
-                           print(help("ManagePolygons", package="RSurvey"))
+                           print(utils::help("ManagePolygons", package="RSurvey"))
                          })
   f0.grp.11 <- ttksizegrip(f0)
 

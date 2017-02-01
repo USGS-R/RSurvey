@@ -1,3 +1,46 @@
+#' Select File to Open or Save As
+#'
+#' A \acronym{GUI} for selecting files to open or save.
+#'
+#' @param cmd character.
+#'   Specifies whether an \code{"Open"} or \code{"Save As"} file management pop up dialog box is implemented.
+#' @param file character.
+#'   File name that the data are to be read from.
+#'   Alternatively, \code{file} can be a readable text-mode \code{\link{connection}}.
+#' @param exts character.
+#'   Vector of default file extensions.
+#' @param initialdir character.
+#'   Files in this directory will be displayed in the dialog box.
+#' @param initialfile character.
+#'   File name to display in the dialog box.
+#' @param defaultextension character.
+#'   String appended to the file name if the user enters a file name without an extension.
+#' @param win.title character.
+#'   String to display as the title of the dialog box.
+#' @param multi logical.
+#'   If true, multiple files may be selected.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return If \code{multi} is false, returns the file path as a charcter object with the following attributes:
+#'   \item{directory}{directory containing the file}
+#'   \item{name}{file name}
+#'   \item{extension}{file extension}
+#'   \item{type}{file type}
+#'   Otherwise, a list is returned containing a object of class character for each file.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @keywords file
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   GetFile()
+#' }
+#'
+
 GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
                     initialfile=NULL, defaultextension=NULL, win.title=cmd,
                     multi=FALSE, parent=NULL) {

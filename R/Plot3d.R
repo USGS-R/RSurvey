@@ -1,13 +1,63 @@
+#' Plot Points and Surface in 3D
+#'
+#' This function renders raster and point data in three-dimensional (\acronym{3D}) space.
+#'
+#' @param r RasterLayer.
+#'   Gridded surface data
+#' @param p SpatialPointsDataFrame.
+#'   Spatial point data
+#' @param xlim numeric.
+#'   Vector of length 2 giving the minimum and maximum values for the \emph{x}-axis.
+#' @param ylim numeric.
+#'   Vector of length 2 giving the minimum and maximum values for the \emph{y}-axis.
+#' @param zlim numeric.
+#'   Vector of length 2 giving the minimum and maximum values for the \emph{z}-axis.
+#' @param vasp numeric.
+#'   The \emph{z/x} aspect ratio for spatial axes.
+#' @param hasp numeric.
+#'   The \emph{y/x} aspect ratio for spatial axes.
+#'   Defaults to 1 (one unit on the \emph{x}-axis equals one unit on the \emph{y}-axis) when \code{r} is projected,
+#' @param cex.pts numeric.
+#'   Amount by which point symbols should be magnified relative to the default.
+#' @param n integer.
+#'   Number of contour levels desired.
+#' @param color.palette function.
+#'   Color \link{palette} to be used to assign colors in the plot.
+#' @param maxpixels integer.
+#'   Maximum number of cells to use for the plot.
+#'
+#' @details The interpolated surface is rendered using \pkg{rgl},
+#'   a \acronym{3D} visualization device system for \R based on \href{https://www.opengl.org/}{OpenGL}.
+#'   The mouse is used for interactive viewpoint navigation where the left, right, and center mouse buttons rotate the scene,
+#'   rotate the scene around the x-axis, and zooms the display, respectively.
+#'
+#' @return Used for the side-effect of a new plot generated.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link{matplot}}, \code{\link{boxplot}}
+#'
+#' @keywords hplot
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   Plot3d()
+#'   rgl::rgl.quit()
+#' }
+#'
+
 Plot3d <- function(r=NULL, p=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
                    vasp=NULL, hasp=NULL, cex.pts=1, n=NULL,
-                   color.palette=terrain.colors, maxpixels=500000) {
+                   color.palette=grDevices::terrain.colors, maxpixels=500000) {
 
   if (!requireNamespace("rgl", quietly=TRUE)) stop()
   is.r <- inherits(r, "RasterLayer")
   is.p <- inherits(p, "SpatialPointsDataFrame")
 
   if (is.r) {
-    try(p <- spTransform(p, r@crs), silent=TRUE)
+    try(p <- sp::spTransform(p, r@crs), silent=TRUE)
     if (is.null(hasp) && !is.na(rgdal::CRSargs(raster::crs(r)))) hasp <- 1
   } else if (is.p) {
     if (is.null(hasp) && !is.na(rgdal::CRSargs(raster::crs(p)))) hasp <- 1
@@ -44,10 +94,10 @@ Plot3d <- function(r=NULL, p=NULL, xlim=NULL, ylim=NULL, zlim=NULL,
     r[r[] < zlim[1] | r[] > zlim[2]] <- NA
     r <- raster::trim(r)
   }
-  xran <- range(c(if (is.p) bbox(p)[1, ] else NULL,
-                  if (is.r) bbox(r)[1, ] else NULL))
-  yran <- range(c(if (is.p) bbox(p)[2, ] else NULL,
-                  if (is.r) bbox(r)[2, ] else NULL))
+  xran <- range(c(if (is.p) sp::bbox(p)[1, ] else NULL,
+                  if (is.r) sp::bbox(r)[1, ] else NULL))
+  yran <- range(c(if (is.p) sp::bbox(p)[2, ] else NULL,
+                  if (is.r) sp::bbox(r)[2, ] else NULL))
   if (is.na(xlim[1])) xlim[1] <- xran[1]
   if (is.na(xlim[2])) xlim[2] <- xran[2]
   if (is.na(ylim[1])) ylim[1] <- yran[1]

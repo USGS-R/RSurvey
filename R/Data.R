@@ -1,3 +1,63 @@
+#' Set or Query Data and Parameters
+#'
+#' This function is used to set or query parameters and their attributes.
+#'
+#' @param option character.
+#'   Parameter name, see \sQuote{Parameters} section.
+#' @param value
+#'   Parameter value specified for \code{option} (optional)
+#' @param which.attr character.
+#'   A non-empty character string specifying which attribute is to be accessed.
+#' @param clear.proj logical.
+#'   If true, basic \acronym{GUI} preferences will be saved and all other data removed.
+#' @param clear.data logical.
+#'   If true, only datasets will be removed.
+#' @param replace.all list.
+#'   A replacement list of parameter values.
+#'
+#' @section Data:
+#' Imported unprocessed data is saved to the data frame \code{data.raw}, see \code{\link{ImportText}}.
+#' Processed point data is saved to the data frame \code{data.pts},
+#' and interpolated surface data is saved to the list \code{data.grd}.
+#'
+#' @section Parameters:
+#' Parameters undefined elsewhere in the help documentation include:
+#' \describe{
+#'   \item{\code{ver}}{package version number}
+#'   \item{\code{win.loc}}{default horizontal and vertical location for \acronym{GUI} placement in pixels.}
+#' }
+#'
+#' @return If \code{value} is given, the object specified by \code{option} is returned.
+#' A \code{NULL} value is returned for objects not yet assigned a value and where no default value is available.
+#' Default values are specified internally within this function.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @keywords sysdata
+#'
+#' @export
+#'
+#' @examples
+#' # set a parameter
+#' Data("test1", 3.14159265)
+#' Data("test2", list(id = "PI", val = 3.14159265))
+#'
+#' # retrieve a parameter value
+#' Data("test1")
+#' Data("test2")
+#' Data(c("test2", "id"))
+#' Data(c("test2", "val"))
+#'
+#' # get all parameter values
+#' d <- Data()
+#'
+#' # remove all saved parameter values
+#' Data(replace.all = list())
+#'
+#' # recover saved parameter values
+#' Data(replace.all = d)
+#'
+
 Data <- local({
 
   # store data locally

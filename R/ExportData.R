@@ -1,3 +1,52 @@
+#' Export Data
+#'
+#' A \acronym{GUI} for exporting data to text files, shapefiles, or R data files.
+#'
+#' @param file.type character.
+#'   Output file type: either
+#'     \var{txt} for text files,
+#'     \var{rda} for R-data files, or
+#'     \var{shp} for shapefiles.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Saves the \acronym{GUI} options in the \code{export} component of \code{\link{Data}}.
+#'   List components of \code{export} include:
+#'     \item{processed}{indicates whether exported data are limited to processed records.}
+#'     \item{fmts}{indicates whether a header line of conversion specification format strings is written (text only).}
+#'     \item{cols}{indicates whether a header line of column names is written (text only).}
+#'     \item{rows}{indicates whether the row names are written (text only).}
+#'     \item{comment}{indicates whether to write comments using the comment character, \code{com} (text only).}
+#'     \item{sep}{field separator character (text only).}
+#'     \item{dec}{string used for decimal points (text only).}
+#'     \item{nas}{string interpreted as \code{\link{NA}} value (text only).}
+#'     \item{com}{comment character (text only).}
+#'     \item{qmethod}{a string specifying how to deal with embedded double quote characters when quoting strings (text only).}
+#'     \item{quote}{if true, any character or factor columns will be surrounded by double quotes (text only).}
+#'     \item{encoding}{declares the encoding to be used on the file (text only).}
+#'     \item{eol}{the character to print at the end of each line (text only).}
+#'     \item{zip}{indicate whether the file should be compressed using \href{http://www.gzip.org/}{gzip},
+#'       \href{http://www.bzip.org/}{bzip2}, or \href{http://tukaani.org/xz/format.html}{xz} (text only).}
+#'     \item{changelog}{indicate if a separate text file should be written with the change log (text only).}
+#'     \item{ascii}{if true, an \acronym{ASCII} representation of the data is written (R data only).}
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @seealso \code{\link[utils]{write.table}}, \code{\link{save}}, \code{\link[rgdal]{writeOGR}}
+#'
+#' @keywords IO
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   Data(replace.all = obj)
+#'   ExportData(file.type = "txt")
+#' }
+#'
+
 ExportData <- function(file.type="txt", parent=NULL) {
 
 
@@ -111,9 +160,9 @@ ExportData <- function(file.type="txt", parent=NULL) {
           ans <- tkmessageBox(icon="info", message=msg, title="Confirm Save As", type="yesno", parent=tt)
           if (as.character(ans) == "no") return()
         }
-        write.table(Data("changelog"), file=f.log, quote=is.quot, sep=sep,
-                    eol=eol, na=nas, dec=dec, row.names=FALSE, col.names=TRUE,
-                    qmethod=qme, fileEncoding=enc)
+        utils::write.table(Data("changelog"), file=f.log, quote=is.quot, sep=sep,
+                           eol=eol, na=nas, dec=dec, row.names=FALSE, col.names=TRUE,
+                           qmethod=qme, fileEncoding=enc)
       }
 
       # set connection
@@ -148,15 +197,15 @@ ExportData <- function(file.type="txt", parent=NULL) {
           i <- i + 1L
         }
         if (headers[2]) h[i, ] <- col.nams
-        write.table(h, file=con, append=is.comm, quote=is.quot, sep=sep,
-                    eol=eol, na=nas, dec=dec, row.names=FALSE, col.names=FALSE,
-                    qmethod=qme, fileEncoding=enc)
+        utils::write.table(h, file=con, append=is.comm, quote=is.quot, sep=sep,
+                           eol=eol, na=nas, dec=dec, row.names=FALSE, col.names=FALSE,
+                           qmethod=qme, fileEncoding=enc)
       }
 
       # write records
-      write.table(d, file=con, append=(is.comm | any(headers)), quote=is.quot,
-                  sep=sep, eol=eol, na=nas, dec=dec, row.names=is.rows,
-                  col.names=FALSE, qmethod=qme, fileEncoding=enc)
+      utils::write.table(d, file=con, append=(is.comm | any(headers)), quote=is.quot,
+                         sep=sep, eol=eol, na=nas, dec=dec, row.names=is.rows,
+                         col.names=FALSE, qmethod=qme, fileEncoding=enc)
 
       Data(c("export", "fmts"), is.fmts)
       Data(c("export", "cols"), is.cols)
@@ -182,11 +231,11 @@ ExportData <- function(file.type="txt", parent=NULL) {
       idx.y <- which(col.ids %in% id.y)
       is.coord.na <- is.na(d[, idx.x]) | is.na(d[, idx.y])
       d <- d[!is.coord.na, ]  # remove coordinates containing missing values
-      coordinates(d) <- col.ids.8bit[c(idx.x, idx.y)]
-      proj4string(d) <- Data("crs")
+      sp::coordinates(d) <- col.ids.8bit[c(idx.x, idx.y)]
+      sp::proj4string(d) <- Data("crs")
       dsn <- dirname(file.name)
       layer <- basename(file.name)
-      ext <- tolower(tail(unlist(strsplit(layer, "\\."))[-1], 1))
+      ext <- tolower(utils::tail(unlist(strsplit(layer, "\\."))[-1], 1))
       if (length(ext) != 0) layer <- sub(paste0(".", ext, "$"), "", layer)
       rgdal::writeOGR(obj=d, dsn=dsn, layer=layer, driver="ESRI Shapefile",
                       verbose=TRUE, overwrite_layer=TRUE)
@@ -372,7 +421,7 @@ ExportData <- function(file.type="txt", parent=NULL) {
   f0.but.2 <- ttkbutton(f0, width=12, text="Export", command=ExportToFile)
   f0.but.4 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(help("ExportData", package="RSurvey"))
+                          print(utils::help("ExportData", package="RSurvey"))
                         })
   f0.but.3 <- ttkbutton(f0, width=12, text="Cancel",
                         command=function() tclvalue(tt.done.var) <- 1)

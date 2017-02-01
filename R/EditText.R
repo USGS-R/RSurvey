@@ -1,3 +1,41 @@
+#' Edit Text
+#'
+#' A \acronym{GUI} for viewing and editing text.
+#'
+#' @param txt character.
+#'   Text used to populate the window.
+#' @param read.only logical.
+#'   Specifies whether the text is read only.
+#' @param win.title character.
+#'   Title of the dialog box.
+#' @param is.fixed.width.font logical.
+#'   Specifies whether a fixed-width font be used.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Returns an object of class character with edited text.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   txt <- c("\"Hills cherish the ambition",
+#'            "    to turn into partial",
+#'            "   differential equations\"",
+#'            "",
+#'            "        -Donald Hall")
+#'   new.txt <- EditText(txt, is.fixed.width.font = TRUE)
+#'
+#'   EditText(txt, read.only = TRUE)
+#' }
+#'
+
 EditText <- function(txt, read.only=FALSE, win.title="View Text",
                      is.fixed.width.font=FALSE, parent=NULL) {
 

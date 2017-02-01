@@ -1,3 +1,32 @@
+#' Rename Values in Character Vector
+#'
+#' A \acronym{GUI} for renaming values in a vector of character strings.
+#'
+#' @param names character.
+#'    Vector of character strings
+#' @param cur.name character.
+#'    Sets the combobox value, name must be included in \code{names}.
+#' @param win.title character.
+#'    String to display as the title of the dialog box.
+#' @param parent tkwin.
+#'   \acronym{GUI} parent window
+#'
+#' @return Returns a character vector with updated values of \code{names}.
+#'
+#' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
+#'
+#' @keywords misc
+#'
+#' @import tcltk
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'   Rename(names = c("Name1", "Name2", "Name3"), cur.name = "Name2")
+#' }
+#'
+
 Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
 
 
@@ -47,7 +76,7 @@ Rename <- function(names=NULL, cur.name=NULL, win.title=NULL, parent=NULL) {
                         command=function() tclvalue(tt.done.var) <- 1)
   f0.but.4 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(help("Rename", package="RSurvey"))
+                          print(utils::help("Rename", package="RSurvey"))
                         })
 
   tkgrid("x", f0.but.2, f0.but.3, f0.but.4, sticky="se", pady=c(15, 10), padx=c(4, 0))
