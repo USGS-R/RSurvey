@@ -21,5 +21,5 @@ Creative Commons Attribution-Share Alike 3.0 license
 
 ---
 
-**Image:** pch.gif, screenshot.png  
+**Image:** pch.gif  
 **Designer:** Jason C. Fisher
