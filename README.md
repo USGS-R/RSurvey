@@ -59,13 +59,17 @@ The main GUI will open automatically and should look something like this
 Please consider reporting bugs and asking questions on the
 [Issues page](https://github.com/jfisher-usgs/RSurvey/issues).
 
-## License
+## Disclaimer
 
-GPL-2 or GPL-3.
-These are "copy-left" licenses.
-This means that anyone who distributes the code in a bundle must license the whole bundle in a GPL-compatible way.
-Additionally, anyone who distributes modified versions of the code (derivative works) must also make the source code available.
-GPL-3 is a little stricter than GPL-2, closing some older loopholes.
+This software is in the public domain because it contains materials that originally came from the USGS,
+an agency of the United States Department of Interior.
+For more information, see the
+[official USGS copyright policy](https://www2.usgs.gov/visual-id/credit_usgs.html "official USGS copyright policy").
 
-[![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://img.shields.io/badge/License-GPL%20v2-blue.svg)
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+Although this software program has been used by the USGS, no warranty, expressed or implied,
+is made by the USGS or the U.S. Government as to the accuracy and functioning of the program and related program material nor shall the fact of distribution constitute any such warranty,
+and no responsibility is assumed by the USGS in connection therewith.
+
+This software is provided "AS IS."
+
+[![CC0](https://i.creativecommons.org/p/zero/1.0/88x31.png)](https://creativecommons.org/publicdomain/zero/1.0/)

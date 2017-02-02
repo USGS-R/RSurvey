@@ -4,9 +4,9 @@
 \alias{GetFile}
 \title{Select File to Open or Save As}
 \usage{
-GetFile(cmd = "Open", file = NULL, exts = NULL, initialdir = NULL,
-  initialfile = NULL, defaultextension = NULL, win.title = cmd,
-  multi = FALSE, parent = NULL)
+GetFile(cmd = c("Open", "Save As"), file = NULL, exts = NULL,
+  initialdir = NULL, initialfile = NULL, defaultextension = NULL,
+  win.title = cmd, multi = FALSE, parent = NULL)
 }
 \arguments{
 \item{cmd}{character.

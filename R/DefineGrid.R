@@ -3,15 +3,23 @@
 #' A \acronym{GUI} for defining the interpolation grid.
 #'
 #' @param grid list.
-#'    Interpolation grid, see \sQuote{Value} section.
+#'    Interpolation grid object, see \sQuote{Value} section.
 #' @param parent tkwin.
 #'   \acronym{GUI} parent window
 #'
 #' @return Returns an object of class list with the following components:
-#'   \item{opt}{something}
-#'   \item{res}{numeric components \code{x} and \code{y} giving the grid spacing
-#'     along the x- and y-axis of the interpolated surface, respectively.}
-#'   \item{geo}{something}
+#'   \item{opt}{an integer indicating the option that will be used to define the interpolation grid. Where
+#'     \code{opt = 1} indicates grid boundaries based on the extent of point data
+#'       and a resolution of 100 rows and 100 columns;
+#'     \code{opt = 2} indicates grid boundaries based on the extent of point data
+#'       and a cell resolution defined by the \code{res} component;
+#'     \code{opt = 3} indicates that the grid geometry is explicitly defined by the \code{geo} component.}
+#'   \item{res}{numeric vector of length 2 with components \code{x} and \code{y} giving the grid spacing
+#'     along the \emph{x}- and \emph{y}-axis, respectively.}
+#'   \item{geo}{numeric vector of length 6 with components
+#'     \code{nrows} and \code{ncols} giving the number of rows and columns, and
+#'     \code{xmn}, \code{xmx}, \code{ymn}, and \code{ymx} giving the limits of the grid boundary
+#'     along the \emph{x}- and \emph{y}-axis.}
 #'
 #' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 #'
@@ -23,11 +31,11 @@
 #'
 #' @examples
 #' \dontrun{
-#'   DefineInterpGrid()
+#'   DefineGrid()
 #' }
 #'
 
-DefineInterpGrid <- function(grid=NULL, parent=NULL) {
+DefineGrid <- function(grid=NULL, parent=NULL) {
 
 
   # update parameter values
@@ -155,7 +163,7 @@ DefineInterpGrid <- function(grid=NULL, parent=NULL) {
 
   f0.but.4 <- ttkbutton(f0, width=12, text="Help",
                         command=function() {
-                          print(utils::help("DefineInterpGrid", package="RSurvey"))
+                          print(utils::help("DefineGrid", package="RSurvey"))
                         })
   tkgrid("x", f0.but.2, f0.but.3, f0.but.4, pady=c(15, 10), padx=c(4, 0))
   tkgrid.columnconfigure(f0, 0, weight=1)

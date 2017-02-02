@@ -41,9 +41,11 @@
 #' }
 #'
 
-GetFile <- function(cmd="Open", file=NULL, exts=NULL, initialdir=NULL,
-                    initialfile=NULL, defaultextension=NULL, win.title=cmd,
-                    multi=FALSE, parent=NULL) {
+GetFile <- function(cmd=c("Open", "Save As"), file=NULL, exts=NULL,
+                    initialdir=NULL, initialfile=NULL, defaultextension=NULL,
+                    win.title=cmd, multi=FALSE, parent=NULL) {
+
+  cmd <- match.arg(cmd)
 
   # initialize file filters
   all.filters <- list(bmp     = "Windows Bitmap",

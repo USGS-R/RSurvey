@@ -1125,7 +1125,7 @@ StartGui <- function() {
   tkadd(menu.edit, "command", label="Define interpolation grid\u2026",
         command=function() {
           grid.old <- Data("grid")
-          grid.new <- DefineInterpGrid(grid.old, tt)
+          grid.new <- DefineGrid(grid.old, tt)
           if (is.null(grid.new)) return()
           if (!identical(grid.old, grid.new)) {
             Data("grid", grid.new)
