@@ -55,7 +55,7 @@
 #'   V4 <- sample(V1 * pi, n)
 #'   d <- data.frame(V1, V2, V3, V4)
 #'   col.names <- c("Integers", "Letters", "DateTime", "Numeric")
-#'   col.formats <- c("\%d", "\%s", "\%m/\%d/\%Y \%H:\%M", "")
+#'   col.formats <- c("%d", "%s", "%m/%d/%Y %H:%M", "")
 #'   ans <- EditData(d, col.names, col.formats)
 #'   str(ans)
 #'

@@ -24,7 +24,7 @@ A \acronym{GUI} for the system \code{sprintf} C-library function.
 }
 \examples{
 \dontrun{
-  Format(sample = pi, fmt = "\\\%3.8f")
+  Format(sample = pi, fmt = "\%3.8f")
   Format(sample = 3L)
   Format(sample = TRUE)
   Format(sample = "string")

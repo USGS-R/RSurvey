@@ -224,5 +224,5 @@ ChoosePch <- function(pch=NA, parent=NULL) {
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  invisible(rtn.pch)
+  return(rtn.pch)
 }

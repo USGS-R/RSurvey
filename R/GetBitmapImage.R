@@ -41,7 +41,7 @@
 #'     assign(but, tcltk::ttkbutton(tt, width = 2, image = get(img),
 #'                                  command = local({k <- k; function() Fun(k)})))
 #'     tcltk::tkgrid(get(but), row = i, column = j, padx = 5, pady = 5)
-#'     i <- k \%/\% d
+#'     i <- k %/% d
 #'     j <- ifelse(j < d - 1, j + 1, 0)
 #'   }
 #' }

@@ -23,7 +23,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'   new.fmt <- FormatDateTime(fmt = "\%A \%B \%d \%I:\%M \%p")
+#'   new.fmt <- FormatDateTime(fmt = "%A %B %d %I:%M %p")
 #'   FormatDateTime(Sys.Date())
 #' }
 #'

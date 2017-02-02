@@ -80,6 +80,7 @@ SetConfiguration <- function(parent=NULL) {
         return()
       }
     Data("max.dev.dim", lim)
+
     tclvalue(tt.done.var) <- 1
   }
 
@@ -299,4 +300,6 @@ SetConfiguration <- function(parent=NULL) {
   tkgrab.release(tt)
   tkdestroy(tt)
   tclServiceMode(TRUE)
+
+  invisible()
 }

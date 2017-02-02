@@ -17,9 +17,9 @@
 #'   identify column classes prior to reading in data, and format values for printing.
 #'   Conversion specifications are based on C-style string formatting commands for
 #'   \code{numeric}, \code{integer}, and \code{character} object classes, see \code{\link{sprintf}};
-#'   for example, a format string of "\%.5f" applied to the mathematical constant \emph{pi} results in "3.14159".
+#'   for example, a format string of "%.5f" applied to the mathematical constant \emph{pi} results in "3.14159".
 #'   Calendar date and time objects of class \code{POSIXct} are defined by the ISO C99 / POSIX standard, see \code{\link{strftime}};
-#'   for example, "02/26/2010 02:05:39 PM" is represented using "\%d/\%m/\%Y \%I:\%M:\%S \%p".
+#'   for example, "02/26/2010 02:05:39 PM" is represented using "%d/%m/%Y %I:%M:%S %p".
 #'
 #'   Comments located above data records and header lines are preserved; all other comments are ignored.
 #'   Requires the specification of a comment character.

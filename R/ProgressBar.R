@@ -137,6 +137,8 @@ ProgressBar <- function (win.title="Progress Bar", label="", maximum=100,
 
 
 #' @rdname ProgressBar
+#'
+#' @export
 
 SetProgressBar <- function (pb, value, label=NULL, step=NULL) {
   if (!inherits(pb, "ProgressBar")) return()

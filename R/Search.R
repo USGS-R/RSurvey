@@ -31,7 +31,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'   ans <- Search()
+#'   Search()
 #' }
 #'
 

@@ -122,4 +122,6 @@ SetPlotAnnotation <- function(parent=NULL) {
   tkgrab.release(tt)
   tkdestroy(tt)
   tclServiceMode(TRUE)
+
+  invisible()
 }

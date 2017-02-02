@@ -500,5 +500,5 @@ ChooseColor <- function(col, parent=NULL) {
   tkdestroy(tt)
   tclServiceMode(TRUE)
 
-  invisible(rtn.col)
+  return(rtn.col)
 }

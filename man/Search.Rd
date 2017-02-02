@@ -34,7 +34,7 @@ A \acronym{GUI} for establishing find and replace arguments in a data table.
 }
 \examples{
 \dontrun{
-  ans <- Search()
+  Search()
 }
 
 }
