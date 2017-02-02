@@ -1,4 +1,4 @@
-#' Set Histogram Input Parameters
+#' Histogram Input Parameters
 #'
 #' A \acronym{GUI} for specifying input parameters for the \code{\link[graphics]{hist}} function.
 #'

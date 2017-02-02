@@ -1,6 +1,6 @@
-#' Import Dataset from R Package
+#' Import Data from Package Dataset
 #'
-#' A \acronym{GUI} for loading selected dataset types from \R packages.
+#' A \acronym{GUI} for importing data from selected \R package datasets.
 #'
 #' @param classes character.
 #'   The object classes of data sets that can be loaded.
@@ -24,11 +24,11 @@
 #'
 #' @examples
 #' \dontrun{
-#'   ans <- ImportPackage(c("data.frame", "matrix"))
+#'   ans <- ImportDataset(c("data.frame", "matrix"))
 #' }
 #'
 
-ImportPackage <- function(classes=NULL, parent=NULL) {
+ImportDataset <- function(classes=NULL, parent=NULL) {
 
 
   # import dataset
@@ -281,7 +281,7 @@ ImportPackage <- function(classes=NULL, parent=NULL) {
                           command=function() tclvalue(tt.done.var) <- 1)
   f0.but.1.4 <- ttkbutton(f0, width=12, text="Help",
                           command=function() {
-                            print(utils::help("ImportPackage", package="RSurvey"))
+                            print(utils::help("ImportDataset", package="RSurvey"))
                           })
   f0.grp.1.5 <- ttksizegrip(f0)
 

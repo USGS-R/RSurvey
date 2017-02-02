@@ -2,7 +2,7 @@
 % Please edit documentation in R/SetConfiguration.R
 \name{SetConfiguration}
 \alias{SetConfiguration}
-\title{Set Window and Plotting Parameters}
+\title{Window and Plotting Parameters}
 \usage{
 SetConfiguration(parent = NULL)
 }

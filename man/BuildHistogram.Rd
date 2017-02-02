@@ -2,7 +2,7 @@
 % Please edit documentation in R/BuildHistogram.R
 \name{BuildHistogram}
 \alias{BuildHistogram}
-\title{Set Histogram Input Parameters}
+\title{Histogram Input Parameters}
 \usage{
 BuildHistogram(d, var.names = NULL, var.default = 1L,
   processed.rec = NULL, parent = NULL)

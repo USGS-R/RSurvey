@@ -1,4 +1,4 @@
-#' Set Window and Plotting Parameters
+#' Window and Plotting Parameters
 #'
 #' A \acronym{GUI} for specifying universal plotting parameters.
 #'

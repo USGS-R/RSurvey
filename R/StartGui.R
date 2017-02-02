@@ -1,10 +1,10 @@
 #' Main Graphical User Interface
 #'
-#' Launches the main \acronym{GUI} for the \pkg{RSurvey} package.
+#' Launches the main graphical user interface (\acronym{GUI}) for the \pkg{RSurvey} package.
 #' May be used to specify coordinate variables, render plots, and access all other package functionality.
 #'
-#' @return Quaries and sets the \code{vars} component of \code{\link{Data}}.
-#'   The \code{vars} object is a list with components:
+#' @return Quaries and sets the \code{vars} list component of \code{\link{Data}}.
+#'   The components of \code{vars} include:
 #'     \item{x, y, z}{index number for the corresponding coordinate-dimension variable in \code{cols},
 #'       see \code{\link{ManageVariables}} function for details.}
 #'
@@ -178,7 +178,7 @@ StartGui <- function() {
         src <- c(pathname=file[1], accessed=format(Sys.time()))
 
       } else if (type == "rpackage") {
-        d <- ImportPackage(valid.classes, parent=tt)
+        d <- ImportDataset(valid.classes, parent=tt)
         src <- d$src
         d <- d$d
       }
