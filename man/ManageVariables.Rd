@@ -2,7 +2,7 @@
 % Please edit documentation in R/ManageVariables.R
 \name{ManageVariables}
 \alias{ManageVariables}
-\title{Variable Manager}
+\title{GUI: Variable Manager}
 \usage{
 ManageVariables(cols, vars, query, changelog, parent = NULL)
 }
@@ -43,7 +43,7 @@ Returns an object of class list with components \code{cols} and \code{vars}.
     \item{changelog}{if required, names in the \code{variable} component are updated.}
 }
 \description{
-A \acronym{GUI} for managing variables in the data table.
+A graphical user interface (\acronym{GUI}) for managing variables in the data table.
 }
 \details{
 This \acronym{GUI} lets you:

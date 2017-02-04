@@ -1,6 +1,7 @@
-#' Polygon Manager
+#' GUI: Polygon Manager
 #'
-#' A \acronym{GUI} for managing and manipulating polygons that is based on the \pkg{rgeos} package.
+#' A graphical user interface (\acronym{GUI}) for managing and manipulating polygons
+#' that is based on the \pkg{rgeos} package.
 #'
 #' @param polys list.
 #'   A list of polygons, components are objects of class \code{\link[=gpc.poly-class]{gpc.poly}}.

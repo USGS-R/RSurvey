@@ -3,7 +3,7 @@
 \name{ProgressBar}
 \alias{ProgressBar}
 \alias{SetProgressBar}
-\title{Progress Bar}
+\title{GUI: Progress Bar}
 \usage{
 ProgressBar(win.title = "Progress Bar", label = "", maximum = 100,
   nsteps = NULL, min.nsteps = 10L, parent = NULL)
@@ -29,7 +29,7 @@ Minimum number of increments.
 If greater than \code{nsteps}, the dialog box is not opened.}
 
 \item{parent}{tkwin.
-\acronym{GUI} parent window}
+graphical user interface parent window}
 
 \item{pb}{ProgressBar.
 Object returned from \code{ProgressBar}, see \sQuote{Value} section.}

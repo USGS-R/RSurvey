@@ -1,6 +1,6 @@
-#' Build C-Style String Formats
+#' GUI: Build C-Style String Formats
 #'
-#' A \acronym{GUI} for the system \code{sprintf} C-library function.
+#' A graphical user interface (\acronym{GUI}) for the system \code{sprintf} C-library function.
 #'
 #' @param sample logical, integer, numeric, character, or factor.
 #'    Sample value

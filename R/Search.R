@@ -1,6 +1,7 @@
-#' Search
+#' GUI: Search Data Table
 #'
-#' A \acronym{GUI} for establishing find and replace arguments in a data table.
+#' A graphical user interface (\acronym{GUI}) for establishing find
+#' and replace arguments in a data table.
 #'
 #' @param is.replace logical.
 #'    If true, the replace component is included.

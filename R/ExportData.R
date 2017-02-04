@@ -1,6 +1,6 @@
-#' Export Data
+#' GUI: Export Data
 #'
-#' A \acronym{GUI} for exporting data to text files, shapefiles, or R data files.
+#' A graphical user interface (\acronym{GUI}) for exporting data to text files, shapefiles, or R data files.
 #'
 #' @param file.type character.
 #'   Output file type: either

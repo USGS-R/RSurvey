@@ -2,7 +2,7 @@
 % Please edit documentation in R/Rename.R
 \name{Rename}
 \alias{Rename}
-\title{Rename Values in Character Vector}
+\title{GUI: Rename Values in Character Vector}
 \usage{
 Rename(names = NULL, cur.name = NULL, win.title = NULL, parent = NULL)
 }
@@ -11,7 +11,7 @@ Rename(names = NULL, cur.name = NULL, win.title = NULL, parent = NULL)
 Vector of character strings}
 
 \item{cur.name}{character.
-Sets the combobox value, name must be included in \code{names}.}
+Sets the combo box value, name must be included in \code{names}.}
 
 \item{win.title}{character.
 String to display as the title of the dialog box.}
@@ -23,7 +23,7 @@ String to display as the title of the dialog box.}
 Returns a character vector with updated values of \code{names}.
 }
 \description{
-A \acronym{GUI} for renaming values in a vector of character strings.
+A graphical user interface (\acronym{GUI}) for renaming values in a vector of character strings.
 }
 \examples{
 \dontrun{

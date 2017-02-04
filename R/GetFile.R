@@ -1,6 +1,6 @@
-#' Select File to Open or Save As
+#' GUI: Select File to Open or Save As
 #'
-#' A \acronym{GUI} for selecting files to open or save.
+#' A graphical user interface (\acronym{GUI}) for selecting files to open or save.
 #'
 #' @param cmd character.
 #'   Specifies whether an \code{"Open"} or \code{"Save As"} file management pop up dialog box is implemented.
@@ -22,7 +22,7 @@
 #' @param parent tkwin.
 #'   \acronym{GUI} parent window
 #'
-#' @return If \code{multi} is false, returns the file path as a charcter object with the following attributes:
+#' @return If \code{multi} is false, returns the file path as a character object with the following attributes:
 #'   \item{directory}{directory containing the file}
 #'   \item{name}{file name}
 #'   \item{extension}{file extension}

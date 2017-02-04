@@ -1,6 +1,6 @@
-#' Polygon Limits
+#' GUI: Polygon Limits
 #'
-#' A \acronym{GUI} for specifying polygon limits.
+#' A graphical user interface (\acronym{GUI}) for specifying polygon limits.
 #'
 #' @param poly.names character.
 #'   Vector of polygon names

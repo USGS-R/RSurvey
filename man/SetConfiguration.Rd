@@ -2,7 +2,7 @@
 % Please edit documentation in R/SetConfiguration.R
 \name{SetConfiguration}
 \alias{SetConfiguration}
-\title{Window and Plotting Parameters}
+\title{GUI: Window and Plotting Parameters}
 \usage{
 SetConfiguration(parent = NULL)
 }
@@ -35,7 +35,7 @@ Queries and sets the following components of \code{\link{Data}}:
   \item{bg.lines}{if true, grids and graticules are drawn.}
 }
 \description{
-A \acronym{GUI} for specifying universal plotting parameters.
+A graphical user interface (\acronym{GUI}) for specifying universal plotting parameters.
 }
 \note{
 Re-importing data does not affect values specified in this \acronym{GUI}.

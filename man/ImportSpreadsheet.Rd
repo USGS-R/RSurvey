@@ -2,7 +2,7 @@
 % Please edit documentation in R/ImportSpreadsheet.R
 \name{ImportSpreadsheet}
 \alias{ImportSpreadsheet}
-\title{Import Data from XML Spreadsheet File}
+\title{GUI: Import Data from XML Spreadsheet File}
 \usage{
 ImportSpreadsheet(parent = NULL)
 }
@@ -16,11 +16,12 @@ Returns an object of list class with the following components:
   \item{src}{vector of length 2 that includes the pathname of the spreadsheet file and access date.}
 }
 \description{
-A \acronym{GUI} for loading selected data sets from an Open XML Spreadsheet file (\file{.xlsx}).
+A graphical user interface (\acronym{GUI}) for loading selected data sets
+from an Open XML Spreadsheet file (\file{.xlsx}).
 }
 \examples{
 \dontrun{
-  ans <- ImportSpreadsheet()
+  obj <- ImportSpreadsheet()
 }
 
 }

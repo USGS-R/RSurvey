@@ -2,7 +2,7 @@
 % Please edit documentation in R/ImportDataset.R
 \name{ImportDataset}
 \alias{ImportDataset}
-\title{Import Data from Package Dataset}
+\title{GUI: Import Data from Package Dataset}
 \usage{
 ImportDataset(classes = NULL, parent = NULL)
 }
@@ -20,11 +20,11 @@ Returns an object of list class with the following components:
   \item{src}{vector of length 3 that includes the dataset name, package name, and access date.}
 }
 \description{
-A \acronym{GUI} for importing data from selected \R package datasets.
+A graphical user interface (\acronym{GUI}) for importing data from selected \R package datasets.
 }
 \examples{
 \dontrun{
-  ans <- ImportDataset(c("data.frame", "matrix"))
+  obj <- ImportDataset(c("data.frame", "matrix"))
 }
 
 }

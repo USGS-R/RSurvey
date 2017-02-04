@@ -1,6 +1,6 @@
-#' Histogram Input Parameters
+#' GUI: Histogram Input Parameters
 #'
-#' A \acronym{GUI} for specifying input parameters for the \code{\link[graphics]{hist}} function.
+#' A graphical user interface (\acronym{GUI}) for specifying input parameters for the \code{\link[graphics]{hist}} function.
 #'
 #' @param d list, data.frame, matrix, or numeric.
 #'   Vector(s) of values for which the histogram is desired.

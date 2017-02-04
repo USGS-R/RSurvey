@@ -1,4 +1,4 @@
-#' Progress Bar
+#' GUI: Progress Bar
 #'
 #' A progress bar that shows the status of long-running operations.
 #'
@@ -15,7 +15,7 @@
 #'   Minimum number of increments.
 #'   If greater than \code{nsteps}, the dialog box is not opened.
 #' @param parent tkwin.
-#'   \acronym{GUI} parent window
+#'   graphical user interface parent window
 #' @param pb ProgressBar.
 #'   Object returned from \code{ProgressBar}, see \sQuote{Value} section.
 #' @param value numeric.

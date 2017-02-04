@@ -1,6 +1,6 @@
-#' Plot Annotation
+#' GUI: Plot Annotation
 #'
-#' A \acronym{GUI} for specifying labels to add to a plot.
+#' A graphical user interface (\acronym{GUI}) for specifying labels to add to a plot.
 #'
 #' @param parent tkwin.
 #'   \acronym{GUI} parent window
@@ -30,32 +30,31 @@ SetPlotAnnotation <- function(parent=NULL) {
 
   # update titles
   UpdateTitles <- function() {
-    val <- as.character(tclvalue(credit.var))
-    Data("credit", if (val == "") NULL else val)
 
-    val <- as.character(tclvalue(explanation.var))
-    Data("explanation", if (val == "") NULL else val)
+    FUN <- function(x) {
+      x <- as.character(tclvalue(tkget(x, "1.0", "end-1c")))
+      return(if (x == "") NULL else x)
+    }
+    Data("credit", FUN(f1.txt.1.2))
+    Data("explanation", FUN(f1.txt.2.2))
 
-    val <- as.character(tclvalue(legend.title.var))
-    Data("legend.title", if (val == "") NULL else val)
-
-    val <- as.character(tclvalue(legend.subtitle.var))
-    Data("legend.subtitle", if (val == "") NULL else val)
+    FUN <- function(x) {
+      x <- as.character(tclvalue(x))
+      return(if (x == "") NULL else x)
+    }
+    Data("legend.title", FUN(legend.title.var))
+    Data("legend.subtitle", FUN(legend.subtitle.var))
 
     tclvalue(tt.done.var) <- 1
   }
 
 
   # assign variables linked to tk widgets
-  credit.var          <- tclVar()
-  explanation.var     <- tclVar()
   legend.title.var    <- tclVar()
   legend.subtitle.var <- tclVar()
   tt.done.var         <- tclVar(0)
 
-  if (!is.null(Data("credit")))          tclvalue(credit.var)          <- Data("credit")
-  if (!is.null(Data("explanation")))     tclvalue(explanation.var)     <- Data("explanation")
-  if (!is.null(Data("legend.title")))    tclvalue(legend.title.var)    <- Data("legend.title")
+  if (!is.null(Data("legend.title"))) tclvalue(legend.title.var) <- Data("legend.title")
   if (!is.null(Data("legend.subtitle"))) tclvalue(legend.subtitle.var) <- Data("legend.subtitle")
 
   # open gui
@@ -92,22 +91,32 @@ SetPlotAnnotation <- function(parent=NULL) {
   f1.lab.3.1 <- ttklabel(f1, text="Point-legend title")
   f1.lab.4.1 <- ttklabel(f1, text="Point-legend subtitle")
 
-  f1.ent.1.2 <- ttkentry(f1, width=50, textvariable=credit.var)
-  f1.ent.2.2 <- ttkentry(f1, width=50, textvariable=explanation.var)
+  f1.txt.1.2 <- tktext(f1, width=50, height=2, undo=1, wrap="none",
+                       relief="solid", foreground="black", background="#FFFFFF",
+                       borderwidth=1, font="TkTextFont", state="normal")
+  f1.txt.2.2 <- tktext(f1, width=50, height=2, undo=1, wrap="none",
+                       relief="solid", foreground="black", background="#FFFFFF",
+                       borderwidth=1, font="TkTextFont", state="normal")
   f1.ent.3.2 <- ttkentry(f1, width=50, textvariable=legend.title.var)
   f1.ent.4.2 <- ttkentry(f1, width=50, textvariable=legend.subtitle.var)
 
-  tkgrid(f1.lab.1.1, f1.ent.1.2, pady=c(15, 4))
-  tkgrid(f1.lab.2.1, f1.ent.2.2, pady=c(0, 4))
+  tkgrid(f1.lab.1.1, f1.txt.1.2, pady=c(15, 4))
+  tkgrid(f1.lab.2.1, f1.txt.2.2, pady=c(0, 4))
   tkgrid(f1.lab.3.1, f1.ent.3.2, pady=c(0, 4))
-  tkgrid(f1.lab.4.1, f1.ent.4.2, pady=c(0, 4))
+  tkgrid(f1.lab.4.1, f1.ent.4.2)
 
-  tkgrid.configure(f1.lab.1.1, f1.lab.2.1, f1.lab.3.1, f1.lab.4.1, sticky="w")
-  tkgrid.configure(f1.ent.1.2, f1.ent.2.2, f1.ent.3.2, f1.ent.4.2,
+  tkgrid.configure(f1.lab.1.1, f1.lab.2.1, f1.lab.3.1, f1.lab.4.1,
+                   sticky="nw")
+  tkgrid.configure(f1.txt.1.2, f1.txt.2.2, f1.ent.3.2, f1.ent.4.2,
                    sticky="we", padx=c(2, 0))
 
   tkgrid.columnconfigure(f1, 1, weight=1, minsize=6)
   tkpack(f1, fill="x", expand=TRUE)
+
+  if (!is.null(Data("credit")))
+    tkinsert(f1.txt.1.2, "end", Data("credit"))
+  if (!is.null(Data("explanation")))
+    tkinsert(f1.txt.2.2, "end", Data("explanation"))
 
   # bind events
   tclServiceMode(TRUE)

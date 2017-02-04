@@ -1,6 +1,6 @@
-#' Import Data from Package Dataset
+#' GUI: Import Data from Package Dataset
 #'
-#' A \acronym{GUI} for importing data from selected \R package datasets.
+#' A graphical user interface (\acronym{GUI}) for importing data from selected \R package datasets.
 #'
 #' @param classes character.
 #'   The object classes of data sets that can be loaded.
@@ -24,7 +24,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'   ans <- ImportDataset(c("data.frame", "matrix"))
+#'   obj <- ImportDataset(c("data.frame", "matrix"))
 #' }
 #'
 

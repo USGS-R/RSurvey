@@ -1,6 +1,7 @@
-#' Import Data from XML Spreadsheet File
+#' GUI: Import Data from XML Spreadsheet File
 #'
-#' A \acronym{GUI} for loading selected data sets from an Open XML Spreadsheet file (\file{.xlsx}).
+#' A graphical user interface (\acronym{GUI}) for loading selected data sets
+#' from an Open XML Spreadsheet file (\file{.xlsx}).
 #'
 #' @param parent tkwin.
 #'   \acronym{GUI} parent window
@@ -23,7 +24,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'   ans <- ImportSpreadsheet()
+#'   obj <- ImportSpreadsheet()
 #' }
 #'
 

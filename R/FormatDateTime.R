@@ -1,6 +1,7 @@
-#' Build Date-Time String Formats
+#' GUI: Build Date-Time String Formats
 #'
-#' A \acronym{GUI} for converting between character representations and objects of class \code{POSIXt} or \code{Date}.
+#' A graphical user interface (\acronym{GUI}) for converting between character representations
+#' and objects of class \code{POSIXt} or \code{Date}.
 #'
 #' @param sample POSIXt or Date.
 #'    Sample date-time

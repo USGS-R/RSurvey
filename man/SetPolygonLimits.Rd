@@ -2,7 +2,7 @@
 % Please edit documentation in R/SetPolygonLimits.R
 \name{SetPolygonLimits}
 \alias{SetPolygonLimits}
-\title{Polygon Limits}
+\title{GUI: Polygon Limits}
 \usage{
 SetPolygonLimits(poly.names = NULL, poly.data = NULL, poly.crop = NULL,
   parent = NULL)
@@ -28,7 +28,7 @@ Queries and sets the following components of \code{\link{Data}}:
   \item{legend.subtitle}{subtitle to be placed at the top of the points legend.}
 }
 \description{
-A \acronym{GUI} for specifying polygon limits.
+A graphical user interface (\acronym{GUI}) for specifying polygon limits.
 }
 \examples{
 \dontrun{

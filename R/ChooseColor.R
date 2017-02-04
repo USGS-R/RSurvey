@@ -1,6 +1,6 @@
-#' Color Picker
+#' GUI: Color Picker
 #'
-#' A \acronym{GUI} for selecting a color.
+#' A graphical user interface (\acronym{GUI}) for selecting a color.
 #'
 #' @param col character.
 #'   Initial color, see \sQuote{Value} section

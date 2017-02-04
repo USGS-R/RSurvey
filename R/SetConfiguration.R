@@ -1,6 +1,6 @@
-#' Window and Plotting Parameters
+#' GUI: Window and Plotting Parameters
 #'
-#' A \acronym{GUI} for specifying universal plotting parameters.
+#' A graphical user interface (\acronym{GUI}) for specifying universal plotting parameters.
 #'
 #' @param parent tkwin.
 #'   \acronym{GUI} parent window

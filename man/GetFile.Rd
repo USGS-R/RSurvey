@@ -2,7 +2,7 @@
 % Please edit documentation in R/GetFile.R
 \name{GetFile}
 \alias{GetFile}
-\title{Select File to Open or Save As}
+\title{GUI: Select File to Open or Save As}
 \usage{
 GetFile(cmd = c("Open", "Save As"), file = NULL, exts = NULL,
   initialdir = NULL, initialfile = NULL, defaultextension = NULL,
@@ -38,7 +38,7 @@ If true, multiple files may be selected.}
 \acronym{GUI} parent window}
 }
 \value{
-If \code{multi} is false, returns the file path as a charcter object with the following attributes:
+If \code{multi} is false, returns the file path as a character object with the following attributes:
   \item{directory}{directory containing the file}
   \item{name}{file name}
   \item{extension}{file extension}
@@ -46,7 +46,7 @@ If \code{multi} is false, returns the file path as a charcter object with the fo
   Otherwise, a list is returned containing a object of class character for each file.
 }
 \description{
-A \acronym{GUI} for selecting files to open or save.
+A graphical user interface (\acronym{GUI}) for selecting files to open or save.
 }
 \examples{
 \dontrun{

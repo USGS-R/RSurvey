@@ -1,6 +1,6 @@
-#' Edit Text
+#' GUI: Edit Text
 #'
-#' A \acronym{GUI} for viewing and editing text.
+#' A graphical user interface (\acronym{GUI}) for viewing and editing text.
 #'
 #' @param txt character.
 #'   Text used to populate the window.

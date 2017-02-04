@@ -2,7 +2,7 @@
 % Please edit documentation in R/DefineGrid.R
 \name{DefineGrid}
 \alias{DefineGrid}
-\title{Define Interpolation Grid}
+\title{GUI: Define Interpolation Grid}
 \usage{
 DefineGrid(grid = NULL, parent = NULL)
 }
@@ -29,7 +29,7 @@ Returns an object of class list with the following components:
     along the \emph{x}- and \emph{y}-axis.}
 }
 \description{
-A \acronym{GUI} for defining the interpolation grid.
+A graphical user interface (\acronym{GUI}) for defining the interpolation grid.
 }
 \examples{
 \dontrun{

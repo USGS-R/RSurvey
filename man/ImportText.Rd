@@ -2,7 +2,7 @@
 % Please edit documentation in R/ImportText.R
 \name{ImportText}
 \alias{ImportText}
-\title{Import Data from Text File}
+\title{GUI: Import Data from Text File}
 \usage{
 ImportText(parent = NULL)
 }
@@ -22,7 +22,7 @@ Sets the following components in \code{\link{Data}}:
   \item{source}{a vector of length 2 that includes the pathname of the text file and access date.}
   \item{fmts}{indicates whether the file contains the conversion specification format strings of the variables.}
   \item{cols}{indicates whether the file contains the names of the variables.}
-  \item{skip}{Number of lines skiped before data is read.}
+  \item{skip}{Number of lines skipped before data is read.}
   \item{sep}{Field separator string}
   \item{dec}{Used in the file for decimal points.}
   \item{na}{String interpreted as \code{\link{NA}} values.}
@@ -32,7 +32,7 @@ Sets the following components in \code{\link{Data}}:
   \item{str.as.fact}{If true, character variables are converted to factors.}
 }
 \description{
-A \acronym{GUI} for reading table formatted data from a text file.
+A graphical user interface (\acronym{GUI}) for reading table formatted data from a text file.
 }
 \details{
 This \acronym{GUI} is a wrapper for the \code{\link[utils]{read.table}} function.

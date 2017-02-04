@@ -1,6 +1,6 @@
-#' Axes Limits
+#' GUI: Axes Limits
 #'
-#' A \acronym{GUI} for specifying axes limits.
+#' A graphical user interface (\acronym{GUI}) for specifying axes limits.
 #'
 #' @param lim list.
 #'    Contains the current plotting limits, see \sQuote{Value} section.

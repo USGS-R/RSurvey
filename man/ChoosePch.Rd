@@ -2,7 +2,7 @@
 % Please edit documentation in R/ChoosePch.R
 \name{ChoosePch}
 \alias{ChoosePch}
-\title{Plotting Symbol Picker}
+\title{GUI: Plotting Symbol Picker}
 \usage{
 ChoosePch(pch = NA, parent = NULL)
 }
@@ -17,7 +17,7 @@ Initial plotting symbol}
 Returns an object of class numeric or integer, specifying the selected plotting symbol.
 }
 \description{
-A \acronym{GUI} for selecting a plotting symbol to use.
+A graphical user interface (\acronym{GUI}) for selecting a plotting symbol to use.
 }
 \examples{
 \dontrun{

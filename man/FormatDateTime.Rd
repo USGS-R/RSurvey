@@ -2,7 +2,7 @@
 % Please edit documentation in R/FormatDateTime.R
 \name{FormatDateTime}
 \alias{FormatDateTime}
-\title{Build Date-Time String Formats}
+\title{GUI: Build Date-Time String Formats}
 \usage{
 FormatDateTime(sample = as.POSIXct("1991-08-25 20:57:08"), fmt = "",
   parent = NULL)
@@ -21,7 +21,8 @@ Conversion specification format}
 Returns a character string representing the formatted date-time value.
 }
 \description{
-A \acronym{GUI} for converting between character representations and objects of class \code{POSIXt} or \code{Date}.
+A graphical user interface (\acronym{GUI}) for converting between character representations
+and objects of class \code{POSIXt} or \code{Date}.
 }
 \examples{
 \dontrun{

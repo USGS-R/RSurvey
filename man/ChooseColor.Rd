@@ -2,7 +2,7 @@
 % Please edit documentation in R/ChooseColor.R
 \name{ChooseColor}
 \alias{ChooseColor}
-\title{Color Picker}
+\title{GUI: Color Picker}
 \usage{
 ChooseColor(col, parent = NULL)
 }
@@ -20,7 +20,7 @@ a string of the form \code{"#RRGGBB"} where each of the pairs
 giving a value in the range \code{00} to \code{FF}.
 }
 \description{
-A \acronym{GUI} for selecting a color.
+A graphical user interface (\acronym{GUI}) for selecting a color.
 }
 \examples{
 \dontrun{

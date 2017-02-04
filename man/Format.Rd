@@ -2,7 +2,7 @@
 % Please edit documentation in R/Format.R
 \name{Format}
 \alias{Format}
-\title{Build C-Style String Formats}
+\title{GUI: Build C-Style String Formats}
 \usage{
 Format(sample = pi, fmt = "", parent = NULL)
 }
@@ -20,7 +20,7 @@ Conversion specification format, see \code{\link{sprintf}}.}
 Returns a character string.
 }
 \description{
-A \acronym{GUI} for the system \code{sprintf} C-library function.
+A graphical user interface (\acronym{GUI}) for the system \code{sprintf} C-library function.
 }
 \examples{
 \dontrun{

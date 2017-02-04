@@ -1,6 +1,6 @@
-#' Data Editor
+#' GUI: Data Editor
 #'
-#' A \acronym{GUI} for viewing and editing table formatted data.
+#' A graphical user interface (\acronym{GUI}) for viewing and editing table formatted data.
 #'
 #' @param d list, matrix, or data.frame.
 #'   Data used to populate the data table.
@@ -56,8 +56,8 @@
 #'   d <- data.frame(V1, V2, V3, V4)
 #'   col.names <- c("Integers", "Letters", "DateTime", "Numeric")
 #'   col.formats <- c("%d", "%s", "%m/%d/%Y %H:%M", "")
-#'   ans <- EditData(d, col.names, col.formats)
-#'   str(ans)
+#'   obj <- EditData(d, col.names, col.formats)
+#'   str(obj)
 #'
 #'   rownames(d) <- paste0(sample(LETTERS, n, replace = TRUE), seq_len(n))
 #'   EditData(d, read.only = TRUE)

@@ -11,7 +11,7 @@ GetBitmapImage(type)
 Icon image type, see \sQuote{Details}}
 }
 \value{
-An image of class \code{\link{tclObj}}.
+An image of class tclObj.
 }
 \description{
 Create a small \acronym{Tk} bitmap image.
@@ -24,7 +24,7 @@ Icon image types include:
   \var{view}, \var{info}, \var{plus}, \var{minus}, \var{print}, and \var{histogram}.
   A recommended editor for bitmap design is Paul Obermeier's
   \href{http://www.posoft.de/html/poBitmapMain.html}{poBitmap} tool;
-  icon size is a width of 11 pixels and height of 11 pixels.
+  specify a square icon 11 pixels on each side.
 }
 \examples{
 \dontrun{

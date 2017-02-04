@@ -2,7 +2,7 @@
 % Please edit documentation in R/SetSortOrder.R
 \name{SetSortOrder}
 \alias{SetSortOrder}
-\title{Sort Order}
+\title{GUI: Sort Order}
 \usage{
 SetSortOrder(col.ids, sort.on = NULL, parent = NULL)
 }
@@ -25,7 +25,7 @@ Returns an object of integer class that specifies the index of the variable used
   if \code{NA}, they are removed.
 }
 \description{
-A \acronym{GUI} for specifying the variable used to sort the data set.
+A graphical user interface (\acronym{GUI}) for specifying the variable used to sort the data set.
 }
 \examples{
 \dontrun{

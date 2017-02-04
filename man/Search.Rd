@@ -2,7 +2,7 @@
 % Please edit documentation in R/Search.R
 \name{Search}
 \alias{Search}
-\title{Search}
+\title{GUI: Search Data Table}
 \usage{
 Search(is.replace = FALSE, defaults = NULL, parent = NULL)
 }
@@ -30,7 +30,8 @@ Returns an object of list class with the following components:
     \item{is.search.sel}{indicates whether the search limited to selected cells.}
 }
 \description{
-A \acronym{GUI} for establishing find and replace arguments in a data table.
+A graphical user interface (\acronym{GUI}) for establishing find
+and replace arguments in a data table.
 }
 \examples{
 \dontrun{

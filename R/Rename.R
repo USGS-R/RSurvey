@@ -1,11 +1,11 @@
-#' Rename Values in Character Vector
+#' GUI: Rename Values in Character Vector
 #'
-#' A \acronym{GUI} for renaming values in a vector of character strings.
+#' A graphical user interface (\acronym{GUI}) for renaming values in a vector of character strings.
 #'
 #' @param names character.
 #'    Vector of character strings
 #' @param cur.name character.
-#'    Sets the combobox value, name must be included in \code{names}.
+#'    Sets the combo box value, name must be included in \code{names}.
 #' @param win.title character.
 #'    String to display as the title of the dialog box.
 #' @param parent tkwin.

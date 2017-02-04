@@ -1,6 +1,7 @@
-#' Coordinate Reference System
+#' GUI: Coordinate Reference System
 #'
-#' A \acronym{GUI} for specifying PROJ.4 arguments associated with a coordinate reference system (CRS).
+#' A graphical user interface (\acronym{GUI}) for specifying PROJ.4 arguments
+#' associated with a coordinate reference system (CRS).
 #' The arguments must be entered exactly as in the PROJ.4 documentation,
 #' in particular there cannot be any white space in +<arg>=<value> strings,
 #' and successive such strings can only be separated by blanks.

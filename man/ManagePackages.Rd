@@ -2,7 +2,7 @@
 % Please edit documentation in R/ManagePackages.R
 \name{ManagePackages}
 \alias{ManagePackages}
-\title{Package Manager}
+\title{GUI: Package Manager}
 \usage{
 ManagePackages()
 }

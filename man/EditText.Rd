@@ -2,7 +2,7 @@
 % Please edit documentation in R/EditText.R
 \name{EditText}
 \alias{EditText}
-\title{Edit Text}
+\title{GUI: Edit Text}
 \usage{
 EditText(txt, read.only = FALSE, win.title = "View Text",
   is.fixed.width.font = FALSE, parent = NULL)
@@ -27,7 +27,7 @@ Specifies whether a fixed-width font be used.}
 Returns an object of class character with edited text.
 }
 \description{
-A \acronym{GUI} for viewing and editing text.
+A graphical user interface (\acronym{GUI}) for viewing and editing text.
 }
 \examples{
 \dontrun{

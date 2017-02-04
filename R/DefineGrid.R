@@ -1,6 +1,6 @@
-#' Define Interpolation Grid
+#' GUI: Define Interpolation Grid
 #'
-#' A \acronym{GUI} for defining the interpolation grid.
+#' A graphical user interface (\acronym{GUI}) for defining the interpolation grid.
 #'
 #' @param grid list.
 #'    Interpolation grid object, see \sQuote{Value} section.

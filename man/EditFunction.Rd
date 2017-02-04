@@ -2,7 +2,7 @@
 % Please edit documentation in R/EditFunction.R
 \name{EditFunction}
 \alias{EditFunction}
-\title{Function Editor}
+\title{GUI: Function Editor}
 \usage{
 EditFunction(cols, index = NULL, fun = NULL, value.length = NULL,
   value.class = NULL, win.title = "Edit Function", parent = NULL)
@@ -37,7 +37,7 @@ Returns an object of class list with the following components:
   \item{sample}{first non-missing value for the evaluated function.}
 }
 \description{
-A \acronym{GUI} for defining functions in the \R language.
+A graphical user interface (\acronym{GUI}) for defining functions in the \R language.
 }
 \details{
 This \acronym{GUI} is appropriate for deriving new variables in a pre-existing data frame or query building.

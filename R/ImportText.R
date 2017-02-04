@@ -1,6 +1,6 @@
-#' Import Data from Text File
+#' GUI: Import Data from Text File
 #'
-#' A \acronym{GUI} for reading table formatted data from a text file.
+#' A graphical user interface (\acronym{GUI}) for reading table formatted data from a text file.
 #'
 #' @param parent tkwin.
 #'   \acronym{GUI} parent window
@@ -38,7 +38,7 @@
 #'   \item{source}{a vector of length 2 that includes the pathname of the text file and access date.}
 #'   \item{fmts}{indicates whether the file contains the conversion specification format strings of the variables.}
 #'   \item{cols}{indicates whether the file contains the names of the variables.}
-#'   \item{skip}{Number of lines skiped before data is read.}
+#'   \item{skip}{Number of lines skipped before data is read.}
 #'   \item{sep}{Field separator string}
 #'   \item{dec}{Used in the file for decimal points.}
 #'   \item{na}{String interpreted as \code{\link{NA}} values.}

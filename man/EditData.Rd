@@ -2,7 +2,7 @@
 % Please edit documentation in R/EditData.R
 \name{EditData}
 \alias{EditData}
-\title{Data Editor}
+\title{GUI: Data Editor}
 \usage{
 EditData(d, col.names = names(d), row.names = NULL, col.formats = NULL,
   read.only = FALSE, changelog = NULL, win.title = "Data",
@@ -44,7 +44,7 @@ Returns \code{NULL} if no edits were made; otherwise,
     \item{new}{value after editing}
 }
 \description{
-A \acronym{GUI} for viewing and editing table formatted data.
+A graphical user interface (\acronym{GUI}) for viewing and editing table formatted data.
 }
 \details{
 Row titles are taken from the row names attribute of argument \code{d}.
@@ -66,8 +66,8 @@ Requires the Tcl package \href{http://tktable.sourceforge.net/}{Tktable}.
   d <- data.frame(V1, V2, V3, V4)
   col.names <- c("Integers", "Letters", "DateTime", "Numeric")
   col.formats <- c("\%d", "\%s", "\%m/\%d/\%Y \%H:\%M", "")
-  ans <- EditData(d, col.names, col.formats)
-  str(ans)
+  obj <- EditData(d, col.names, col.formats)
+  str(obj)
 
   rownames(d) <- paste0(sample(LETTERS, n, replace = TRUE), seq_len(n))
   EditData(d, read.only = TRUE)

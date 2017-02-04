@@ -44,7 +44,7 @@ If any of the suggested packages are missing, you will be prompted to install th
 
 ## Run
 
-Load **RSurvey** in the current R session and launch its GUI using the command
+Load **RSurvey** in the current R session and launch its main GUI using the command
 
 ```r
 library(RSurvey)

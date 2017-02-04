@@ -1,6 +1,6 @@
-#' Variable Manager
+#' GUI: Variable Manager
 #'
-#' A \acronym{GUI} for managing variables in the data table.
+#' A graphical user interface (\acronym{GUI}) for managing variables in the data table.
 #'
 #' @param cols list.
 #'   See \sQuote{Value} section

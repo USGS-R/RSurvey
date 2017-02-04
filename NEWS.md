@@ -1,16 +1,16 @@
 # RSurvey 0.8.3.9000
 
-- Stop GUI from automatically launching during the **RSurvey** package load.
+- Complete redesign of the graphical user interface and plotting routines.
 
-- Change function name from `OpenRSurvey` to `StartGui`.
+- Remove GPL (>=2) software license and place in the public domain (CCO).
 
-- Remove vector components from state variables.
+- Change to in-source documentation using **roxygen2** package.
+
+- Leverage functions in the **inlmisc** package for plotting and polygon operations.
 
 - Add CITATION file to be used by the `citation` function.
 
-- Remove `BuildPackage` function
-
-- Add Makefile for automating package-development tasks.
+- Remove `BuildPackage` function and replace with Makefile.
 
 - Change NEWS file to markdown format.
 

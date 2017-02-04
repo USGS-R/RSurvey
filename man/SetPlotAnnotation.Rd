@@ -2,7 +2,7 @@
 % Please edit documentation in R/SetPlotAnnotation.R
 \name{SetPlotAnnotation}
 \alias{SetPlotAnnotation}
-\title{Plot Annotation}
+\title{GUI: Plot Annotation}
 \usage{
 SetPlotAnnotation(parent = NULL)
 }
@@ -18,7 +18,7 @@ Queries and sets the following components of \code{\link{Data}}:
   \item{legend.subtitle}{subtitle to be placed at the top of the points legend.}
 }
 \description{
-A \acronym{GUI} for specifying labels to add to a plot.
+A graphical user interface (\acronym{GUI}) for specifying labels to add to a plot.
 }
 \examples{
 \dontrun{

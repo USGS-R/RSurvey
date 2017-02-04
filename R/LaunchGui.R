@@ -1,4 +1,4 @@
-#' Main Graphical User Interface
+#' GUI: Main Graphical User Interface
 #'
 #' Launches the main graphical user interface (\acronym{GUI}) for the \pkg{RSurvey} package.
 #' May be used to specify coordinate variables, render plots, and access all other package functionality.
@@ -18,11 +18,11 @@
 #'
 #' @examples
 #' \dontrun{
-#'   StartGui()
+#'   LaunchGui()
 #' }
 #'
 
-StartGui <- function() {
+LaunchGui <- function() {
 
 
   # close gui
@@ -588,9 +588,9 @@ StartGui <- function() {
     }
 
     if (graphics.device == "RGL") {
-      Plot3d(r, p, xlim=lim$x, ylim=lim$y, zlim=lim$z, vasp=Data("asp.zx"),
-             hasp=asp, cex.pts=Data("cex.pts"), n=Data("nlevels"),
-             color.palette=Data("palette.grd"))
+      ans <- try(Plot3d(r, p, xlim=lim$x, ylim=lim$y, zlim=lim$z, vasp=Data("asp.zx"),
+                        hasp=asp, cex.pts=Data("cex.pts"), n=Data("nlevels"),
+                        color.palette=Data("palette.grd")), silent=TRUE)
     } else {
       if (graphics.device == "R") {
         file <- NULL
@@ -647,10 +647,10 @@ StartGui <- function() {
                                     silent=TRUE)
       }
     }
-    if (inherits(ans, "try-error")) {
-      msg <- "Plot routine failed."
-      tkmessageBox(icon="error", message=msg, detail=ans, title="Error", type="ok", parent=tt)
-    }
+    if (inherits(ans, "try-error"))
+      tkmessageBox(icon="error", message="Plot routine failed.", detail=ans,
+                   title="Error", type="ok", parent=tt)
+
     tkfocus(tt)
   }
 
@@ -833,7 +833,8 @@ StartGui <- function() {
       # interpolate
       xlen <- diff(c(raster::xmin(r), raster::xmax(r)))
       ylen <- diff(c(raster::ymin(r), raster::ymax(r)))
-      m <- n <- 1
+      m <- 1
+      n <- 1
       if ((ylen / xlen) < 1)
         m <- 2
       else
@@ -841,10 +842,13 @@ StartGui <- function() {
       ans <- try(MBA::mba.points(xyz=cbind(x, y, z)[!is.na(z), ],
                                  xy.est=sp::coordinates(r),
                                  n=n, m=m, h=11, verbose=FALSE)$xyz.est[, "z"])
-     if (inherits(ans, "try-error"))
+     if (inherits(ans, "try-error")) {
+       tkmessageBox(icon="error", message="Interpolation failed.", detail=ans,
+                    title="Error", type="ok", parent=tt)
        r <- NULL
-     else
+     } else {
        r[] <- ans
+     }
      names(r) <- "z"
 
       Data("data.grd", r)
@@ -1241,7 +1245,7 @@ StartGui <- function() {
               CloseGUI()
               Data("data.pts", NULL)
               Data("data.grd", NULL)
-              RestoreSession(file.path(getwd(), "R"), save.objs="Data", fun.call="StartGui")
+              RestoreSession(file.path(getwd(), "R"), save.objs="Data", fun.call="LaunchGui")
             })
   }
 

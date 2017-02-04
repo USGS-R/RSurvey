@@ -1,6 +1,6 @@
-#' Sort Order
+#' GUI: Sort Order
 #'
-#' A \acronym{GUI} for specifying the variable used to sort the data set.
+#' A graphical user interface (\acronym{GUI}) for specifying the variable used to sort the data set.
 #'
 #' @param col.ids character.
 #'   Vector of variable names

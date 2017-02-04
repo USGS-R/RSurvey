@@ -17,7 +17,7 @@ Parameter name, see \sQuote{Parameters} section.}
 A non-empty character string specifying which attribute is to be accessed.}
 
 \item{clear.proj}{logical.
-If true, basic \acronym{GUI} preferences will be saved and all other data removed.}
+If true, basic graphical user interface (\acronym{GUI}) preferences will be saved and all other data removed.}
 
 \item{clear.data}{logical.
 If true, only datasets will be removed.}

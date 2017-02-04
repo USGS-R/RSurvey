@@ -2,7 +2,7 @@
 % Please edit documentation in R/BuildHistogram.R
 \name{BuildHistogram}
 \alias{BuildHistogram}
-\title{Histogram Input Parameters}
+\title{GUI: Histogram Input Parameters}
 \usage{
 BuildHistogram(d, var.names = NULL, var.default = 1L,
   processed.rec = NULL, parent = NULL)
@@ -27,7 +27,7 @@ Vector of record indexes for processed data.}
 \code{NULL}
 }
 \description{
-A \acronym{GUI} for specifying input parameters for the \code{\link[graphics]{hist}} function.
+A graphical user interface (\acronym{GUI}) for specifying input parameters for the \code{\link[graphics]{hist}} function.
 }
 \examples{
 \dontrun{

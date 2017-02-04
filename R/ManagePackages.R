@@ -1,4 +1,4 @@
-#' Package Manager
+#' GUI: Package Manager
 #'
 #' This function installs \R packages suggested by \pkg{RSurvey}.
 #' If a suggested package is unavailable on the local computer,

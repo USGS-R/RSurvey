@@ -2,7 +2,7 @@
 % Please edit documentation in R/ExportData.R
 \name{ExportData}
 \alias{ExportData}
-\title{Export Data}
+\title{GUI: Export Data}
 \usage{
 ExportData(file.type = "txt", parent = NULL)
 }
@@ -38,7 +38,7 @@ Saves the \acronym{GUI} options in the \code{export} component of \code{\link{Da
     \item{ascii}{if true, an \acronym{ASCII} representation of the data is written (R data only).}
 }
 \description{
-A \acronym{GUI} for exporting data to text files, shapefiles, or R data files.
+A graphical user interface (\acronym{GUI}) for exporting data to text files, shapefiles, or R data files.
 }
 \examples{
 \dontrun{

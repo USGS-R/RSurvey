@@ -2,7 +2,7 @@
 % Please edit documentation in R/SetAxesLimits.R
 \name{SetAxesLimits}
 \alias{SetAxesLimits}
-\title{Axes Limits}
+\title{GUI: Axes Limits}
 \usage{
 SetAxesLimits(lim = NULL, parent = NULL)
 }
@@ -26,7 +26,7 @@ Returns an object of class list containing the following components:
   \item{z}{vector of \code{z} limits \code{(z1,z2)}, default is \code{(NA,NA)}.}
 }
 \description{
-A \acronym{GUI} for specifying axes limits.
+A graphical user interface (\acronym{GUI}) for specifying axes limits.
 }
 \examples{
 \dontrun{

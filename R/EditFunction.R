@@ -1,6 +1,6 @@
-#' Function Editor
+#' GUI: Function Editor
 #'
-#' A \acronym{GUI} for defining functions in the \R language.
+#' A graphical user interface (\acronym{GUI}) for defining functions in the \R language.
 #'
 #' @param cols list.
 #'   y

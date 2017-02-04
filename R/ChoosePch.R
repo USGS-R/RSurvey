@@ -1,6 +1,6 @@
-#' Plotting Symbol Picker
+#' GUI: Plotting Symbol Picker
 #'
-#' A \acronym{GUI} for selecting a plotting symbol to use.
+#' A graphical user interface (\acronym{GUI}) for selecting a plotting symbol to use.
 #'
 #' @param pch numeric or character.
 #'    Initial plotting symbol

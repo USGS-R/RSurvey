@@ -2,7 +2,7 @@
 % Please edit documentation in R/ManagePolygons.R
 \name{ManagePolygons}
 \alias{ManagePolygons}
-\title{Polygon Manager}
+\title{GUI: Polygon Manager}
 \usage{
 ManagePolygons(polys = NULL, poly.data = NULL, poly.crop = NULL,
   crs = sp::CRS(as.character(NA)), parent = NULL)
@@ -28,7 +28,8 @@ Returns an object of class list with components
   \code{polys}, \code{poly.data}, \code{poly.crop}, and \code{crs} (see \sQuote{Arguments} section).
 }
 \description{
-A \acronym{GUI} for managing and manipulating polygons that is based on the \pkg{rgeos} package.
+A graphical user interface (\acronym{GUI}) for managing and manipulating polygons
+that is based on the \pkg{rgeos} package.
 }
 \details{
 The text file representation of a polygon is of the following format:\cr\cr

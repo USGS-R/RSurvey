@@ -12,9 +12,9 @@
 #'   \var{view}, \var{info}, \var{plus}, \var{minus}, \var{print}, and \var{histogram}.
 #'   A recommended editor for bitmap design is Paul Obermeier's
 #'   \href{http://www.posoft.de/html/poBitmapMain.html}{poBitmap} tool;
-#'   icon size is a width of 11 pixels and height of 11 pixels.
+#'   specify a square icon 11 pixels on each side.
 #'
-#' @return An image of class \code{\link{tclObj}}.
+#' @return An image of class tclObj.
 #'
 #' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 #'
