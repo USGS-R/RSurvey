@@ -414,7 +414,7 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   top.menu <- tkmenu(tt, tearoff=0)
   menu.edit <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
-  tkadd(menu.edit, "command", label="New\u2026", accelerator="Ctrl+n",
+  tkadd(menu.edit, "command", label="New\u2026", accelerator="Ctrl+N",
         command=SaveNewVar)
   tkadd(menu.edit, "command", label="Delete", command=DeleteVar)
   menu.arrange <- tkmenu(tt, tearoff=0)

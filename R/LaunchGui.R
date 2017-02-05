@@ -1041,10 +1041,10 @@ LaunchGui <- function() {
   # file menu
   menu.file <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
-  tkadd(menu.file, "command", label="New project", accelerator="Ctrl+n", command=ClearObjs)
-  tkadd(menu.file, "command", label="Open project\u2026", accelerator="Ctrl+o", command=OpenProj)
-  tkadd(menu.file, "command", label="Save project", accelerator="Ctrl+s", command=SaveProj)
-  tkadd(menu.file, "command", label="Save project as\u2026",  accelerator="Ctrl+Shift+s",
+  tkadd(menu.file, "command", label="New project", accelerator="Ctrl+N", command=ClearObjs)
+  tkadd(menu.file, "command", label="Open project\u2026", accelerator="Ctrl+O", command=OpenProj)
+  tkadd(menu.file, "command", label="Save project", accelerator="Ctrl+S", command=SaveProj)
+  tkadd(menu.file, "command", label="Save project as\u2026",  accelerator="Ctrl+Shift+S",
         command=SaveProjAs)
   tkadd(menu.file, "separator")
   menu.file.import <- tkmenu(tt, tearoff=0)
@@ -1082,7 +1082,7 @@ LaunchGui <- function() {
   tkadd(menu.file.graphics, "command", label="PDF file\u2026", command=function() PlotData("pdf"))
   tkadd(menu.file, "cascade", label="Save graphics to a", menu=menu.file.graphics)
   menu.file.snapshot <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.snapshot, "command", label="2D graphics device\u2026", accelerator="Ctrl+r",
+  tkadd(menu.file.snapshot, "command", label="2D graphics device\u2026", accelerator="Ctrl+R",
         command=SaveRDevice)
   tkadd(menu.file.snapshot, "command", label="3D graphics device\u2026", command=SaveRGLDevice)
   tkadd(menu.file, "cascade", label="Save snapshot from active", menu=menu.file.snapshot)

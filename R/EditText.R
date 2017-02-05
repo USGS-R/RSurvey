@@ -155,26 +155,26 @@ EditText <- function(txt, read.only=FALSE, win.title="View Text",
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
 
   if (read.only) {
-    tkadd(menu.file, "command", label="Save as\u2026", accelerator="Ctrl+s", command=SaveAs)
-    tkadd(menu.edit, "command", label="Select all", accelerator="Ctrl+a", command=EditSelectAll)
+    tkadd(menu.file, "command", label="Save as\u2026", accelerator="Ctrl+S", command=SaveAs)
+    tkadd(menu.edit, "command", label="Select all", accelerator="Ctrl+A", command=EditSelectAll)
     tkadd(menu.edit, "separator")
-    tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c", command=EditCopy)
+    tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+C", command=EditCopy)
   } else {
-    tkadd(menu.file, "command", label="Open\u2026", accelerator="Ctrl+o",
+    tkadd(menu.file, "command", label="Open\u2026", accelerator="Ctrl+O",
           command=function() OpenFile())
     tkadd(menu.file, "command", label="Open and append\u2026",
           command=function() OpenFile(is.appended=TRUE))
-    tkadd(menu.file, "command", label="Save as\u2026", accelerator="Ctrl+s", command=SaveAs)
+    tkadd(menu.file, "command", label="Save as\u2026", accelerator="Ctrl+S", command=SaveAs)
 
-    tkadd(menu.edit, "command", label="Undo", accelerator="Ctrl+z", command=EditUndo)
-    tkadd(menu.edit, "command", label="Redo", accelerator="Ctrl+y", command=EditRedo)
+    tkadd(menu.edit, "command", label="Undo", accelerator="Ctrl+Z", command=EditUndo)
+    tkadd(menu.edit, "command", label="Redo", accelerator="Ctrl+Y", command=EditRedo)
     tkadd(menu.edit, "separator")
-    tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+x", command=EditCut)
-    tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c", command=EditCopy)
-    tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+v", command=EditPaste)
+    tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+X", command=EditCut)
+    tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+C", command=EditCopy)
+    tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+V", command=EditPaste)
     tkadd(menu.edit, "separator")
-    tkadd(menu.edit, "command", label="Select all", accelerator="Ctrl+a", command=EditSelectAll)
-    tkadd(menu.edit, "command", label="Clear console", accelerator="Ctrl+l", command=ClearConsole)
+    tkadd(menu.edit, "command", label="Select all", accelerator="Ctrl+A", command=EditSelectAll)
+    tkadd(menu.edit, "command", label="Clear console", accelerator="Ctrl+L", command=ClearConsole)
   }
 
   # finish top menu

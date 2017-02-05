@@ -786,21 +786,21 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   menu.edit <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
   if (!read.only) {
-    tkadd(menu.edit, "command", label="Undo", accelerator="Ctrl+z", command=UndoEdit)
-    tkadd(menu.edit, "command", label="Redo", accelerator="Ctrl+y", command=RedoEdit)
+    tkadd(menu.edit, "command", label="Undo", accelerator="Ctrl+Z", command=UndoEdit)
+    tkadd(menu.edit, "command", label="Redo", accelerator="Ctrl+Y", command=RedoEdit)
     tkadd(menu.edit, "separator")
   }
-  tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+c", command=BypassCopyCmd)
+  tkadd(menu.edit, "command", label="Copy", accelerator="Ctrl+C", command=BypassCopyCmd)
   if (!read.only) {
-    tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+x", command=BypassCutCmd)
-    tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+v", command=BypassPasteCmd)
+    tkadd(menu.edit, "command", label="Cut", accelerator="Ctrl+X", command=BypassCutCmd)
+    tkadd(menu.edit, "command", label="Paste", accelerator="Ctrl+V", command=BypassPasteCmd)
     tkadd(menu.edit, "separator")
     menu.edit.del <- tkmenu(tt, tearoff=0)
     tkadd(menu.edit.del, "command", label="Character after cursor", accelerator="Delete",
           command=function() tkevent.generate(f3.tbl, "<Delete>"))
     tkadd(menu.edit.del, "command", label="Character before cursor", accelerator="Backspace",
           command=function() tkevent.generate(f3.tbl, "<BackSpace>"))
-    tkadd(menu.edit.del, "command", label="All characters after cursor", accelerator="Ctrl+k",
+    tkadd(menu.edit.del, "command", label="All characters after cursor", accelerator="Ctrl+K",
           command=function() tkevent.generate(f3.tbl, "<Control-k>"))
     tkadd(menu.edit, "cascade", label="Inside cell delete", menu=menu.edit.del)
   }
@@ -825,12 +825,12 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   # search menu
   menu.search <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="Search", menu=menu.search, underline=0)
-  tkadd(menu.search, "command", label="Find\u2026", accelerator="Ctrl+f",
+  tkadd(menu.search, "command", label="Find\u2026", accelerator="Ctrl+F",
         command=function() CallSearch())
   tkadd(menu.search, "command", label="Find next", command=function() Find("next"))
   tkadd(menu.search, "command", label="Find previous", command=function() Find("prev"))
   if (!read.only)
-    tkadd(menu.search, "command", label="Replace\u2026", accelerator="Ctrl+r",
+    tkadd(menu.search, "command", label="Replace\u2026", accelerator="Ctrl+R",
           command=function() CallSearch(is.replace=TRUE))
 
   # selection menu
@@ -920,9 +920,9 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     tkadd(menu.nav.in, "command", label="Right", accelerator="Ctrl+\u2192",
           command=function() tkevent.generate(f3.tbl, "<Control-Right>"))
     tkadd(menu.nav.in, "separator")
-    tkadd(menu.nav.in, "command", label="Beggining", accelerator="Ctrl+a",
+    tkadd(menu.nav.in, "command", label="Beggining", accelerator="Ctrl+A",
           command=function() tkevent.generate(f3.tbl, "<Control-a>"))
-    tkadd(menu.nav.in, "command", label="End", accelerator="Ctrl+e",
+    tkadd(menu.nav.in, "command", label="End", accelerator="Ctrl+E",
           command=function() tkevent.generate(f3.tbl, "<Control-e>"))
     tkadd(menu.nav, "cascade", label="Move inside cell to the", menu=menu.nav.in)
   }

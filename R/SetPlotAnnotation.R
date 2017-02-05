@@ -91,10 +91,10 @@ SetPlotAnnotation <- function(parent=NULL) {
   f1.lab.3.1 <- ttklabel(f1, text="Point-legend title")
   f1.lab.4.1 <- ttklabel(f1, text="Point-legend subtitle")
 
-  f1.txt.1.2 <- tktext(f1, width=50, height=2, undo=1, wrap="none",
+  f1.txt.1.2 <- tktext(f1, width=50, height=3, undo=1, wrap="none",
                        relief="solid", foreground="black", background="#FFFFFF",
                        borderwidth=1, font="TkTextFont", state="normal")
-  f1.txt.2.2 <- tktext(f1, width=50, height=2, undo=1, wrap="none",
+  f1.txt.2.2 <- tktext(f1, width=50, height=3, undo=1, wrap="none",
                        relief="solid", foreground="black", background="#FFFFFF",
                        borderwidth=1, font="TkTextFont", state="normal")
   f1.ent.3.2 <- ttkentry(f1, width=50, textvariable=legend.title.var)

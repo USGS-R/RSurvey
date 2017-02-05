@@ -453,14 +453,14 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
   tkadd(menu.file, "cascade", label="Export as", menu=menu.file.export)
   menu.edit <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Edit", menu=menu.edit, underline=0)
-  tkadd(menu.edit, "command", label="Rename\u2026", accelerator="Ctrl+r", command=RenamePolygon)
+  tkadd(menu.edit, "command", label="Rename\u2026", accelerator="Ctrl+R", command=RenamePolygon)
   tkadd(menu.edit, "command", label="Delete", accelerator="Delete", command=ClearPolygon)
 
   menu.select <- tkmenu(tt, tearoff=0)
   tkadd(top.menu, "cascade", label="Select", menu=menu.select, underline=0)
-  tkadd(menu.select, "command", label="All", accelerator="Ctrl+a",
+  tkadd(menu.select, "command", label="All", accelerator="Ctrl+A",
         command=function() SelectPolygon("all"))
-  tkadd(menu.select, "command", label="Deselect", accelerator="Ctrl+Shift+a",
+  tkadd(menu.select, "command", label="Deselect", accelerator="Ctrl+Shift+A",
         command=function() SelectPolygon("none"))
   tkadd(menu.select, "command", label="Inverse",
         command=function() SelectPolygon("inverse"))
