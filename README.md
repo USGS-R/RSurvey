@@ -33,10 +33,16 @@ To check if Tktable is available, use the command
 inherits(tcltk::tclRequire("Tktable", FALSE), "tclObj")
 ```
 
-Finally, install the stable version of **RSurvey** from CRAN using the command
+To install the stable version of **RSurvey** from CRAN use the command
 
 ```r
 install.packages("RSurvey")
+```
+
+Or use **devtools** to install the development version from GitHub.
+
+```r
+devtools::install_github("jfisher-usgs/RSurvey")
 ```
 
 In addition to its required packages, **RSurvey** can make use of the functionality in its suggested packages.

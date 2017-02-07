@@ -11,7 +11,7 @@
 #'
 #' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 #'
-#' @seealso \code{\link{parse}}, \code{\link{eval}}}
+#' @seealso \code{\link{parse}}, \code{\link{eval}}
 #'
 #' @keywords utilities
 #'

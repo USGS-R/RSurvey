@@ -30,6 +30,9 @@ EvalFunction("\\"X\\" + \\"Y\\"", cols)
 EvalFunction("rnorm(12)", cols)
 
 }
+\seealso{
+\code{\link{parse}}, \code{\link{eval}}
+}
 \author{
 J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 }

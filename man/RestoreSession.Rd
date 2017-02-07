@@ -30,6 +30,9 @@ This function restores local objects within the current \R session.
 }
 
 }
+\seealso{
+\code{\link{list.files}}, \code{\link{source}}
+}
 \author{
 J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 }
