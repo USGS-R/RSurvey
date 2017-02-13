@@ -1187,7 +1187,7 @@ LaunchGui <- function() {
   tkadd(menu.plot, "command", label="Zoom in",  accelerator="Ctrl++", command=function() ViewZoom("+"))
   tkadd(menu.plot, "command", label="Zoom out", accelerator="Ctrl+-", command=function() ViewZoom("-"))
   menu.plot.axes <- tkmenu(tt, tearoff=0)
-  tkadd(menu.plot.axes, "command", label="Zoom in at point\u2026",
+  tkadd(menu.plot.axes, "command", label="Zoom in on point\u2026",
         command=function() ViewZoom("+", id="point"))
   tkadd(menu.plot.axes, "command", label="Define bounding box\u2026",
         command=function() ViewZoom("+", id="bbox"))

@@ -2,7 +2,7 @@
 
 The purpose of this document is to give interested users a look into what may come in future releases.
 
-- [ ] Specify break points used to partition the colors representing numeric raster values.
+- [ ] Add option for user defined break points, used to partition the colors representing numeric raster values.
 - [ ] Concatenate color palettes based on break points.
 - [ ] Add additional interpolation methods from the [**gstat**](https://CRAN.R-project.org/package=gstat) package
       and (or) [**fields**](https://CRAN.R-project.org/package=fields) package;
