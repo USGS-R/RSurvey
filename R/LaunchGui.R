@@ -1048,31 +1048,31 @@ LaunchGui <- function() {
         command=SaveProjAs)
   tkadd(menu.file, "separator")
   menu.file.import <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.import, "command", label="Shapefile\u2026",
-        command=function() ReadData("shp"))
   tkadd(menu.file.import, "command", label="Text file or clipboard\u2026",
         command=function() ReadData("txt"))
   tkadd(menu.file.import, "command", label="XML-spreadsheet file\u2026",
         state=ifelse(is.pkg.xml, "normal", "disabled"),
         command=function() ReadData("xlsx"))
+  tkadd(menu.file.import, "command", label="Shapefile\u2026",
+        command=function() ReadData("shp"))
   tkadd(menu.file.import, "command", label="R-package dataset\u2026",
         command=function() ReadData("rpackage"))
   tkadd(menu.file.import, "command", label="R-data file\u2026",
         command=function() ReadData("rda"))
   tkadd(menu.file, "cascade", label="Import point data from", menu=menu.file.import)
   menu.file.export.pnt <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.export.pnt, "command", label="Shapefile\u2026",
-        command=function() WriteData("shp"))
   tkadd(menu.file.export.pnt, "command", label="Text file\u2026",
         command=function() WriteData("txt"))
+  tkadd(menu.file.export.pnt, "command", label="Shapefile\u2026",
+        command=function() WriteData("shp"))
   tkadd(menu.file.export.pnt, "command", label="R-data file\u2026",
         command=function() WriteData("rda"))
   tkadd(menu.file, "cascade", label="Export point data as", menu=menu.file.export.pnt)
   menu.file.export.grd <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.export.grd, "command", label="GeoTIFF\u2026",
-        command=function() WriteRaster("tif"))
   tkadd(menu.file.export.grd, "command", label="Text file\u2026",
         command=function() WriteRaster("txt"))
+  tkadd(menu.file.export.grd, "command", label="GeoTIFF\u2026",
+        command=function() WriteRaster("tif"))
   tkadd(menu.file.export.grd, "command", label="R-data file\u2026",
         command=function() WriteRaster("rda"))
   tkadd(menu.file, "cascade", label="Export interpolated grid data as", menu=menu.file.export.grd)

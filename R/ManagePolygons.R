@@ -436,18 +436,18 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
   menu.file <- tkmenu(tt, tearoff=0, relief="flat")
   tkadd(top.menu, "cascade", label="File", menu=menu.file, underline=0)
   menu.file.import <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.import, "command", label="Shapefile\u2026",
-        command=function() ImportPolygon("shp"))
   tkadd(menu.file.import, "command", label="Text file\u2026",
         command=function() ImportPolygon("txt"))
+  tkadd(menu.file.import, "command", label="Shapefile\u2026",
+        command=function() ImportPolygon("shp"))
   tkadd(menu.file.import, "command", label="R-data file\u2026",
         command=function() ImportPolygon("rda"))
   tkadd(menu.file, "cascade", label="Import from", menu=menu.file.import)
   menu.file.export <- tkmenu(tt, tearoff=0)
-  tkadd(menu.file.export, "command", label="Shapefile\u2026",
-        command=function() ExportPolygon("shp"))
   tkadd(menu.file.export, "command", label="Text file\u2026",
         command=function() ExportPolygon("txt"))
+  tkadd(menu.file.export, "command", label="Shapefile\u2026",
+        command=function() ExportPolygon("shp"))
   tkadd(menu.file.export, "command", label="R-data file\u2026",
         command=function() ExportPolygon("rda"))
   tkadd(menu.file, "cascade", label="Export as", menu=menu.file.export)
