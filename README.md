@@ -7,6 +7,8 @@
 
 The [R](https://www.r-project.org/) package **RSurvey** is a geographic information system (GIS) graphical user interface (GUI)
 that provides data viewing, management, and analysis tools.
+This cross-platform application was designed to be simple enough for non-technical users.
+**RSurvey**-generated graphics attempt to meet the exact standards for illustrations in reports of the United States Geological Survey (USGS).
 
 ## Install
 
@@ -39,12 +41,12 @@ To install the stable version of **RSurvey** from CRAN use the command
 install.packages("RSurvey")
 ```
 
-If you are running into difficulties with package installation,
-see the R Commander [installation notes](https://socserv.mcmaster.ca/jfox/Misc/Rcmdr/installation-notes.html) for possible solutions.
-R Commander is another GUI implemented as an R package.
-
 In addition to its required packages, **RSurvey** can make use of the functionality in its suggested packages.
 If any of the suggested packages are missing, you will be prompted to install them when it first starts up.
+
+If you're running into difficulties with package installation,
+see the R Commander [installation notes](https://socserv.mcmaster.ca/jfox/Misc/Rcmdr/installation-notes.html) for possible solutions.
+R Commander is another GUI implemented as an R package.
 
 ## Run
 
@@ -63,8 +65,8 @@ A tentative list of features proposed for future releases is given on the
 
 ## Disclaimer
 
-This software is in the public domain because it contains materials that originally came from the
-United States Geological Survey (USGS), an agency of the United States Department of Interior.
+This software is in the public domain because it contains materials that originally came from the USGS,
+an agency of the United States Department of Interior.
 For more information, see the
 [official USGS copyright policy](https://www2.usgs.gov/visual-id/credit_usgs.html "official USGS copyright policy").
 
