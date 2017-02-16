@@ -39,13 +39,7 @@ To install the stable version of **RSurvey** from CRAN use the command
 install.packages("RSurvey")
 ```
 
-Or use **devtools** to install the development version from GitHub.
-
-```r
-devtools::install_github("jfisher-usgs/RSurvey")
-```
-
-If you're running into difficulties with package installation,
+If you are running into difficulties with package installation,
 see the R Commander [installation notes](https://socserv.mcmaster.ca/jfox/Misc/Rcmdr/installation-notes.html) for possible solutions.
 R Commander is another GUI implemented as an R package.
 
@@ -60,10 +54,12 @@ Load **RSurvey** in the current R session and launch its main GUI using the comm
 library(RSurvey)
 ```
 
-## Bugs
+## Contriubte
 
-Please consider reporting bugs and asking questions on the
-[Issues page](https://github.com/jfisher-usgs/RSurvey/issues).
+Report bugs and suggest new features on the [Issues](https://github.com/jfisher-usgs/RSurvey/issues) page,
+and propose improvements with [pull requests](https://help.github.com/articles/creating-a-pull-request/).
+A tentative list of features proposed for future releases is given on the
+[Future Plans](https://github.com/jfisher-usgs/RSurvey/blob/master/inst/misc/future-plans.md) page.
 
 ## Disclaimer
 
