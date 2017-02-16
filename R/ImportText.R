@@ -654,8 +654,8 @@ ImportText <- function(parent=NULL) {
   f3.lab.2.6 <- ttklabel(f3, text="Skip lines")
   f3.lab.3.1 <- ttklabel(f3, text="Comment")
   f3.lab.3.4 <- ttklabel(f3, text="Encoding")
-  txt <- paste("Comments located above data records and header lines",
-               "will be preserved (files only); all other comments are ignored.")
+  txt <- paste("Comments located above data records and header lines will be preserved;",
+               "all other comments are ignored.")
   f3.lab.4.1 <- ttklabel(f3, text=txt, foreground="#A40802")
 
   f3.box.1.2 <- ttkcombobox(f3, width=17, state="readonly", value=sep1)

@@ -45,6 +45,10 @@ Or use **devtools** to install the development version from GitHub.
 devtools::install_github("jfisher-usgs/RSurvey")
 ```
 
+If you're running into difficulties with package installation,
+see the R Commander [installation notes](https://socserv.mcmaster.ca/jfox/Misc/Rcmdr/installation-notes.html) for possible solutions.
+R Commander is another GUI implemented as an R package.
+
 In addition to its required packages, **RSurvey** can make use of the functionality in its suggested packages.
 If any of the suggested packages are missing, you will be prompted to install them when it first starts up.
 
