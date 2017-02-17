@@ -7,7 +7,8 @@
 
 **RSurvey** is a geographic information system (GIS) graphical user interface (GUI) that provides data viewing, management, and analysis tools.
 The cross-platform application was designed to be simple enough for non-technical users.
-**RSurvey**-generated graphics attempt to meet the exact standards for illustrations in reports of the United States Geological Survey (USGS).
+**RSurvey**-generated graphics attempt to meet the exact standards for illustrations in reports of the United States Geological Survey
+([USGS](https://www.usgs.gov/)).
 
 ## Install
 
@@ -52,7 +53,7 @@ R Commander is another GUI implemented as an R package.
 Load **RSurvey** in the current R session and launch its main GUI using the command
 
 ```r
-library(RSurvey)
+library("RSurvey")
 ```
 
 ## Contribute
