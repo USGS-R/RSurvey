@@ -10,4 +10,4 @@ The purpose of this document is to give interested users a look into what may co
 - [ ] Add option for plotting on a logarithmic scale.
 - [ ] Create profile graphs based on a user defined line of cross section, see `inlmisc::PlotCrossSection`.
 - [ ] Add support for measurement units using the [**units**](https://CRAN.R-project.org/package=units) package.
-- [ ] Include support for simple features using the [**sf**](https://CRAN.R-project.org/package=sf) package.
+- [ ] Add support for simple features using the [**sf**](https://CRAN.R-project.org/package=sf) package.
