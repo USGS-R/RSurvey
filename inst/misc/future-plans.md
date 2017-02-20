@@ -13,3 +13,5 @@ The purpose of this document is to give interested users a look into what may co
 - [ ] Add support for simple features using the [**sf**](https://CRAN.R-project.org/package=sf) package.
 - [ ] Enable/disable GUI menu items according to their usage context.
 - [ ] Write an introductory manual.
+- [ ] Import National Water Information System (NWIS) data using the
+      [**dataRetrieval**](https://CRAN.R-project.org/package=dataRetrieval) package.
