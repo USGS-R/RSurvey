@@ -8,7 +8,8 @@ The purpose of this document is to give interested users a look into what may co
       and (or) [**fields**](https://CRAN.R-project.org/package=fields) package;
       interpolation options defined by user.
 - [ ] Add option for plotting on a logarithmic scale.
-- [ ] Create profile graphs based on a user defined line of cross section, see `inlmisc::PlotCrossSection`.
+- [ ] Create profile graphs based on a user defined line of cross section, see `PlotCrossSection` function
+      in the [**inlmisc**](https://CRAN.R-project.org/package=inlmisc) package.
 - [ ] Add support for measurement units using the [**units**](https://CRAN.R-project.org/package=units) package.
 - [ ] Add support for simple features using the [**sf**](https://CRAN.R-project.org/package=sf) package.
 - [ ] Enable/disable GUI menu items according to their usage context.
