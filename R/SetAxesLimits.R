@@ -179,8 +179,7 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
   tkgrid(f1.lab.1.1, f1.ent.1.2, f1.chk.1.3, padx=1, pady=2)
   tkgrid(f1.lab.2.1, f1.ent.2.2, f1.chk.2.3, padx=1, pady=2)
 
-  tkgrid.configure(f1.lab.1.1, f1.lab.2.1, sticky="e")
-
+  tkgrid.configure(f1.lab.1.1, f1.lab.2.1, sticky="w")
   tkgrid.configure(f1.ent.1.2, f1.ent.2.2, sticky="we")
 
   tkgrid.columnconfigure(f1, 1, weight=1, minsize=25)
@@ -215,7 +214,7 @@ SetAxesLimits <- function(lim=NULL, parent=NULL) {
   tkgrid(f2.lab.1.1, f2.ent.1.2, f2.chk.1.3, padx=1, pady=2)
   tkgrid(f2.lab.2.1, f2.ent.2.2, f2.chk.2.3, padx=1, pady=2)
 
-  tkgrid.configure(f2.lab.1.1, f2.lab.2.1, sticky="e")
+  tkgrid.configure(f2.lab.1.1, f2.lab.2.1, sticky="w")
   tkgrid.configure(f2.ent.1.2, f2.ent.2.2, sticky="we")
 
   tkgrid.columnconfigure(f2, 1, weight=1, minsize=25)

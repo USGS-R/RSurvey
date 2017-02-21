@@ -565,11 +565,11 @@ ManageVariables <- function(cols, vars, query, changelog, parent=NULL) {
   # bind events
   tclServiceMode(TRUE)
 
-  tkbind(tt, "<Control-n>", SaveNewVar)
-  tkbind(tt, "<Control-]>", function() Arrange("forward"))
-  tkbind(tt, "<Control-Shift-}>", function() Arrange("front"))
-  tkbind(tt, "<Control-[>", function() Arrange("backward"))
-  tkbind(tt, "<Control-Shift-{>", function() Arrange("back"))
+  tkbind(tt, "<Control-KeyPress-n>", SaveNewVar)
+  tkbind(tt, "<Control-KeyPress-bracketright>", function() Arrange("forward"))
+  tkbind(tt, "<Control-Shift-KeyPress-braceright>", function() Arrange("front"))
+  tkbind(tt, "<Control-KeyPress-bracketleft>", function() Arrange("backward"))
+  tkbind(tt, "<Control-Shift-KeyPress-braceleft>", function() Arrange("back"))
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
   tkbind(nb, "<<NotebookTabChanged>>", ChangeTab)

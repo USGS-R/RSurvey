@@ -1059,8 +1059,8 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
   tkbind(f0.ent.1.1, "<Return>", paste(.Tcl.callback(BypassReturnCmd), "break", sep="; "))
   tkbind(f0.ent.1.1, "<FocusIn>", function() tksee(f3.tbl, "active"))
 
-  tkbind(tt, "<Control-KeyRelease-f>", function() CallSearch(is.replace=FALSE))
-  tkbind(tt, "<Control-KeyRelease-r>", function() CallSearch(is.replace=TRUE))
+  tkbind(tt, "<Control-KeyPress-f>", function() CallSearch(is.replace=FALSE))
+  tkbind(tt, "<Control-KeyPress-r>", function() CallSearch(is.replace=TRUE))
 
   tkbind(f3.tbl, "<Control-KeyPress-x>", paste(.Tcl.callback(BypassCutCmd),    "break", sep="; "))
   tkbind(f3.tbl, "<Control-KeyPress-v>", paste(.Tcl.callback(BypassPasteCmd),  "break", sep="; "))

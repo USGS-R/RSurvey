@@ -635,17 +635,17 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
   tkbind(f2.cvs, "<Leave>", MouseLeave)
   tkbind(f2.cvs, "<Configure>", ScaleCanvas)
 
-  tkbind(tt, "<Control-a>", function() SelectPolygon("all"))
-  tkbind(tt, "<Control-Shift-A>", function() SelectPolygon("none"))
+  tkbind(tt, "<Control-KeyPress-a>", function() SelectPolygon("all"))
+  tkbind(tt, "<Control-Shift-KeyPress-A>", function() SelectPolygon("none"))
 
-  tkbind(tt, "<Control-]>", function() ArrangePolygon("forward"))
-  tkbind(tt, "<Control-Shift-}>", function() ArrangePolygon("front"))
-  tkbind(tt, "<Control-[>", function() ArrangePolygon("backward"))
-  tkbind(tt, "<Control-Shift-{>", function() ArrangePolygon("back"))
+  tkbind(tt, "<Control-KeyPress-bracketright>", function() ArrangePolygon("forward"))
+  tkbind(tt, "<Control-Shift-KeyPress-braceright>", function() ArrangePolygon("front"))
+  tkbind(tt, "<Control-KeyPress-bracketleft>", function() ArrangePolygon("backward"))
+  tkbind(tt, "<Control-Shift-KeyPress-braceleft>", function() ArrangePolygon("back"))
 
   tkbind(tt, "<BackSpace>", ClearPolygon)
   tkbind(tt, "<Delete>", ClearPolygon)
-  tkbind(tt, "<Control-r>", RenamePolygon)
+  tkbind(tt, "<Control-KeyPress-r>", RenamePolygon)
 
   tkbind(f1.lst, "<<ListboxSelect>>", RefreshPolygons)
 

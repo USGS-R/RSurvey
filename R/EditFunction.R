@@ -759,11 +759,11 @@ EditFunction <- function(cols, index=NULL, fun=NULL, value.length=NULL,
   tkbind(f1.lst.4.1, "<Double-ButtonRelease-1>", InsertValue)
   tkbind(f1.box.3.1, "<<ComboboxSelected>>",     RebuildList)
 
-  tkbind("Text", "<Control-z>", EditUndo)
-  tkbind("Text", "<Control-y>", EditRedo)
-  tkbind("Text", "<Control-v>", EditPaste)
-  tkbind("Text", "<Control-a>", EditSelectAll)
-  tkbind("Text", "<Control-l>", ClearConsole)
+  tkbind("Text", "<Control-KeyPress-z>", EditUndo)
+  tkbind("Text", "<Control-KeyPress-y>", EditRedo)
+  tkbind("Text", "<Control-KeyPress-v>", EditPaste)
+  tkbind("Text", "<Control-KeyPress-a>", EditSelectAll)
+  tkbind("Text", "<Control-KeyPress-l>", ClearConsole)
 
   # gui control
   tkfocus(tt)

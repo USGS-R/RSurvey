@@ -193,11 +193,11 @@ SetCrs <- function(crs=sp::CRS(as.character(NA)), parent=NULL) {
   # bind events
   tclServiceMode(TRUE)
 
-  tkbind("Text", "<Control-z>", EditUndo)
-  tkbind("Text", "<Control-y>", EditRedo)
-  tkbind("Text", "<Control-v>", EditPaste)
-  tkbind("Text", "<Control-l>", ClearConsole)
-  tkbind("Text", "<Control-a>", EditSelectAll)
+  tkbind("Text", "<Control-KeyPress-z>", EditUndo)
+  tkbind("Text", "<Control-KeyPress-y>", EditRedo)
+  tkbind("Text", "<Control-KeyPress-v>", EditPaste)
+  tkbind("Text", "<Control-KeyPress-l>", ClearConsole)
+  tkbind("Text", "<Control-KeyPress-a>", EditSelectAll)
 
   tkbind(tt, "<Destroy>", function() tclvalue(tt.done.var) <- 1)
 
