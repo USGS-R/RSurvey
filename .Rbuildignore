@@ -6,3 +6,4 @@
 ^\.travis\.yml$
 ^\.Rprofile$
 misc/future-plans.md$
+^appveyor\.yml$

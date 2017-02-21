@@ -1,6 +1,7 @@
 # RSurvey
 
 [![Travis-CI Build Status](https://travis-ci.org/jfisher-usgs/RSurvey.svg?branch=master)](https://travis-ci.org/jfisher-usgs/RSurvey)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/jfisher-usgs/RSurvey?branch=master&svg=true)](https://ci.appveyor.com/project/jfisher-usgs/RSurvey)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/RSurvey)](https://CRAN.R-project.org/package=RSurvey)
 
 ## Overview
