@@ -927,8 +927,9 @@ LaunchGui <- function() {
     ProcessData()
     crs.new <- sp::CRS("+init=epsg:4326")
     map <- leaflet::leaflet()
+    map <- leaflet::addProviderTiles(map, "OpenStreetMap.Mapnik")
     opt <- leaflet::WMSTileOptions(format="image/png", transparent=TRUE)
-    base.groups <- c("Open Street Map", "The National Map")
+    base.groups <- c("Open Street Map", "National Map")
     map <- leaflet::addTiles(map, group=base.groups[1])
     url <- "https://basemap.nationalmap.gov/arcgis/services/USGSTopo/MapServer/WmsServer?"
     txt <-  "USGS <a href='https://nationalmap.gov/'>The National Map</a>"
@@ -1105,7 +1106,7 @@ LaunchGui <- function() {
         })
   tkadd(menu.edit, "separator")
   tkadd(menu.edit, "command", label="Manage variables\u2026", command=CallManageVariables)
-  tkadd(menu.edit, "command", label="Data editor\u2026",
+  tkadd(menu.edit, "command", label="Edit unprocessed data\u2026",
         command=function() CallEditData(read.only=FALSE))
   tkadd(menu.edit, "command", label="Comment\u2026", command=EditComment)
   tkadd(menu.edit, "separator")
