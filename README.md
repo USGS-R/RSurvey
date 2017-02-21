@@ -42,6 +42,12 @@ To install the stable version of **RSurvey** from CRAN use the command
 install.packages("RSurvey")
 ```
 
+Or use **devtools** to install the development version from GitHub.
+
+```r
+devtools::install_github("jfisher-usgs/RSurvey")
+```
+
 In addition to its required packages, **RSurvey** can make use of the functionality in its suggested packages.
 If any of the suggested packages are missing, you will be prompted to install them when it first starts up.
 
