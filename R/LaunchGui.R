@@ -1238,7 +1238,7 @@ LaunchGui <- function() {
   tkadd(menu.help.rep, "command", label="CRAN",
         command=function() utils::browseURL("https://CRAN.R-project.org/package=RSurvey"))
   tkadd(menu.help.rep, "command", label="GitHub",
-        command=function() utils::browseURL("https://github.com/jfisher-usgs/RSurvey"))
+        command=function() utils::browseURL("https://github.com/USGS-R/RSurvey"))
   tkadd(menu.help, "cascade", label="Repository on  ", menu=menu.help.rep)
 
   tkadd(menu.help, "separator")
