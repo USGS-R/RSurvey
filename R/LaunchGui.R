@@ -775,7 +775,13 @@ LaunchGui <- function() {
 
       # convert to spatial points
       sp::coordinates(d) <- ~ x + y
-      sp::proj4string(d) <- Data("crs")
+      ans <- try(sp::proj4string(d) <- Data("crs"), silent=TRUE)
+      if (inherits(ans, "try-error")) {
+        msg <- "Failed to set Coordinate Reference System."
+        tkmessageBox(icon="error", message=msg, detail=ans,
+                     title="Error", type="ok", parent=tt)
+        sp::proj4string(d) <- sp::CRS(as.character(NA))
+      }
 
       # points in polygon
       if (!is.null(Data("poly.data"))) {
@@ -841,15 +847,15 @@ LaunchGui <- function() {
         n <- 2
       ans <- try(MBA::mba.points(xyz=cbind(x, y, z)[!is.na(z), ],
                                  xy.est=sp::coordinates(r),
-                                 n=n, m=m, h=11, verbose=FALSE)$xyz.est[, "z"])
-     if (inherits(ans, "try-error")) {
-       tkmessageBox(icon="error", message="Interpolation failed.", detail=ans,
-                    title="Error", type="ok", parent=tt)
-       r <- NULL
-     } else {
-       r[] <- ans
-     }
-     names(r) <- "z"
+                                 n=n, m=m, h=11, verbose=FALSE)$xyz.est[, "z"], silent=TRUE)
+      if (inherits(ans, "try-error")) {
+        tkmessageBox(icon="error", message="Interpolation failed.", detail=ans,
+                     title="Error", type="ok", parent=tt)
+        r <- NULL
+      } else {
+        r[] <- ans
+      }
+      names(r) <- "z"
 
       Data("data.grd", r)
     }

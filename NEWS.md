@@ -1,6 +1,8 @@
 # RSurvey 0.9.0.9000
 
-- ...
+- Account for case when the coordinate reference system is not applicable for the coordinate data.
+
+- Use valid Tk key binding names, prevents errors on Linux OS.
 
 # RSurvey 0.9.0
 
