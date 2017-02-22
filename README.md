@@ -65,10 +65,10 @@ library("RSurvey")
 
 ## Contribute
 
-Report bugs, suggest new features on the [Issues](https://github.com/jfisher-usgs/RSurvey/issues) page,
+Report bugs, suggest new features on the [Issues page](https://github.com/jfisher-usgs/RSurvey/issues),
 and propose improvements with pull requests.
 A tentative list of features proposed for future releases is given on the
-[Future Plans](https://github.com/jfisher-usgs/RSurvey/blob/master/inst/misc/future-plans.md) page.
+[Future Plans page](https://github.com/jfisher-usgs/RSurvey/blob/master/inst/misc/future-plans.md).
 
 ## Disclaimer
 
