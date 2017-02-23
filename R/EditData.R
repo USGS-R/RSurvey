@@ -333,8 +333,11 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
       return()
     }
     vals <- FormatValues(ij[, 1], ij[, 2])
-    utils::write.table(matrix(vals, nrow=ni, ncol=nj, byrow=TRUE), file="clipboard",
-                       sep="\t", eol="\n", row.names=FALSE, col.names=FALSE)
+    txt <- matrix(vals, nrow=ni, ncol=nj, byrow=TRUE)
+    txt <- utils::capture.output(utils::write.table(txt, sep="\t", row.names=FALSE, col.names=FALSE))
+    txt <- paste(txt, collapse="\n")
+    tkclipboard.clear()
+    tkclipboard.append(txt)
     return()
   }
 
@@ -367,22 +370,24 @@ EditData <- function(d, col.names=names(d), row.names=NULL, col.formats=NULL,
     tclServiceMode(FALSE)
     on.exit(tclServiceMode(TRUE))
     active.cell <- as.character(tkindex(f3.tbl, "active"))
-    args <- list(file="clipboard", colClasses="character", sep="\t",
-                 flush=TRUE, fill=TRUE, na.strings=NULL)
-    new.vals <- suppressWarnings(try(do.call(utils::read.table, args), silent=TRUE))
-    if (inherits(new.vals, "try-error")) return()
-    match.length <- attr(regexpr("\t", new.vals, fixed=TRUE), "match.length")
+    txt <- as.character(tclvalue(.Tcl("selection get -selection CLIPBOARD")))
+    if (length(txt) == 0) return()
+    args <- list(text=txt, colClasses="character", sep="\t", flush=TRUE,
+                 fill=TRUE, na.strings=NULL)
+    cb <- try(do.call(utils::read.table, args), silent=TRUE)
+    if (inherits(cb, "try-error")) return()
+    match.length <- attr(regexpr("\t", cb, fixed=TRUE), "match.length")
     if (!all(match.length == match.length[1])) {
-      msg <- paste("Clipboard contains text string copied from multiple",
+      msg <- paste("Clipboard contains data copied from multiple",
                    "selections and is unsuitable for pasting.")
       tkmessageBox(icon="info", message=msg, title="Paste", type="ok", parent=tt)
       return()
     }
     active.ij <- as.integer(strsplit(active.cell, ",")[[1]])
-    m <- nrow(new.vals)
-    n <- ncol(new.vals)
+    m <- nrow(cb)
+    n <- ncol(cb)
     ij <- cbind(rep(seq_len(m), n), rep(seq_len(n), each=m))
-    new.vals <- new.vals[ij]
+    new.vals <- cb[ij]
     ij[, 1] <- ij[, 1] + active.ij[1] - 1L
     ij[, 2] <- ij[, 2] + active.ij[2] - 1L
     i <- ij[, 1]

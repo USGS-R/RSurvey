@@ -15,6 +15,8 @@
       packageStartupMessage(paste(strwrap(s, indent=1), collapse="\n "))
     }
     LaunchGui()
+  } else {
+    packageStartupMessage("The RSurvey GUI is launched only in interactive sessions.")
   }
   invisible()
 }
