@@ -1,7 +1,7 @@
 # RSurvey
 
-[![Travis-CI Build Status](https://travis-ci.org/jfisher-usgs/RSurvey.svg?branch=master)](https://travis-ci.org/jfisher-usgs/RSurvey)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/jfisher-usgs/RSurvey?branch=master&svg=true)](https://ci.appveyor.com/project/jfisher-usgs/RSurvey)
+[![Travis-CI Build Status](https://travis-ci.org/USGS-R/RSurvey.svg?branch=master)](https://travis-ci.org/USGS-R/RSurvey)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/USGS-R/RSurvey?branch=master&svg=true)](https://ci.appveyor.com/project/jfisher-usgs/RSurvey)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/RSurvey)](https://CRAN.R-project.org/package=RSurvey)
 
 ## Overview
@@ -45,7 +45,7 @@ install.packages("RSurvey")
 Or use **devtools** to install the development version from GitHub.
 
 ```r
-devtools::install_github("jfisher-usgs/RSurvey")
+devtools::install_github("USGS-R/RSurvey")
 ```
 
 In addition to its required packages, **RSurvey** can make use of the functionality in its suggested packages.
@@ -65,10 +65,10 @@ library("RSurvey")
 
 ## Contribute
 
-Report bugs, suggest new features on the [Issues page](https://github.com/jfisher-usgs/RSurvey/issues),
+Report bugs, suggest new features on the [Issues page](https://github.com/USGS-R/RSurvey/issues),
 and propose improvements with pull requests.
 A tentative list of features proposed for future releases is given on the
-[Future Plans page](https://github.com/jfisher-usgs/RSurvey/blob/master/inst/misc/future-plans.md).
+[Future Plans page](https://github.com/USGS-R/RSurvey/blob/master/inst/misc/future-plans.md).
 
 ## Disclaimer
 
