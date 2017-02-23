@@ -453,7 +453,10 @@ ImportText <- function(parent=NULL) {
   # paste clipboard
   PasteData <- function() {
     tkselection.set(f4.tbl, "origin")
-    cb <- try(scan(file="clipboard", what="character", sep="\n", quiet=TRUE), silent=TRUE)
+    txt <- as.character(tclvalue(.Tcl("selection get -selection CLIPBOARD")))
+    if (length(txt) == 0) return()
+    args <- list(text=txt, what="character", sep="\n", quiet=TRUE)
+    cb <- try(do.call(scan, args), silent=TRUE)
     cb <<- if (inherits(cb, "try-error")) NULL else cb
     if (is.null(cb)) return()
     tclvalue(source.var) <- ""

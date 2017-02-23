@@ -237,7 +237,8 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
   # copy format to clipboard
   CopyFormat <- function() {
     txt <- as.character(tclvalue(fmt.var))
-    cat(txt, file="clipboard")
+    tkclipboard.clear()
+    tkclipboard.append(txt)
   }
 
 
@@ -245,7 +246,10 @@ Format <- function(sample=pi, fmt="", parent=NULL) {
   PasteFormat <- function() {
     opt <- as.integer(tclvalue(opt.var))
     if (opt != 3L) return()
-    cb <- try(scan(file="clipboard", what="character", sep="\n", quiet=TRUE), silent=TRUE)
+    txt <- as.character(tclvalue(.Tcl("selection get -selection CLIPBOARD")))
+    if (length(txt) == 0) return()
+    args <- list(text=txt, what="character", sep="\n", quiet=TRUE)
+    cb <- try(do.call(scan, args), silent=TRUE)
     if (inherits(cb, "try-error")) return()
     tclvalue(fmt.var) <- cb
     UpdateSample()
