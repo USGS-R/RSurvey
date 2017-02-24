@@ -3,6 +3,7 @@
 [![Travis Build Status](https://travis-ci.org/USGS-R/RSurvey.svg?branch=master)](https://travis-ci.org/USGS-R/RSurvey)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/2iqeunfhx593megv?svg=true)](https://ci.appveyor.com/project/jfisher-usgs/rsurvey)
 [![CRAN Version](https://www.r-pkg.org/badges/version/RSurvey)](https://CRAN.R-project.org/package=RSurvey)
+[![](https://cranlogs.r-pkg.org/badges/RSurvey?color=brightgreen)](https://CRAN.R-project.org/package=RSurvey)
 
 ## Overview
 
