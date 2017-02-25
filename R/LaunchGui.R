@@ -666,7 +666,7 @@ LaunchGui <- function() {
       if (is.null(Data("data.pts"))) return()
     }
 
-    vars <- Data("vars")
+    vars <- Data("vars")[names(Data("vars")) %in% c("x", "y", "z")]
     cols <- Data("cols")
     rows <- Data("rows")
 

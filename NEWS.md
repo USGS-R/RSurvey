@@ -1,6 +1,6 @@
 # RSurvey 0.9.1.9000
 
-- ...
+- Fix bug resulting in error when viewing data for coordinate variables with sort order set.
 
 # RSurvey 0.9.1
 
