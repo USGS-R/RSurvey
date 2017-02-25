@@ -1,5 +1,7 @@
 # RSurvey 0.9.1.9000
 
+- Stop including variables of class factor in histogram plots.
+
 - Fix bug resulting in error when viewing data for coordinate variables with sort order set.
 
 # RSurvey 0.9.1

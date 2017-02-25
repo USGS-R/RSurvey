@@ -160,9 +160,7 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL
     if (is.null(var.names)) var.names <- sprintf("Unknown (%d)", length(d))
   }
 
-  d <- lapply(d, function(i) try(as.numeric(i), silent=TRUE))
-
-  FUN <- function(i) !(inherits(i, "try-error") | all(is.na(i)))
+  FUN <- function(i) is.numeric(i) && !all(is.na(i))
   is.num <- vapply(d, FUN, TRUE)
   d <- d[is.num]
   if (length(d) == 0L) {
@@ -390,5 +388,8 @@ BuildHistogram <- function(d, var.names=NULL, var.default=1L, processed.rec=NULL
   if (!is.null(parent)) tkfocus(parent)
 
   tclServiceMode(TRUE)
+
+  if (grDevices::dev.cur() != dev) grDevices::dev.off()
+
   invisible()
 }
