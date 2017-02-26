@@ -71,6 +71,8 @@ Report bugs, suggest new features on the [Issues page](https://github.com/USGS-R
 and propose improvements with pull requests.
 A tentative list of features proposed for future releases is given on the
 [Future Plans page](https://github.com/USGS-R/RSurvey/blob/master/inst/misc/future-plans.md).
+The set of standards used for coding **RSurvey** is documented in
+[Google's R Style Guide](https://google.github.io/styleguide/Rguide.xml "Google's R Style Guide").
 
 ## Disclaimer
 
