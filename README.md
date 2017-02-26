@@ -4,7 +4,7 @@
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/2iqeunfhx593megv?svg=true)](https://ci.appveyor.com/project/jfisher-usgs/rsurvey)
 [![CRAN Version](https://www.r-pkg.org/badges/version/RSurvey)](https://CRAN.R-project.org/package=RSurvey)
 [![](https://cranlogs.r-pkg.org/badges/RSurvey?color=brightgreen)](https://CRAN.R-project.org/package=RSurvey)
-[![CC0](https://img.shields.io/badge/license-CC0%201.0-brightgreen.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
+[![CC0](https://img.shields.io/badge/license-CC0--1.0-brightgreen.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
 
 ## Overview
 
@@ -20,7 +20,7 @@ the Comprehensive R Archive Network ([CRAN](https://cran.r-project.org/)).
 Windows users should set R to operate as a single document interface (SDI) application during installation
 by choosing to customize the start-up options and specifying the SDI interface (not the default).
 
-If your operating system is OS X, download and install [XQuartz](https://www.xquartz.org/), and reboot your computer.
+If your operating system is macOS, download and install [XQuartz](https://www.xquartz.org/), and reboot your computer.
 
 **RSurvey** uses the [Tk](http://www.tkdocs.com/) toolkit for GUI rendering,
 access to Tk is provided by the **tcltk** package.
@@ -38,7 +38,7 @@ To check if Tktable is available, use the command
 inherits(tcltk::tclRequire("Tktable", FALSE), "tclObj")
 ```
 
-To install the stable version of **RSurvey** from CRAN use the command
+To install the stable version of **RSurvey** from [CRAN](https://CRAN.R-project.org/package=RSurvey) use the command
 
 ```r
 install.packages("RSurvey")
