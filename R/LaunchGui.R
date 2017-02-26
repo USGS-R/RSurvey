@@ -666,7 +666,7 @@ LaunchGui <- function() {
       if (is.null(Data("data.pts"))) return()
     }
 
-    vars <- Data("vars")
+    vars <- Data("vars")[names(Data("vars")) %in% c("x", "y", "z")]
     cols <- Data("cols")
     rows <- Data("rows")
 
@@ -789,20 +789,25 @@ LaunchGui <- function() {
         if (!is.null(p)) d <- d[!is.na(sp::over(d, p)), , drop=FALSE]
       }
 
-      if (nrow(d) > 0) {
-        Data("data.pts", d)
-        Data("data.grd", NULL)
-      } else {
-        msg <- "Range excludes all data points."
+      if (nrow(d) == 0) {
+        msg <- "All points were excluded during processing."
         tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
+        return()
       }
+      Data("data.pts", d)
+      Data("data.grd", NULL)
     }
 
     # grid
     if (!is.null(Data("data.pts")) && is.null(Data("data.grd"))) {
       if (!"z" %in% var.names) return()
+      if (nrow(Data("data.pts")) < 2) {
+        msg <- "Insufficient number of data records to perform interpolation."
+        tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
+        return()
+      }
       if (all(is.na(Data("data.pts")$z))) {
-        msg <- "Missing values for coordinate-variable 'z'."
+        msg <- "Can't interpolate because all values are missing for coordinate-variable 'z'."
         tkmessageBox(icon="error", message=msg, title="Error", type="ok", parent=tt)
         return()
       }
