@@ -174,7 +174,7 @@ ImportText <- function(parent=NULL) {
         fmt <- if (is.na(col.formats[j])) NULL else col.formats[j]
 
         # determine if character variables are POSIXct class
-        # TODO(JCF): ensure variable is date-time
+        # TODO(jfisher-usgs): ensure variable is date-time
         if (inherits(val, "character")) {
           is.time <- FALSE
           if (!is.null(fmt) && fmt != "" && !all(is.na(val))) {

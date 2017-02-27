@@ -993,7 +993,7 @@ LaunchGui <- function() {
       grDevices::dev.new(width=7, height=7)
     } else {
       cin <- graphics::par("din")
-      # TODO(JCF): read xpos and ypos from current dev and pass to dev.new
+      # TODO(jfisher-usgs): read xpos and ypos from current dev and pass to dev.new
       grDevices::dev.new(width=cin[1], height=cin[2])
     }
   }
