@@ -445,8 +445,8 @@ LaunchGui <- function() {
   AboutPackage <- function() {
     lib <- ifelse("package:RSurvey" %in% search(), system.file(package="RSurvey"), getwd())
     ver <- read.dcf(file.path(lib, "DESCRIPTION"), "Version")
-    yr  <- sub("-.*", "", read.dcf(file.path(lib, "DESCRIPTION"), "Packaged"))
-    msg <- sprintf("RSurvey package version %s (%s)", ver, yr)
+    ymd <- strsplit(read.dcf(file.path(lib, "DESCRIPTION"), "Packaged"), " ")[[1]][1]
+    msg <- sprintf("RSurvey package version %s (%s)", ver, ymd)
     tkmessageBox(icon="info", message=msg, title="Information", type="ok", parent=tt)
   }
 
@@ -751,7 +751,7 @@ LaunchGui <- function() {
       # account for missing z variable
       if (!"z" %in% var.names) d$z <- rep(as.numeric(NA), nrow(d))
 
-      # filter records
+      # query records
       query <- Data("query")
       if (!is.null(query)) {
         is.filter <- EvalFunction(query, cols)
@@ -770,16 +770,15 @@ LaunchGui <- function() {
       }
 
       # remove non-finite spatial coordinate values
-      is.coord <- is.finite(d[, "x"]) & is.finite(d[, "y"])
-      d <- d[is.coord, , drop=FALSE]
+      d <- d[is.finite(d[, "x"]) & is.finite(d[, "y"]), , drop=FALSE]
 
       # convert to spatial points
       sp::coordinates(d) <- ~ x + y
       ans <- try(sp::proj4string(d) <- Data("crs"), silent=TRUE)
       if (inherits(ans, "try-error")) {
         msg <- "Failed to set Coordinate Reference System."
-        tkmessageBox(icon="error", message=msg, detail=ans,
-                     title="Error", type="ok", parent=tt)
+        tkmessageBox(icon="error", message=msg, detail=ans, title="Error",
+                     type="ok", parent=tt)
         sp::proj4string(d) <- sp::CRS(as.character(NA))
       }
 
@@ -850,8 +849,7 @@ LaunchGui <- function() {
         m <- 2
       else
         n <- 2
-      ans <- try(MBA::mba.points(xyz=cbind(x, y, z)[!is.na(z), ],
-                                 xy.est=sp::coordinates(r),
+      ans <- try(MBA::mba.points(xyz=cbind(x, y, z)[!is.na(z), ], xy.est=sp::coordinates(r),
                                  n=n, m=m, h=11, verbose=FALSE)$xyz.est[, "z"], silent=TRUE)
       if (inherits(ans, "try-error")) {
         tkmessageBox(icon="error", message="Interpolation failed.", detail=ans,
@@ -940,7 +938,7 @@ LaunchGui <- function() {
     map <- leaflet::leaflet()
     map <- leaflet::addProviderTiles(map, "OpenStreetMap.Mapnik")
     opt <- leaflet::WMSTileOptions(format="image/png", transparent=TRUE)
-    base.groups <- c("Open Street Map", "National Map")
+    base.groups <- c("Open Street Map", "USGS Topo")
     map <- leaflet::addTiles(map, group=base.groups[1])
     url <- "https://basemap.nationalmap.gov/arcgis/services/USGSTopo/MapServer/WmsServer?"
     txt <-  "USGS <a href='https://nationalmap.gov/'>The National Map</a>"
