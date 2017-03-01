@@ -941,7 +941,7 @@ LaunchGui <- function() {
     base.groups <- c("Open Street Map", "USGS Topo")
     map <- leaflet::addTiles(map, group=base.groups[1])
     url <- "https://basemap.nationalmap.gov/arcgis/services/USGSTopo/MapServer/WmsServer?"
-    txt <-  "USGS <a href='https://nationalmap.gov/'>The National Map</a>"
+    txt <- "USGS <a href='https://nationalmap.gov/'>The National Map</a>"
     map <- leaflet::addWMSTiles(map, url, options=opt, layers="0",
                                 attribution=txt, group=base.groups[2])
     overlay.groups <- NULL
