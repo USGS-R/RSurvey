@@ -5,6 +5,7 @@
 [![CRAN Version](https://www.r-pkg.org/badges/version/RSurvey)](https://CRAN.R-project.org/package=RSurvey)
 [![](https://cranlogs.r-pkg.org/badges/RSurvey?color=brightgreen)](https://CRAN.R-project.org/package=RSurvey)
 [![CC0](https://img.shields.io/badge/license-CC0--1.0-brightgreen.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
+[![USGS Category](https://img.shields.io/badge/USGS-Research-blue.svg)](https://owi.usgs.gov/R/packages.html#research)
 
 ## Overview
 
