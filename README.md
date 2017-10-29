@@ -1,11 +1,9 @@
 # RSurvey
 
 [![Travis Build Status](https://travis-ci.org/USGS-R/RSurvey.svg?branch=master)](https://travis-ci.org/USGS-R/RSurvey)
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/2iqeunfhx593megv?svg=true)](https://ci.appveyor.com/project/jfisher-usgs/rsurvey)
 [![CRAN Version](https://www.r-pkg.org/badges/version/RSurvey)](https://CRAN.R-project.org/package=RSurvey)
-[![](https://cranlogs.r-pkg.org/badges/RSurvey?color=brightgreen)](https://CRAN.R-project.org/package=RSurvey)
-[![CC0](https://img.shields.io/badge/license-CC0--1.0-brightgreen.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
-[![USGS Category](https://img.shields.io/badge/USGS-Research-blue.svg)](https://owi.usgs.gov/R/packages.html#research)
+[![](https://cranlogs.r-pkg.org/badges/RSurvey?color=brightgreen)](https://www.rpackages.io/package/RSurvey)
+[![USGS Category](https://img.shields.io/badge/USGS-Research-blue.svg)](https://owi.usgs.gov/R/packages.html#orphan)
 
 ## Overview
 
@@ -70,10 +68,6 @@ library("RSurvey")
 
 Report bugs, suggest new features on the [Issues](https://github.com/USGS-R/RSurvey/issues) page,
 and propose improvements with pull requests.
-A tentative list of features proposed for future releases is given on the
-[Future Plans](https://github.com/USGS-R/RSurvey/blob/master/inst/misc/future-plans.md) page.
-The set of standards used for coding **RSurvey** is documented in
-[Google's R Style Guide](https://google.github.io/styleguide/Rguide.xml "Google's R Style Guide").
 
 ## Disclaimer
 
