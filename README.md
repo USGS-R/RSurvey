@@ -3,7 +3,7 @@
 [![Travis Build Status](https://travis-ci.org/USGS-R/RSurvey.svg?branch=master)](https://travis-ci.org/USGS-R/RSurvey)
 [![CRAN Version](https://www.r-pkg.org/badges/version/RSurvey)](https://CRAN.R-project.org/package=RSurvey)
 [![](https://cranlogs.r-pkg.org/badges/RSurvey?color=brightgreen)](https://www.rpackages.io/package/RSurvey)
-[![USGS Category](https://img.shields.io/badge/USGS-Research-blue.svg)](https://owi.usgs.gov/R/packages.html#orphan)
+[![USGS Category](https://img.shields.io/badge/USGS-Orphan-red.svg)](https://owi.usgs.gov/R/packages.html#orphan)
 
 ## Overview
 
@@ -63,11 +63,6 @@ Load **RSurvey** in the current R session and launch its main GUI using the comm
 ```r
 library("RSurvey")
 ```
-
-## Contribute
-
-Report bugs, suggest new features on the [Issues](https://github.com/USGS-R/RSurvey/issues) page,
-and propose improvements with pull requests.
 
 ## Disclaimer
 
