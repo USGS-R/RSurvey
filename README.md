@@ -53,7 +53,7 @@ In addition to its required packages, **RSurvey** can make use of the functional
 If any of the suggested packages are missing, you will be prompted to install them when it first starts up.
 
 If you're running into difficulties with package installation,
-see the R Commander [installation notes](https://socserv.mcmaster.ca/jfox/Misc/Rcmdr/installation-notes.html) for possible solutions.
+see the R Commander [installation notes](http://socserv.socsci.mcmaster.ca/jfox/Misc/Rcmdr/installation-notes.html) for possible solutions.
 R Commander is another GUI implemented as an R package.
 
 ## Run
