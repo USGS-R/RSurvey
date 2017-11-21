@@ -1,7 +1,9 @@
 .onAttach <- function(lib, pkg) {
   if (interactive()) {
     ver <- read.dcf(file.path(lib, pkg, "DESCRIPTION"), "Version")
-    msg <- "USGS Orphan Package: https://owi.usgs.gov/R/packages.html#orphan"
+    msg <- "USGS Orphan Package:
+            https://owi.usgs.gov/R/packages.html#orphan
+            Deprecated - Development of this package has halted."
     packageStartupMessage(paste(strwrap(msg), collapse="\n"))
     LaunchGui()
   } else {

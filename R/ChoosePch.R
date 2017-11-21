@@ -122,7 +122,7 @@ ChoosePch <- function(pch=NA, parent=NULL) {
 
 
   # set default values for misc. variables
-  if ("package:RSurvey" %in% search())
+  if ("RSurvey" %in% utils::installed.packages(.libPaths(), noCache=TRUE)[, "Package"])
     image.path <- file.path(system.file("images", package="RSurvey"), "pch.gif")
   else
     image.path <- file.path(getwd(), "inst", "images", "pch.gif")
