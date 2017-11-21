@@ -12,12 +12,13 @@ If you are interested in taking over maintainer status for the package, please e
 
 ## Overview
 
-**RSurvey** is a geographic information system (GIS) graphical user interface (GUI) that provides data viewing, management, and analysis tools.
+The [R](https://www.r-project.org/) package **RSurvey** is a geographic information system (GIS)
+graphical user interface (GUI) that provides data viewing, management, and analysis tools.
 The cross-platform application was designed to be simple enough for non-technical users.
 
 ## Install
 
-If [R](https://www.r-project.org/) is not already installed on your computer, download and install the latest binary distribution from
+If R is not already installed on your computer, download and install the latest binary distribution from
 the Comprehensive R Archive Network ([CRAN](https://cran.r-project.org/)).
 Windows users should set R to operate as a single document interface (SDI) application during installation
 by choosing to customize the start-up options and specifying the SDI interface (not the default).
