@@ -1,4 +1,6 @@
-# RSurvey 0.9.1.9000
+# RSurvey 0.9.2
+
+- Change USGS package status from 'Research' to 'Orphan'.
 
 - Stop including variables of class factor in histogram plots.
 

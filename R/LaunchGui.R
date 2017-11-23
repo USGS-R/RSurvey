@@ -443,7 +443,10 @@ LaunchGui <- function() {
 
   # about package
   AboutPackage <- function() {
-    lib <- ifelse("package:RSurvey" %in% search(), system.file(package="RSurvey"), getwd())
+    if ("RSurvey" %in% utils::installed.packages(.libPaths(), noCache=TRUE)[, "Package"])
+      lib <- system.file(package="RSurvey")
+    else
+      lib <- getwd()
     ver <- read.dcf(file.path(lib, "DESCRIPTION"), "Version")
     ymd <- strsplit(read.dcf(file.path(lib, "DESCRIPTION"), "Packaged"), " ")[[1]][1]
     msg <- sprintf("RSurvey package version %s (%s)", ver, ymd)
@@ -1266,7 +1269,7 @@ LaunchGui <- function() {
   f0 <- ttkframe(tt, relief="flat", borderwidth=2)
   tkpack(f0, side="top", fill="x")
 
-  if ("package:RSurvey" %in% search())
+  if ("RSurvey" %in% utils::installed.packages(.libPaths(), noCache=TRUE)[, "Package"])
     img.path <- system.file("images", package="RSurvey")
   else
     img.path <- file.path(getwd(), "inst", "images")

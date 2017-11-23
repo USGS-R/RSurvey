@@ -5,16 +5,20 @@
 [![](https://cranlogs.r-pkg.org/badges/RSurvey?color=brightgreen)](https://www.rpackages.io/package/RSurvey)
 [![USGS Category](https://img.shields.io/badge/USGS-Orphan-red.svg)](https://owi.usgs.gov/R/packages.html#orphan)
 
+## Deprecated
+
+Development of this package has halted.
+If you are interested in taking over maintainer status for the package, please email the author.
+
 ## Overview
 
-**RSurvey** is a geographic information system (GIS) graphical user interface (GUI) that provides data viewing, management, and analysis tools.
+The [R](https://www.r-project.org/) package **RSurvey** is a geographic information system (GIS)
+graphical user interface (GUI) that provides data viewing, management, and analysis tools.
 The cross-platform application was designed to be simple enough for non-technical users.
-**RSurvey**-generated graphics attempt to meet the exact standards for illustrations in reports of the United States Geological Survey
-([USGS](https://www.usgs.gov/)).
 
 ## Install
 
-If [R](https://www.r-project.org/) is not already installed on your computer, download and install the latest binary distribution from
+If R is not already installed on your computer, download and install the latest binary distribution from
 the Comprehensive R Archive Network ([CRAN](https://cran.r-project.org/)).
 Windows users should set R to operate as a single document interface (SDI) application during installation
 by choosing to customize the start-up options and specifying the SDI interface (not the default).
@@ -66,14 +70,14 @@ library("RSurvey")
 
 ## Disclaimer
 
-This software is in the public domain because it contains materials that originally came from the USGS,
-an agency of the United States Department of Interior.
-For more information, see the
-[official USGS copyright policy](https://www2.usgs.gov/visual-id/credit_usgs.html "official USGS copyright policy").
+This information is preliminary or provisional and is subject to revision.
+It is being provided to meet the need for timely best science.
+The information has not received final approval by the U.S. Geological Survey (USGS)
+and is provided on the condition that neither the USGS nor the U.S. Government
+shall be held liable for any damages resulting from the authorized or unauthorized use of the information.
 
-Although this software program has been used by the USGS, no warranty, expressed or implied,
-is made by the USGS or the U.S. Government as to the accuracy and functioning of the program and
-related program material nor shall the fact of distribution constitute any such warranty,
+Although this software program has been used by the U.S. Geological Survey (USGS),
+no warranty, expressed or implied, is made by the USGS or the U.S. Government
+as to the accuracy and functioning of the program and related program material
+nor shall the fact of distribution constitute any such warranty,
 and no responsibility is assumed by the USGS in connection therewith.
-
-This software is provided "AS IS."
