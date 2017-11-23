@@ -1,6 +1,6 @@
 Package: RSurvey
 Title: Geographic Information System Application
-Version: 0.9.2
+Version: 0.9.2.9000
 Authors@R: person(given=c("Jason", "C."), family="Fisher", role=c("aut", "cre"), email="jfisher@usgs.gov", comment=c(ORCID="0000-0001-9032-8912"))
 Description: A geographic information system (GIS) graphical user interface (GUI) that
   provides data viewing, management, and analysis tools.
