@@ -2,7 +2,7 @@
 
 - Fix broken cross-reference links in the help documentation.
 
-- Remove stray (no loop) `next` command from `ManagePolygons` function.
+- Remove stray `next` command from `ManagePolygons` function.
 
 # RSurvey 0.9.2
 
