@@ -339,10 +339,8 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       new.poly <- local({nam <- load(file=file); return(eval(parse(text=nam[1])))})
     }
 
-    if (!inherits(new.poly, c("SpatialPolygons", "SpatialPolygonsDataFrame", "gpc.poly"))) {
+    if (!inherits(new.poly, c("SpatialPolygons", "SpatialPolygonsDataFrame", "gpc.poly")))
       warning(sprintf("Inappropriate class for object extracted from file: %s", file))
-      next
-    }
 
     new.poly <- methods::as(new.poly, "SpatialPolygons")
     if (is.na(rgdal::CRSargs(crs))) crs <<- new.poly@proj4string
