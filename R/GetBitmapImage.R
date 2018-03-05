@@ -18,7 +18,7 @@
 #'
 #' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 #'
-#' @seealso \code{\link[tcltk]{tkimage.create}}
+#' @seealso \code{\link[tcltk:TkCommands]{tkimage.create}}
 #'
 #' @keywords misc
 #'

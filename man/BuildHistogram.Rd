@@ -36,7 +36,7 @@ A graphical user interface (\acronym{GUI}) for specifying input parameters for t
 
 }
 \seealso{
-\code{\link[graphics]{plot.histogram}}
+\code{\link[graphics:plothistogram]{plot.histogram}}
 }
 \author{
 J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center

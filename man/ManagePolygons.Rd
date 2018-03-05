@@ -45,7 +45,7 @@ The text file representation of a polygon is of the following format:\cr\cr
   x2 y2\cr
   ...\cr\cr
   The hole flag is either 1 to indicate a hole, or 0 for a regular contour.
-  See the \code{\link[rgeos]{read.polyfile}} function for details.
+  See the \code{\link[rgeos:gpc-polyfile]{read.polyfile}} function for details.
 }
 \examples{
 \dontrun{
@@ -54,7 +54,8 @@ The text file representation of a polygon is of the following format:\cr\cr
 
 }
 \seealso{
-\code{\link[rgeos]{polyfile}}, \code{\link[rgeos]{gUnion}}, \code{\link[inlmisc]{SetPolygons}}
+\code{\link[rgeos:gpc-polyfile]{polyfile}}, \code{\link[rgeos:topo-bin-gUnion]{gUnion}},
+  \code{\link[inlmisc]{SetPolygons}}
 }
 \author{
 J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center

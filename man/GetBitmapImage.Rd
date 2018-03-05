@@ -50,7 +50,7 @@ Icon image types include:
 
 }
 \seealso{
-\code{\link[tcltk]{tkimage.create}}
+\code{\link[tcltk:TkCommands]{tkimage.create}}
 }
 \author{
 J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center

@@ -1,6 +1,8 @@
 # RSurvey 0.9.2.9000
 
-- ...
+- Fix broken cross-reference links in the help documentation.
+
+- Remove stray (no loop) `next` command from `ManagePolygons` function.
 
 # RSurvey 0.9.2
 

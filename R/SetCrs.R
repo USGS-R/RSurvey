@@ -15,7 +15,7 @@
 #'
 #' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 #'
-#' @seealso \code{\link[sp]{CRS}}, \code{\link[rgdal]{checkCRSArgs}}
+#' @seealso \code{\link[sp:CRS-class]{CRS}}, \code{\link[rgdal:CRS-class]{checkCRSArgs}}
 #'
 #' @keywords misc
 #'

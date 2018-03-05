@@ -17,7 +17,7 @@
 #'
 #' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 #'
-#' @seealso \code{\link[graphics]{plot.histogram}}
+#' @seealso \code{\link[graphics:plothistogram]{plot.histogram}}
 #'
 #' @keywords misc
 #'
