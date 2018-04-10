@@ -1,4 +1,4 @@
-# RSurvey 0.9.2.9000
+# RSurvey 0.9.3
 
 - Fix broken cross-reference links in the help documentation.
 
