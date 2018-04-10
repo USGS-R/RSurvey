@@ -18,10 +18,10 @@ Create a small \acronym{Tk} bitmap image.
 }
 \details{
 Icon image types include:
-  \var{left}, \var{right}, \var{up}, \var{down}, \var{top}, \var{bottom},
-  \var{upleft}, \var{upright}, \var{downleft}, \var{downright}, \var{next},
-  \var{previous}, \var{copy}, \var{paste}, \var{find}, \var{delete},
-  \var{view}, \var{info}, \var{plus}, \var{minus}, \var{print}, and \var{histogram}.
+  \code{left}, \code{right}, \code{up}, \code{down}, \code{top}, \code{bottom},
+  \code{upleft}, \code{upright}, \code{downleft}, \code{downright}, \code{next},
+  \code{previous}, \code{copy}, \code{paste}, \code{find}, \code{delete},
+  \code{view}, \code{info}, \code{plus}, \code{minus}, \code{print}, and \code{histogram}.
   A recommended editor for bitmap design is Paul Obermeier's
   \href{http://www.posoft.de/html/poBitmapMain.html}{poBitmap} tool;
   specify a square icon 11 pixels on each side.
@@ -50,7 +50,7 @@ Icon image types include:
 
 }
 \seealso{
-\code{\link[tcltk]{tkimage.create}}
+\code{\link[tcltk:TkCommands]{tkimage.create}}
 }
 \author{
 J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center

@@ -27,14 +27,15 @@
 #'   x2 y2\cr
 #'   ...\cr\cr
 #'   The hole flag is either 1 to indicate a hole, or 0 for a regular contour.
-#'   See the \code{\link[rgeos]{read.polyfile}} function for details.
+#'   See the \code{\link[rgeos:gpc-polyfile]{read.polyfile}} function for details.
 #'
 #' @return Returns an object of class list with components
 #'   \code{polys}, \code{poly.data}, \code{poly.crop}, and \code{crs} (see \sQuote{Arguments} section).
 #'
 #' @author J.C. Fisher, U.S. Geological Survey, Idaho Water Science Center
 #'
-#' @seealso \code{\link[rgeos]{polyfile}}, \code{\link[rgeos]{gUnion}}, \code{\link[inlmisc]{SetPolygons}}
+#' @seealso \code{\link[rgeos:gpc-polyfile]{polyfile}}, \code{\link[rgeos:topo-bin-gUnion]{gUnion}},
+#'   \code{\link[inlmisc]{SetPolygons}}
 #'
 #' @keywords misc
 #'
@@ -339,10 +340,8 @@ ManagePolygons <- function(polys=NULL, poly.data=NULL, poly.crop=NULL,
       new.poly <- local({nam <- load(file=file); return(eval(parse(text=nam[1])))})
     }
 
-    if (!inherits(new.poly, c("SpatialPolygons", "SpatialPolygonsDataFrame", "gpc.poly"))) {
+    if (!inherits(new.poly, c("SpatialPolygons", "SpatialPolygonsDataFrame", "gpc.poly")))
       warning(sprintf("Inappropriate class for object extracted from file: %s", file))
-      next
-    }
 
     new.poly <- methods::as(new.poly, "SpatialPolygons")
     if (is.na(rgdal::CRSargs(crs))) crs <<- new.poly@proj4string

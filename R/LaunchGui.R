@@ -636,20 +636,23 @@ LaunchGui <- function() {
                                     silent=TRUE)
 
       if (plot.type == "Surface and points") {
-        bg.neg <- if (Data("proportional")) "#999999B1" else NULL
-        ans <- try(inlmisc::PlotMap(r, p, inches=inches, bg="#1F1F1FCB", bg.neg=bg.neg,
-                                    fg="#FFFFFF40", legend.loc=NULL,
-                                    xlim=lim$x, ylim=lim$y, zlim=lim$z,
-                                    n=Data("nlevels"), asp=asp, dms.tick=Data("dms.tick"),
-                                    bg.lines=Data("bg.lines"), pal=Data("palette.grd"),
-                                    contour.lines=contour.lines, file=file,
-                                    useRaster=Data("useRaster"),
-                                    scale.loc=Data("scale.loc"), arrow.loc=Data("arrow.loc"),
-                                    draw.key=Data("draw.key"), max.dev.dim=Data("max.dev.dim"),
-                                    credit=Data("credit"), explanation=Data("explanation")),
-                                    silent=TRUE)
+
+        ans <- try({
+          inlmisc::PlotMap(r, xlim=lim$x, ylim=lim$y, zlim=lim$z,
+                           n=Data("nlevels"), asp=asp, dms.tick=Data("dms.tick"),
+                           bg.lines=Data("bg.lines"), pal=Data("palette.grd"),
+                           contour.lines=contour.lines, file=file,
+                           useRaster=Data("useRaster"),
+                           scale.loc=Data("scale.loc"), arrow.loc=Data("arrow.loc"),
+                           draw.key=Data("draw.key"), max.dev.dim=Data("max.dev.dim"),
+                           credit=Data("credit"), explanation=Data("explanation"))
+          inlmisc::AddPoints(p, bg="#1F1F1FCB", inches=inches,
+                             bg.neg=if (Data("proportional")) "#999999B1" else NULL,
+                             fg="#FFFFFF40", legend.loc=NULL)
+        }, silent=TRUE)
       }
     }
+
     if (inherits(ans, "try-error"))
       tkmessageBox(icon="error", message="Plot routine failed.", detail=ans,
                    title="Error", type="ok", parent=tt)
