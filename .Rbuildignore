@@ -7,3 +7,5 @@
 ^\.Rprofile$
 misc/future-plans.md$
 ^appveyor\.yml$
+^RSurvey\.Rproj$
+^\.Rproj\.user$
